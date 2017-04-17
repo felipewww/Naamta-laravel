@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
+use App\Models\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -68,9 +69,9 @@ class RegisterController extends Controller
             'password' => bcrypt($data['password']),
             ]);
         
-        $user
+        $user   
             ->roles()
-            ->attach(Role::where('name', 'admin')->first());
+            ->attach(Role::where('name', 'client')->first());
         
         return $user;
     }
