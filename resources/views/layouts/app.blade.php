@@ -60,6 +60,16 @@
 
                                 <ul class="dropdown-menu" role="menu">
                                     <li>
+                                        <a href="{{ url('home') }}">
+                                            Dashboard
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ url('users') }}">
+                                            System Users
+                                        </a>
+                                    </li>
+                                    <li>
                                         <a href="#"
                                             onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
