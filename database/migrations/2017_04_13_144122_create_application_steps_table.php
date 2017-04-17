@@ -15,6 +15,28 @@ class CreateApplicationStepsTable extends Migration
     {
         Schema::create('application_steps', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('step_id')->unsigned()->nullable();
+            $table->integer('responsible')->unsigned();
+            $table->integer('form')->unsigned()->nullable();
+            $table->integer('screen')->unsigned()->nullable();
+            $table->tinyInteger('status')->default(0);
+
+            $table->foreign('step_id')
+                    ->references('id')->on('steps')
+                    ->onDelete('set null');
+            
+            $table->foreign('form')
+                    ->references('id')->on('steps')
+                    ->onDelete('set null');
+            
+            $table->foreign('screen')
+                    ->references('id')->on('steps')
+                    ->onDelete('set null');
+
+            $table->foreign('responsible')
+                    ->references('id')->on('users')
+                    ->onDelete('cascade');
+
             $table->timestamps();
         });
     }

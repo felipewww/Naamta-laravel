@@ -15,7 +15,26 @@ class CreateCommentsTable extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('user_id')->unsigned()->nullable();
+            $table->text('text');
+            $table->integer('field')->unsigned()->nullable();
+            $table->integer('response')->unsigned()->nullable();
+            $table->enum('status', array("wait", "viewed", "resolved"))->default("wait");
+
+            $table->foreign('user_id')
+                    ->references('id')->on('users')
+                    ->onDelete('set null');
+
+            $table->foreign('field')
+                    ->references('id')->on('fields')
+                    ->onDelete('set null');
+
+            $table->foreign('response')
+                    ->references('id')->on('comments')
+                    ->onDelete('set null');
+
             $table->timestamps();
+            
         });
     }
 

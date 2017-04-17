@@ -13,8 +13,16 @@ class CreateContainersTable extends Migration
      */
     public function up()
     {
-        Schema::create('container', function (Blueprint $table) {
+        Schema::create('containers', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('form_template_id')->unsigned();
+            $table->string('name');
+            $table->string('config');
+            
+            $table->foreign('form_template_id')
+                    ->references('id')->on('form_templates')
+                    ->onDelete('cascade');
+                    
             $table->timestamps();
         });
     }
@@ -26,6 +34,6 @@ class CreateContainersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('container');
+        Schema::dropIfExists('containers');
     }
 }

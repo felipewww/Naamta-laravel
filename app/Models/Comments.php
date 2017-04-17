@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class FormTemplate extends Model
+class Comments extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -12,11 +12,11 @@ class FormTemplate extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'status'
+        'text', 'status', 'field', 'response', 'status'
     ];
 
-    public function containers()
+    public function user()
     {
-        return $this->hasMany('App\Models\Container');
+        return $this->hasOne('App\Models\User');
     }
 }

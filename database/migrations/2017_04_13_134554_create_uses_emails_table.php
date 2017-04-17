@@ -15,6 +15,17 @@ class CreateUsesEmailsTable extends Migration
     {
         Schema::create('uses_emails', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('email_id')->unsigned()->nullable();
+            $table->integer('recieved_by')->unsigned()->nullable();
+            
+            $table->foreign('recieved_by')
+                    ->references('id')->on('user_types')
+                    ->onDelete('set null');
+
+            $table->foreign('email_id')
+                    ->references('id')->on('email_templates')
+                    ->onDelete('set null');
+                    
             $table->timestamps();
         });
     }
@@ -26,6 +37,6 @@ class CreateUsesEmailsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('UsesEmail');
+        Schema::dropIfExists('uses_emails');
     }
 }

@@ -15,6 +15,15 @@ class CreateFieldsTable extends Migration
     {
         Schema::create('fields', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('container_id')->unsigned();
+            $table->integer('type');
+            $table->string('config');
+            $table->tinyInteger('status')->default(0);
+            
+            $table->foreign('container_id')
+                    ->references('id')->on('containers')
+                    ->onDelete('cascade');
+                    
             $table->timestamps();
         });
     }

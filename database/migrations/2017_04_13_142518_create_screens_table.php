@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateClientsTable extends Migration
+class CreateScreensTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,13 @@ class CreateClientsTable extends Migration
      */
     public function up()
     {
-       Schema::create('clients', function (Blueprint $table) {
+        Schema::create('screens', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->unsigned();
-            $table->string('name');
-            
-            $table->foreign('user_id')
+            $table->string('title');
+            $table->text('description');
+            $table->integer('responsible')->unsigned();
+
+            $table->foreign('responsible')
                     ->references('id')->on('users')
                     ->onDelete('cascade');
         });
@@ -31,6 +32,6 @@ class CreateClientsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('clients');
+        Schema::dropIfExists('screens');
     }
 }

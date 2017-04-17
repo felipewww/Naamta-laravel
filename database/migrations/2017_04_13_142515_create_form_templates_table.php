@@ -15,6 +15,8 @@ class CreateFormTemplatesTable extends Migration
     {
         Schema::create('form_templates', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('name');
+            $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });
     }
