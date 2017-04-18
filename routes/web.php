@@ -39,5 +39,9 @@ Route::get('/callback', function (Request $request) {
     return json_decode((string) $response->getBody(), true);
 });
 
-Route::resource('/step', 'StepController');
-Route::resource('/email', 'EmailController');
+Route::resource('/steps',  'StepsController');
+Route::resource('/emails', 'EmailsController');
+Route::resource('/forms',  'FormsController');
+
+
+

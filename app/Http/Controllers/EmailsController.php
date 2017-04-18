@@ -13,7 +13,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Models\EmailTemplate;
 
-class EmailController extends Controller
+class EmailsController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -37,7 +37,7 @@ class EmailController extends Controller
     {
         $request->user()->authorizeRoles(['admin']);
 
-        return view('panel.emails.list')->with('emails', $this->emails);
+        return view('emails.list')->with('emails', $this->emails);
     }
 
     /**
@@ -51,7 +51,7 @@ class EmailController extends Controller
        
         
         // load the view and pass the nerds
-        return view('panel.emails.form');
+        return view('emails.form');
     }
 
      /**
@@ -70,7 +70,7 @@ class EmailController extends Controller
 
         // process the login
         if ($validator->fails()) {
-            return Redirect::to('email/create')
+            return Redirect::to('emails/create')
                 ->withErrors($validator)
                 ->withInput();
         }
@@ -84,7 +84,7 @@ class EmailController extends Controller
         // redirect
         Session::flash('message', 'Item cadastrado com sucesso!');
         
-        return Redirect::to('email');
+        return Redirect::to('emails');
     }
 
      /**
@@ -98,7 +98,7 @@ class EmailController extends Controller
          $email = EmailTemplate::find($id);
 
         // show the view and pass the nerd to it
-        return view('panel.emails.form')
+        return view('emails.form')
             ->with(array('email' => $email));
     }
 
@@ -118,7 +118,7 @@ class EmailController extends Controller
 
         // process the login
         if ($validator->fails()) {
-            return Redirect::to('email/create')
+            return Redirect::to('emails/create')
                 ->withErrors($validator)
                 ->withInput();
         }
@@ -132,7 +132,7 @@ class EmailController extends Controller
         // redirect
         Session::flash('message', 'Item atualizado com sucesso!');
         
-        return Redirect::to('email');
+        return Redirect::to('emails');
     }
 
     /**
@@ -153,7 +153,7 @@ class EmailController extends Controller
             Session::flash('message', 'Erro ao apagar os itens!');
         }
 
-        return Redirect::to('email');
+        return Redirect::to('emails');
         
     }
 }

@@ -1,13 +1,12 @@
 @extends('layouts.app')
 
 @php
-    $page = "email";
+    $page = "emails";
     
-    $route = route('email.store');
+    $route = route('emails.store');
     $method = 'POST';
-    
-    if($email!=null){
-        $route = route('email.update', ['id' => $email->id]);
+    if(isset($email) && $email!=null){
+        $route = route('emails.update', ['id' => $email->id]);
         $method = 'PUT';
     }else{
         $email = new App\Models\EmailTemplate();
@@ -20,7 +19,7 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
-                <div class="panel-heading">Dashboard</div>
+                <div class="panel-heading">Add Email</div>
 
                 <div class="panel-body">
                     <form class="form-horizontal" role="form" method="POST" action="{{$route}}">

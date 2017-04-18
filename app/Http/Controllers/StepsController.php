@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Step;
 
-class StepController extends Controller
+class StepsController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -29,6 +29,6 @@ class StepController extends Controller
     {
         $request->user()->authorizeRoles(['admin']);
 
-        return view('panel.steps.list')->with('steps', $this->steps);
+        return view('steps.list')->with('steps', $this->steps);
     }
 }

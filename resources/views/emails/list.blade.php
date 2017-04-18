@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @php
-    $page = "step";
-    $itens = $steps;
+    $page = "emails";
+    $itens = $emails;
 @endphp
 
 @section('content')
@@ -10,7 +10,10 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
-                <div class="panel-heading">Dashboard</div>
+                <div class="panel-heading">
+                    E-mails
+                     <a role="button" href="{{ URL::to($page . '/create') }}" class="btn btn-default btn-rounded btn-condensed btn-sm pull-right">Add</span></a>
+                </div>
 
                 <div class="panel-body">
                    <table class="table table-bordered table-striped table-actions datatable">
@@ -29,7 +32,7 @@
                                 <td><strong>{{ $item->title }}</strong></td>
                                 <td><strong>{{ $item->status }}</strong></td>
                                 <td class="text-center" >
-                                    <form id="delete" action="{{ route('step.destroy', ['id' => $item->id]) }}" method="POST" class="form-inline">
+                                    <form id="delete" action="{{ route('emails.destroy', ['id' => $item->id]) }}" method="POST" class="form-inline">
                                         {{ csrf_field() }}
                                         <input type="hidden" name="_method" value="DELETE">    
                                         <a role="button" href="{{ URL::to($page . '/' .$item->id . '/edit') }}" class="btn btn-default btn-rounded btn-condensed btn-sm">Edit</span></a>
