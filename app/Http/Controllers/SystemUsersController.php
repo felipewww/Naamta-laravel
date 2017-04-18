@@ -82,6 +82,10 @@ class SystemUsersController extends Controller
     public function delete(Request $request, $userId){
           
         $request->user()->authorizeRoles(['admin']);
-        return('Delete User: ' . $userId);
+        
+        $user = User::findOrFail($userId);
+        $user->delete();
+        
+        return redirect('users');
     }
 }
