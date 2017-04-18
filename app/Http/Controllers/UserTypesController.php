@@ -35,6 +35,10 @@ class UserTypesController extends Controller
         
         $request->user()->authorizeRoles(['admin']);
         
+        $this->validate($request, [
+            'title' => 'required',
+        ]);
+        
         $slug = str_slug($request->name, '-');
         $data = array('slug' => $slug, 'title' => $request->name, 'status'=>$request->status);
         $usertype = UsersTypes::create($data);

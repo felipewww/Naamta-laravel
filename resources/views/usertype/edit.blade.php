@@ -9,6 +9,17 @@
 
                 <div class="panel-body">
                     
+                    <!-- Errors -->
+                    @if (count($errors) > 0)
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    
                     <!-- Mensagem de sucesso e erro -->
                     @if(Session::has('error_msg'))
                         <div class="alert alert-danger">
@@ -29,7 +40,7 @@
                     
                         <div class="row" style="margin-top: 15px;">
                             <div class="col-md-12">
-                                <input type="text" class="form-control" name="name" placeholder="Name" required="" @if(isset($usertype)) value="{{ $usertype->title }}" @endif >
+                                <input type="text" class="form-control" name="name" placeholder="Title" required="" @if(isset($usertype)) value="{{ $usertype->title }}" @endif >
                             </div>
                         </div>
                         <div class="row"style="margin-top: 15px;" >

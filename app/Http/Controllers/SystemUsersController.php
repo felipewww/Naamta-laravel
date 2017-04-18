@@ -31,14 +31,15 @@ class SystemUsersController extends Controller
     
     public function create(Request $request){
         
-        $request->user()->authorizeRoles(['admin']);       
-        return view('systemUsers.edit');
+        $request->user()->authorizeRoles(['admin']);   
+        $roles = Roles::whereIn('name', ['admin','staff'])->get();
+        return view('systemUsers.edit')->with('roles', $roles);
     }
     
     public function create_post(Request $request){
         
         $request->user()->authorizeRoles(['admin']);
-        
+            
         \Session::flash('success_msg','User Added.');
         return view('systemUsers.edit');
     }
@@ -48,7 +49,7 @@ class SystemUsersController extends Controller
         $request->user()->authorizeRoles(['admin']);
         
         $user = User::findOrFail($userId);
-        $roles = Roles::all();
+        $roles = Roles::whereIn('name', ['admin','staff'])->get();
         
         if($user->roles->first()->name == 'client'){
             return redirect('users');

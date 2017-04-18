@@ -40,7 +40,6 @@
                         <div class="row" style="margin-top: 15px;">
                             <div class="col-md-12">
                                 <select class="form-control" name="user_type" required="">
-                                    <option value="">Choose One...</option>
                                     @foreach($roles as $role)
                                         <option value="{{ $role->id }}" @if(isset($user) AND $user->roles()->first()->name == $role->name) selected @endif >{{ $role->name }}</option>
                                     @endforeach
