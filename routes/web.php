@@ -20,8 +20,11 @@ Auth::routes();
 Route::get('/home', 'HomeController@index');
 
 Route::get('/users', 'SystemUsersController@index');
+Route::get('/users/create', 'SystemUsersController@create');
 Route::get('/users/{id}/edit', 'SystemUsersController@edit');
+Route::post('/users/{id}/edit', 'SystemUsersController@edit_post');
 Route::post('/users/{id}/delete', 'SystemUsersController@delete');
+
 
 Route::get('/callback', function (Request $request) {
     $http = new GuzzleHttp\Client;
