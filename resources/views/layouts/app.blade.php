@@ -75,6 +75,11 @@
                                         </a>
                                     </li>
                                     <li>
+                                        <a href="{{ url('emails') }}">
+                                            Emails
+                                        </a>
+                                    </li>
+                                    <li>
                                         <a href="#"
                                             onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">

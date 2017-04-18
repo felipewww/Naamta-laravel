@@ -32,6 +32,13 @@ Route::get('/userstype/{id}/edit', 'UserTypesController@update');
 Route::post('/userstype/{id}/edit', 'UserTypesController@update_post');
 Route::post('/userstype/{id}/delete', 'UserTypesController@delete');
 
+Route::get('/emails', 'EmailsController@index');
+Route::get('/emails/create', 'EmailsController@insert');
+Route::post('/emails/create', 'EmailsController@insert_post');
+Route::get('/emails/{id}/edit', 'EmailsController@update');
+Route::post('/emails/{id}/edit', 'EmailsController@update_post');
+Route::post('/emails/{id}/delete', 'EmailsController@delete');
+
 
 Route::get('/callback', function (Request $request) {
     $http = new GuzzleHttp\Client;
