@@ -2,90 +2,138 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
+
+use Validator;
+use Session;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Http\Request;
-use App\Models\UsersTypes;
+use App\Models\EmailTemplate;
+use App\Models\UserType;
 
 class UserTypesController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    private $userTypes;
     
-    public function __construct()
+    private $rules = [
+            'title' => 'required|min:3|max:255'];
+    
+    public function __construct(Request $request)
     {
-        $this->middleware('auth');
+        $this->middleware(function ($request, $next) {
+            $user = \Auth::user()->authorizeRoles(['admin']);;
+            return $next($request);
+        });
+        $this->userTypes = UserType::all();
     }
     
-    //====================================
-    
+     /**
+     * Show the application UserType list.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index(Request $request){
-        
-        $request->user()->authorizeRoles(['admin']);
-        
-        $usertype = UsersTypes::all();
-        
-        return view('usertype.show')->with(['usertype'=>$usertype]);
+        return view('userTypes.list')->with(['usertypes'=> $this->userTypes]);
     }
     
-    public function insert(Request $request){
-        
-        $request->user()->authorizeRoles(['admin']);
-        
-        return view('usertype.edit');
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+        // load the view and pass the email
+        return view('userTypes.form');
     }
     
-    public function insert_post(Request $request){
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function store(Request $request){
         
-        $request->user()->authorizeRoles(['admin']);
+        Validator::make($request->all(), $this->rules)->validate();
         
-        $this->validate($request, [
-            'title' => 'required',
-        ]);
+         try{
+            // store
+
+            $userTypes = UserType::create([
+                'slug'  => str_slug($request->title, '-'),
+                'title' => $request->title,
+                'status'=> (int)$request->status,
+            ]);
         
-        $slug = str_slug($request->name, '-');
-        $data = array('slug' => $slug, 'title' => $request->name, 'status'=>$request->status);
-        $usertype = UsersTypes::create($data);
-        
-        if ( !$usertype ){
-            \Session::flash('error_msg','Fail at create user type.');
-        }else{
-            \Session::flash('success_msg','User type created.');
+            \Session::flash('success','User Type created: ' . $request->name);
+
+        } catch(Exception $e){
+
+            \Session::flash('error','Email create failed: ' . $e);
+
         }
-        
-        return redirect('userstype/create');
+
+        return Redirect::to('usertypes');
     }
     
-    public function update(Request $request, $userId){
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @return Response
+     */
+    public function edit($id){
         
-        $request->user()->authorizeRoles(['admin']);
+        $userType = UserType::findOrFail($id);
         
-        $usertype = UsersTypes::findOrFail($userId);
-        
-        return view('usertype.edit')->with(['usertype' => $usertype]);
+        return view('userTypes.form')->with(['userType' => $userType]);
     }
     
-    public function update_post(Request $request, $userId){
-        
-        $request->user()->authorizeRoles(['admin']);
-        
-        $usertype = UsersTypes::findOrFail($userId);
-        $usertype->title = $request->name;
-        $usertype->slug = str_slug($request->name, '-');
-        $usertype->status = $request->status;
-        
-        if ( !$usertype->save() ){
-            \Session::flash('error_msg','Fail at update.');
-        }else{
-            \Session::flash('success_msg','User type updated.');
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function update(Request $request, $id){
+
+        try{
+
+            $userTypes = UserType::where('id', $id)->update([
+                'slug'  => str_slug($request->title, '-'),
+                'title' => $request->title,
+                'status'=> (int)$request->status,
+            ]);
+
+            \Session::flash('success','User Type updated: ' . $request->name);
+
+        }catch(Exception $e){
+            \Session::flash('error','User Type updated failed: ' . $e);
         }
                 
-        return redirect('userstype/'.$userId.'/edit');
+        return Redirect::to('usertypes');
     }
     
-    public function delete(Request $request, $userId){
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function destroy($id){
         
-        $request->user()->authorizeRoles(['admin']);
-        
-        $usertype = UsersTypes::findOrFail($userId);
-        $usertype->delete();
-        
-        return redirect('userstype');
+        try{
+            $userType = UserType::where('id', $id)->delete();
+            Session::flash('message', 'User Type deleted!');
+            
+        }catch (Exception $e){
+            Session::flash('message', 'User Type delete failed!');
+        }
+
+        return Redirect::to('usertypes');
     }
 }

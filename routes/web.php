@@ -19,27 +19,6 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index');
 
-Route::get('/users', 'SystemUsersController@index');
-Route::get('/users/create', 'SystemUsersController@create');
-Route::get('/users/{id}/edit', 'SystemUsersController@edit');
-Route::post('/users/{id}/edit', 'SystemUsersController@edit_post');
-Route::post('/users/{id}/delete', 'SystemUsersController@delete');
-
-Route::get('/userstype', 'UserTypesController@index');
-Route::get('/userstype/create', 'UserTypesController@insert');
-Route::post('/userstype/create', 'UserTypesController@insert_post');
-Route::get('/userstype/{id}/edit', 'UserTypesController@update');
-Route::post('/userstype/{id}/edit', 'UserTypesController@update_post');
-Route::post('/userstype/{id}/delete', 'UserTypesController@delete');
-
-Route::get('/emails', 'EmailsController@index');
-Route::get('/emails/create', 'EmailsController@insert');
-Route::post('/emails/create', 'EmailsController@insert_post');
-Route::get('/emails/{id}/edit', 'EmailsController@update');
-Route::post('/emails/{id}/edit', 'EmailsController@update_post');
-Route::post('/emails/{id}/delete', 'EmailsController@delete');
-
-
 Route::get('/callback', function (Request $request) {
     $http = new GuzzleHttp\Client;
 
@@ -56,9 +35,13 @@ Route::get('/callback', function (Request $request) {
     return json_decode((string) $response->getBody(), true);
 });
 
-Route::resource('/steps',  'StepsController');
+Route::resource('/users', 'SystemUsersController');
+Route::resource('/usertypes', 'UserTypesController');
+Route::resource('/steps', 'StepsController');
 Route::resource('/emails', 'EmailsController');
 Route::resource('/forms',  'FormsController');
+
+
 
 
 

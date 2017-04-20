@@ -85,7 +85,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="{{ url('userstype') }}">
+                                        <a href="{{ url('usertypes') }}">
                                             User Types
                                         </a>
                                     </li>

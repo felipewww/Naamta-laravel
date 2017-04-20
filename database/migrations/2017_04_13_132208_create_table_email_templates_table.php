@@ -17,7 +17,7 @@ class CreateTableEmailTemplatesTable extends Migration
             $table->increments('id');
             $table->string('title');
             $table->longText('text');
-            $table->integer('status')->default(1);
+            $table->tinyInteger('status')->default(1);
             $table->timestamps();
         });
     }

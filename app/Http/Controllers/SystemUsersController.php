@@ -9,9 +9,24 @@ use App\Models\Roles;
 
 class SystemUsersController extends Controller
 {
+    private $users;
+    private $roles;
+    private $rules = [
+        'title' => 'required|min:3|max:255',
+        'text' => 'required|min:10'
+    ];
+
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware(function ($request, $next) {
+            $user = \Auth::user()->authorizeRoles(['admin']);;
+            return $next($request);
+        });
+        
+        $this->roles = Roles::whereIn('name', ['admin','staff'])->get();
+        $this->users = User::whereHas('roles', function($query) {
+            $query->whereIn('name', ['admin', 'staff']);
+        })->get();   
     }
 
     /**
@@ -20,73 +35,57 @@ class SystemUsersController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request){
-        
-        $request->user()->authorizeRoles(['admin']);
-        
-        $users = User::whereHas('roles', function($query) {
-            $query->whereIn('name', ['admin', 'staff']);
-        })->get();       
-        return view('systemUsers.show')->with(['users'=>$users]);
+        return view('systemUsers.list')->with(['users' => $this->users]);
     }
     
     public function create(Request $request){
         
-        $request->user()->authorizeRoles(['admin']);   
-        $roles = Roles::whereIn('name', ['admin','staff'])->get();
-        return view('systemUsers.edit')->with('roles', $roles);
+        return view('systemUsers.form')->with('roles', $this->roles);
     }
     
-    public function create_post(Request $request){
+    public function store(Request $request){
         
-        $request->user()->authorizeRoles(['admin']);
-            
-        \Session::flash('success_msg','User Added.');
-        return view('systemUsers.edit');
+        \Session::flash('success_msg', 'User Added.');
+        return view('systemUsers.form');
     }
     
-    public function edit(Request $request, $userId){
+    public function edit(Request $request, $id){
         
-        $request->user()->authorizeRoles(['admin']);
-        
-        $user = User::findOrFail($userId);
-        $roles = Roles::whereIn('name', ['admin','staff'])->get();
+        $user = User::findOrFail($id);
         
         if($user->roles->first()->name == 'client'){
             return redirect('users');
         }
         
-        return view('systemUsers.edit')->with(['user'=>$user, 'roles'=>$roles]);
+        return view('systemUsers.form')->with(['user' => $user, 'roles'=>$this->roles]);
     }
     
-    public function edit_post(Request $request, $userId){
+    public function update(Request $request, $id){
         
-        
-        $request->user()->authorizeRoles(['admin']);
-        
-        $user = User::findOrFail($userId);
-        $user->status = $request->status;
-        
-        $user->roles()->sync($request->user_type);
-        
-        //Check if user saved
-        
-        if ( !$user->save()){
-            \Session::flash('error_msg','User Edit Fail.');
-        }else{
-            \Session::flash('success_msg','User Edited.');
+        try{
+            $user = User::findOrFail($id);
+            $user->status = $request->status;
+            
+            $user->roles()->sync($request->user_type);
+            $user->save();
+            \Session::flash('success_msg','User Edited: ' . $user->name);
+        } catch(Exception $e){
+            \Session::flash('error','User update failed: ' . $e);
         }
         
-        
-        return redirect('users/'.$userId.'/edit');
+        return redirect('users');
     }
     
     public function delete(Request $request, $userId){
           
-        $request->user()->authorizeRoles(['admin']);
-        
-        $user = User::findOrFail($userId);
-        $user->delete();
-        
-        return redirect('users');
+        // delete
+        try{
+            $email = User::where('id', $id)->delete();
+            Session::flash('message', 'User deleted!');
+        }catch (Exception $e){
+            Session::flash('message', 'User delete failed!');
+        }
+
+        return Redirect::to('users');
     }
 }

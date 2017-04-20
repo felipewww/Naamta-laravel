@@ -16,7 +16,10 @@ class StepsController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware(function ($request, $next) {
+            $user = \Auth::user()->authorizeRoles(['admin']);;
+            return $next($request);
+        });
         $this->steps = Step::all();
     }
 
@@ -27,8 +30,6 @@ class StepsController extends Controller
      */
     public function index(Request $request)
     {
-        $request->user()->authorizeRoles(['admin']);
-
         return view('steps.list')->with('steps', $this->steps);
     }
 }
