@@ -27,19 +27,19 @@
                         <input type="hidden" name="_method" value="{{ $method }}">
                         <div class="row" style="margin-top: 15px;">
                             <div class="col-md-12">
-                                <input type="text" class="form-control" name="name" disabled placeholder="Name"  @if(isset($user)) value="{{ $user->name }}" @endif >
+                                <input type="text" class="form-control" name="name" disabled placeholder="Name" value="{{ $user->name!=null ? $user->name : old('name') }}" >
                             </div>
                         </div>
                         <div class="row" style="margin-top: 15px;">
                             <div class="col-md-12">
-                                <input type="text" class="form-control" name="email" disabled placeholder="Email" @if(isset($user)) value="{{ $user->email }}" @endif >
+                                <input type="text" class="form-control" name="email" disabled placeholder="Email" value="{{ $user->email!=null ? $user->email : old('email') }}">
                             </div>
                         </div>
                         <div class="row" style="margin-top: 15px;">
                             <div class="col-md-12">
                                 <select class="form-control" name="user_type" required="">
                                     @foreach($roles as $role)
-                                        <option value="{{ $role->id }}" @if(isset($user) AND $user->roles()->first()->name == $role->name) selected @endif >{{ $role->name }}</option>
+                                        <option value="{{ $role->id }}" {{ (isset($user) && $user->roles()->first()->id == $role->id ? "selected" : "") }}>{{ $role->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -47,8 +47,8 @@
                         <div class="row"style="margin-top: 15px;" >
                             <div class="col-md-12">
                                 <select class="form-control" name="status">
-                                    <option value="1" @if(isset($user) AND $user->status == 1) selected @endif  >Active</option>
-                                    <option value="0" @if(isset($user) AND $user->status == 0) selected @endif >Inactive</option>
+                                    <option value="1" {{ (isset($userType) && $userType->status == 1 ? "selected" : "") }} >Active</option>
+                                    <option value="0" {{ (isset($userType) && $userType->status == 0 ? "selected" : "") }} >Inactive</option>
                                 </select>
                             </div>
                         </div>

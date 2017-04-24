@@ -27,19 +27,19 @@
                         </thead>
                         <tbody>
                         	@foreach($itens as $key => $item)
-                            <tr id="trow_{{ $key }}">
-                                <td class="text-center">{{ $item->id }}</td>
-                                <td><strong>{{ $item->title }}</strong></td>
-                                <td><strong>{{ $item->status }}</strong></td>
-                                <td class="text-center" >
-                                    <form id="delete" action="{{ route('forms.destroy', ['id' => $item->id]) }}" method="POST" class="form-inline">
-                                        {{ csrf_field() }}
-                                        <input type="hidden" name="_method" value="DELETE">    
-                                        <a role="button" href="{{ URL::to($page . '/' .$item->id . '/edit') }}" class="btn btn-default btn-rounded btn-condensed btn-sm">Edit</span></a>
-                                        <button type="submit" class="btn btn-danger btn-rounded btn-condensed btn-sm" onClick="delete_row('trow_{{ $key }}');">Delete</button>
-                                    </form>
-                                </td>
-                            </tr>
+                                <tr id="trow_{{ $key }}">
+                                    <td class="text-center">{{ $item->id }}</td>
+                                    <td><strong>{{ $item->name }}</strong></td>
+                                    <td><strong>{{ $item->status }}</strong></td>
+                                    <td class="text-center" >
+                                        <form id="delete" action="{{ route('forms.destroy', ['id' => $item->id]) }}" method="POST" class="form-inline">
+                                            {{ csrf_field() }}
+                                            <input type="hidden" name="_method" value="DELETE">    
+                                            <a role="button" href="{{ URL::to($page . '/' .$item->id . '/edit') }}" class="btn btn-default btn-rounded btn-condensed btn-sm">Edit</span></a>
+                                            <button type="submit" class="btn btn-danger btn-rounded btn-condensed btn-sm" onClick="delete_row('trow_{{ $key }}');">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
                             @endforeach
                         </tbody>
                     </table>

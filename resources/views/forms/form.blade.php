@@ -42,7 +42,24 @@
                 @if($form->id!=null)
                     <input type="hidden" name="id" value="{{ $form->id }}">
                 @endif
+                <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
+                    <label for="name" class="col-md-4 control-label">Name</label>
 
+                    <div class="col-md-6">
+                        <input id="name" type="text" class="form-control" name="name" value="{{ $form->name!=null ? $user->name : old('name') }}" required>
+
+                        @if ($errors->has('name'))
+                            <span class="help-block">
+                                <strong>{{ $errors->first('name') }}</strong>
+                            </span>
+                        @endif
+                    </div>
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" id="status" name="status" value="1"> Status
+                    </label>
+                </div>
                 <div id="container"></div>
                 
                 <div class="form-group">
@@ -123,15 +140,22 @@
         var title = "Container " + (container.getElementsByClassName("panel").length + 1);
         _generateContainer(container, title, true)
 
+
+        var hiddenObj = new Object();
+        hiddenObj.name       = "container";
+        hiddenObj.value      = "1";
+
+        _generateFormHidden(JSON.stringify(hiddenObj), document.getElementById("id_container_1"), false)
+
         return false;
     }
 
     function OnSubmitFormInput()
     {
-        var container = document.getElementById("id_container_0");
+        var container = document.getElementById("id_container_1");
 
         var inputObj = new Object();
-
+        
         inputObj.required    = document.getElementById("required").value;
         inputObj.label       = document.getElementById("inputLabel").value;
         inputObj.help        = document.getElementById("inputHelpText").value;
@@ -173,6 +197,28 @@
         
         container.appendChild(panelContainer);
 
+        var hiddenObj = new Object();
+        hiddenObj.name       = "config";
+        hiddenObj.value      = "{value: 1}";
+
+        _generateFormHidden(JSON.stringify(hiddenObj), panelBody, config = false)
+
+        return false;
+    }
+
+    function _generateFormHidden(obj, container, config = false)
+    {
+        obj = JSON.parse(obj);
+
+        var input         = document.createElement("input");
+        
+        input.type        = "hidden";
+        input.id          = "hidden_" + obj.name;
+        input.name        = "containers[" +  container.id + "][" + obj.name + "]";
+        input.value       = obj.value;
+
+        container.appendChild(input);
+
         return false;
     }
 
@@ -186,7 +232,7 @@
         var input         = document.createElement("input");
         
         input.type        = obj.type;
-        input.required    = obj.required;
+        //input.required    = obj.required;
         input.className   = "form-control ";
         input.className  += obj.class;
         input.id          = "input_" + obj.name;
@@ -210,6 +256,12 @@
 
         
         container.appendChild(formGroup);
+
+        var hiddenObj = new Object();
+        hiddenObj.name       = input.id;
+        hiddenObj.value      = JSON.stringify(obj);
+
+        _generateFormHidden(JSON.stringify(hiddenObj), document.getElementById("id_container_1"), false)
 
         return false;
     }

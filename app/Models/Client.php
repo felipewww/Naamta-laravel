@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
-class Client extends User
+use Illuminate\Database\Eloquent\Model;
+
+class Client extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -10,7 +12,11 @@ class Client extends User
      * @var array
      */
     protected $fillable = [
-        'company'
+       'id', 'company', 'user_id'
     ];
 
+    public function user()
+    {
+        return $this->belongsToOne('App\Models\User', 'user_id');
+    }
 }

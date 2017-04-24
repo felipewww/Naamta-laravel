@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Client;
+use App\Models\Application;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -49,9 +52,9 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'company' => 'required|max:255',
-            'name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
+            'company'  => 'required|max:255',
+            'name'     => 'required|max:255',
+            'email'    => 'required|email|max:255|unique:users',
             'password' => 'required|min:6|confirmed',
         ]);
     }
@@ -64,16 +67,38 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
+        \DB::beginTransaction();
+
+        try{
+            
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => bcrypt($data['password'])
             ]);
         
-        $user   
-            ->roles()
-            ->attach(Role::where('name', 'client')->first());
-        
-        return $user;
+            $user   
+                ->roles()
+                ->attach(Role::where('name', 'client')->first());
+            
+            $client = Client::create([
+                'company' => $data["company"],
+                'user_id' => $user->id
+            ]);
+
+            $application = Application::create([
+                'client_id' => $client->id,
+                'description' => " "
+            ]);
+
+            \DB::commit();
+
+            return $user;
+
+        } catch (Exception $e){
+            \DB::rollBack();
+            throw $e;
+        }        
+
     }
 }
