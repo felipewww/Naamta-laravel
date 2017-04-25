@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 
+use App\Library\DataTablesExtensions;
 use Validator;
 use Session;
 use Illuminate\Support\Facades\Input;
@@ -13,6 +14,8 @@ use App\Models\EmailTemplate;
 
 class EmailsController extends Controller
 {
+    use DataTablesExtensions;
+
     private $emails;
     private $user;
     private $rules = [
@@ -37,7 +40,44 @@ class EmailsController extends Controller
      */
     public function index(Request $request)
     {
-        return view('emails.list')->with('emails', $this->emails);
+        $this->dataTablesInit();
+        return view('emails.list', ['dataTables' => $this->dataTables ]);
+    }
+
+    public function dataTablesConfig()
+    {
+        $data = [];
+        foreach ($this->emails as $reg)
+        {
+            $newInfo = [
+                $reg['id'],
+                $reg['title'],
+                ($reg['status']) ? 'Active' : 'Inactive',
+                [
+                    'rowActions' =>
+                        [
+                            [
+                                'html' => '',
+                                'attributes' => ['class' => 'fa fa-pencil']
+                            ],
+                            [
+                                'html' => '',
+                                'attributes' => ['class' => 'fa fa-trash']
+                            ]
+                        ]
+                ]
+            ];
+
+            array_push($data, $newInfo);
+        }
+
+        $this->data_info = $data;
+        $this->data_cols = [
+            ['title' => 'id', 'width' => '40px'],
+            ['title' => 'Title'],
+            ['title' => 'Status'],
+            ['title' => 'Actions', 'width' => '100px'],
+        ];
     }
 
     /**

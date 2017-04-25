@@ -1,0 +1,1 @@
+{"version":3,"sources":["naamta.scss"],"names":[],"mappings":"AAAO;EACL,mBAAmB;EACnB,UAAU;EACV,cAAc,EACf;;AAED;EACE,gBAAgB,EACjB","file":"naamta.css","sourcesContent":[".panel .panel-heading {\r\n  text-align: center;\r\n  margin: 0;\r\n  padding: 30px;\r\n}\r\n\r\ntable.setDataTables tbody tr td {\r\n  padding: 20px 0;\r\n}"]}

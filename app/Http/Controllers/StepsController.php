@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Library\DataTablesExtensions;
 use Illuminate\Http\Request;
 use App\Models\Step;
 
 class StepsController extends Controller
 {
+    use DataTablesExtensions;
     /**
      * Create a new controller instance.
      *
@@ -30,6 +32,41 @@ class StepsController extends Controller
      */
     public function index(Request $request)
     {
-        return view('steps.list')->with('steps', $this->steps);
+        $this->dataTablesInit();
+        return view('steps.list', ['dataTables' => $this->dataTables]);
+    }
+
+    public function dataTablesConfig()
+    {
+        $data = [];
+        foreach ($this->steps as $reg)
+        {
+            $newInfo = [
+                $reg['id'],
+                $reg['title'],
+                ($reg['status']) ? 'Active' : 'Inactive',
+                [
+                    'rowActions' =>
+                        [
+                            [
+                                'html' => 'edit',
+                            ],
+                            [
+                                'html' => 'delete',
+                            ]
+                        ]
+                ]
+            ];
+
+            array_push($data, $newInfo);
+        }
+
+        $this->data_info = $data;
+        $this->data_cols = [
+            ['title' => 'id', 'width' => '40px'],
+            ['title' => 'Title'],
+            ['title' => 'Status'],
+            ['title' => 'Actions'],
+        ];
     }
 }
