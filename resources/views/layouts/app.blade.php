@@ -187,7 +187,12 @@
                             <li role="separator" class="divider"></li>
                             <li><a href="userprofile.html"><i class="ti-user"></i> My Profile</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="login.html"><i class="fa fa-power-off"></i> Logout</a></li>
+                            <li>
+                                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fa fa-power-off"></i> Logout</a>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                    {{ csrf_field() }}
+                                </form>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -198,7 +203,7 @@
                     <li class="nav-small-cap">WORKFLOW</li>
                     <li> <a href="{{ url('steps') }}"> Steps</a> </li>
                     <li> <a href="{{ url('emails') }}"> Email Templates</a></li>
-                    <li> <a href="#"> Aplications</a></li>
+                    <li> <a href="{{ url('applications') }}"> Applications</a></li>
                     <li> <a href="{{ url('forms') }}"> Form Types</a></li>
                 </ul>
             </div>

@@ -16,14 +16,14 @@ class CreateFormValuesTable extends Migration
         Schema::create('form_values', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('client_id')->unsigned()->nullable();
-            $table->integer('field')->unsigned()->nullable();
+            $table->integer('field_id')->unsigned()->nullable();
             $table->text('value');
             
             $table->foreign('client_id')
                     ->references('id')->on('clients')
                     ->onDelete('set null');
 
-            $table->foreign('field')
+            $table->foreign('field_id')
                     ->references('id')->on('fields')
                     ->onDelete('set null');
 

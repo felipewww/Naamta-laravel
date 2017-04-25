@@ -12,7 +12,7 @@ class Application extends Model
      * @var array
      */
     protected $fillable = [
-        'client_id', 'description'
+        'client_id', 'description', 'staff_id'
     ];
 
     public function steps()
@@ -27,6 +27,6 @@ class Application extends Model
 
     public function client()
     {
-        return $this->hasOne('App\Models\Client', 'client_id');
+        return $this->hasOne('App\Models\Client', 'id', 'client_id');
     }
 }
