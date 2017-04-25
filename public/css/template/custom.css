@@ -1,0 +1,9 @@
+a.logo{
+	display: block;
+	width: 100%;
+	text-align: center;
+}
+
+a.logo img{
+	height: 80%;
+}

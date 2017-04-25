@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Library\DataTablesExtensions;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Role;
@@ -9,6 +10,7 @@ use App\Models\Roles;
 
 class SystemUsersController extends Controller
 {
+    use DataTablesExtensions;
     private $users;
     private $roles;
     private $rules = [
@@ -35,7 +37,44 @@ class SystemUsersController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request){
-        return view('systemUsers.list')->with(['users' => $this->users]);
+        $this->dataTablesInit();
+        return view('systemUsers.list', ['dataTables' => $this->dataTables ]);
+    }
+
+    public function dataTablesConfig()
+    {
+        $data = [];
+        foreach ($this->users as $reg)
+        {
+            $newInfo = [
+                $reg['id'],
+                $reg['name'],
+                $reg->roles()->first()->name,
+                ($reg['status']) ? 'Active' : 'Inactive',
+                [
+                    'rowActions' =>
+                        [
+                            [
+                                'html' => 'edit',
+                            ],
+                            [
+                                'html' => 'delete',
+                            ]
+                        ]
+                ]
+            ];
+
+            array_push($data, $newInfo);
+        }
+
+        $this->data_info = $data;
+        $this->data_cols = [
+            ['title' => 'id', 'width' => '40px'],
+            ['title' => 'Name'],
+            ['title' => 'Role'],
+            ['title' => 'Status'],
+            ['title' => 'Actions'],
+        ];
     }
     
     public function create(Request $request){
