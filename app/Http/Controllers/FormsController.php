@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+
+use App\Library\DataTablesExtensions;
+
 use App\Http\Controllers\Controller;
 
 use Validator;
 use Session;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
+
 use Illuminate\Http\Request;
 
 use App\Models\FormTemplate;
@@ -16,6 +20,7 @@ use App\Models\Field;
 
 class FormsController extends Controller
 {
+    use DataTablesExtensions;
     private $forms;
     /**
      * Create a new controller instance.
@@ -36,8 +41,42 @@ class FormsController extends Controller
     public function index(Request $request)
     {
         $request->user()->authorizeRoles(['admin', 'staff']);
-        
-        return view('forms.list')->with('forms', $this->forms);
+        $this->dataTablesInit();
+        return view('forms.list', ['dataTables' => $this->dataTables]);
+    }
+
+    public function dataTablesConfig()
+    {
+        $data = [];
+        foreach ($this->forms as $reg)
+        {
+            $newInfo = [
+                $reg['id'],
+                $reg['name'],
+                ($reg['status']) ? 'Active' : 'Inactive',
+                [
+                    'rowActions' =>
+                        [
+                            [
+                                'html' => 'edit',
+                            ],
+                            [
+                                'html' => 'delete',
+                            ]
+                        ]
+                ]
+            ];
+
+            array_push($data, $newInfo);
+        }
+
+        $this->data_info = $data;
+        $this->data_cols = [
+            ['title' => 'id', 'width' => '40px'],
+            ['title' => 'Name'],
+            ['title' => 'Status'],
+            ['title' => 'Actions'],
+        ];
     }
     
     /**

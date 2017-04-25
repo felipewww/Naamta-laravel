@@ -1,0 +1,369 @@
+@import url(https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700);
+/*Theme Colors*/
+/*bootstrap Color*/
+/*Normal Color*/
+/*Border radius*/
+/*Preloader*/
+.preloader {
+  width: 100%;
+  height: 100%;
+  top: 0px;
+  position: fixed;
+  z-index: 99999;
+  background: #fff;
+}
+.preloader .cssload-speeding-wheel {
+  position: absolute;
+  top: calc(50% - 3.5px);
+  left: calc(50% - 3.5px);
+}
+/* This is for popins font for firefox */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/poppins/v1/2fCJtbhSlhNNa6S2xlh9GyEAvth_LlrfE80CYdSH47w.woff2) format('woff2');
+  unicode-range: U+02BC, U+0900-097F, U+1CD0-1CF6, U+1CF8-1CF9, U+200B-200D, U+20A8, U+20B9, U+25CC, U+A830-A839, U+A8E0-A8FB;
+}
+/* This is for popins font for firefox */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/poppins/v1/UGh2YG8gx86rRGiAZYIbVyEAvth_LlrfE80CYdSH47w.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+/* This is for popins font for firefox */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/poppins/v1/yQWaOD4iNU5NTY0apN-qj_k_vArhqVIZ0nv9q090hN8.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/*Just change your choise color here its theme Colors*/
+body {
+  background: #333;
+}
+/*Top Header Part*/
+.top-left-part {
+  background: #333;
+}
+.logo i {
+  color: #ffffff;
+}
+.navbar-header {
+  background: #f59623;
+}
+.navbar-top-links > li > a {
+  color: #ffffff;
+}
+/*Right panel*/
+.right-sidebar .rpanel-title {
+  background: #4973a9;
+}
+/*Bread Crumb*/
+.bg-title .breadcrumb .active {
+  color: #f59623;
+}
+/*Sidebar*/
+.sidebar {
+  background: #333;
+}
+.wp-side-menu {
+  background: #333;
+}
+.wp-side-menu li a {
+  color: #a6acbc;
+}
+.wp-side-menu li a:hover {
+  color: #fff;
+}
+.wp-side-menu > li:hover,
+.wp-side-menu > li.selected {
+  background: #444;
+}
+.wp-side-menu > li.selected {
+  background: #4973a9;
+}
+.wp-side-menu > li.selected > a {
+  color: #ffffff;
+}
+.wp-side-menu li ul.nav-second-level {
+  background: #444;
+}
+.wp-side-menu li ul.nav-second-level li > a.active {
+  font-weight: 500;
+  color: #ffffff;
+}
+.wp-side-menu li.selected ul.nav-second-level,
+.wp-side-menu li.selected:hover ul.nav-second-level {
+  background: #333;
+}
+.wp-side-menu > li {
+  margin: 10px 0px;
+}
+@media (min-width: 768px) {
+  .content-wrapper .sidebar .wp-side-menu li.selected ul.nav-second-level,
+  .content-wrapper .sidebar .wp-side-menu li.selected:hover ul.nav-second-level {
+    background: #444;
+  }
+}
+.user-profile .user-pro-body .u-dropdown {
+  color: #a6acbc;
+}
+/*themecolor*/
+.bg-theme {
+  background-color: #707cd2 !important;
+}
+.bg-theme-dark {
+  background-color: #f59623 !important;
+}
+/*Chat widget*/
+.chat-list .odd .chat-text {
+  background: #4973a9;
+}
+/*Button*/
+.btn-custom {
+  background: #f59623;
+  border: 1px solid #f59623;
+  color: #ffffff;
+}
+.btn-custom:hover,.btn-custom:focus,.btn-custom:active {
+  background: #f59623;
+  opacity: 0.8;
+  color: #ffffff;
+  border: 1px solid #f59623;
+}
+/*Button 2*/
+.btn-custom2 {
+  background: #4973a9;
+  border: 1px solid #4973a9;
+  color: #ffffff;
+}
+.btn-custom2:hover,.btn-custom2:focus,.btn-custom2:active {
+  background: #4973a9;
+  opacity: 0.8;
+  color: #ffffff;
+  border: 1px solid #4973a9;
+}
+/*Button save*/
+.btn-save {
+  background: #67953f;
+  border: 1px solid #67953f;
+  color: #ffffff;
+}
+.btn-save:hover,.btn-save:focus,.btn-save:active {
+  background: #67953f;
+  opacity: 0.8;
+  color: #ffffff;
+  border: 1px solid #67953f;
+}
+/*Button def*/
+.btn-def {
+  background: #eaeaea;
+  border: 1px solid #ddd;
+  color: #444;
+}
+.btn-def:hover,.btn-def:focus,.btn-def:active {
+  background: #eaeaea;
+  opacity: 0.8;
+  color: #444;
+  border: 1px solid #ddd;
+}
+/*Custom tab*/
+.customtab li.active a,
+.customtab li.active a:hover,
+.customtab li.active a:focus {
+  border-bottom: 2px solid #f59623;
+  color: #f59623;
+}
+.tabs-vertical li.active a,
+.tabs-vertical li.active a:hover,
+.tabs-vertical li.active a:focus {
+  background: #4973a9;
+  border-right: 2px solid #f59623;
+}
+/*Nav-pills*/
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:focus,
+.nav-pills > li.active > a:hover {
+  background: #4973a9;
+  color: #ffffff;
+}
+
+.color-table.muted-table thead th{
+  background-color: transparent;
+  color: #000;
+}
+
+a.logo{
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+a.logo img{
+  height: 80%;
+}
+
+.text-danger{
+  color: #a94442;
+}
+
+.btn.btn-warning.btn-circle{
+  background: #4973a9;
+  border: 1px solid #4973a9;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    color: white !important;
+    border: 1px solid #F59623;
+    background-color: #F59623;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover{
+    border: 1px solid #F59623;
+    background-color: #F59623;
+}
+
+div.logo{
+  text-align: center;
+  left: 50%;
+  top: 60px;
+  position: absolute;
+  transform: translate(-50%);
+}
+
+.form-material .form-control, .form-material .form-control.focus, .form-material .form-control:focus{
+    background-image: linear-gradient(#4973a9,#4973a9),linear-gradient(rgba(120,130,140,.13),rgba(120,130,140,.13));
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    float: none;
+}
+
+.login-box{
+    margin: 280px auto 0;
+}
+
+.box{
+  margin-bottom: 20px;
+}
+
+.box .box-title{
+    margin: 0 0 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+.white-box .box-title, .box .box-title{
+  font-size: 20px;
+  text-align: center;
+}
+
+.alert a{
+  color: #f59623;
+  font-weight: bold;
+}
+.alert a:hover{
+  text-decoration: underline;
+}
+
+.alert-custom{
+  background-color: #fff;
+  border: none;
+  color: #333;
+}
+
+
+[id^=frmb-][id$='-form-wrap'] .btn-primary{
+  border: 1px solid #F59623;
+  background-color: #F59623;
+}
+
+@media (min-width: 768px){
+  .content-wrapper #page-wrapper {
+      margin-left: 160px;
+  }
+  .content-wrapper .sidebar {
+      width: 160px;
+  }
+  .content-wrapper .top-left-part {
+      width: 160px;
+  }
+  .content-wrapper .sidebar .wp-side-menu>li:hover {
+      width: 160px;
+  }
+  .logo b{
+        width: 160px;
+  }
+}
+
+
+.sttabs nav li.tab-current a h3{
+  color: #f59623;
+}
+
+
+.panel-heading>.dropdown .dropdown-toggle{
+  display: none;
+}
+
+.panel-heading{
+  background-color: #fafafa;
+  cursor: move;
+}
+
+.lobipanel .white-box{
+  padding-top: 0;
+}
+
+.panel .panel-heading {
+    border-radius: 0;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 20px 25px;
+    padding: 10px 0;
+    margin: 0 -25px;
+}
+.white-box ul{
+  padding-left: 0;
+}
+.white-box ul li{
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  margin-bottom: 1px solid #ddd;
+}
+
+.panel .table>tbody>tr>td,.panel  .table>tbody>tr>th,.panel  .table>tfoot>tr>td,.panel  .table>tfoot>tr>th,.panel  .table>thead>tr>td,.panel  .table>thead>tr>th{
+  font-size: 12px;
+  padding: 5px 0;
+}
+
+.panel h5 + p{
+  font-size: 12px;
+  padding: 0;
+}
+
+h5 + table{
+  margin-top: 5px;
+}
+
+.panel .action .btn{
+  margin-bottom: 10px;
+}
+
+[id^=frmb-][id$='-form-wrap'] .frmb{
+  min-height: 280px !important;
+}
+
+.view-data{
+  display: none !important;
+}
+
+.panel > .white-box{
+  padding-top: 0;
+}
