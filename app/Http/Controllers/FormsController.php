@@ -79,6 +79,45 @@ class FormsController extends Controller
         return Redirect::to('forms');
     }
 
+    public function edit(Request $request, $id){
+        
+        $form = FormTemplate::findOrFail($id);
+        
+        return view('forms.form')->with(['form' => $form]);
+    }
+    
+    public function update(Request $request, $id){
+        try{
+
+           FormTemplate::where("id", $id)->update([
+                'name'      => $request->name,
+                'status'    => (int)$request->status
+            ]);
+
+            $containers = $this->_saveContainers($request->containers, $form->id);
+            $fields = $this->_saveFields($containers);
+
+            \Session::flash('success_msg','Form Edited: ' . $form->name);
+        } catch(Exception $e){
+            \Session::flash('error','Form update failed: ' . $e);
+        }
+        
+        return redirect('forms');
+    }
+    
+    public function delete(Request $request, $id){
+          
+        // delete
+        try{
+            FormTemplate::where('id', $id)->delete();
+            Session::flash('message', 'Form deleted!');
+        }catch (Exception $e){
+            Session::flash('message', 'Form delete failed!');
+        }
+
+        return Redirect::to('forms');
+    }
+
      /**
      * Store a newly created containers.
      *
