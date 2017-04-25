@@ -102,7 +102,7 @@ class EmailsController extends Controller
        
         try{
 
-            $email = EmailTemplate::create([
+            EmailTemplate::create([
                 'title'  => $request->title,
                 'text'   => $request->text,
                 'status' => (int)$request->status,
@@ -126,10 +126,10 @@ class EmailsController extends Controller
      */
     public function edit($id)
     {
-        // get all the nerds
-         $email = EmailTemplate::findOrFail($id);
+        // Get email template
+        EmailTemplate::findOrFail($id);
 
-        // show the view and pass the nerd to it
+        // show the view and pass the email to it
         return view('emails.form')
             ->with(array('email' => $email));
     }
@@ -145,7 +145,7 @@ class EmailsController extends Controller
         $validator = Validator::make($request->all(), $this->rules)->validate();
         
         try{
-            $email = EmailTemplate::where('id', $id)->update([
+            EmailTemplate::where('id', $id)->update([
                 'title'  => $request->title,
                 'text'   => $request->text,
                 'status' => (int)$request->status
@@ -170,7 +170,7 @@ class EmailsController extends Controller
     {
         // delete
         try{
-            $email = EmailTemplate::where('id', $id)->delete();
+            EmailTemplate::where('id', $id)->delete();
             Session::flash('message', 'Email deleted!');
         }catch (Exception $e){
             Session::flash('message', 'Email delete failed!');

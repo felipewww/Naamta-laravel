@@ -12,7 +12,7 @@ class Container extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'fields', 'config'
+        'name', 'form_template_id', 'config'
     ];
 
     public function formTemplate()

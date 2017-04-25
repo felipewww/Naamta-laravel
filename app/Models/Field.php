@@ -7,7 +7,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
-class Fields extends Model
+class Field extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -15,7 +15,7 @@ class Fields extends Model
      * @var array
      */
     protected $fillable = [
-        'type', 'config', 'status'
+       'container_id', 'type', 'config', 'status'
     ];
 
     public function container()

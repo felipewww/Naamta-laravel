@@ -13,10 +13,6 @@ class SystemUsersController extends Controller
     use DataTablesExtensions;
     private $users;
     private $roles;
-    private $rules = [
-        'title' => 'required|min:3|max:255',
-        'text' => 'required|min:10'
-    ];
 
     public function __construct()
     {
@@ -119,7 +115,7 @@ class SystemUsersController extends Controller
           
         // delete
         try{
-            $email = User::where('id', $id)->delete();
+            User::where('id', $id)->delete();
             Session::flash('message', 'User deleted!');
         }catch (Exception $e){
             Session::flash('message', 'User delete failed!');

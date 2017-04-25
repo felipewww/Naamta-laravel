@@ -21,7 +21,6 @@ Route::get('/home', 'HomeController@index');
 
 Route::get('/callback', function (Request $request) {
     $http = new GuzzleHttp\Client;
-
     $response = $http->post('http://127.0.0.1/oauth/token', [
         'form_params' => [
             'grant_type' => 'authorization_code',
@@ -31,7 +30,6 @@ Route::get('/callback', function (Request $request) {
             'code' => $request->code,
         ],
     ]);
-
     return json_decode((string) $response->getBody(), true);
 });
 
