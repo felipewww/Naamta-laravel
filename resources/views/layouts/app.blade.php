@@ -11,7 +11,6 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Styles -->
-    {{--<link href="{{ asset('css/app.css') }}" rel="stylesheet">--}}
     <link href="{{ asset("bower_components/bootstrap/dist/css/bootstrap.min.css") }}" rel="stylesheet">
     <link href="{{ asset("css/template/style.css") }}" rel="stylesheet">
     <link href="{{ asset("css/template/colors/blue-dark.css") }}" rel="stylesheet">
@@ -21,9 +20,6 @@
     @yield('styles')
 
     <link href="{{ asset("css/naamta.css") }}" rel="stylesheet">
-
-    {{--<link rel="stylesheet" type="text/css" media="screen" href="{{ asset("css/form-builder/form-builder.min.css") }}">--}}
-    {{--<link rel="stylesheet" type="text/css" media="screen" href="{{ asset("css/form-builder/form-render.min.css") }}">--}}
 
     <!-- Scripts -->
     <script>
@@ -39,120 +35,12 @@
     <script src="{{ asset("js/template/jquery.slimscroll.js") }}"></script>
     <script src="{{ asset("js/template/custom.js") }}"></script>
     <script src="{{ asset("js/script.js") }}"></script>
-    {{--<script src="{{ asset("js/template/jasny-bootstrap.js") }}"></script>--}}
 
     @yield('scripts')
 
 </head>
 <body>
-    {{--<div id="app">--}}
-        {{--<nav class="navbar navbar-default navbar-static-top">--}}
-            {{--<div class="container">--}}
-                {{--<div class="navbar-header">--}}
-
-                    {{--<!-- Collapsed Hamburger -->--}}
-                    {{--<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#app-navbar-collapse">--}}
-                        {{--<span class="sr-only">Toggle Navigation</span>--}}
-                        {{--<span class="icon-bar"></span>--}}
-                        {{--<span class="icon-bar"></span>--}}
-                        {{--<span class="icon-bar"></span>--}}
-                    {{--</button>--}}
-
-                    {{--<!-- Branding Image -->--}}
-                    {{--<a class="navbar-brand" href="{{ url('/') }}">--}}
-                        {{--{{ config('app.name', 'Laravel') }}--}}
-                    {{--</a>--}}
-                {{--</div>--}}
-
-                {{--<div class="collapse navbar-collapse" id="app-navbar-collapse">--}}
-                    {{--<!-- Left Side Of Navbar -->--}}
-                    {{--<ul class="nav navbar-nav">--}}
-                        {{--&nbsp;--}}
-                    {{--</ul>--}}
-
-                    {{--<!-- Right Side Of Navbar -->--}}
-                    {{--<ul class="nav navbar-nav navbar-right">--}}
-                        {{--<!-- Authentication Links -->--}}
-                        {{--@if (Auth::guest())--}}
-                            {{--<li><a href="{{ route('login') }}">Login</a></li>--}}
-                            {{--<li><a href="{{ route('register') }}">Register</a></li>--}}
-                        {{--@else--}}
-                            {{--<li class="dropdown">--}}
-                                {{--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">--}}
-                                    {{--{{ Auth::user()->name }} <span class="caret"></span>--}}
-                                {{--</a>--}}
-
-                                {{--<ul class="dropdown-menu" role="menu">--}}
-                                    {{--<li>--}}
-                                        {{--<a href="{{ url('home') }}">--}}
-                                            {{--Dashboard--}}
-                                        {{--</a>--}}
-                                    {{--</li>--}}
-                                    {{--<li>--}}
-                                        {{--<a href="{{ url('users') }}">--}}
-                                            {{--System Users--}}
-                                        {{--</a>--}}
-                                    {{--</li>--}}
-                                    {{--<li>--}}
-                                        {{--<a href="{{ url('emails') }}">--}}
-                                            {{--Emails--}}
-                                        {{--</a>--}}
-                                    {{--</li>--}}
-                                    {{--<li>--}}
-                                        {{--<a href="{{ url('steps') }}">--}}
-                                            {{--Steps--}}
-                                        {{--</a>--}}
-                                    {{--</li>--}}
-                                    {{--<li>--}}
-                                        {{--<a href="{{ url('forms') }}">--}}
-                                            {{--Forms--}}
-                                        {{--</a>--}}
-                                    {{--</li>--}}
-                                    {{--<li>--}}
-                                        {{--<a href="{{ url('usertypes') }}">--}}
-                                            {{--User Types--}}
-                                        {{--</a>--}}
-                                    {{--</li>--}}
-                                    {{--<li>--}}
-                                        {{--<a href="#"--}}
-                                            {{--onclick="event.preventDefault();--}}
-                                                     {{--document.getElementById('logout-form').submit();">--}}
-                                            {{--Logout--}}
-                                        {{--</a>--}}
-
-                                        {{--<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">--}}
-                                            {{--{{ csrf_field() }}--}}
-                                        {{--</form>--}}
-                                    {{--</li>--}}
-                                {{--</ul>--}}
-                            {{--</li>--}}
-                        {{--@endif--}}
-                    {{--</ul>--}}
-                {{--</div>--}}
-            {{--</div>--}}
-        {{--</nav>--}}
-
-        {{--@yield('content')--}}
-    {{--</div>--}}
-
-    {{--<!-- Scripts -->--}}
-    {{--<script src="{{ asset('js/app.js') }}"></script>--}}
-    {{--<script>--}}
-        {{--const data = {--}}
-            {{--name: 'Leonardo Carvalho',--}}
-            {{--redirect: 'http://127.0.0.1/callback'--}}
-        {{--};--}}
-
-        {{--axios.post('/oauth/clients', data)--}}
-            {{--.then(response => {--}}
-                {{--console.log(response.data);--}}
-            {{--})--}}
-            {{--.catch (response => {--}}
-                {{--// List errors on response...--}}
-        {{--});--}}
-    {{--</script>--}}
-
-            <!-- Preloader -->
+    <!-- Preloader -->
     <div class="preloader">
         <div class="cssload-speeding-wheel"></div>
     </div>
@@ -164,7 +52,6 @@
                     <a class="logo" href="{{ url('home') }}">
                         <b>
                             <img src="{{asset('media/images/naamta_logo.png')}}" alt="home" class="dark-logo" />
-{{--                            <img src="{{asset('media/images/naamta_logo.png')}}" alt="home" class="light-logo" />--}}
                         </b>
                     </a>
                 </div>
@@ -235,5 +122,19 @@
         </div>
         <!-- /#page-wrapper -->
     </div>
+    {{--<script>--}}
+        {{--const data = {--}}
+            {{--name: 'Leonardo Carvalho',--}}
+            {{--redirect: 'http://127.0.0.1/callback'--}}
+        {{--};--}}
+
+        {{--axios.post('/oauth/clients', data)--}}
+            {{--.then(response => {--}}
+                {{--console.log(response.data);--}}
+            {{--})--}}
+            {{--.catch (response => {--}}
+                {{--// List errors on response...--}}
+        {{--});--}}
+    {{--</script>--}}
 </body>
 </html>

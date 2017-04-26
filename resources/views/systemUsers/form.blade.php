@@ -12,7 +12,6 @@
     }else{
         $email = new App\Models\User();
     }
-
 @endphp
 
 @section('content')
@@ -54,6 +53,14 @@
                         </div>
                         <div class="row"style="margin-top: 15px;" >
                             <div class="col-md-12">
+                                <select class="form-control" name="see_apps">
+                                    <option value="1" {{ (isset($user) && $user->see_apps == 1 ? "selected" : "") }} >See all apps</option>
+                                    <option value="0" {{ (isset($user) && $user->see_apps == 0 ? "selected" : "") }} >See only my apps</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row"style="margin-top: 15px;" >
+                            <div class="col-md-12">
                                 {{ csrf_field() }} 
                                 <input type='submit' name='submit' class="btn btn-primary" value='Submit'>
                             </div>
@@ -64,5 +71,4 @@
         </div>
     </div>
 </div>
-
 @endsection

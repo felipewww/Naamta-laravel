@@ -46,7 +46,8 @@ class SystemUsersController extends Controller
                 $reg['id'],
                 $reg['name'],
                 $reg->roles()->first()->name,
-                ($reg['status']) ? 'Active' : 'Inactive',
+                ($reg['see_apps'] == 1) ? 'True' : 'False',
+                ($reg['status'] == 1) ? 'Active' : 'Inactive',
                 [
                     'rowActions' =>
                         [
@@ -70,6 +71,7 @@ class SystemUsersController extends Controller
             ['title' => 'id', 'width' => '40px'],
             ['title' => 'Name'],
             ['title' => 'Role'],
+            ['title' => 'Se all Apps'],
             ['title' => 'Status'],
             ['title' => 'Actions'],
         ];
@@ -96,11 +98,10 @@ class SystemUsersController extends Controller
     }
     
     public function update(Request $request, $id){
-        
         try{
             $user = User::findOrFail($id);
             $user->status = $request->status;
-            
+            $user->see_apps = $request->see_apps;
             $user->roles()->sync($request->user_type);
             $user->save();
             \Session::flash('success_msg','User Edited: ' . $user->name);

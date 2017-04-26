@@ -140,11 +140,9 @@
 @endsection
 @section('scripts')
 <script>
-
     function addUserType(){
         var userName =  $("#user_application").find(":selected");
         var staffName = $("#staff_application").find(":selected");
-        
         if(userName.val()!="" && staffName.val()!=""){
             $('#filltable').prepend(
                 '<tr>' +
