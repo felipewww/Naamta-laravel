@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Http\Request;
 use App\Models\Application;
 use App\Models\User;
+use App\Models\UserType;
+use App\Models\UserApplication;
 
 class ApplicationsController extends Controller
 {
@@ -21,6 +23,9 @@ class ApplicationsController extends Controller
      */
     private $applications;
     private $staffs;
+    private $userTypes;
+    private $usersApplication;
+
     private $rules = [
         'description' => 'required|min:3|max:255',
         'staff_id'    => 'required'
@@ -32,7 +37,9 @@ class ApplicationsController extends Controller
             $user = \Auth::user()->authorizeRoles(['admin']);;
             return $next($request);
         });
-        $this->applications = Application::all();
+        $this->applications     = Application::all();
+        $this->userTypes        = UserType::All();
+
         foreach(User::all() as $u){
             if($u->hasRole("staff"))
                 $this->staffs[] = $u;
@@ -52,8 +59,9 @@ class ApplicationsController extends Controller
 
     public function edit(Request $request, $id)
     {
+        $this->usersApplication = UserApplication::where('application_id', $id)->get();
         $application = Application::FindOrFail($id);
-        return view('applications.form', ['application' => $application, 'staffs' => $this->staffs ]);
+        return view('applications.form', ['application' => $application, 'staffs' => $this->staffs, 'userTypes' => $this->userTypes, 'usersApplication' => $this->usersApplication ]);
     }
 
     /**
@@ -63,20 +71,32 @@ class ApplicationsController extends Controller
      */
     public function update(Request $request, $id)
     {
-
         $validator = Validator::make($request->all(), $this->rules)->validate();
-        
+        \DB::beginTransaction();
         try{
             Application::where('id', $id)->update([
                 'description'  => $request->description,
                 'staff_id'     => $request->staff_id
             ]);
 
+            if(is_array($request->users_application)){
+                UserApplication::where('application_id', $id)->delete();
+                foreach($request->users_application as $uApp){
+                    $_arrUApp = explode(",", $uApp);
+                    $userApplication  = UserApplication::create([
+                        'application_id'  => $id,
+                        'user_id'         => trim(explode(",", $uApp)[0]),
+                        'user_type'       => trim(explode(",", $uApp)[1]),
+                    ]);
+                }
+            }
+            \DB::commit();
             \Session::flash('success','Application updated: ' . $request->title);
         } catch(Exception $e){
             \Session::flash('error','Application update failed: ' . $e);
+            \DB::rollBack();
+            throw $e;
         }
-
         return Redirect::to('applications');
 
     }

@@ -168,7 +168,7 @@
                         </b>
                     </a>
                 </div>
-
+   
             </div>
             <!-- /.navbar-header -->
             <!-- /.navbar-top-links -->
@@ -180,12 +180,12 @@
             <div class="wp-sidebar-nav">
                 <div class="user-profile">
                     <div class="dropdown user-pro-body">
-                        <a href="#" class="dropdown-toggle u-dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Steave Gection <span class="caret"></span></a>
+                        @if (Auth::check())
+                        <a href="#" class="dropdown-toggle u-dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{Auth::user()->name}} <span class="caret"></span></a>
                         <ul class="dropdown-menu animated fadeIn">
-                            <li><a href="index.html"><i class="ti-view-list"></i> Applications</a></li>
-                            <li><a href="list-system-users.html"><i class="ti-settings"></i> System</a></li>
+                            <li><a href="{{ url('applications') }}"><i class="ti-view-list"></i> Applications</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="userprofile.html"><i class="ti-user"></i> My Profile</a></li>
+                            <li><a href="{{ route('users.edit', ['id' => Auth::id()]) }}"><i class="ti-user"></i> My Profile</a></li>
                             <li role="separator" class="divider"></li>
                             <li>
                                 <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fa fa-power-off"></i> Logout</a>
@@ -194,6 +194,7 @@
                                 </form>
                             </li>
                         </ul>
+                        @endif
                     </div>
                 </div>
                 <ul class="wp-side-menu">

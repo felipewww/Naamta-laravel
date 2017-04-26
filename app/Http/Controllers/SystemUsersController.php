@@ -51,10 +51,12 @@ class SystemUsersController extends Controller
                     'rowActions' =>
                         [
                             [
-                                'html' => 'edit',
+                                'html' => 'fa fa-trash',
+                                'attributes' => ['class' => 'btn btn-warning btn-circle']
                             ],
                             [
                                 'html' => 'delete',
+                                'attributes' => ['class' => 'btn btn-danger btn-circle']
                             ]
                         ]
                 ]
@@ -74,12 +76,10 @@ class SystemUsersController extends Controller
     }
     
     public function create(Request $request){
-        
         return view('systemUsers.form')->with('roles', $this->roles);
     }
     
     public function store(Request $request){
-        
         \Session::flash('success_msg', 'User Added.');
         return view('systemUsers.form');
     }
