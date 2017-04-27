@@ -38,7 +38,6 @@ class CreateStepsTable extends Migration
 //            $table->foreign('responsible')
 //                    ->references('id')->on('users')
 //                    ->onDelete('cascade');
-
             $table->timestamps();
         });
     }
