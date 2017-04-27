@@ -15,7 +15,6 @@
     <link href="{{ asset("css/template/style.css") }}" rel="stylesheet">
     <link href="{{ asset("css/template/colors/blue-dark.css") }}" rel="stylesheet">
     <link href="{{ asset("css/template/animate.css") }}" rel="stylesheet">
-    <link href="{{ asset("css/template/animate.css") }}" rel="stylesheet">
     <link href="{{ asset("css/template/icons/font-awesome/css/font-awesome.min.css") }}" rel="stylesheet">
     @yield('styles')
 
@@ -32,11 +31,14 @@
     <script src="{{ asset("bower_components/jquery/dist/jquery.min.js") }}"></script>
     <script src="{{ asset("bower_components/jquery-ui/jquery-ui.min.js") }}"></script>
     <script src="{{ asset("bower_components/bootstrap/dist/js/bootstrap.min.js") }}"></script>
+    <script src="{{ asset("js/template/wp-sidebar.js") }}"></script>
     <script src="{{ asset("js/template/jquery.slimscroll.js") }}"></script>
+    <script src="{{ asset("js/template/waves.js") }}"></script>
     <script src="{{ asset("js/template/custom.js") }}"></script>
+    <script src="{{ asset("js/template/jasny-bootstrap.js") }}"></script>
+    @yield('scripts')
     <script src="{{ asset("js/script.js") }}"></script>
 
-    @yield('scripts')
 
 </head>
 <body>
