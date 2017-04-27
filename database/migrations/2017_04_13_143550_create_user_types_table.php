@@ -32,5 +32,6 @@ class CreateUserTypesTable extends Migration
         DB::statement('SET FOREIGN_KEY_CHECKS = 0');
         Schema::dropIfExists('user_types');
         DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+
     }
 }

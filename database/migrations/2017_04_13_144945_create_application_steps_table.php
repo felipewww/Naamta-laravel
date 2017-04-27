@@ -38,6 +38,7 @@ class CreateApplicationStepsTable extends Migration
                     ->onDelete('cascade');
 
             $table->timestamps();
+            
         });
     }
 
