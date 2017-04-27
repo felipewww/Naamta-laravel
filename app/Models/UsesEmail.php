@@ -12,6 +12,6 @@ class UsesEmail extends Model
      * @var array
      */
     protected $fillable = [
-        'email_template_id', 'user_types_id'
+        'email_id', 'received_by', 'send_when', 'step_id'
     ];
 }

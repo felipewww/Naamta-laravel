@@ -11,7 +11,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 Forms
-                 <a role="button" href="{{ URL::to($page . '/create') }}" class="btn btn-default btn-rounded btn-condensed btn-sm pull-right">Add</span></a>
+                 <a role="button" href="{{ URL::to($page . '/create') }}" class="btn btn-default btn-rounded btn-condensed btn-sm pull-right">Add</a>
             </div>
 
             <div class="panel-body">

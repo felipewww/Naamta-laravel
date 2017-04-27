@@ -24,11 +24,11 @@ class CreateApplicationStepsTable extends Migration
             $table->foreign('step_id')
                     ->references('id')->on('steps')
                     ->onDelete('set null');
-            
+
             $table->foreign('form')
                     ->references('id')->on('steps')
                     ->onDelete('set null');
-            
+
             $table->foreign('screen')
                     ->references('id')->on('steps')
                     ->onDelete('set null');

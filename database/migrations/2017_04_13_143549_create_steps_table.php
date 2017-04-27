@@ -20,8 +20,8 @@ class CreateStepsTable extends Migration
             $table->integer('previous_step')->unsigned()->nullable();
             $table->integer('form')->unsigned()->nullable();
             $table->integer('screen')->unsigned()->nullable();
-            $table->integer('responsible')->unsigned();
-            $table->tinyInteger('status')->default(0);
+//            $table->integer('responsible')->unsigned();
+//            $table->tinyInteger('status')->default(0);
 
             $table->foreign('previous_step')
                     ->references('id')->on('steps')
@@ -35,9 +35,9 @@ class CreateStepsTable extends Migration
                     ->references('id')->on('screens')
                     ->onDelete('set null');
 
-            $table->foreign('responsible')
-                    ->references('id')->on('users')
-                    ->onDelete('cascade');
+//            $table->foreign('responsible')
+//                    ->references('id')->on('users')
+//                    ->onDelete('cascade');
 
             $table->timestamps();
         });
@@ -50,6 +50,8 @@ class CreateStepsTable extends Migration
      */
     public function down()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
         Schema::dropIfExists('steps');
+        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
     }
 }

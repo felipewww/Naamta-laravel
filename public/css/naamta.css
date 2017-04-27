@@ -6,4 +6,10 @@
 table.setDataTables tbody tr td {
   padding: 20px 0; }
 
+.selects {
+  padding: 30px;
+  background: #e2e2e2;
+  margin-top: 5px;
+}
+
 /*# sourceMappingURL=naamta.css.map */

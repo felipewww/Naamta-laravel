@@ -187,7 +187,11 @@
                             <li role="separator" class="divider"></li>
                             <li><a href="userprofile.html"><i class="ti-user"></i> My Profile</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="login.html"><i class="fa fa-power-off"></i> Logout</a></li>
+                            <li><a href="javascript:document.forms['logout-form'].submit();"><i class="fa fa-power-off"></i>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                    {{ csrf_field() }}
+                                </form>
+                            </li>
                         </ul>
                     </div>
                 </div>
