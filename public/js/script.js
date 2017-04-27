@@ -39,11 +39,45 @@ Script = {
         return e;
     },
 
+    /**
+     * Instantiate it as new() will generate random numbers between two numbers without repeat
+     * */
+    _Random: function (end, start)
+    {
+        return function (end, start) {
+
+            if (!this.generateds) {
+                this.generateds = [];
+            }
+
+            if ( start == undefined ) { start = 1; }
+            if ( end == undefined ) { end = 100; }
+
+            var current = Script.Random(end, start);
+
+            if ( this.generateds.length >= ((end-start)+1) ) {
+                console.log('Número máximo de randons atingido', this.generateds);
+                end = end+10;
+            }
+
+            console.log(':: ', this.generateds);
+
+            if ( this.generateds.indexOf(current) >= 0 ) {
+                console.log('já existe '+current+'. Tentar criar outro.');
+                console.log(this);
+                return this._Random(end, start)
+            }
+
+            this.generateds.push(current);
+            return current;
+        }
+    },
+
     Random: function (end, start)
     {
         if ( start == undefined ) { start = 1; }
         if ( end == undefined ) { end = 100; }
 
         return Math.floor(Math.random() * end) + start;
-    },
+    }
 };

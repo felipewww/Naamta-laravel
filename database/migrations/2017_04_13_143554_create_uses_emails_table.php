@@ -15,16 +15,23 @@ class CreateUsesEmailsTable extends Migration
     {
         Schema::create('uses_emails', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('email_id')->unsigned()->nullable();
-            $table->integer('recieved_by')->unsigned()->nullable();
+            $table->integer('email_id')->unsigned();
+            $table->integer('received_by')->unsigned();
+            $table->integer('step_id')->unsigned();
+
+            $table->enum('send_when', ['success', 'rejected']);
             
-            $table->foreign('recieved_by')
+            $table->foreign('received_by')
                     ->references('id')->on('user_types')
-                    ->onDelete('set null');
+                    ->onDelete('cascade');
 
             $table->foreign('email_id')
                     ->references('id')->on('email_templates')
-                    ->onDelete('set null');
+                    ->onDelete('cascade');
+
+            $table->foreign('step_id')
+                ->references('id')->on('steps')
+                ->onDelete('cascade');
                     
             $table->timestamps();
         });
@@ -37,6 +44,8 @@ class CreateUsesEmailsTable extends Migration
      */
     public function down()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
         Schema::dropIfExists('uses_emails');
+        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
     }
 }

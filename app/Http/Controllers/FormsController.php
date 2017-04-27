@@ -7,6 +7,7 @@ use App\Library\DataTablesExtensions;
 
 use App\Http\Controllers\Controller;
 
+use Illuminate\Support\Facades\URL;
 use Validator;
 use Session;
 use Illuminate\Support\Facades\Input;
@@ -47,6 +48,7 @@ class FormsController extends Controller
 
     public function dataTablesConfig()
     {
+//        echo route('forms');
         $data = [];
         foreach ($this->forms as $reg)
         {
@@ -59,6 +61,7 @@ class FormsController extends Controller
                         [
                             [
                                 'html' => 'edit',
+                                'attributes' => ['href' => '/forms/'.$reg['id'].'/edit']
                             ],
                             [
                                 'html' => 'delete',
