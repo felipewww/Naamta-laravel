@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\URL;
 use Validator;
 use Session;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
 
@@ -48,7 +49,7 @@ class FormsController extends Controller
 
     public function dataTablesConfig()
     {
-//        echo route('forms');
+        //echo route('forms');
         $data = [];
         foreach ($this->forms as $reg)
         {
@@ -107,10 +108,11 @@ class FormsController extends Controller
                 'name'      => $request->name,
                 'status'    => (int)$request->status
             ]);
-            $containers = $this->_saveContainers($request->containers, $form->id);
+           
+            $containers = $this->_saveContainers(json_decode($request->containers), $form->id);
             $fields = $this->_saveFields($containers);
 
-            \Session::flash('success','Form template created: ' . $request->title);
+            \Session::flash('success','Form template created: ' . $request->name);
             \DB::commit();
         } catch(Exception $e){
             \Session::flash('error','Form create failed: ' . $e);
@@ -123,23 +125,24 @@ class FormsController extends Controller
 
     public function edit(Request $request, $id){
         
-        $form = FormTemplate::findOrFail($id);
+        $form = FormTemplate::with( array( 'containers', 'containers.fields') )->findOrFail($id);
+       
+        $this->_convertFormToJson($form);
         
-        return view('forms.form')->with(['form' => $form]);
+        return view('forms.form')->with(['form' => $form, 'containers' => $this->_convertFormToJson($form)]);
     }
     
     public function update(Request $request, $id){
         try{
-
            FormTemplate::where("id", $id)->update([
                 'name'      => $request->name,
                 'status'    => (int)$request->status
             ]);
 
-            $containers = $this->_saveContainers($request->containers, $form->id);
+            $containers = $this->_saveContainers(json_decode($request->containers), $id);
             $fields = $this->_saveFields($containers);
 
-            \Session::flash('success_msg','Form Edited: ' . $form->name);
+            \Session::flash('success_msg','Form Edited: ' . $request->name);
         } catch(Exception $e){
             \Session::flash('error','Form update failed: ' . $e);
         }
@@ -168,29 +171,32 @@ class FormsController extends Controller
     private function _saveContainers($_requestContainers, $formId){
         $containers = array();
         $fields = array();
+       
+
         foreach($_requestContainers as $k => $_arrC){
             $container = new Container();
             $container->form_template_id = $formId;
-            foreach($_arrC as $key => $value){
-                switch($key){
-                    case "config":
-                        $container->config = $value;
-                    break;
-                    case "container":
-                        $container->name = "Container " . $value;
-                    break;
-                    default:
-                        $field = new Field([
-                            'type' => 1,
-                            'config' => $value,
-                            'status' => 1
-                        ]);
-                        $container->fields[] = $field;
-                    break;
+            $container->name = "Container " . $k;
+            $container->config = "";
+            if(isset($_requestContainers->config)){
+                $container->config = $_requestContainers->config;
+            }
+            
+            if(isset($_arrC->fields)){
+                foreach($_arrC->fields as $key => $value){
+                    $field = Field::firstOrNew(array('id' => $value->id));
+                    $field->type = $value->type;
+                    $field = Field::updateOrCreate([
+                        'type' => $value->type,
+                        'config' => json_encode($value->options),
+                        'status' => 1
+                    ]);
+                    $container->fields[] = $field;
                 }
             }
-            $container->save();
+
             array_push($containers, $container);
+            $container->save();
         }
         return $containers;
     }
@@ -209,7 +215,61 @@ class FormsController extends Controller
                 array_push($fields, $field->toArray());
             }
         }
-
         return Field::insert($fields);
+    }
+
+    /**
+     * Store a newly created fields.
+     *
+     * @return response of saved itens
+     */
+    private function _generateRandomName(){
+        $string = Str::random(10);
+        if(is_array(Field::where("name", $string)->get())>0){
+            return $this->_generateRandomName();
+        }
+        return $string;
+    }
+
+    // type : 'checkbox-group',
+    //   isEditable : true,
+    //   options : {
+    //     isRequired : true,
+    //     label : 'Label',
+    //     help : 'Help Text',
+    //     value : '',
+    //     min : '',
+    //     max : '',
+    //     step : '',
+    //     type : '',
+    //     options : [
+    //       {
+    //         label : 'Option Label',
+    //         value : 'Option Value'
+    //       }
+    //     ]
+    //   }
+
+    /**
+     * Store a newly created fields.
+     *
+     * @return response of saved itens
+     */
+     private function _convertFormToJson($form){
+        
+        $_return = array();
+        foreach ($form->containers as $i => $c){
+            $_return[$i]["id"]   = $c->id;
+            $_return[$i]["name"] = $c->name; 
+            $_return[$i]["config"] = $c->config;
+            foreach($c->fields as $k => $v){
+                $_return[$i]["fields"][$k]["type"] =  $v->type;
+                $_return[$i]["fields"][$k]["container_id"] =  $v->container_id;
+                $_return[$i]["fields"][$k]["isEditable"] =  true;
+                $_return[$i]["fields"][$k]["options"] =  json_decode($v->config);
+            } 
+        }
+
+        return json_encode($_return);
     }
 }

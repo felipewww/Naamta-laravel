@@ -242,7 +242,7 @@ function appendNavigation(){
   $('#save').click(function(e){
     e.preventDefault();
     localStorage.setItem('form', toJson() );
-    $("input[name=form]").val(localStorage.getItem('form'));
+    $("input[name=containers]").val(localStorage.getItem('form'));
   });
 
   $('#drag-container nav ul li').click(function(e){

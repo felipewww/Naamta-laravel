@@ -26,11 +26,11 @@
             <form  class="form-horizontal" role="form" method="POST" action="{{$route}}">
                 {{ csrf_field() }}
                 <input type="hidden" name="_method" value="{{ $method }}">
-                <input type="hidden" name="form" value="{{ $form->form!=null ? $form->form : old('form') }}" required>
+                <input type="hidden" name="containers" value="{{ isset($containers) ? $containers : old('containers') }}" required>
                 <div class="form-group">
                     <label class="col-md-12">Title</label>
                     <div class="col-md-12">
-                        <input id="name" type="text" class="form-control" name="name" value="{{ $form->name!=null ? $user->name : old('name') }}" required>
+                        <input id="name" type="text" class="form-control" name="name" value="{{ $form->name!=null ? $form->name : old('name') }}" required>
                         @if ($errors->has('name'))
                             <span class="help-block">
                                 <strong>{{ $errors->first('name') }}</strong>
@@ -48,7 +48,7 @@
                     </div>
                 </div>
                 <div class="form-group text-center m-t-20">
-                    <a href="list-forms-template.html" class="btn btn-success waves-effect waves-light m-r-20 ">Create</a>
+                    <button type="submite" class="btn btn-success waves-effect waves-light m-r-20 ">Create</a>
                 </div>
             </form>
         </div>

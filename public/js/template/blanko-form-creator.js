@@ -10,9 +10,15 @@ var tabCounter = 0;
 
 
 // // Retrieve the json from storage
- var form = localStorage.getItem('form');
- fieldId = localStorage.getItem('fieldId');
- tabCounter = localStorage.getItem('tabCounter');
+var form = $("input[name=containers]").val();
+if(form==""){
+  console.log("entrou");
+  form = localStorage.getItem('form');
+  fieldId = localStorage.getItem('fieldId');
+  tabCounter = localStorage.getItem('tabCounter');
+}
+
+
 
 if(form != null){
   createTabs(form);
@@ -23,8 +29,11 @@ if(form != null){
 Example
 var tabObj1 = {
   config : {},
+  id: '',
+  name: '',
   fields : [
     {
+      id: '',
       type : 'checkbox-group',
       isEditable : true,
       options : {
