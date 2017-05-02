@@ -95,8 +95,8 @@ class FormsController extends Controller
         return view('forms.form');
     }
 
-   /**
-     * Store a newly created resource in storage.
+    /**
+     * Show the form for creating a new resource.
      *
      * @return Response
      */
@@ -134,6 +134,7 @@ class FormsController extends Controller
     
     public function update(Request $request, $id){
         try{
+
            FormTemplate::where("id", $id)->update([
                 'name'      => $request->name,
                 'status'    => (int)$request->status
@@ -249,27 +250,4 @@ class FormsController extends Controller
     //       }
     //     ]
     //   }
-
-    /**
-     * Store a newly created fields.
-     *
-     * @return response of saved itens
-     */
-     private function _convertFormToJson($form){
-        
-        $_return = array();
-        foreach ($form->containers as $i => $c){
-            $_return[$i]["id"]   = $c->id;
-            $_return[$i]["name"] = $c->name; 
-            $_return[$i]["config"] = $c->config;
-            foreach($c->fields as $k => $v){
-                $_return[$i]["fields"][$k]["type"] =  $v->type;
-                $_return[$i]["fields"][$k]["container_id"] =  $v->container_id;
-                $_return[$i]["fields"][$k]["isEditable"] =  true;
-                $_return[$i]["fields"][$k]["options"] =  json_decode($v->config);
-            } 
-        }
-
-        return json_encode($_return);
-    }
 }
