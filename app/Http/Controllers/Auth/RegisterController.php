@@ -170,7 +170,7 @@ class RegisterController extends Controller
 
 
             \DB::commit();
-            dd('thats ok!');
+            
             return $user;
 
         } catch (Exception $e){

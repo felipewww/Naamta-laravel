@@ -39,6 +39,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::resource('/steps', 'StepsController');
     Route::resource('/emails', 'EmailsController');
     Route::resource('/forms',  'FormsController');
+    Route::resource('/screens', 'ScreensController');
     Route::resource('/applications',  'ApplicationsController');
 
     Route::get('/applications/{id}/settings',  'ApplicationsController@settings');

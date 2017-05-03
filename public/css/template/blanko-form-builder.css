@@ -1,0 +1,153 @@
+#drag-container .hidden{
+    display: none;
+}
+#drag-container .modal{
+    position: fixed;    
+}
+#drag-container .draggable-input{
+    border: 1px solid #e8e8e8;
+    transition: 0.5s;
+}
+#drag-container .span-required{
+    display: none;
+}
+#drag-container .on-drag{
+    opacity: 0.5;
+    cursor: move;
+}
+#drag-container .drag-heading{
+    background-color: #333;
+    padding: 10px 15px;
+}   
+#drag-container .drag-heading h4{
+    color: white;
+    display: inline;
+}
+#drag-container .drag-heading ul{
+    list-style: none;
+    float: right;
+    text-align: right;
+    margin: 0;
+    display: inline;
+}
+#drag-container .drag-heading ul li{
+    display: inline-block;
+    color: white;
+    font-size: 18px;
+    padding-left: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-left: 15px;
+}
+#drag-container .drag-heading ul li:hover{
+    color: #f59623;
+}
+#drag-container .help {
+    display: inline;
+    position: relative;
+}
+#drag-container .help .icon{
+    margin-left: 5px;
+    display: inline;
+}
+#drag-container .help .text{
+    display: none;
+    white-space: nowrap;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 20px;
+    font-size: 12px;
+    background-color: #686868;
+    color: white;
+    padding: 5px;
+}
+#drag-container .help .icon:hover + .text{
+    display: block;
+}
+#drag-container #list-container{
+    width: 30%;
+    margin-left: 20px;
+    display: inline-block;
+    vertical-align: top;
+}
+#drag-container #list-container.fixed{
+    position: relative;
+    margin-top: 10px;
+}
+#drag-container #list-container li{
+    list-style: none;
+    padding: 5px 10px;
+    margin: 5px 0;
+    background-color: white;
+    cursor: pointer;
+}
+#drag-container #list-container li a{
+    color: #282828;
+}
+#drag-container #list-container li a:hover{
+    color: #f59623;
+}
+#drag-container{
+    min-height: 140px;
+    padding: 20px;
+}
+#drag-container nav ul{
+    margin: 0;
+    padding: 0;
+}
+#drag-container nav li{
+    margin: 0 10px 0 0;
+    cursor: pointer;
+    display: inline-block;
+    padding: 10px;
+    background-color: #fff;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+#drag-container nav li.active{
+    background-color: #f59623;
+}
+#drag-container nav li.active a{
+    color: white;
+}
+#drag-container .tab{
+    display: none;
+    min-height: 200px;
+    border: 2px dotted #dadada;
+    position: relative;
+    padding: 10px;
+    margin-top: 10px;
+}
+#drag-container .tab:before{
+    content: "content";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+}
+#drag-container .tab.active{
+    display: block;
+}
+#drag-container .form-holder{
+    width: 60%;
+    display: inline-block;
+    vertical-align: top;
+}
+#drag-container nav ul li .fa{
+    visibility: hidden;
+    margin-left: 10px;
+}
+#drag-container nav ul li.active .fa{
+    color: white;
+    visibility: visible;
+    display: inline-block;
+}
+#drag-container #blankSpace{
+    height: 80px;
+    opacity: 0.2;
+    background-color: #bababa;
+    margin: 10px;
+    border: 2px dotted #dedede;
+}

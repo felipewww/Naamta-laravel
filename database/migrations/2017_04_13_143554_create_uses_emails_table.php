@@ -34,7 +34,6 @@ class CreateUsesEmailsTable extends Migration
                 ->onDelete('cascade');
                     
             $table->timestamps();
-            
         });
     }
 

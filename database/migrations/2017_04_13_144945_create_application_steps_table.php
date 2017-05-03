@@ -15,12 +15,14 @@ class CreateApplicationStepsTable extends Migration
     {
         Schema::create('application_steps', function (Blueprint $table) {
             $table->increments('id');
+
             $table->string('title');
             $table->string('description');
             $table->tinyInteger('status')->default(0);
             $table->integer('responsible')->unsigned();
             $table->integer('application_id')->unsigned();
             $table->integer('previous_step')->unsigned()->nullable();
+
 
             $table->string('morphs_from');
 
@@ -34,7 +36,6 @@ class CreateApplicationStepsTable extends Migration
             $table->foreign('responsible')
                     ->references('id')->on('application_user_types')
                     ->onDelete('restrict');
-
             $table->timestamps();
         });
     }
