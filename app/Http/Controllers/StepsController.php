@@ -73,7 +73,6 @@ class StepsController extends Controller
                 'success' => [],
                 'rejected' => []
             ];
-//            dd($vars->emailTemplates);
 
             foreach ($vars->emailTemplates as $template)
             {
@@ -97,7 +96,6 @@ class StepsController extends Controller
                 $hasRejected = $search->isNotEmpty();
 
                 if ($hasRejected) {
-//                    $template->selected = 'selected';
                     $usedEmails['rejected'][$template->id] = [];
                     foreach ($search as $foundItem)
                     {
@@ -112,9 +110,6 @@ class StepsController extends Controller
                     ]
                 );
             }
-
-//            dd($vars->emailTemplates);
-//            dd($usedEmails);
 
             $vars->usedEmails = $usedEmails;
             $vars->functest = function($opt, $opts){
@@ -139,8 +134,6 @@ class StepsController extends Controller
         $vars                   = new \stdClass();
         $vars->steps            = $this->steps;
         $vars->morphs_from      = [FormTemplate::class, Screens::class];
-//        $vars->forms            = FormTemplate::all();
-//        $vars->screens          = Screens::all();
         $vars->emailTemplates   = EmailTemplate::all();
         $vars->userTypes        = UserType::all();
         $vars->step             = new Step();
@@ -194,14 +187,7 @@ class StepsController extends Controller
     public function edit($id)
     {
         $step = ( $id instanceof ApplicationStep ) ? $id : Step::findOrFail($id);
-//        if ( $id instanceof ApplicationStep) {
-//            $step = $id;
-//        }else{
-//            $step = Step::findOrFail($id);
-//        }
-
         $vars = $this->defaultVars('edit', $step);
-
         $vars->step = $step;
 
         return view('steps.form', ['vars' => $vars]);

@@ -40,9 +40,6 @@
                                     <div class="col-md-12">
                                         @foreach($steps as $step)
                                         <div class="col-md-2 step">
-                                            {{--<div class="box">--}}
-                                                {{--<h3 class="box-title m-b-0">Step 1</h3>--}}
-                                            {{--</div>--}}
                                             <div class="panel draggable" draggable="true">
                                                 <div class="white-box">
                                                     <div class="panel-heading p-b-10 p-t-10">
@@ -76,7 +73,6 @@
                                                             </tbody>
                                                         </table>
                                                     @endif
-                                                    {{--<h5 class="m-t-0 m-b-20"><b>Form:</b> Form 1</h5>--}}
 
                                                     <div class="row action">
                                                         <div class="col-md-6">
