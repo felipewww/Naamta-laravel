@@ -10,15 +10,9 @@ var tabCounter = 0;
 
 
 // // Retrieve the json from storage
-var form = $("input[name=containers]").val();
-if(form==""){
-  console.log("entrou");
-  form = localStorage.getItem('form');
-  fieldId = localStorage.getItem('fieldId');
-  tabCounter = localStorage.getItem('tabCounter');
-}
-
-
+ var form = localStorage.getItem('form');
+ fieldId = localStorage.getItem('fieldId');
+ tabCounter = localStorage.getItem('tabCounter');
 
 if(form != null){
   createTabs(form);
@@ -29,11 +23,8 @@ if(form != null){
 Example
 var tabObj1 = {
   config : {},
-  id: '',
-  name: '',
   fields : [
     {
-      id: '',
       type : 'checkbox-group',
       isEditable : true,
       options : {
@@ -148,10 +139,11 @@ function toJson(){
 function createTabs(json){
   var objs = JSON.parse(json);
   objs.forEach(function(obj){
-    $('.tab-control').removeClass('active');
     addTab();
     obj.fields.forEach(createFields);
   });
+  $('.tab-control').removeClass('active');
+  $('.tab-control:first-of-type').addClass('active');
 }
 
 // Creates the fields related to the createTabs function
@@ -170,7 +162,7 @@ function createFields(obj){
   $(clone).appendTo('.tab.active');
 }
 
-// Sets field values according to json from createTabs
+// fs field values according to json from createTabs
 // Relates to createFields
 function configureField(node, options, type){
   /*Visual*/

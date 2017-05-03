@@ -175,7 +175,7 @@ class FormsController extends Controller
        
 
         foreach($_requestContainers as $k => $_arrC){
-            $container = new Container();
+            $container = Container::findOrNew($_arrC->id);
             $container->form_template_id = $formId;
             $container->name = "Container " . $k;
             $container->config = "";
