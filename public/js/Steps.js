@@ -4,10 +4,22 @@ $(document).ready(function () {
 
 var Steps = {
     containers: {},
+    action: 'create',
 
     init: function () {
         this.setTemplate();
         this.cfgContainers();
+
+        if (this.action == 'edit')
+        {
+            this.moveEventsEmails();
+        }
+    },
+
+    moveEventsEmails: function ()
+    {
+        var container = document.getElementById('eventsEmails');
+        // var emails = container
     },
 
     setTemplate: function () {
@@ -62,7 +74,7 @@ var Steps = {
 
         btn._Random = new Script._Random;
         btn.addEventListener('click', function () {
-            var name = container.getAttribute('id') + '[' + btn._Random(5,1) + ']';
+            var name = container.getAttribute('id') + '[' + btn._Random(100,1) + ']';
             container.appendChild(_this.getTemplate(name));
             ChosenExtensions.init();
         })

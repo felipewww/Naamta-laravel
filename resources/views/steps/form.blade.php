@@ -139,7 +139,8 @@
                                </div>
 
                                @if( $vars->usedEmails )
-                                   <div id="usedEmails">
+                                   <script>Steps.action = 'edit'</script>
+                                   <div id="eventsEmails">
                                    @foreach($vars->usedEmails as $event => $usedMail)
                                        @foreach($usedMail as $email_id => $staffs_id)
                                            <div class="mail-component-{{ $event }}" style="">

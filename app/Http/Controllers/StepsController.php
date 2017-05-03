@@ -51,7 +51,12 @@ class StepsController extends Controller
 
         if ( $action == 'edit' )
         {
-            $vars->userTypes = $step->application->userTypes;
+            $vars->userTypes = ($step instanceof ApplicationStep) ? $step->application->userTypes : $vars->userTypes = UserType::all();
+//            if ($step instanceof ApplicationStep) {
+//                $vars->userTypes = $step->application->userTypes;
+//            }else{
+//                $vars->userTypes = UserType::all();
+//            }
 
             foreach ($vars->steps as $step_temp)
             {
@@ -122,21 +127,17 @@ class StepsController extends Controller
         }
         else
         {
-            $vars->usedEmails = false;
-            $vars->userTypes        = UserType::all();
+            $vars->step         = new Step();
+            $vars->usedEmails   = false;
+            $vars->userTypes    = UserType::all();
         }
 
         return $vars;
     }
 
     public function create()
-    {   
-        $vars                   = new \stdClass();
-        $vars->steps            = $this->steps;
-        $vars->morphs_from      = [FormTemplate::class, Screens::class];
-        $vars->emailTemplates   = EmailTemplate::all();
-        $vars->userTypes        = UserType::all();
-        $vars->step             = new Step();
+    {
+        $vars = $this->defaultVars();
 
         return view('steps.form', ['vars' => $vars]);
     }
@@ -148,8 +149,6 @@ class StepsController extends Controller
             'rejected' => $request->emails_rejected,
         ];
 
-        $request->offsetUnset('forms');
-        $request->offsetUnset('screens');
         $request->offsetUnset('emails_success');
         $request->offsetUnset('emails_rejected');
 
@@ -187,7 +186,15 @@ class StepsController extends Controller
     public function edit($id)
     {
         $step = ( $id instanceof ApplicationStep ) ? $id : Step::findOrFail($id);
-        $vars = $this->defaultVars('edit', $step);
+        if ( $id instanceof ApplicationStep ) {
+            $step = $id;
+            $action = 'edit';
+        }else{
+            $step = Step::findOrFail($id);
+            $action = 'edit';
+        }
+
+        $vars = $this->defaultVars($action, $step);
         $vars->step = $step;
 
         return view('steps.form', ['vars' => $vars]);
