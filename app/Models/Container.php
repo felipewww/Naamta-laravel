@@ -10,6 +10,7 @@ class Container extends Model
      * The attributes that are mass assignable.
      *
      * @var array
+     * 
      */
     protected $fillable = [
         'name', 'form_template_id', 'config'

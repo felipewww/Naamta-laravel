@@ -62,4 +62,6 @@
 </div>
 <script src="{{ asset("js/template/blanko-form-builder.js") }}"></script>
 <script src="{{ asset("js/template/blanko-form-creator.js") }}"></script>
+<script src="{{ asset("js/template/blanko-form-checkpoint.js") }}"></script>
+
 @endsection
