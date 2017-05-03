@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Library\DataTablesExtensions;
+use App\Models\ApplicationStep;
 use App\Models\EmailTemplate;
 use App\Models\FormTemplate;
 use App\Models\Screens;
@@ -41,40 +42,114 @@ class StepsController extends Controller
         return view('steps.list', ['dataTables' => $this->dataTables]);
     }
 
+    public function defaultVars($action = 'create', $step = null)
+    {
+        $vars = new \stdClass();
+        $vars->steps            = $this->steps;
+        $vars->morphs_from      = [FormTemplate::class, Screens::class];
+        $vars->emailTemplates   = EmailTemplate::all();
+
+        if ( $action == 'edit' )
+        {
+            $vars->userTypes = $step->application->userTypes;
+
+            foreach ($vars->steps as $step_temp)
+            {
+                $step_temp->selected = ( $step_temp->id == $step->previous_step ) ? 'selected' : '' ;
+            }
+
+            foreach ($vars->userTypes as $type_temp)
+            {
+                $type_temp->selected = ( $type_temp->id == $step->responsible ) ? 'selected' : '' ;
+            }
+
+            $emails_success         = $step->usesEmails()->with(['template'])->where('send_when', 'success')->get();
+            $vars->emails_success   = $emails_success;
+
+            $emails_rejected        = $step->usesEmails()->with(['template'])->where('send_when', 'rejected')->get();
+            $vars->emails_rejected  = $emails_rejected;
+
+            $usedEmails = [
+                'success' => [],
+                'rejected' => []
+            ];
+//            dd($vars->emailTemplates);
+
+            foreach ($vars->emailTemplates as $template)
+            {
+                $success = [];
+                $rejected = [];
+
+                //Verify if the template is selected
+                $search = $vars->emails_success->where('email_id', $template->id);
+                $hasSuccess = $search->isNotEmpty();
+
+                if ($hasSuccess) {
+                    $usedEmails['success'][$template->id] = [];
+                    foreach ($search as $foundItem)
+                    {
+                        array_push($success, $foundItem->id);
+                        array_push($usedEmails['success'][$template->id], $foundItem->id);
+                    }
+                }
+
+                $search = $vars->emails_rejected->where('id', $template->id);
+                $hasRejected = $search->isNotEmpty();
+
+                if ($hasRejected) {
+//                    $template->selected = 'selected';
+                    $usedEmails['rejected'][$template->id] = [];
+                    foreach ($search as $foundItem)
+                    {
+                        array_push($rejected, $foundItem->id);
+                        array_push($usedEmails['rejected'][$template->id], $foundItem->id);
+                    }
+                }
+
+                $template->setAttribute('emails', [
+                        'success' => $success,
+                        'rejected' => $rejected,
+                    ]
+                );
+            }
+
+//            dd($vars->emailTemplates);
+//            dd($usedEmails);
+
+            $vars->usedEmails = $usedEmails;
+            $vars->functest = function($opt, $opts){
+                $str = '';
+                if ( $opt == 1 ) {
+                    $str = 'selected';
+                }
+                return $str;
+            };
+        }
+        else
+        {
+            $vars->usedEmails = false;
+            $vars->userTypes        = UserType::all();
+        }
+
+        return $vars;
+    }
+
     public function create()
     {   
         $vars                   = new \stdClass();
         $vars->steps            = $this->steps;
         $vars->morphs_from      = [FormTemplate::class, Screens::class];
-        $vars->forms            = FormTemplate::all();
-        $vars->screens          = Screens::all();
+//        $vars->forms            = FormTemplate::all();
+//        $vars->screens          = Screens::all();
         $vars->emailTemplates   = EmailTemplate::all();
         $vars->userTypes        = UserType::all();
+        $vars->step             = new Step();
 
         return view('steps.form', ['vars' => $vars]);
     }
 
     public function store(Request $request)
     {
-        switch ($request->morphs_from)
-        {
-            case FormTemplate::class:
-                $fk_id = $request->forms;
-                $fk_str = 'form';
-                break;
-
-            case Screens::class:
-                $fk_id = $request->screens;
-                $fk_str = 'screen';
-                break;
-
-            default:
-                throw trigger_error('Unexpected error. Please, contact the administrator.', E_USER_ERROR);
-                break;
-        }
-
-        $request->offsetSet($fk_str, $fk_id);
-
         $emails = [
             'success' => $request->emails_success,
             'rejected' => $request->emails_rejected,
@@ -106,9 +181,30 @@ class StepsController extends Controller
                 }
             }
         }
-//        dd($reg);
 
         return $this->create();
+    }
+
+    public function appStep($id)
+    {
+        $step = ApplicationStep::findOrFail($id);
+        return $this->edit($step);
+    }
+
+    public function edit($id)
+    {
+        $step = ( $id instanceof ApplicationStep ) ? $id : Step::findOrFail($id);
+//        if ( $id instanceof ApplicationStep) {
+//            $step = $id;
+//        }else{
+//            $step = Step::findOrFail($id);
+//        }
+
+        $vars = $this->defaultVars('edit', $step);
+
+        $vars->step = $step;
+
+        return view('steps.form', ['vars' => $vars]);
     }
 
     public function dataTablesConfig()
@@ -124,10 +220,12 @@ class StepsController extends Controller
                     'rowActions' =>
                         [
                             [
-                                'html' => 'edit',
+                                'html' => '',
+                                'attributes' => ['class' => 'fa fa-pencil', 'href' => '/steps/'.$reg->id.'/edit']
                             ],
                             [
-                                'html' => 'delete',
+                                'html' => '',
+                                'attributes' => ['class' => 'fa fa-trash']
                             ]
                         ]
                 ]

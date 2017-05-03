@@ -12,7 +12,7 @@ class ApplicationStep extends Model
      * @var array
      */
     protected $fillable = [
-      'responsible', 'status'
+      'responsible', 'status', 'step_id', 'previous_step', 'application_id', 'morphs_from', 'title' ,'description' ,'status'
     ];
 
     public function form()
@@ -30,8 +30,18 @@ class ApplicationStep extends Model
         return $this->hasOne('App\Models\Step');
     }
 
+//    public function application()
+//    {
+//        return $this->hasOne('App\Models\Application');
+//    }
+
     public function application()
     {
-        return $this->hasOne('App\Models\Application');
+        return $this->belongsTo('App\Models\Application', 'application_id', 'id');
+    }
+
+    public function usesEmails()
+    {
+        return $this->hasMany(ApplicationUsesEmail::class);
     }
 }

@@ -20,6 +20,14 @@ class CreateUserTypesTable extends Migration
             $table->tinyInteger('status')->default(1);
             $table->timestamps();
         });
+
+//        Schema::create('application_user_types', function (Blueprint $table) {
+//            $table->increments('id');
+//            $table->string('slug');
+//            $table->string('title');
+//            $table->tinyInteger('status')->default(1);
+//            $table->timestamps();
+//        });
     }
 
     /**
@@ -31,6 +39,7 @@ class CreateUserTypesTable extends Migration
     {
         DB::statement('SET FOREIGN_KEY_CHECKS = 0');
         Schema::dropIfExists('user_types');
+//        Schema::dropIfExists('application_user_types');
         DB::statement('SET FOREIGN_KEY_CHECKS = 1');
 
     }

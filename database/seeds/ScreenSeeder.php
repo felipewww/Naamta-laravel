@@ -19,19 +19,16 @@ class ScreenSeeder extends Seeder
                     'id'                => 1,
                     'title'             => 'Screen One',
                     'description'       => Faker::create()->paragraph(1),
-                    'responsible'       => 1,
                 ],
                 [
                     'id'                => 2,
                     'title'             => 'Screen two',
                     'description'       => Faker::create()->paragraph(1),
-                    'responsible'       => 1,
                 ],
                 [
                     'id'                => 3,
                     'title'             => 'Screen Three',
                     'description'       => Faker::create()->paragraph(1),
-                    'responsible'       => 1,
                 ],
             )
         );

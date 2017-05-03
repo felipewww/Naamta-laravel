@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Library\DataTablesExtensions;
+use App\Models\ApplicationUsesEmail;
 use Validator;
 use Session;
 use Illuminate\Support\Facades\Input;
@@ -61,7 +62,23 @@ class ApplicationsController extends Controller
     {
         $this->usersApplication = UserApplication::where('application_id', $id)->get();
         $application = Application::FindOrFail($id);
-        return view('applications.form', ['application' => $application, 'staffs' => $this->staffs, 'userTypes' => $this->userTypes, 'usersApplication' => $this->usersApplication ]);
+
+        //$application = Application::with(['userTypes','userTypes.usesEmails'])->FindOrFail($id);
+        $steps = $application->steps()->with(['usesEmails', 'usesEmails.receivedBy', 'usesEmails.template'])->get();
+//        dd($steps);
+//        dd($application->userTypes()->with(['usesEmails'])->get());
+
+        //$steps = $application->appSteps;
+//        dd($steps);
+        return view('applications.form',
+            [
+                'application' => $application,
+                'staffs' => $this->staffs,
+                'userTypes' => $this->userTypes,
+                'usersApplication' => $this->usersApplication,
+                'steps' => $steps
+            ]
+        );
     }
 
     /**
@@ -101,6 +118,12 @@ class ApplicationsController extends Controller
 
     }
 
+    public function settings($id)
+    {
+        $application = Application::FindOrFail($id);
+
+        return view('applications.settings');
+    }
 
     private function dataTablesConfig()
     {
@@ -116,7 +139,7 @@ class ApplicationsController extends Controller
                     [
                         [
                             'html' => '',
-                            'attributes' => ['class' => 'fa fa-pencil']
+                            'attributes' => ['class' => 'fa fa-pencil', 'href' => '/applications/'.$reg->id.'/edit']
                         ],
                         [
                             'html' => '',

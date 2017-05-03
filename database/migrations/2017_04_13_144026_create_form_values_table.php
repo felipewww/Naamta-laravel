@@ -39,6 +39,8 @@ class CreateFormValuesTable extends Migration
      */
     public function down()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
         Schema::dropIfExists('form_values');
+        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
     }
 }

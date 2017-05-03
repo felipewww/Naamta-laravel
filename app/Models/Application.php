@@ -17,7 +17,7 @@ class Application extends Model
 
     public function steps()
     {
-        return $this->hasMany('App\Models\Step');
+        return $this->hasMany(ApplicationStep::class);
     }
 
     public function users()
@@ -28,5 +28,10 @@ class Application extends Model
     public function client()
     {
         return $this->hasOne('App\Models\Client', 'id', 'client_id');
+    }
+
+    public function userTypes()
+    {
+        return $this->hasMany(ApplicationUserTypes::class);
     }
 }

@@ -12,7 +12,7 @@ class Step extends Model
      * @var array
      */
     protected $fillable = [
-        'title', 'description', 'responsible', 'previous_step', 'form', 'screen', 'status'
+        'title', 'description', 'responsible', 'previous_step', 'status', 'morphs_from'
     ];
 
     public function usesEmails()

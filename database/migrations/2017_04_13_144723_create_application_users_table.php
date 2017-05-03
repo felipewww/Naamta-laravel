@@ -28,7 +28,7 @@ class CreateApplicationUsersTable extends Migration
                     ->onDelete('set null');
 
             $table->foreign('user_type')
-                    ->references('id')->on('user_types')
+                    ->references('id')->on('application_user_types')
                     ->onDelete('set null');
 
             $table->timestamps();
@@ -42,6 +42,8 @@ class CreateApplicationUsersTable extends Migration
      */
     public function down()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
         Schema::dropIfExists('application_users');
+        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
     }
 }

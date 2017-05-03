@@ -40,4 +40,8 @@ Route::group(['middleware' => 'auth'], function(){
     Route::resource('/emails', 'EmailsController');
     Route::resource('/forms',  'FormsController');
     Route::resource('/applications',  'ApplicationsController');
+
+    Route::get('/applications/{id}/settings',  'ApplicationsController@settings');
+    
+    Route::get('/applications/step/{id}',  'StepsController@appStep');
 });

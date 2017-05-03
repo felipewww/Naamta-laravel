@@ -15,30 +15,27 @@ class CreateApplicationStepsTable extends Migration
     {
         Schema::create('application_steps', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('step_id')->unsigned()->nullable();
-            $table->integer('responsible')->unsigned();
-            $table->integer('form')->unsigned()->nullable();
-            $table->integer('screen')->unsigned()->nullable();
+            $table->string('title');
+            $table->string('description');
             $table->tinyInteger('status')->default(0);
+            $table->integer('responsible')->unsigned();
+            $table->integer('application_id')->unsigned();
+            $table->integer('previous_step')->unsigned()->nullable();
 
-            $table->foreign('step_id')
-                    ->references('id')->on('steps')
-                    ->onDelete('set null');
+            $table->string('morphs_from');
 
-            $table->foreign('form')
-                    ->references('id')->on('steps')
-                    ->onDelete('set null');
+            $table->foreign('application_id')
+                ->references('id')->on('applications')
+                ->onDelete('cascade');
 
-            $table->foreign('screen')
-                    ->references('id')->on('steps')
-                    ->onDelete('set null');
+            $table->foreign('previous_step')
+                ->references('id')->on('application_steps');
 
             $table->foreign('responsible')
-                    ->references('id')->on('users')
-                    ->onDelete('cascade');
+                    ->references('id')->on('application_user_types')
+                    ->onDelete('restrict');
 
             $table->timestamps();
-            
         });
     }
 
@@ -49,6 +46,8 @@ class CreateApplicationStepsTable extends Migration
      */
     public function down()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
         Schema::dropIfExists('application_steps');
+        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
     }
 }
