@@ -4,10 +4,8 @@ var clicked;
 var current = 0;
 var lastReview = new Date();
 localStorage.getItem('checkpoints')
-//if(localStorage.getItem('lastReview') != null){
+
 if(localStorage.getItem('checkpoints') != null){
-	//lastReview = parseInt(localStorage.getItem('lastReview'));
-	//appendToHistory(current, new Date(lastReview), true);
 	checkpoints = JSON.parse(localStorage.getItem('checkpoints'));
 	checkpoints.forEach(function(checkpoint, index){
 		appendToHistory(index, new Date(checkpoint.time), true, checkpoint.data);
@@ -15,7 +13,6 @@ if(localStorage.getItem('checkpoints') != null){
 }else{
 	appendToHistory(current, lastReview, true);
 }
-
 
 setInterval( function(){
 	var date = new Date();
@@ -25,7 +22,7 @@ setInterval( function(){
 	}
 }, 30000);
 
-setInterval(saveCheckpoint, 240000)
+setInterval(saveCheckpoint, 240000);
 
 function loadPonctualCheckpoint(id){
 	$('#drag-container .tab-control').remove();
@@ -41,12 +38,11 @@ function saveCheckpoint(){
 			time : date.getTime()
 		});
 		localStorage.setItem('form', toJson());
-		//localStorage.setItem('lastReview', date.getTime());
 		localStorage.setItem('checkpoints', JSON.stringify(checkpoints), '  ');
 		appendToHistory(current, date, true);
 	}
-    //$('#checkpoints').empty();
 }
+
 function appendToHistory(index, date, checkpoint = false, data = toJson()){
 	temporaryCheckpoints.push(data);
 	$('#checkpoints').find('a').removeClass('active');

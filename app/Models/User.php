@@ -64,4 +64,25 @@ class User extends Authenticatable
         }
         return false;
     }
+
+    public function isAdmin(){
+        if ($this->hasRole("admin")) {
+            return true;
+        }
+        return false;
+    }
+
+    public function isStaff(){
+        if ($this->hasRole("staff")) {
+            return true;
+        }
+        return false;
+    }
+
+    public function isClient(){
+        if ($this->hasRole("client")) {
+            return true;
+        }
+        return false;
+    }
 }

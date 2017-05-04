@@ -10,16 +10,20 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
+    <link rel="icon" type="image/png" sizes="16x16" href="../plugins/images/favicon.png">
+
     <!-- Styles -->
     <link href="{{ asset("bower_components/bootstrap/dist/css/bootstrap.min.css") }}" rel="stylesheet">
+    <link href="{{ asset("css/template/animate.css") }}" rel="stylesheet">
     <link href="{{ asset("css/template/style.css") }}" rel="stylesheet">
     <link href="{{ asset("css/template/colors/blue-dark.css") }}" rel="stylesheet">
-    <link href="{{ asset("css/template/animate.css") }}" rel="stylesheet">
-    <link href="{{ asset("css/template/icons/font-awesome/css/font-awesome.min.css") }}" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
     @yield('styles')
-
-    <link href="{{ asset("css/naamta.css") }}" rel="stylesheet">
-
     <!-- Scripts -->
     <script>
         window.Laravel = {!! json_encode([
@@ -35,7 +39,7 @@
     <script src="{{ asset("js/template/jquery.slimscroll.js") }}"></script>
     <script src="{{ asset("js/template/waves.js") }}"></script>
     <script src="{{ asset("js/template/custom.js") }}"></script>
-    <script src="{{ asset("js/template/jasny-bootstrap.js") }}"></script>
+    <script src="{{ asset("bower_components/styleswitcher/jQuery.style.switcher.js") }}"></script>
     @yield('scripts')
     <script src="{{ asset("js/script.js") }}"></script>
 
@@ -46,104 +50,13 @@
     <div class="preloader">
         <div class="cssload-speeding-wheel"></div>
     </div>
-    <div id="wrapper">
-        <!-- Top Navigation -->
-        <nav class="navbar navbar-default navbar-static-top m-b-0">
-            <div class="navbar-header"> <a class="navbar-toggle hidden-sm hidden-md hidden-lg " href="javascript:void(0)" data-toggle="collapse" data-target=".navbar-collapse"><i class="ti-menu"></i></a>
-                <div class="top-left-part">
-                    <a class="logo" href="{{ url('home') }}">
-                        <b>
-                            <img src="{{asset('media/images/naamta_logo.png')}}" alt="home" class="dark-logo" />
-                        </b>
-                    </a>
-                </div>
-   
-            </div>
-            <!-- /.navbar-header -->
-            <!-- /.navbar-top-links -->
-            <!-- /.navbar-static-side -->
-        </nav>
-        <!-- End Top Navigation -->
-        <!-- Left navbar-header -->
-        <div class="sidebar" role="navigation">
-            <div class="wp-sidebar-nav">
-                <div class="user-profile">
-                    <div class="dropdown user-pro-body">
-                        @if (Auth::check())
-                        <a href="#" class="dropdown-toggle u-dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{Auth::user()->name}} <span class="caret"></span></a>
-                        <ul class="dropdown-menu animated fadeIn">
-                            <li><a href="{{ url('applications') }}"><i class="ti-view-list"></i> Applications</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="{{ route('users.edit', ['id' => Auth::id()]) }}"><i class="ti-user"></i> My Profile</a></li>
-                            <li role="separator" class="divider"></li>
-
-                            <li>
-                                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fa fa-power-off"></i> Logout</a>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                    {{ csrf_field() }}
-                                </form>
-                            </li>
-                        </ul>
-                        @endif
-                    </div>
-                </div>
-                <ul class="wp-side-menu">
-                    @if(Auth::user()!=null && Auth::user()->isAdmin())
-                        <li class="nav-small-cap">USERS</li>
-                        <li> <a href="{{ url('users') }}">Users List</a> </li>
-                        <li> <a href="{{ url('usertypes') }}">User Types</a></li>
-                    @endif
-                    @if(Auth::user()!=null && (Auth::user()->isAdmin() || Auth::user()->isStaff()))
-                        <li class="nav-small-cap">WORKFLOW</li>
-                    @endif
-                    @if(Auth::user()!=null &&Auth::user()->isAdmin())
-                        <li> <a href="{{ url('steps') }}"> Steps</a> </li>
-                        <li> <a href="{{ url('emails') }}"> Email Templates</a></li>
-                    @endif
-                    @if(Auth::user()!=null && (Auth::user()->isAdmin() || Auth::user()->isStaff()))
-                        <li> <a href="{{ url('forms') }}"> Form Types</a></li>
-                        <li> <a href="{{ url('applications') }}"> Applications</a></li>
-                    @endif
-                </ul>
+    <section id="wrapper" class="login-register">
+        <div class="logo"><img src="{{asset('media/images/naamta_logo.png')}}" alt="home" class="dark-logo" /></div>
+        <div class="login-box">
+            <div class="white-box">
+                @yield('content')
             </div>
         </div>
-        <!-- Left navbar-header end -->
-        <!-- Page Content -->
-        <div id="page-wrapper">
-            <div class="container-fluid">
-                <div class="row bg-title">
-                    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                        <h4 class="page-title">New Form Type</h4> </div>
-                    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
-                        <ol class="breadcrumb">
-                            <li><a href="list-forms-template.html">Form Types</a></li>
-                            <li class="active">New Form Type</li>
-                        </ol>
-                    </div>
-                    <!-- /.col-lg-12 -->
-                </div>
-                <!-- .row -->
-                <div class="row">
-                    @yield('content')
-                </div>
-            </div>
-            <!-- /.container-fluid -->
-        </div>
-        <!-- /#page-wrapper -->
-    </div>
-    {{--<script>--}}
-        {{--const data = {--}}
-            {{--name: 'Leonardo Carvalho',--}}
-            {{--redirect: 'http://127.0.0.1/callback'--}}
-        {{--};--}}
-
-        {{--axios.post('/oauth/clients', data)--}}
-            {{--.then(response => {--}}
-                {{--console.log(response.data);--}}
-            {{--})--}}
-            {{--.catch (response => {--}}
-                {{--// List errors on response...--}}
-        {{--});--}}
-    {{--</script>--}}
+    </section>
 </body>
 </html>

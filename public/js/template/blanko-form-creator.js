@@ -1,32 +1,44 @@
+var isEditable = true;
+var fieldCounter = 0; // FIELD ID
+var tabCounter = 0; //TAB ID
+var username = 'Fulano de Tal'; // USER NAME
+
+// Temporary variables
 var tempContainers;
 var tempFields;
-var isEditable = true;
 
-//Temporary variables
-var tabId = 0;
-var fieldId = 0;
-var inputId = 0;
-var tabCounter = 0;
-
-
-// // Retrieve the json from storage
- var form = localStorage.getItem('form');
- fieldId = localStorage.getItem('fieldId');
+// Retrieve variables from storage
+ //var form = localStorage.getItem('form');
+ fieldCounter = localStorage.getItem('fieldCounter');
  tabCounter = localStorage.getItem('tabCounter');
 
-if(form != null){
-  createTabs(form);
-}
-
+//if(form != null){
+// createTabs(form);
+//}
 
 /*
 Example
+
 var tabObj1 = {
-  config : {},
+  config : {
+    id : 1959595,
+    title: 'Title'
+  },
   fields : [
     {
+      id : 1233123,
       type : 'checkbox-group',
       isEditable : true,
+      comments : [
+        {
+          username : 'John',
+          msg : 'A Comment'
+        },
+        {
+          username : 'Josephine',
+          msg : 'Another Comment'
+        }
+      ],
       options : {
         isRequired : true,
         label : 'Label',
@@ -38,34 +50,38 @@ var tabObj1 = {
         type : '',
         options : [
           {
-            label : 'Option Label',
-            value : 'Option Value'
+            label : 'Option Label 1',
+            value : 'Option Value 1'
+          },
+          {
+            label : 'Option Label 2',
+            value : 'Option Value 2'
           }
         ]
       }
     }
   ]
 }
-//Array of tabs
+
+// Array of tabs
 var tabsObj = [tabObj1];
-Stringify array
+// Stringify array
 tabsObj = JSON.stringify(tabsObj);
-Create from stringified array
+// Create from stringified array
 createTabs(tabsObj);
 
 */
 
-
-
-//Transform fields in objects
+// Transform fields in objects
 function toFieldObject(){
 	var obj = {
-    id : $(this).attr('id').split("__")[1],
+      id : $(this).attr('data-id'),
 		type :  $(this).attr('id').split("__")[0],
 		isEditable : isEditable,
 		options : {
 			options : []
-		}
+		},
+      comments : []
 	};
 
 	obj.options.isRequired = $(this).find('.is-required').prop('checked');
@@ -75,28 +91,38 @@ function toFieldObject(){
 	obj.options.min = $(this).find('.min-value').val();
 	obj.options.max = $(this).find('.max-value').val();
 	obj.options.step = $(this).find('.step-value').val();
-  obj.options.type = $(this).find('[type=radio]:checked').val();
+    obj.options.type = $(this).find('[type=radio]:checked').val();
 
-	if(obj.type == 'select'){
-		var options = $(this).find('select option');
-		options.each(function(){
-			var option = {
-				label : $(this).text(),
-        value : $(this).val()
-			};
-			obj.options.options.push(option);
-		});
-	}
+    var comments = $(this).find('.comments li');
 
-  if(obj.type == 'radio-group'){
-    var options = $(this).find('.drag-input .radio');
-    options.each(function(){
-      var option = {
-        label : $(this).find('label').text(),
-        value : $(this).find('input').val()
-      };
-      obj.options.options.push(option);
+    comments.each(function(){
+      var comment = {
+          username : $(this).find('span.username').text(),
+          msg : $(this).find('span.message').text()
+        };
+      obj.comments.push(comment);
     });
+
+    if(obj.type == 'select'){
+        var options = $(this).find('select option');
+        options.each(function(){
+            var option = {
+                label : $(this).text(),
+        value : $(this).val()
+            };
+            obj.options.options.push(option);
+        });
+      }
+
+    if(obj.type == 'radio-group'){
+      var options = $(this).find('.drag-input .radio');
+      options.each(function(){
+        var option = {
+          label : $(this).find('label').text(),
+          value : $(this).find('input').val()
+        };
+        obj.options.options.push(option);
+     });
   }
 
   if(obj.type == 'checkbox-group'){
@@ -112,15 +138,25 @@ function toFieldObject(){
 	tempFields.push(obj);
 }
 
-//Save current tabs and fields in Json
+// Save current tabs and fields in Json
 function toJson(){	
   tempContainers = new Array();
   var listContainers = $('.tab');
 
   listContainers.each(function(){
-    tempFields = new Array();
+    var id = $(this).attr('id').replace("tab", "");
+    var index = $(this).attr('id');
+    var tabId = $(this).attr('tab-id');
+    var title = $('a[href="#' + index + '"]').text();
 
+    tempFields = new Array();
+    var index = $(this).closest('.tab').index();
     var tab = {
+      config : {
+        id : id,
+        title : title,
+        tabId : tabId
+      },
       fields : []
     }
     var listFields = $(this).find('.draggable-input');
@@ -139,7 +175,7 @@ function toJson(){
 function createTabs(json){
   var objs = JSON.parse(json);
   objs.forEach(function(obj){
-    addTab();
+    addTab(obj.config);
     obj.fields.forEach(createFields);
   });
   $('.tab-control').removeClass('active');
@@ -157,12 +193,18 @@ function createFields(obj){
   clone.find('.drag-options').toggle(obj.isEditable);
   configureField(clone, obj.options, obj.type);
 
+
   addEvents(clone[0], obj.id);
-  
+ 
   $(clone).appendTo('.tab.active');
+  if(obj.comments!=null){
+    obj.comments.forEach(function(comment){
+      appendComment(comment.username, comment.msg, obj.id);
+    })
+  }
 }
 
-// fs field values according to json from createTabs
+// Field values according to json from createTabs
 // Relates to createFields
 function configureField(node, options, type){
   /*Visual*/
@@ -208,7 +250,7 @@ function configureField(node, options, type){
   node.find('input[value="' + options.type+'"]' ).prop('checked', true);
 }
 
-//Creates form from current tabs and fields
+// Creates form from current tabs and fields
 function toHtml(){
   isEditable = false;
   json = toJson();

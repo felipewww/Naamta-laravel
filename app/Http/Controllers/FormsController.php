@@ -108,9 +108,9 @@ class FormsController extends Controller
                 'name'      => $request->name,
                 'status'    => (int)$request->status
             ]);
-           
-            $containers = $this->_saveContainers(json_decode($request->containers), $form->id);
-            $fields = $this->_saveFields($containers);
+
+            $this->_saveContainers(json_decode($request->containers), $form->id);
+            //$fields = $this->_saveFields($containers);
 
             \Session::flash('success','Form template created: ' . $request->name);
             \DB::commit();
@@ -127,9 +127,8 @@ class FormsController extends Controller
         
         $form = FormTemplate::with( array( 'containers', 'containers.fields') )->findOrFail($id);
        
-        $this->_convertFormToJson($form);
-        
         return view('forms.form')->with(['form' => $form, 'containers' => $this->_convertFormToJson($form)]);
+
     }
     
     public function update(Request $request, $id){
@@ -141,7 +140,7 @@ class FormsController extends Controller
             ]);
 
             $containers = $this->_saveContainers(json_decode($request->containers), $id);
-            $fields = $this->_saveFields($containers);
+            //$fields = $this->_saveFields($containers);
 
             \Session::flash('success_msg','Form Edited: ' . $request->name);
         } catch(Exception $e){
@@ -172,33 +171,52 @@ class FormsController extends Controller
     private function _saveContainers($_requestContainers, $formId){
         $containers = array();
         $fields = array();
-       
-
+        $_oldContainers = Container::where('form_template_id', $formId)->get()->toArray();
+        $_oldContainers = array_column($_oldContainers, 'id');
+        $_excludeContainers = array();
         foreach($_requestContainers as $k => $_arrC){
-            $container = Container::findOrNew($_arrC->id);
-            $container->form_template_id = $formId;
-            $container->name = "Container " . $k;
-            $container->config = "";
-            if(isset($_requestContainers->config)){
-                $container->config = $_requestContainers->config;
+            $key = array_search($_arrC->config->tabId, $_oldContainers);
+            if($key!==false){
+                array_push($_excludeContainers, $_oldContainers[$key]);
             }
-            
+
+            $container = Container::firstOrNew(array('id' => $_arrC->config->tabId));
+
+            $container->name = $_arrC->config->title;
+            $container->form_template_id = $formId;
+            $container->config = "";
+            $container->save();
+            $_oldFields = Field::where('container_id', $container->id)->get()->toArray();
+            $_oldFields = array_column($_oldFields, 'id');
+            $_excludeFields = array();
             if(isset($_arrC->fields)){
                 foreach($_arrC->fields as $key => $value){
+
+                    $fKey = array_search($value->id, $_oldFields);
+
+                    if($fKey!==false){
+                        array_push($_excludeFields, $_oldFields[$fKey]);
+                    }
+
                     $field = Field::firstOrNew(array('id' => $value->id));
+                    $field->container_id = $container->id;
                     $field->type = $value->type;
-                    $field = Field::updateOrCreate([
-                        'type' => $value->type,
-                        'config' => json_encode($value->options),
-                        'status' => 1
-                    ]);
-                    $container->fields[] = $field;
+                    $field->config = json_encode($value->options);
+                    $field->status = 1;
+                    $field->save();
                 }
             }
-
-            array_push($containers, $container);
-            $container->save();
+            $fieldsToRemove = array_diff($_oldFields, $_excludeFields);
+            foreach($fieldsToRemove as $oF){
+                Field::where("id", $oF)->delete();
+            }
         }
+        $contaniersToRemove = array_diff($_oldContainers, $_excludeContainers);
+
+        foreach($contaniersToRemove as $oC){
+            Container::where("id", $oC)->delete();
+        }
+
         return $containers;
     }
 
@@ -232,22 +250,50 @@ class FormsController extends Controller
         return $string;
     }
 
-    // type : 'checkbox-group',
-    //   isEditable : true,
-    //   options : {
-    //     isRequired : true,
-    //     label : 'Label',
-    //     help : 'Help Text',
-    //     value : '',
-    //     min : '',
-    //     max : '',
-    //     step : '',
-    //     type : '',
-    //     options : [
-    //       {
-    //         label : 'Option Label',
-    //         value : 'Option Value'
-    //       }
-    //     ]
-    //   }
+    /*
+    Example
+
+    var tabObj1 = {
+      config : {
+        id : 1959595,
+        title: 'Title'
+      },
+      fields : [
+        {
+          id : 1233123,
+          type : 'checkbox-group',
+          isEditable : true,
+          comments : [
+            {
+              username : 'John',
+              msg : 'A Comment'
+            },
+            {
+              username : 'Josephine',
+              msg : 'Another Comment'
+            }
+          ],
+          options : {
+            isRequired : true,
+            label : 'Label',
+            help : 'Help Text',
+            value : '',
+            min : '',
+            max : '',
+            step : '',
+            type : '',
+            options : [
+              {
+                label : 'Option Label 1',
+                value : 'Option Value 1'
+              },
+              {
+                label : 'Option Label 2',
+                value : 'Option Value 2'
+              }
+            ]
+          }
+        }
+      ]
+    }*/
 }

@@ -12,7 +12,7 @@ class FormTemplateSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('form_templates')->insert(
+       /* DB::table('form_templates')->insert(
             array
             (
                 [
@@ -37,6 +37,6 @@ class FormTemplateSeeder extends Seeder
                     'updated_at' => Carbon::now(3),
                 ],
             )
-        );
+        );*/
     }
 }
