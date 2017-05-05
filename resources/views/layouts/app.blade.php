@@ -88,14 +88,22 @@
                     </div>
                 </div>
                 <ul class="wp-side-menu">
-                    <li class="nav-small-cap">USERS</li>
-                    <li> <a href="{{ url('users') }}">Users List</a> </li>
-                    <li> <a href="{{ url('usertypes') }}">User Types</a></li>
-                    <li class="nav-small-cap">WORKFLOW</li>
-                    <li> <a href="{{ url('steps') }}"> Steps</a> </li>
-                    <li> <a href="{{ url('emails') }}"> Email Templates</a></li>
-                    <li> <a href="{{ url('applications') }}"> Applications</a></li>
-                    <li> <a href="{{ url('forms') }}"> Form Types</a></li>
+                    @if(Auth::user()!=null && Auth::user()->isAdmin())
+                        <li class="nav-small-cap">USERS</li>
+                        <li> <a href="{{ url('users') }}">Users List</a> </li>
+                        <li> <a href="{{ url('usertypes') }}">User Types</a></li>
+                    @endif
+                    @if(Auth::user()!=null && (Auth::user()->isAdmin() || Auth::user()->isStaff()))
+                        <li class="nav-small-cap">WORKFLOW</li>
+                    @endif
+                    @if(Auth::user()!=null &&Auth::user()->isAdmin())
+                        <li> <a href="{{ url('steps') }}"> Steps</a> </li>
+                        <li> <a href="{{ url('emails') }}"> Email Templates</a></li>
+                    @endif
+                    @if(Auth::user()!=null && (Auth::user()->isAdmin() || Auth::user()->isStaff()))
+                        <li> <a href="{{ url('forms') }}"> Form Types</a></li>
+                        <li> <a href="{{ url('applications') }}"> Applications</a></li>
+                    @endif
                 </ul>
             </div>
         </div>
@@ -115,13 +123,11 @@
                     <!-- /.col-lg-12 -->
                 </div>
                 <!-- .row -->
-
                 <div class="row">
                     @yield('content')
                 </div>
             </div>
             <!-- /.container-fluid -->
-
         </div>
         <!-- /#page-wrapper -->
     </div>

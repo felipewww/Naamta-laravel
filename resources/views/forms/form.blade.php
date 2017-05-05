@@ -63,5 +63,12 @@
 <script src="{{ asset("js/template/blanko-form-builder.js") }}"></script>
 <script src="{{ asset("js/template/blanko-form-creator.js") }}"></script>
 <script src="{{ asset("js/template/blanko-form-checkpoint.js") }}"></script>
-
+<script>
+    $('form').submit(function(e){
+        e.preventDefault();
+        $('input[name=containers]').val(toJson());
+        $(this).unbind().submit();
+    })
+    createTabs($('input[name=containers]').val());
+</script>
 @endsection
