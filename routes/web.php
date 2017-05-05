@@ -44,6 +44,8 @@ Route::group(['middleware' => 'auth'], function(){
     Route::resource('/applications',  'ApplicationsController');
 
     Route::get('/applications/{id}/settings',  'ApplicationsController@settings');
-    
+    Route::post('/applications/{id}/saveStepsPosition', 'ApplicationsController@saveStepsPosition');
+    Route::post('/steps/saveDefaultStepsPosition', 'StepsController@saveDefaultStepsPosition');
+
     Route::get('/applications/step/{id}',  'StepsController@appStep');
 });

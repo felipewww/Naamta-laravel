@@ -15,6 +15,10 @@
 
 @endphp
 
+@section('scripts')
+    <script type="text/javascript" src="/js/appSteps.js"></script>
+@endsection
+
 @section('content')
     <div class="row">
         <div class="col-md-12">
@@ -22,25 +26,18 @@
                 <!-- Tabstyle start -->
                 <section>
                     <div class="sttabs">
-                        <a href="newstep.html" class="btn btn-info" style="width: 120px; float: right;"><i class="fa fa-plus"></i> Add Step</a>
-                        <a href="#" class="btn btn-save m-r-20" style="width: 120px; float: right;"><i class="fa fa-check"></i> Save</a>
-                        <a href="/applications/{{$application->id}}/settings" class="btn btn-save m-r-20" style="width: 120px; float: right;"><i class="fa fa-check"></i>Settings </a>
-                        <nav>
-                            <ul class="col-md-3">
-                                <li><a href="#active"><span><h3>Active Steps2</h3></span></a></li>
-                                <li><a href="#inactive"><span><h3>Inactive Steps</h3></span></a></li>
-                            </ul>
-                        </nav>
+                        <a href="#" class="btn btn-save m-r-20" style="width: 120px; float: right;" onclick="appSteps.save()"><i class="fa fa-check"></i> Save</a>
+                        <a href="/applications/{{ $application->id }}/settings" class="btn btn-save m-r-20" style="width: 120px; float: right;"><i class="fa fa-check"></i>Settings </a>
                         <div class="clearfix"></div>
                         {{--<div class="content-wrap">--}}
                         <div class="">
                             <section id="active">
                                 <!-- .row -->
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div id="sortables" class="col-md-12">
                                         @foreach($steps as $step)
-                                        <div class="col-md-2 step">
-                                            <div class="panel draggable" draggable="true">
+                                        <div class="col-md-2 step-sortable" data-stepid="{{$step->id}}">
+                                            <div class="panel">
                                                 <div class="white-box">
                                                     <div class="panel-heading p-b-10 p-t-10">
                                                         <h3 class="box-title m-b-0">{{ $step->title }}</h3>
@@ -75,9 +72,6 @@
                                                     @endif
 
                                                     <div class="row action">
-                                                        <div class="col-md-6">
-                                                            <a href="#" class="btn btn-danger">Inactivate</a>
-                                                        </div>
                                                         <div class="col-md-6">
                                                             <a href="/applications/step/{{ $step->id  }}" class="btn btn-circle pull-right btn-custom2"><i class="fa fa-pencil"></i></a>
                                                         </div>

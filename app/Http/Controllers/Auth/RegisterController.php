@@ -145,6 +145,7 @@ class RegisterController extends Controller
                     'responsible'       => $uTypesClones[$step->responsible], //Keep the usertype relation with new id
                     'title'             => $step->title,
                     'description'       => $step->description,
+                    'ordination'        => $step->ordination,
                     'status'            => 0,
                     'morphs_from'       => $step->morphs_from,
                 ]);
@@ -155,14 +156,17 @@ class RegisterController extends Controller
                  * Clone UsesEmails default with new IDs using default temporary relationship user types
                  * */
                 $emails = UsesEmail::where('step_id', $step->id)->get();
+
                 foreach ($emails as $clone)
                 {
-                    $cloneID = $clone->id;
+
+                    $cloneID = $clone->received_by;
                     unset($clone['id']);
                     unset($clone['step_id']);
                     unset($clone['received_by']);
                     $clone->application_step_id = $appSteps->id;
                     $newEmailRelation = new ApplicationUsesEmail($clone->getAttributes());
+
                     $newEmailRelation->received_by = $uTypesClones[$cloneID]; //$newAppType->id;
                     $newEmailRelation->save();
                 }

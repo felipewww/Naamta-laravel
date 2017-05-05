@@ -20,6 +20,7 @@ class StepsSeeder extends Seeder
                 'status'            => 1,
                 'title'             => 'Step A',
                 'previous_step'     => null,
+                'ordination'        => 0,
                 'description'       => Faker::create()->paragraph(1),
             ],
             [
@@ -29,6 +30,7 @@ class StepsSeeder extends Seeder
                 'status'            => 1,
                 'title'             => 'Step B [screen]',
                 'previous_step'     => 1,
+                'ordination'        => 1,
                 'description'       => Faker::create()->paragraph(1),
             ],
             [
@@ -38,6 +40,7 @@ class StepsSeeder extends Seeder
                 'status'            => 1,
                 'title'             => 'Step C',
                 'previous_step'     => 2,
+                'ordination'        => 2,
                 'description'       => Faker::create()->paragraph(1),
             ],
             [
@@ -47,6 +50,7 @@ class StepsSeeder extends Seeder
                 'status'            => 1,
                 'title'             => 'Step D [screen]',
                 'previous_step'     => 3,
+                'ordination'        => 3,
                 'description'       => Faker::create()->paragraph(1),
             ],
             [
@@ -56,15 +60,17 @@ class StepsSeeder extends Seeder
                 'status'            => 1,
                 'title'             => 'Step E',
                 'previous_step'     => 4,
+                'ordination'        => 4,
                 'description'       => Faker::create()->paragraph(1),
             ],
             [
                 'id'                => 6,
                 'morphs_from'       => \App\Models\Screens::class,
                 'responsible'       => 1,
-                'status'            => 0,
+                'status'            => 1,
                 'title'             => 'Step F [screen]',
                 'previous_step'     => 5,
+                'ordination'        => 5,
                 'description'       => Faker::create()->paragraph(1),
             ]
         ];

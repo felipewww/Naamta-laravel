@@ -19,4 +19,9 @@ class UsesEmail extends Model
     {
         return $this->hasOne(EmailTemplate::class, 'id', 'email_id');
     }
+
+    public function receivedBy()
+    {
+        return $this->hasOne(UserType::class, 'id', 'received_by');
+    }
 }

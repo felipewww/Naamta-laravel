@@ -18,8 +18,35 @@ var Steps = {
 
     moveEventsEmails: function ()
     {
-        var container = document.getElementById('eventsEmails');
-        // var emails = container
+        var container   = document.getElementById('eventsEmails');
+        var e_success   = container.getElementsByClassName('mail-component-success');
+        var e_rejected  = container.getElementsByClassName('mail-component-rejected');
+
+        $(e_success).find('> select').each(function () {
+            $(this).chosen();
+        });
+
+        $(e_rejected).find('> select').each(function () {
+            $(this).chosen();
+        });
+
+        var selects = {
+            success: e_success,
+            rejected: e_rejected
+        };
+
+        for(var idx in selects)
+        {
+            var obj = selects[idx];
+
+            while (obj.length > 0)
+            {
+                var element = obj[0];
+                if (element) {
+                    this.containers[idx].appendChild(element);
+                }
+            }
+        }
     },
 
     setTemplate: function () {

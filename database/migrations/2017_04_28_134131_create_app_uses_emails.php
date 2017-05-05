@@ -19,7 +19,7 @@ class CreateAppUsesEmails extends Migration
     public function up()
     {
         Schema::create('application_uses_emails', function (Blueprint $table) {
-            $table->increments('id');
+//            $table->increments('id');
             $table->integer('email_id')->unsigned();
             $table->integer('received_by')->unsigned();
             $table->integer('application_step_id')->unsigned();
@@ -38,6 +38,7 @@ class CreateAppUsesEmails extends Migration
                 ->references('id')->on('application_steps')
                 ->onDelete('cascade');
 
+            $table->primary(['email_id', 'received_by', 'application_step_id'], 'primary_three_fk');
             $table->timestamps();
 
         });
