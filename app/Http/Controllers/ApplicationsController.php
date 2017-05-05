@@ -169,11 +169,11 @@ class ApplicationsController extends Controller
                     [
                         [
                             'html' => '',
-                            'attributes' => ['class' => 'fa fa-pencil', 'href' => '/applications/'.$reg->id.'/edit']
+                            'attributes' => ['class' => 'btn btn-warning btn-circle fa fa-pencil m-l-10', 'href' => '/applications/'.$reg->id.'/edit']
                         ],
                         [
                             'html' => '',
-                            'attributes' => ['class' => 'fa fa-trash']
+                            'attributes' => ['class' => 'btn btn-danger btn-circle fa fa-trash m-l-10']
                         ]
                     ]
                 ]
