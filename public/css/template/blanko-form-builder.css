@@ -177,8 +177,7 @@
     padding: 0 10px !important;
 }
 .comments .username{
-    font-weight: bold;
-    margin-right: 5px;
+    color: #333;
 }
 .comments .username:after{
     content: ": ";
@@ -198,14 +197,27 @@
     border: none;
 }
 #drag-container.client-view .drag-comments{
-    padding: 0 !important;
+    padding: 5px !important;
+    background: #fafafa;
+    margin: 10px;
+    color: #999;
+}
+
+#drag-container.client-view .drag-comments ul li{
+    font-size: 0.85em;
 }
 #drag-container.client-view .drag-comments h4{
     font-size: 1em;
+    margin: 0;
+    padding: 10px;
 }
 #drag-container.client-view .drag-comments textarea{
     height: 38px;
 }
 #drag-container.client-view .toggle-comments{
     cursor: pointer;
+}
+#drag-container.client-view .comment-input{
+    clear: both;
+    margin: 10px 0;
 }
