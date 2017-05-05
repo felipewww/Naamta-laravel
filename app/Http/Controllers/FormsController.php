@@ -62,6 +62,10 @@ class FormsController extends Controller
                         [
                             [
                                 'html' => '',
+                                'attributes' => ['class' => 'btn btn-warning btn-circle fa fa-eye m-l-10', 'href' => '/forms/'.$reg->id]
+                            ],
+                            [
+                                'html' => '',
                                 'attributes' => ['class' => 'btn btn-warning btn-circle fa fa-pencil m-l-10', 'href' => '/forms/'.$reg->id.'/edit']
                             ],
                             [
@@ -122,6 +126,14 @@ class FormsController extends Controller
         }
 
         return Redirect::to('forms');
+    }
+
+    public function show(Request $request, $id){
+
+        $form = FormTemplate::with( array( 'containers', 'containers.fields') )->findOrFail($id);
+
+        return view('forms.show')->with(['form' => $form, 'containers' => $this->_convertFormToJson($form)]);
+
     }
 
     public function edit(Request $request, $id){
