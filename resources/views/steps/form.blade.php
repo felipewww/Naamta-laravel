@@ -7,11 +7,12 @@
 
     $route = route('steps.store');
     $method = 'POST';
+
     if(isset($vars->step) && $vars->step!=null){
         $method = 'PUT';
         $route = route('steps.update', ['id' => $vars->step->id]);
     }else{
-        $email = new App\Models\User();
+        $vars->step         = new App\Models\Step();
     }
 
 @endphp
@@ -32,6 +33,10 @@
                 <div class="panel-body">
                    <form class="form-horizontal" role="form" method="POST" action="{{ $route }}">
                        {{ csrf_field() }}
+
+                       <input type="hidden" name="_stepFrom" value="{{$vars->stepFrom}}">
+                       <input type="hidden" name="_method" value="{{$method}}">
+                       <input type="hidden" name="application_id" value="{{$vars->application->id}}">
 
                        <div class="form-group{{ $errors->has('title') ? ' has-error' : '' }}">
                            <label class="col-md-12">Title</label>
@@ -57,23 +62,23 @@
                            </div>
                        </div>
 
-                       <div class="form-group {{ $errors->has('title') ? ' has-error' : '' }}" id="forms">
-                           <label class="col-sm-12">Previous Step</label>
-                           <div class="col-sm-12">
-                               <select class="form-control" name="previous_step">
-                                   <option value="">Select previous step (if exists)</option>
-                                   @foreach($vars->steps as $step)
-                                       <option {{ $step->selected  }} value="{{ $step->id }}">{{  $step->title }}</option>
-                                   @endforeach
-                               </select>
+                       {{--<div class="form-group {{ $errors->has('title') ? ' has-error' : '' }}" id="forms">--}}
+                           {{--<label class="col-sm-12">Previous Step</label>--}}
+                           {{--<div class="col-sm-12">--}}
+                               {{--<select class="form-control" name="previous_step">--}}
+                                   {{--<option value="">Select previous step (if exists)</option>--}}
+                                   {{--@foreach($vars->steps as $step)--}}
+                                       {{--<option {{ $step->selected  }} value="{{ $step->id }}">{{  $step->title }}</option>--}}
+                                   {{--@endforeach--}}
+                               {{--</select>--}}
 
-                               @if ($errors->has('title'))
-                                   <span class="help-block">
-                                        <strong>{{ $errors->first('title') }}</strong>
-                                    </span>
-                               @endif
-                           </div>
-                       </div>
+                               {{--@if ($errors->has('title'))--}}
+                                   {{--<span class="help-block">--}}
+                                        {{--<strong>{{ $errors->first('title') }}</strong>--}}
+                                    {{--</span>--}}
+                               {{--@endif--}}
+                           {{--</div>--}}
+                       {{--</div>--}}
 
                        <div class="form-group {{ $errors->has('title') ? ' has-error' : '' }}" id="forms">
                            <label class="col-sm-12">Responsible</label>
@@ -145,12 +150,12 @@
                                        @foreach($usedMail as $email_id => $staffs_id)
                                            <div class="mail-component-{{ $event }}" style="">
                                                <h2 class="delete_component">Delete</h2>
-                                               <select style="width: 20%;">
+                                               <select name="usedemails[{{$event}}][{{$email_id}}][id]" style="width: 20%;">
                                                    @foreach($vars->emailTemplates as $tpl)
                                                        <option {{ ( $tpl->id == $email_id ) ? 'selected' : ''  }} value="{{$tpl->id}}">{{ $tpl->title }}</option>
                                                    @endforeach
                                                </select>
-                                               <select multiple style="width: 80%;">
+                                               <select name="usedemails[{{$event}}][{{$email_id}}][staffs][]" multiple style="width: 80%;">
                                                    <option>Select an user type</option>
                                                    @foreach($vars->userTypes as $utype)
                                                        <option {{ ( gettype(array_search($utype->id, $staffs_id)) == 'integer'  ? 'selected' : '') }} value="{{$utype->id}}">{{ $utype->title }}</option>

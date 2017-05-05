@@ -19,6 +19,7 @@ class CreateStepsTable extends Migration
             $table->integer('responsible')->unsigned();
             $table->string('morphs_from');
             $table->text('description');
+            $table->integer('ordination');
             $table->integer('previous_step')->unsigned()->nullable();
 
             $table->tinyInteger('status')->default(1);

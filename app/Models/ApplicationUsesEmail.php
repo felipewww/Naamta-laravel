@@ -23,4 +23,9 @@ class ApplicationUsesEmail extends Model
     {
         return $this->hasOne(ApplicationUserTypes::class, 'id', 'received_by');
     }
+
+    public function applicationSteps()
+    {
+        return $this->belongsToMany(ApplicationStep::class);
+    }
 }

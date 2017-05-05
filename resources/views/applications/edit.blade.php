@@ -98,9 +98,9 @@
                                             <tr>
                                                 <td>
                                                     {{ $uApp->user->name }}
-                                                    <input type="hidden" name="users_application[]" value="{{ $uApp->user->id }}, {{ $uApp->type->id }}">
+                                                    <input type="hidden" name="users_application[]" value="{{ $uApp->user->id }}, {{ $uApp->appType->id }}">
                                                 </td>
-                                                <td>{{ $uApp->type->title }}</td>
+                                                <td>{{ $uApp->appType->title }}</td>
                                                 <td class="text-nowrap">
                                                     <a href="#" onclick="event.preventDefault();$(this).parent().parent().remove();" data-toggle="tooltip" data-original-title="Delete" class="removeTr"> <i class="fa fa-close text-danger"></i> </a>
                                                 </td>

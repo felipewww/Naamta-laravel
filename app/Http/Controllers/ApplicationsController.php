@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Library\DataTablesExtensions;
+use App\Models\ApplicationStep;
 use App\Models\ApplicationUsesEmail;
 use Validator;
 use Session;
@@ -62,21 +63,16 @@ class ApplicationsController extends Controller
     {
         $this->usersApplication = UserApplication::where('application_id', $id)->get();
         $application = Application::FindOrFail($id);
+        
+        $steps = $application->steps()->with(['usesEmails', 'usesEmails.receivedBy', 'usesEmails.template'])->orderBy('ordination')->get();
 
-        //$application = Application::with(['userTypes','userTypes.usesEmails'])->FindOrFail($id);
-        $steps = $application->steps()->with(['usesEmails', 'usesEmails.receivedBy', 'usesEmails.template'])->get();
-//        dd($steps);
-//        dd($application->userTypes()->with(['usesEmails'])->get());
-
-        //$steps = $application->appSteps;
-//        dd($steps);
         return view('applications.form',
             [
-                'application' => $application,
-                'staffs' => $this->staffs,
-                'userTypes' => $this->userTypes,
-                'usersApplication' => $this->usersApplication,
-                'steps' => $steps
+                'application'       => $application,
+                'staffs'            => $this->staffs,
+                'userTypes'         => $this->userTypes,
+                'usersApplication'  => $this->usersApplication,
+                'steps'             => $steps
             ]
         );
     }
@@ -110,6 +106,7 @@ class ApplicationsController extends Controller
             \DB::commit();
             \Session::flash('success','Application updated: ' . $request->title);
         } catch(Exception $e){
+        dd("here");
             \Session::flash('error','Application update failed: ' . $e);
             \DB::rollBack();
             throw $e;
@@ -120,9 +117,42 @@ class ApplicationsController extends Controller
 
     public function settings($id)
     {
-        $application = Application::FindOrFail($id);
+        $usersApplication = UserApplication::with(['user','appType'])->where('application_id', $id)->get();
 
-        return view('applications.settings');
+        $application    = Application::FindOrFail($id);
+        $userTypes      = $application->userTypes;
+        $staffs         = User::all();
+        return view('applications.edit',
+            [
+                'application' => $application,
+                'userTypes' => $userTypes,
+                'staffs' => $staffs,
+                'usersApplication'  => $usersApplication,
+            ]
+        );
+    }
+
+    public function saveStepsPosition($appID, Request $request)
+    {
+        $application = Application::FindOrFail($appID);
+
+        \DB::beginTransaction();
+        $previous_step = null;
+        $i = 0;
+        while ($i < count($request->ids))
+        {
+            $stepID = $request->ids[$i];
+            
+            $step = ApplicationStep::findOrFail($stepID);
+            $step->previous_step = $previous_step;
+            $step->ordination = $i;
+            $step->save();
+            $previous_step = $stepID;
+            $i++;
+        }
+        \DB::commit();
+
+        return json_encode(['status' => true]);
     }
 
     private function dataTablesConfig()

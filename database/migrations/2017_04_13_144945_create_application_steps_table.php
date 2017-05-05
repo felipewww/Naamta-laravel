@@ -19,20 +19,20 @@ class CreateApplicationStepsTable extends Migration
             $table->string('title');
             $table->string('description');
             $table->tinyInteger('status')->default(0);
+            $table->integer('ordination');
             $table->integer('responsible')->unsigned();
             $table->integer('application_id')->unsigned();
             $table->integer('previous_step')->unsigned()->nullable();
-
-
+            
             $table->string('morphs_from');
-
+            
             $table->foreign('application_id')
                 ->references('id')->on('applications')
                 ->onDelete('cascade');
-
+            
             $table->foreign('previous_step')
                 ->references('id')->on('application_steps');
-
+            
             $table->foreign('responsible')
                     ->references('id')->on('application_user_types')
                     ->onDelete('restrict');

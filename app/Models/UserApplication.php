@@ -18,4 +18,9 @@ class UserApplication extends Model
     {
         return $this->hasOne('App\Models\UserType', 'id', 'user_type');
     }
+
+    public function appType()
+    {
+        return $this->belongsTo(ApplicationUserTypes::class, 'user_type', 'id');
+    }
 }

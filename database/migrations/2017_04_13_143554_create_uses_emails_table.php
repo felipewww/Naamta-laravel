@@ -14,7 +14,7 @@ class CreateUsesEmailsTable extends Migration
     public function up()
     {
         Schema::create('uses_emails', function (Blueprint $table) {
-            $table->increments('id');
+//            $table->increments('id');
             $table->integer('email_id')->unsigned();
             $table->integer('received_by')->unsigned();
             $table->integer('step_id')->unsigned();
@@ -32,7 +32,9 @@ class CreateUsesEmailsTable extends Migration
             $table->foreign('step_id')
                 ->references('id')->on('steps')
                 ->onDelete('cascade');
-                    
+
+            $table->primary(['email_id', 'received_by', 'step_id'], 'primary_three_fk');
+
             $table->timestamps();
         });
     }

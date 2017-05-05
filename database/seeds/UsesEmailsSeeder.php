@@ -16,7 +16,7 @@ class UsesEmailsSeeder extends Seeder
             array
             (
                 [
-                    'id'            => 1,
+//                    'id'            => 1,
                     'email_id'      => 1,
                     'received_by'   => 1,
                     'step_id'       => 1,
@@ -25,7 +25,7 @@ class UsesEmailsSeeder extends Seeder
                     'updated_at' => Carbon::now(),
                 ],
                 [
-                    'id'            => 2,
+//                    'id'            => 2,
                     'email_id'      => 2,
                     'received_by'   => 1,
                     'step_id'       => 1,
