@@ -183,3 +183,29 @@
 .comments .username:after{
     content: ": ";
 }
+
+#drag-container.client-view .draggable-input{
+    border: none;
+}
+#drag-container.client-view .panel-body{
+    padding: 0 0 12px;
+}
+#drag-container.client-view .form-group{
+    padding: 0;
+    margin: 0;
+}
+#drag-container.client-view .tab{
+    border: none;
+}
+#drag-container.client-view .drag-comments{
+    padding: 0 !important;
+}
+#drag-container.client-view .drag-comments h4{
+    font-size: 1em;
+}
+#drag-container.client-view .drag-comments textarea{
+    height: 38px;
+}
+#drag-container.client-view .toggle-comments{
+    cursor: pointer;
+}

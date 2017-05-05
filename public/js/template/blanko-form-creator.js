@@ -1,7 +1,7 @@
 var isEditable = true;
 var fieldCounter = 0; // FIELD ID
 var tabCounter = 0; //TAB ID
-var username = 'Fulano de Tal'; // USER NAME
+var username = 'User Name'; // USER NAME
 
 // Temporary variables
 var tempContainers;
@@ -172,14 +172,33 @@ function toJson(){
 
 // Creates tabs from json
 // Uses createFields
-function createTabs(json){
+function createTabs(json, clientView = false){
+  $('.tab-control').remove();
   var objs = JSON.parse(json);
   objs.forEach(function(obj){
     addTab(obj.config);
-    obj.fields.forEach(createFields);
+    if(obj.fields != undefined){
+      obj.fields.forEach(createFields);
+    }
   });
   $('.tab-control').removeClass('active');
   $('.tab-control:first-of-type').addClass('active');
+
+  if(clientView){
+    $('#drag-container').addClass('client-view');
+    $('.draggable-input').removeClass('panel');
+    $('.tabs-options').remove();
+    $('.drag-heading').remove();
+    $('#list-container').remove();
+    $('.drag-options').remove();
+    $('.tab-control .fa').remove();
+    $('.help').append($('<i>', {
+      class : 'fa fa-comments toggle-comments',
+      click : function(){
+        $(this).closest('.draggable-input').find('.drag-comments').toggleClass('hidden');
+      }
+    }));
+  }
 }
 
 // Creates the fields related to the createTabs function
@@ -199,7 +218,7 @@ function createFields(obj){
   $(clone).appendTo('.tab.active');
   if(obj.comments!=null){
     obj.comments.forEach(function(comment){
-      appendComment(comment.username, comment.msg, obj.id);
+      appendComment(comment.username, comment.msg, $(clone));
     })
   }
 }
