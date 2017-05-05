@@ -267,7 +267,7 @@ function appendList(){
 
 // Appends tabs navigation
 function appendNavigation(){
-  var html = '<div class="form-holder"><div class="tabs-options"><a class="btn btn-custom2" id="addTab">Add Tab</a><a class="btn btn-save m-l-20" id="save">Save</a><a class="btn btn-default m-l-20" id="open-history">History</a></div><nav><ul></ul></nav><div class="tabs-holder"></div></div>';
+  var html = '<div class="form-holder"><div class="tabs-options"><a class="btn btn-custom2" id="addTab">Add Page</a><a class="btn btn-save m-l-20" id="save">Save History</a><a class="btn btn-default m-l-20" id="open-history">History</a></div><nav><ul></ul></nav><div class="tabs-holder"></div></div>';
   $('#drag-container').append(html);  
   
   $('#addTab').click(function(e){
@@ -302,7 +302,7 @@ function appendNavigation(){
 
 // Adds a new tab on the form-holder
 function addTab(obj = null){
-  var title = (obj != null) ? obj.title : 'New Tab';
+  var title = (obj != null) ? obj.title : 'New Page';
   $('.tab-control').removeClass('active');
   var tabId = (obj != null) ? obj.id : tabCounter++;
   localStorage.setItem('tabCounter', tabCounter);
@@ -402,7 +402,5 @@ function getHash(elem){
 }
 
 function appendComment(user, msg, id){
-  
   $('.draggable-input[data-id="'+ id +'"]').find('.comments').append('<li><p><span class="username">'+ user +'</span><span class="message">'+ msg +'</span></p></li>');
-  
 }

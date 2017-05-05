@@ -59,11 +59,12 @@ class ScreensController extends Controller
                     'rowActions' =>
                         [
                             [
-                                'html' => 'edit',
-                                'attributes' => ['href' => '/screens/'.$reg['id'].'/edit']
+                                'html' => '',
+                                'attributes' => ['class' => 'btn btn-warning btn-circle fa fa-pencil m-l-10', 'href' => '/screens/'.$reg->id.'/edit']
                             ],
                             [
-                                'html' => 'delete',
+                                'html' => '',
+                                'attributes' => ['class' => 'btn btn-danger btn-circle fa fa-trash m-l-10']
                             ]
                         ]
                 ]

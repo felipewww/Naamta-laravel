@@ -52,12 +52,12 @@ class SystemUsersController extends Controller
                     'rowActions' =>
                         [
                             [
-                                'html' => 'fa fa-trash',
-                                'attributes' => ['class' => 'btn btn-warning btn-circle']
+                                'html' => '',
+                                'attributes' => ['class' => 'btn btn-warning btn-circle fa fa-pencil m-l-10', 'href' => '/users/'.$reg->id.'/edit']
                             ],
                             [
-                                'html' => 'delete',
-                                'attributes' => ['class' => 'btn btn-danger btn-circle']
+                                'html' => '',
+                                'attributes' => ['class' => 'btn btn-danger btn-circle fa fa-trash m-l-10']
                             ]
                         ]
                 ]

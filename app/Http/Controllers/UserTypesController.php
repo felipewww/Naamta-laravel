@@ -58,10 +58,12 @@ class UserTypesController extends Controller
                     'rowActions' =>
                         [
                             [
-                                'html' => 'edit',
+                                'html' => '',
+                                'attributes' => ['class' => 'btn btn-warning btn-circle fa fa-pencil m-l-10', 'href' => '/usertypes/'.$reg->id.'/edit']
                             ],
                             [
-                                'html' => 'delete',
+                                'html' => '',
+                                'attributes' => ['class' => 'btn btn-danger btn-circle fa fa-trash m-l-10']
                             ]
                         ]
                 ]
