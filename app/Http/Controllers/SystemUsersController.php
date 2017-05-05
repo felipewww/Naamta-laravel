@@ -57,7 +57,7 @@ class SystemUsersController extends Controller
                             ],
                             [
                                 'html' => '',
-                                'attributes' => ['class' => 'btn btn-danger btn-circle fa fa-trash m-l-10']
+                                'attributes' => ['class' => 'btn btn-danger btn-circle fa fa-trash m-l-10 modal-delete', 'data-toggle'=>'modal', 'data-target' => '#modalDelete', 'data-action' => route('users.destroy' , $reg->id)]
                             ]
                         ]
                 ]
@@ -112,16 +112,16 @@ class SystemUsersController extends Controller
         return redirect('users');
     }
     
-    public function delete(Request $request, $userId){
+    public function destroy(Request $request, $userId){
           
         // delete
         try{
-            User::where('id', $id)->delete();
-            Session::flash('message', 'User deleted!');
+            User::where('id', $userId)->delete();
+            \Session::flash('message', 'User deleted!');
         }catch (Exception $e){
-            Session::flash('message', 'User delete failed!');
+            \Session::flash('message', 'User delete failed!');
         }
 
-        return Redirect::to('users');
+        return redirect('users');
     }
 }

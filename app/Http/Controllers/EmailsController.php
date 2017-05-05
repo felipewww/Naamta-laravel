@@ -62,7 +62,7 @@ class EmailsController extends Controller
                             ],
                             [
                                 'html' => '',
-                                'attributes' => ['class' => 'btn btn-danger btn-circle fa fa-trash m-l-10']
+                                'attributes' => ['class' => 'btn btn-danger btn-circle fa fa-trash m-l-10 modal-delete', 'data-toggle'=>'modal', 'data-target' => '#modalDelete', 'data-action' => route('emails.destroy' , $reg->id)]
                             ]
                         ]
                 ]
@@ -166,14 +166,14 @@ class EmailsController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         // delete
         try{
             EmailTemplate::where('id', $id)->delete();
-            Session::flash('message', 'Email deleted!');
+            \Session::flash('message', 'Email deleted!');
         }catch (Exception $e){
-            Session::flash('message', 'Email delete failed!');
+            \Session::flash('message', 'Email delete failed!');
         }
 
         return Redirect::to('emails');

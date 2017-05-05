@@ -17,6 +17,8 @@ class CreateScreensTable extends Migration
             $table->increments('id');
             $table->string('title');
             $table->text('description');
+            $table->softDeletes();
+            $table->timestamps();
         });
     }
 
@@ -28,7 +30,7 @@ class CreateScreensTable extends Migration
     public function down()
     {
         DB::statement('SET FOREIGN_KEY_CHECKS = 0');
-        Schema::dropIfExists('screens');
+        ScheIfExists('screens');
         DB::statement('SET FOREIGN_KEY_CHECKS = 1');
     }
 }

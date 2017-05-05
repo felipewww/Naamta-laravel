@@ -63,7 +63,7 @@ class UserTypesController extends Controller
                             ],
                             [
                                 'html' => '',
-                                'attributes' => ['class' => 'btn btn-danger btn-circle fa fa-trash m-l-10']
+                                'attributes' => ['class' => 'btn btn-danger btn-circle fa fa-trash m-l-10 modal-delete', 'data-toggle'=>'modal', 'data-target' => '#modalDelete', 'data-action' => route('usertypes.destroy' , $reg->id)]
                             ]
                         ]
                 ]
@@ -163,14 +163,13 @@ class UserTypesController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function destroy($id){
-        
+    public function destroy(Request $request, $id){
         try{
-            $userType = UserType::where('id', $id)->delete();
-            Session::flash('message', 'User Type deleted!');
+            UserType::where('id', $id)->delete();
+            \Session::flash('message', 'User Type deleted!');
             
         }catch (Exception $e){
-            Session::flash('message', 'User Type delete failed!');
+            \Session::flash('message', 'User Type delete failed!');
         }
 
         return Redirect::to('usertypes');
