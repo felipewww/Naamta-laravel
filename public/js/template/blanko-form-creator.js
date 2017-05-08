@@ -75,7 +75,7 @@ createTabs(tabsObj);
 // Transform fields in objects
 function toFieldObject(){
 	var obj = {
-      id : $(this).attr('data-id'),
+    id : $(this).attr('data-id'),
 		type :  $(this).attr('id').split("__")[0],
 		isEditable : isEditable,
 		options : {
@@ -91,7 +91,8 @@ function toFieldObject(){
 	obj.options.min = $(this).find('.min-value').val();
 	obj.options.max = $(this).find('.max-value').val();
 	obj.options.step = $(this).find('.step-value').val();
-    obj.options.type = $(this).find('[type=radio]:checked').val();
+  obj.options.type = $(this).find('[type=radio]:checked').val();
+  obj.options.class = ($(this).hasClass('half-row')) ? 'half-row' : '';
 
     var comments = $(this).find('.comments li');
 
@@ -231,6 +232,9 @@ function configureField(node, options, type){
   node.find('.update-label').val(options.label);
   node.find('.help .text').text(options.help);
   if(options.help == '') node.find('.help .icon').hide();
+
+  //Size of the field
+  node.addClass(options.class);
 
   //other attributes
   node.find('.drag-input input').attr({

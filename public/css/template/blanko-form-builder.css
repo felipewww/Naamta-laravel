@@ -7,6 +7,12 @@
 #drag-container .draggable-input{
     border: 1px solid #e8e8e8;
     transition: 0.5s;
+    display: inline-block;
+    width: 100%;
+    vertical-align: top;
+}
+#drag-container .draggable-input.half-row{
+    width: 49%;
 }
 #drag-container .span-required{
     display: none;
@@ -43,6 +49,9 @@
 #drag-container .drag-heading ul li:hover{
     color: #f59623;
 }
+#drag-container .drag-heading .fa-compress, #drag-container .drag-heading .fa-expand{
+    transform: rotate(45deg);
+}   
 #drag-container .help {
     display: inline;
     position: relative;
@@ -146,12 +155,18 @@
     visibility: visible;
     display: inline-block;
 }
+
 #drag-container #blankSpace{
+    width: 100%;
+    display: inline-block;
     height: 80px;
     opacity: 0.2;
     background-color: #bababa;
     margin: 10px;
     border: 2px dotted #dedede;
+}
+#drag-container #blankSpace.half-row{
+    width: 48%;
 }
 #history a{
     color: #333;
@@ -185,6 +200,7 @@
 
 #drag-container.client-view .draggable-input{
     border: none;
+    padding: 5px 20px;
 }
 #drag-container.client-view .panel-body{
     padding: 0 0 12px;
@@ -215,9 +231,13 @@
     height: 38px;
 }
 #drag-container.client-view .toggle-comments{
+    margin-left: 5px;
     cursor: pointer;
 }
 #drag-container.client-view .comment-input{
     clear: both;
     margin: 10px 0;
+}
+#drag-container.client-view .form-holder{
+    width: 100%;
 }
