@@ -6,6 +6,7 @@ var username = 'User Name'; // USER NAME
 // Temporary variables
 var tempContainers;
 var tempFields;
+var clones = new Array();
 
 // Retrieve variables from storage
  //var form = localStorage.getItem('form');
@@ -75,7 +76,7 @@ createTabs(tabsObj);
 // Transform fields in objects
 function toFieldObject(){
 	var obj = {
-      id : $(this).attr('data-id'),
+    id : $(this).attr('data-id'),
 		type :  $(this).attr('id').split("__")[0],
 		isEditable : isEditable,
 		options : {
@@ -84,6 +85,8 @@ function toFieldObject(){
       comments : []
 	};
 
+  obj.options.ordenate = $(this).index() -1;
+  console.log(obj.options);
 	obj.options.isRequired = $(this).find('.is-required').prop('checked');
 	obj.options.label = $(this).find('.label-text').val();
 	obj.options.help = $(this).find('.help-text').val();
@@ -91,7 +94,9 @@ function toFieldObject(){
 	obj.options.min = $(this).find('.min-value').val();
 	obj.options.max = $(this).find('.max-value').val();
 	obj.options.step = $(this).find('.step-value').val();
-    obj.options.type = $(this).find('[type=radio]:checked').val();
+  obj.options.type = $(this).find('[type=radio]:checked').val();
+  obj.options.class = ($(this).hasClass('half-row')) ? 'half-row' : '';
+
 
     var comments = $(this).find('.comments li');
 
@@ -175,12 +180,23 @@ function toJson(){
 function createTabs(json, clientView = false){
   $('.tab-control').remove();
   var objs = JSON.parse(json);
+  
   objs.forEach(function(obj){
+    clones = new Array();
     addTab(obj.config);
     if(obj.fields != undefined){
       obj.fields.forEach(createFields);
     }
+    clones.sort(function(a, b){
+      var a = $(a).attr('class').split('order_')[1];
+      var b = $(b).attr('class').split('order_')[1];
+      return a - b;
+    });
+    clones.forEach(function(clone){
+      $(clone).appendTo('.tab.active');
+    })
   });
+  
   $('.tab-control').removeClass('active');
   $('.tab-control:first-of-type').addClass('active');
 
@@ -199,6 +215,8 @@ function createTabs(json, clientView = false){
       }
     }));
   }
+
+  ordenateFields();
 }
 
 // Creates the fields related to the createTabs function
@@ -206,16 +224,16 @@ function createTabs(json, clientView = false){
 // Uses configureField
 function createFields(obj){
   var clone = $('#input-types #' + obj.type).clone();
+  console.log(obj);
   $('.tab-control .tab-config').toggle(obj.isEditable);
   $('.tab-control .tab-remove').toggle(obj.isEditable);
   clone.find('.drag-heading').toggle(obj.isEditable);
   clone.find('.drag-options').toggle(obj.isEditable);
   configureField(clone, obj.options, obj.type);
 
-
   addEvents(clone[0], obj.id);
- 
-  $(clone).appendTo('.tab.active');
+  clones.splice(obj.options.ordenate, 0, clone);
+
   if(obj.comments!=null){
     obj.comments.forEach(function(comment){
       appendComment(comment.username, comment.msg, $(clone));
@@ -227,10 +245,15 @@ function createFields(obj){
 // Relates to createFields
 function configureField(node, options, type){
   /*Visual*/
+  node.addClass('order_' + options.ordenate);
+
   node.find('.update-label').text(options.label);
   node.find('.update-label').val(options.label);
   node.find('.help .text').text(options.help);
   if(options.help == '') node.find('.help .icon').hide();
+
+  //Size of the field
+  node.addClass(options.class);
 
   //other attributes
   node.find('.drag-input input').attr({
@@ -253,7 +276,6 @@ function configureField(node, options, type){
 
   options.options.forEach(function(obj){
     addOption(type, node, obj.label, obj.value);
-
   });
 
   /*Options*/
