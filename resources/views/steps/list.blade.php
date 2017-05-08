@@ -7,15 +7,15 @@
 @include('partials.dataTables')
 
 @section('scripts')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
     <script src="/js/template/drag.js"></script>
-
     <script src="/js/template/cbpFWTabs.js"></script>
     <script src="/js/sysSteps.js"></script>
 @endsection
 
 @section('content')
+    @include('partials._modal_steps')
+    @include('partials._modal_delete_step')
+
     <div class="row">
         <div class="col-md-12">
             <div class="">
@@ -23,11 +23,11 @@
                 <section>
                     <div class="sttabs">
                         <a href="/steps/create" class="btn btn-info" style="width: 120px; float: right;"><i class="fa fa-plus"></i> Add Step</a>
-                        <a href="#" onclick="sysSteps.save()" class="btn btn-save m-r-20" style="width: 120px; float: right;"><i class="fa fa-check"></i> Save</a>
+                        <span onclick="sysSteps.save()" class="btn btn-save m-r-20" style="width: 120px; float: right;"><i class="fa fa-check"></i> Save</span>
                         <nav>
                             <ul class="col-md-3">
-                                <li><a href="#active"><span><h3>Active Steps</h3></span></a></li>
-                                <li><a href="#inactive"><span><h3>Inactive Steps</h3></span></a></li>
+                                <li><span href="#active"><span><h3>Active Steps</h3></span></span></li>
+                                <li><span href="#inactive"><span><h3>Inactive Steps</h3></span></span></li>
                             </ul>
                         </nav>
                         <div class="clearfix"></div>
@@ -74,11 +74,14 @@
                                                     <h5 class="m-t-0 m-b-20"><b>Form:</b> Form 1</h5>
 
                                                     <div class="row action">
-                                                        <div class="col-md-6">
-                                                            <a href="#" onclick="sysSteps.changeStatus(this)" data-status="1" class="btn btn-danger">Inactivate</a>
+                                                        <div class="col-md-12">
+                                                            <span onclick="sysSteps.changeStatus(this)" data-status="1" class="btn btn-custom">Inactivate</span>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <a href="/steps/{{ $step->id }}/edit" class="btn btn-circle pull-right btn-custom2"><i class="fa fa-pencil"></i></a>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <span onclick="sysSteps.confirmDelete(this, {{ $step->id }})" class="btn btn-circle pull-right btn-danger"><i class="fa fa-danger"></i></span>
                                                         </div>
                                                     </div>
                                                 </div>

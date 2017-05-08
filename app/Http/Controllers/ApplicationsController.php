@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 use App\Library\DataTablesExtensions;
 use App\Models\ApplicationStep;
 use App\Models\ApplicationUsesEmail;
+use App\Models\Step;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\URL;
 use Validator;
 use Session;
 use Illuminate\Support\Facades\Input;
@@ -72,7 +75,7 @@ class ApplicationsController extends Controller
                 'staffs'            => $this->staffs,
                 'userTypes'         => $this->userTypes,
                 'usersApplication'  => $this->usersApplication,
-                'steps'             => $steps
+                'steps'             => $steps,
             ]
         );
     }
@@ -82,14 +85,17 @@ class ApplicationsController extends Controller
      *
      * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, Response $res)
     {
         $validator = Validator::make($request->all(), $this->rules)->validate();
         \DB::beginTransaction();
         try{
+            $application = Application::where('id', $id)->first();
+
             Application::where('id', $id)->update([
                 'description'  => $request->description,
-                'staff_id'     => $request->staff_id
+                'staff_id'     => $request->staff_id,
+                'status'     => $request->status,
             ]);
 
             if(is_array($request->users_application)){
@@ -106,7 +112,6 @@ class ApplicationsController extends Controller
             \DB::commit();
             \Session::flash('success','Application updated: ' . $request->title);
         } catch(Exception $e){
-        dd("here");
             \Session::flash('error','Application update failed: ' . $e);
             \DB::rollBack();
             throw $e;
@@ -115,19 +120,21 @@ class ApplicationsController extends Controller
 
     }
 
-    public function settings($id)
+    public function settings(Request $request, $id)
     {
         $usersApplication = UserApplication::with(['user','appType'])->where('application_id', $id)->get();
-
         $application    = Application::FindOrFail($id);
         $userTypes      = $application->userTypes;
         $staffs         = User::all();
+        $hasInactiveSteps = $application->steps()->where('status', 0)->get()->count();
+
         return view('applications.edit',
             [
                 'application' => $application,
                 'userTypes' => $userTypes,
                 'staffs' => $staffs,
                 'usersApplication'  => $usersApplication,
+                'hasInactiveSteps'  => $hasInactiveSteps
             ]
         );
     }
@@ -153,6 +160,34 @@ class ApplicationsController extends Controller
         \DB::commit();
 
         return json_encode(['status' => true]);
+    }
+
+    public function changeStepStatus(Request $request)
+    {
+        $step           = ApplicationStep::where('id', $request->id)->first();
+        $newStatus      = ($request->currentStatus == '1') ? 0 : 1;
+        $step->status   = $newStatus;
+        $step->save();
+
+        $res = [
+            'reqStatus' => true,
+            'newStatus' => $newStatus
+        ];
+
+//        dd($request->all());
+        return json_encode($res);
+    }
+
+    public function deleteStep(Request $request)
+    {
+//        dd($request->all());
+        Step::where('id', $request->id)->delete();
+        
+        $res = [
+            'status' => true
+        ];
+
+        return json_encode($res);
     }
 
     private function dataTablesConfig()

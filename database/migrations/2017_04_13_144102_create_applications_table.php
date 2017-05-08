@@ -16,17 +16,12 @@ class CreateApplicationsTable extends Migration
         Schema::create('applications', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('client_id')->unsigned()->nullable();
-//            $table->integer('staff_id')->unsigned()->nullable();
             $table->text('description');
-            $table->boolean('status')->default(0);
+            $table->boolean('status');
 
             $table->foreign('client_id')
                     ->references('id')->on('clients')
                     ->onDelete('set null');
-
-//            $table->foreign('staff_id')
-//                    ->references('id')->on('application_user_types')
-//                    ->onDelete('set null');
 
             $table->timestamps();
                     

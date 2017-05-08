@@ -22,7 +22,13 @@
             <div class="panel panel-default">
                 <div class="panel-heading">Applications</div>
                 <div class="panel-body">
+                    @if( $hasInactiveSteps )
+                    <div class="alert alert-danger">
+                        <strong>Warning!</strong> This application has one ore more steps inactivated and cannot be activated for a while. <a href="/applications/{{$application->id}}/edit">Click here to solve it.</a>
+                    </div>
+                    @endif
                    <form class="form-horizontal" role="form" method="POST" action="{{ $route }}">
+                    {{--{!! Form::open(array('url' => $route, 'class' => 'form-horizontal')) !!}--}}
                         {{ csrf_field() }}
                         <input type="hidden" name="_method" value="{{ $method }}">
                         <div class="form-group" style="margin-top: 15px;">
@@ -114,8 +120,10 @@
                             <label for="text" class="col-md-4 control-label">Status</label>
                             <div class="col-md-6">
                                 <select class="form-control" name="status">
-                                    <option value="1" {{ (isset($email) && $email->status == 1 ? "selected" : "") }} >Active</option>
-                                    <option value="0" {{ (isset($email) && $email->status == 0 ? "selected" : "") }} >Inactive</option>
+                                    {{--<option value="1" {{ (isset($email) && $email->status == 1 ? "selected" : "") }} >Active</option>--}}
+                                    {{--<option value="0" {{ (isset($email) && $email->status == 0 ? "selected" : "") }} >Inactive</option>--}}
+                                    <option {{ ($hasInactiveSteps) ? 'disabled' : '' }} value="1" {{ ($application->status) ? "selected" : "" }} >Active</option>
+                                    <option value="0" {{ (!$application->status) ? "selected" : ""  }} >Inactive</option>
                                 </select>
                                 @if ($errors->has('status'))
                                     <span class="help-block">
@@ -132,6 +140,7 @@
                             </div>
                         </div>
                     </form>
+                    {{--{!! Form::close() !!}--}}
                 </div>
             </div>
         </div>
