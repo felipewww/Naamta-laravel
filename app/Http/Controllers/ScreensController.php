@@ -64,7 +64,7 @@ class ScreensController extends Controller
                             ],
                             [
                                 'html' => '',
-                                'attributes' => ['class' => 'btn btn-danger btn-circle fa fa-trash m-l-10']
+                                'attributes' => ['class' => 'btn btn-danger btn-circle fa fa-trash m-l-10 modal-delete', 'data-toggle'=>'modal', 'data-target' => '#modalDelete', 'data-action' => route('screens.destroy' , $reg->id)]
                             ]
                         ]
                 ]
@@ -139,18 +139,17 @@ class ScreensController extends Controller
         
         return redirect('screens');
     }
-    
-    public function delete(Request $request, $id){
-          
+
+    public function destroy(Request $request, $id){
         // delete
         try{
             Screen::where('id', $id)->delete();
-            Session::flash('message', 'Screen deleted!');
+            \Session::flash('message', 'Screen deleted!');
         }catch (Exception $e){
-            Session::flash('message', 'Screen delete failed!');
+            \Session::flash('message', 'Screen delete failed!');
         }
 
-        return Redirect::to('screens');
+        return redirect('screens');
     }
 
 }

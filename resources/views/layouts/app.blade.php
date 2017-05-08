@@ -102,6 +102,7 @@
                     @endif
                     @if(Auth::user()!=null && (Auth::user()->isAdmin() || Auth::user()->isStaff()))
                         <li> <a href="{{ url('forms') }}"> Form Types</a></li>
+                        <li> <a href="{{ url('screens') }}"> Screen Types</a></li>
                         <li> <a href="{{ url('applications') }}"> Applications</a></li>
                     @endif
                 </ul>
@@ -131,6 +132,7 @@
         </div>
         <!-- /#page-wrapper -->
     </div>
+    @include('partials.modal_delete')
     {{--<script>--}}
         {{--const data = {--}}
             {{--name: 'Leonardo Carvalho',--}}
@@ -145,5 +147,6 @@
                 {{--// List errors on response...--}}
         {{--});--}}
     {{--</script>--}}
+
 </body>
 </html>

@@ -62,11 +62,15 @@ class FormsController extends Controller
                         [
                             [
                                 'html' => '',
+                                'attributes' => ['class' => 'btn btn-warning btn-circle fa fa-eye m-l-10', 'href' => '/forms/'.$reg->id]
+                            ],
+                            [
+                                'html' => '',
                                 'attributes' => ['class' => 'btn btn-warning btn-circle fa fa-pencil m-l-10', 'href' => '/forms/'.$reg->id.'/edit']
                             ],
                             [
                                 'html' => '',
-                                'attributes' => ['class' => 'btn btn-danger btn-circle fa fa-trash m-l-10']
+                                'attributes' => ['class' => 'btn btn-danger btn-circle fa fa-trash m-l-10 modal-delete', 'data-toggle'=>'modal', 'data-target' => '#modalDelete', 'data-action' => route('forms.destroy' , $reg->id)]
                             ]
                         ]
                 ]
@@ -124,6 +128,14 @@ class FormsController extends Controller
         return Redirect::to('forms');
     }
 
+    public function show(Request $request, $id){
+
+        $form = FormTemplate::with( array( 'containers', 'containers.fields') )->findOrFail($id);
+
+        return view('forms.show')->with(['form' => $form, 'containers' => $this->_convertFormToJson($form)]);
+
+    }
+
     public function edit(Request $request, $id){
         
         $form = FormTemplate::with( array( 'containers', 'containers.fields') )->findOrFail($id);
@@ -151,17 +163,17 @@ class FormsController extends Controller
         return redirect('forms');
     }
     
-    public function delete(Request $request, $id){
-          
+    public function destroy(Request $request, $id){
+
         // delete
         try{
             FormTemplate::where('id', $id)->delete();
-            Session::flash('message', 'Form deleted!');
+            \Session::flash('message', 'Form deleted!');
         }catch (Exception $e){
-            Session::flash('message', 'Form delete failed!');
+            \Session::flash('message', 'Form delete failed!');
         }
 
-        return Redirect::to('forms');
+        return redirect('forms');
     }
 
      /**

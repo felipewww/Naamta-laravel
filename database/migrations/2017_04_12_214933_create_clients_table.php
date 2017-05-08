@@ -23,6 +23,7 @@ class CreateClientsTable extends Migration
                     ->onDelete('cascade');
 
             $table->timestamps();
+            $table->softDeletes();
 
         });
     }

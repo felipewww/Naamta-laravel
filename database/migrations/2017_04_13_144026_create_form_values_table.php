@@ -27,7 +27,6 @@ class CreateFormValuesTable extends Migration
                     ->references('id')->on('fields')
                     ->onDelete('set null');
 
-
             $table->timestamps();
         });
     }

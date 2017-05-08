@@ -19,6 +19,7 @@ class CreateTableEmailTemplatesTable extends Migration
             $table->longText('text');
             $table->tinyInteger('status')->default(1);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
