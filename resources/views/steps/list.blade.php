@@ -78,10 +78,10 @@
                                                             <span onclick="sysSteps.changeStatus(this)" data-status="1" class="btn btn-custom">Inactivate</span>
                                                         </div>
                                                         <div class="col-md-6">
-                                                            <a href="/steps/{{ $step->id }}/edit" class="btn btn-circle pull-right btn-custom2"><i class="fa fa-pencil"></i></a>
+                                                            <a href="/steps/{{ $step->id }}/edit" class="btn btn-circle pull-right btn-custom2" data-dismiss="modal"><i class="fa fa-pencil"></i></a>
                                                         </div>
                                                         <div class="col-md-6">
-                                                            <span onclick="sysSteps.confirmDelete(this, {{ $step->id }})" class="btn btn-circle pull-right btn-danger"><i class="fa fa-danger"></i></span>
+                                                            <span onclick="sysSteps.confirmDelete(this, {{ $step->id }})" class="btn btn-circle pull-right btn-danger" data-dismiss="modal"><i class="fa fa-close"></i></span>
                                                         </div>
                                                     </div>
                                                 </div>

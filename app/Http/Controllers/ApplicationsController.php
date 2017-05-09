@@ -38,6 +38,7 @@ class ApplicationsController extends Controller
 
     public function __construct()
     {
+        parent::__construct();
         $this->middleware(function ($request, $next) {
             $user = \Auth::user()->authorizeRoles(['admin']);;
             return $next($request);
@@ -58,12 +59,20 @@ class ApplicationsController extends Controller
      */
     public function index(Request $request)
     {
+        $this->pageInfo->title              = 'All Applications';
+        $this->pageInfo->category->title    = 'Applications';
+        $this->pageInfo->subCategory->title = 'List';
+
         $this->dataTablesInit();
-        return view('applications.list', ['dataTables' => $this->dataTables ]);
+        return view('applications.list', ['dataTables' => $this->dataTables, 'pageInfo' => $this->pageInfo]);
     }
 
     public function edit(Request $request, $id)
     {
+        $this->pageInfo->title              = 'Application Steps';
+        $this->pageInfo->category->title    = 'Application';
+        $this->pageInfo->subCategory->title = 'Edit Steps';
+
         $this->usersApplication = UserApplication::where('application_id', $id)->get();
         $application = Application::FindOrFail($id);
         
@@ -76,6 +85,7 @@ class ApplicationsController extends Controller
                 'userTypes'         => $this->userTypes,
                 'usersApplication'  => $this->usersApplication,
                 'steps'             => $steps,
+                'pageInfo'          => $this->pageInfo
             ]
         );
     }
@@ -122,6 +132,10 @@ class ApplicationsController extends Controller
 
     public function settings(Request $request, $id)
     {
+        $this->pageInfo->title              = 'Application Settings';
+        $this->pageInfo->category->title    = 'Application';
+        $this->pageInfo->subCategory->title = 'Edit Settings';
+
         $usersApplication = UserApplication::with(['user','appType'])->where('application_id', $id)->get();
         $application    = Application::FindOrFail($id);
         $userTypes      = $application->userTypes;
@@ -134,7 +148,8 @@ class ApplicationsController extends Controller
                 'userTypes' => $userTypes,
                 'staffs' => $staffs,
                 'usersApplication'  => $usersApplication,
-                'hasInactiveSteps'  => $hasInactiveSteps
+                'hasInactiveSteps'  => $hasInactiveSteps,
+                'pageInfo' => $this->pageInfo
             ]
         );
     }
@@ -173,14 +188,12 @@ class ApplicationsController extends Controller
             'reqStatus' => true,
             'newStatus' => $newStatus
         ];
-
-//        dd($request->all());
+        
         return json_encode($res);
     }
 
     public function deleteStep(Request $request)
     {
-//        dd($request->all());
         Step::where('id', $request->id)->delete();
         
         $res = [

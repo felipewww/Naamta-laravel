@@ -25,6 +25,7 @@ class EmailsController extends Controller
 
     public function __construct()
     {
+        parent::__construct();
         $this->middleware(function ($request, $next) {
             $user = \Auth::user()->authorizeRoles(['admin']);;
             return $next($request);
@@ -40,8 +41,12 @@ class EmailsController extends Controller
      */
     public function index(Request $request)
     {
+        $this->pageInfo->title              = 'Email Templates';
+        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->subCategory->title = 'Email List';
+
         $this->dataTablesInit();
-        return view('emails.list', ['dataTables' => $this->dataTables ]);
+        return view('emails.list', ['dataTables' => $this->dataTables, 'pageInfo' => $this->pageInfo ]);
     }
 
     public function dataTablesConfig()
@@ -87,8 +92,11 @@ class EmailsController extends Controller
      */
     public function create()
     {
+        $this->pageInfo->title              = 'Email Templates';
+        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->subCategory->title = 'Email Create';
         // load the view and pass the email
-        return view('emails.form');
+        return view('emails.form', ['pageInfo' => $this->pageInfo]);
     }
 
      /**
@@ -126,12 +134,15 @@ class EmailsController extends Controller
      */
     public function edit($id)
     {
+        $this->pageInfo->title              = 'Email Templates';
+        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->subCategory->title = 'Email Edit';
+
         // Get email template
-        EmailTemplate::findOrFail($id);
+        $email = EmailTemplate::findOrFail($id);
 
         // show the view and pass the email to it
-        return view('emails.form')
-            ->with(array('email' => $email));
+        return view('emails.form', ['email' => $email, 'pageInfo' => $this->pageInfo]);
     }
 
     /**

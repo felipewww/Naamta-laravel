@@ -17,7 +17,7 @@ class CreateApplicationsTable extends Migration
             $table->increments('id');
             $table->integer('client_id')->unsigned()->nullable();
             $table->text('description');
-            $table->boolean('status');
+            $table->boolean('status')->default(0);
 
             $table->foreign('client_id')
                     ->references('id')->on('clients')
