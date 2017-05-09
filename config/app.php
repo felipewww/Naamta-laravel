@@ -53,7 +53,7 @@ return [
 
     'url' => env('APP_URL', 'http://naamta-backend.azurewebsites.net'),
 
-    /*
+    /*http://naamta-backend.azurewebsites.net
     |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
