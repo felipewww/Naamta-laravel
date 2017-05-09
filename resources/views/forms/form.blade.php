@@ -6,8 +6,10 @@
     $route = route('forms.store');
     $method = 'POST';
     if(isset($form) && $form!=null){
-        $route = route('forms.update', ['id' => $form->id]);
-        $method = 'PUT';
+        if($form->id!=null){
+            $route = route('forms.update', ['id' => $form->id]);
+            $method = 'PUT';
+        }
     }else{
         $form = new App\Models\FormTemplate();
     }
@@ -43,8 +45,8 @@
                     <label class="col-sm-12">Status</label>
                     <div class="col-sm-12">
                         <select class="form-control" name="status">
-                            <option value="1" {{ (isset($email) && $email->status == 1 ? "selected" : "") }} >Active</option>
-                            <option value="0" {{ (isset($email) && $email->status == 0 ? "selected" : "") }} >Inactive</option>
+                            <option value="1" {{ (isset($form) && $form->status == 1 ? "selected" : "") }} >Active</option>
+                            <option value="0" {{ (isset($form) && $form->status == 0 ? "selected" : "") }} >Inactive</option>
                         </select>
                     </div>
                 </div>

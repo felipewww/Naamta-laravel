@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Comments extends Model
+class Comment extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -12,7 +12,7 @@ class Comments extends Model
      * @var array
      */
     protected $fillable = [
-        'text', 'status', 'field', 'response', 'status'
+        'userId', 'userName', 'text', 'field'
     ];
 
     public function user()

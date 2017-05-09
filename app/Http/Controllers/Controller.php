@@ -33,9 +33,9 @@ class Controller extends BaseController
         $_return = array();
         foreach ($form->containers as $i => $c){
             $_return[$i]["config"] = [
-                'id'    =>  ($clone ? null : $c->id),
+                'id'    =>  ($clone ? $i : $c->id),
                 'title'  =>  $c->name,
-                'tabId' =>  $c->id,
+                'tabId' =>  ($clone ? "": $c->id),
             ];
 
             foreach($c->fields as $k => $v){
@@ -43,8 +43,13 @@ class Controller extends BaseController
                 $_return[$i]["fields"][$k]["type"] =  $v->type;
                 $_return[$i]["fields"][$k]["container_id"] =  $v->container_id;
                 $_return[$i]["fields"][$k]["isEditable"] =  true;
+                $_return[$i]["fields"][$k]["comments"] = array();
+                if(isset($v->comments) && count($v->comments) > 0){
+                    foreach ($v->comments as $comment) {
+                        array_push($_return[$i]["fields"][$k]["comments"], array("username" => $comment->user_name, "msg" => $comment->text));
+                    }
+                }
                 $_return[$i]["fields"][$k]["options"] =  json_decode($v->config);
-                $_return[$i]["fields"][$k]["commments"] =  json_decode("[{username : 'John',msg : 'A Comment'},{username : 'Josephine', msg : 'Another Comment'}]");
             }
         }
         return json_encode($_return);
