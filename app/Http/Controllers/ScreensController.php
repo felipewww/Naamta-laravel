@@ -29,6 +29,7 @@ class ScreensController extends Controller
      */
     public function __construct()
     {
+        parent::__construct();
         $this->middleware('auth');
         $this->screens = Screen::all();
     }
@@ -40,9 +41,13 @@ class ScreensController extends Controller
      */
     public function index(Request $request)
     {
+        $this->pageInfo->title              = 'Screens';
+        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->subCategory->title = 'Screens List';
+
         $request->user()->authorizeRoles(['admin', 'staff']);
         $this->dataTablesInit();
-        return view('screens.list', ['dataTables' => $this->dataTables]);
+        return view('screens.list', ['dataTables' => $this->dataTables, 'pageInfo' => $this->pageInfo]);
     }
 
     public function dataTablesConfig()
@@ -89,9 +94,13 @@ class ScreensController extends Controller
      */
     public function create()
     {
+        $this->pageInfo->title              = 'Screens';
+        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->subCategory->title = 'Screen Create';
+
         // get all the nerds
         // load the view and pass the nerds
-        return view('screens.form');
+        return view('screens.form', ['pageInfo' => $this->pageInfo]);
     }
 
     /**
@@ -119,10 +128,14 @@ class ScreensController extends Controller
     }
 
     public function edit(Request $request, $id){
-        
+
+        $this->pageInfo->title              = 'Screens';
+        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->subCategory->title = 'Screens Edit';
+
         $screen = Screen::findOrFail($id);
        
-        return view('screens.form')->with(['screen' => $screen]);
+        return view('screens.form')->with(['screen' => $screen, 'pageInfo' => $this->pageInfo]);
     }
     
     public function update(Request $request, $id){

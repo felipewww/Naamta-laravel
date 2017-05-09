@@ -14,6 +14,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
+        parent::__construct();
        $this->middleware(function ($request, $next) {
             $user = \Auth::user()->authorizeRoles(['admin', 'staff', 'client']);;
             return $next($request);
@@ -27,7 +28,11 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        return view('homes.'.Auth::user()->roles[0]->name);
+        $this->pageInfo->title              = 'Homepage';
+        $this->pageInfo->category->title    = '';
+        $this->pageInfo->subCategory->title = 'Homepage';
+
+        return view('homes.'.Auth::user()->roles[0]->name, ['pageInfo' => $this->pageInfo]);
     }
 
 

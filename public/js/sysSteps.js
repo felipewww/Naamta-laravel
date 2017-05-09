@@ -39,13 +39,17 @@ sysSteps = {
                 url: 'step/delete',
                 method: 'post',
                 data: data,
-                // dataType: 'json',
+                dataType: 'json',
                 success: function (data) {
-                    console.log('Success', data);
+                    // console.log('Success', data);
                     $(element).closest('.step-sortable').remove();
+                    _this.save();
                 },
                 error: function (data) {
                     console.log('Error', data);
+                },
+                complete: function () {
+                    _this.confirmDeleteModal.modal('hide');
                 }
             });
         });

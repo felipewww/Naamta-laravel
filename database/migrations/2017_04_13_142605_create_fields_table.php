@@ -17,7 +17,7 @@ class CreateFieldsTable extends Migration
             $table->increments('id');
             $table->integer('container_id')->unsigned();
             $table->string('type');
-            $table->string('config');
+//            $table->('config');
             $table->tinyInteger('status')->default(0);
             
             $table->foreign('container_id')
@@ -28,6 +28,8 @@ class CreateFieldsTable extends Migration
             $table->softDeletes();
             
         });
+
+        DB::statement("ALTER TABLE fields ADD config MEDIUMBLOB");
     }
 
     /**

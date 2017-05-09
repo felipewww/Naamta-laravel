@@ -31,6 +31,7 @@ class FormsController extends Controller
      */
     public function __construct()
     {
+        parent::__construct();
         $this->middleware('auth');
         $this->forms = FormTemplate::all();
     }
@@ -42,9 +43,13 @@ class FormsController extends Controller
      */
     public function index(Request $request)
     {
+        $this->pageInfo->title              = 'Form Templates';
+        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->subCategory->title = 'Forms List';
+
         $request->user()->authorizeRoles(['admin', 'staff']);
         $this->dataTablesInit();
-        return view('forms.list', ['dataTables' => $this->dataTables]);
+        return view('forms.list', ['dataTables' => $this->dataTables, 'pageInfo' => $this->pageInfo]);
     }
 
     public function dataTablesConfig()
@@ -95,9 +100,12 @@ class FormsController extends Controller
      */
     public function create()
     {
+        $this->pageInfo->title              = 'Form Templates';
+        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->subCategory->title = 'Form Create';
         // get all the nerds
         // load the view and pass the nerds
-        return view('forms.form');
+        return view('forms.form', ['pageInfo' => $this->pageInfo]);
     }
 
     /**
@@ -130,17 +138,24 @@ class FormsController extends Controller
 
     public function show(Request $request, $id){
 
+        $this->pageInfo->title              = 'Form Templates';
+        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->subCategory->title = 'Form View';
+
         $form = FormTemplate::with( array( 'containers', 'containers.fields') )->findOrFail($id);
 
-        return view('forms.show')->with(['form' => $form, 'containers' => $this->_convertFormToJson($form)]);
+        return view('forms.show')->with(['form' => $form, 'containers' => $this->_convertFormToJson($form), 'pageInfo' => $this->pageInfo]);
 
     }
 
     public function edit(Request $request, $id){
-        
+        $this->pageInfo->title              = 'Form Templates';
+        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->subCategory->title = 'Form Edit';
+
         $form = FormTemplate::with( array( 'containers', 'containers.fields') )->findOrFail($id);
        
-        return view('forms.form')->with(['form' => $form, 'containers' => $this->_convertFormToJson($form)]);
+        return view('forms.form')->with(['form' => $form, 'containers' => $this->_convertFormToJson($form), 'pageInfo' => $this->pageInfo]);
 
     }
     

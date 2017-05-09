@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Library\DataTablesExtensions;
+use App\Library\PageInfo;
 use App\Models\Application;
 use App\Models\ApplicationStep;
 use App\Models\ApplicationUsesEmail;
@@ -28,6 +28,8 @@ class StepsController extends Controller
 
     public function __construct()
     {
+        parent::__construct();
+
         $this->middleware(function ($request, $next) {
             $user = \Auth::user()->authorizeRoles(['admin']);;
             return $next($request);
@@ -42,11 +44,20 @@ class StepsController extends Controller
      */
     public function index(Request $request)
     {
+        $this->pageInfo->title              = 'Default Steps List';
+        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->subCategory->title = 'Default steps';
+
         $vars = new \stdClass();
         $vars->steps        = Step::where('status', 1)->orderBy('ordination')->get();
         $vars->inactives    = Step::where('status', 0)->get();
         
-        return view('steps.list', ['vars' => $vars]);
+        return view(
+            'steps.list', [
+                'vars' => $vars,
+                'pageInfo' => $this->pageInfo
+            ]
+        );
     }
 
     public function defaultVars($action = 'create', $step = null)
@@ -151,9 +162,15 @@ class StepsController extends Controller
 
     public function create()
     {
+        $this->pageInfo->title              = 'Default Steps Create';
+        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->subCategory->title = 'Create Step';
+
         $vars = $this->defaultVars();
 
-        return view('steps.form', ['vars' => $vars]);
+        return view(
+            'steps.form', ['vars' => $vars, 'pageInfo' => $this->pageInfo]
+        );
     }
 
     public function update($id, Request $request)
@@ -301,6 +318,10 @@ class StepsController extends Controller
 
     public function edit($id)
     {
+        $this->pageInfo->title              = 'Default Steps Create';
+        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->subCategory->title = 'Edit Step';
+
         if ( $id instanceof ApplicationStep ) {
             $step = $id;
             $action = 'edit';
@@ -312,12 +333,14 @@ class StepsController extends Controller
         $vars = $this->defaultVars($action, $step);
         $vars->step = $step;
 
-        return view('steps.form', ['vars' => $vars]);
+        return view(
+            'steps.form',
+            ['vars' => $vars, 'pageInfo' => $this->pageInfo]
+        );
     }
 
     public function saveDefaultStepsPosition(Request $request)
     {
-//        dd($request->all());
         \DB::beginTransaction();
         $previous_step = null;
         $i = 0;
@@ -350,43 +373,4 @@ class StepsController extends Controller
 
         return json_encode(['status' => true]);
     }
-
-//    public function dataTablesConfig()
-//    {
-//        $data = [];
-//        foreach ($this->steps as $reg)
-//        {
-//            $newInfo = [
-//                $reg['id'],
-//                $reg['title'],
-//                ($reg['status']) ? 'Active' : 'Inactive',
-//                [
-//                    'rowActions' =>
-//                        [
-//                            [
-//                                'html' => '',
-//                                'attributes' => ['class' => 'fa fa-pencil', 'href' => '/steps/'.$reg->id.'/edit']
-//                            ],
-//                            [
-//                                'html' => '',
-//                                'attributes' => ['class' => 'fa fa-trash']
-//                            ],
-//                            [
-//                                '' => 'formdelete'
-//                            ]
-//                        ]
-//                ]
-//            ];
-//
-//            array_push($data, $newInfo);
-//        }
-//
-//        $this->data_info = $data;
-//        $this->data_cols = [
-//            ['title' => 'id', 'width' => '40px'],
-//            ['title' => 'Title'],
-//            ['title' => 'Status'],
-//            ['title' => 'Actions'],
-//        ];
-//    }
 }
