@@ -75,25 +75,24 @@ createTabs(tabsObj);
 
 // Transform fields in objects
 function toFieldObject(){
-	var obj = {
+  var obj = {
     id : $(this).attr('data-id'),
-		type :  $(this).attr('id').split("__")[0],
-		isEditable : isEditable,
-		options : {
-			options : []
-		},
+    type :  $(this).attr('id').split("__")[0],
+    isEditable : isEditable,
+    options : {
+      options : []
+    },
       comments : []
-	};
+  };
 
-  obj.options.ordenate = $(this).index() -1;
-  console.log(obj.options);
-	obj.options.isRequired = $(this).find('.is-required').prop('checked');
-	obj.options.label = $(this).find('.label-text').val();
-	obj.options.help = $(this).find('.help-text').val();
-	obj.options.value = $(this).find('.value').val();
-	obj.options.min = $(this).find('.min-value').val();
-	obj.options.max = $(this).find('.max-value').val();
-	obj.options.step = $(this).find('.step-value').val();
+  obj.options.ordenate = parseInt($(this).find('.ordenation').text().replace('(','').replace(')','')) ;
+  obj.options.isRequired = $(this).find('.is-required').prop('checked');
+  obj.options.label = $(this).find('.label-text').val();
+  obj.options.help = $(this).find('.help-text').val();
+  obj.options.value = $(this).find('.value').val();
+  obj.options.min = $(this).find('.min-value').val();
+  obj.options.max = $(this).find('.max-value').val();
+  obj.options.step = $(this).find('.step-value').val();
   obj.options.type = $(this).find('[type=radio]:checked').val();
   obj.options.class = ($(this).hasClass('half-row')) ? 'half-row' : '';
 
@@ -140,11 +139,11 @@ function toFieldObject(){
       obj.options.options.push(option);
     });
   }
-	tempFields.push(obj);
+  tempFields.push(obj);
 }
 
 // Save current tabs and fields in Json
-function toJson(){	
+function toJson(){  
   tempContainers = new Array();
   var listContainers = $('.tab');
 
@@ -170,9 +169,9 @@ function toJson(){
     tempContainers.push(tab);
   })
 
-	var fieldArray = new Array();
-	
-	return JSON.stringify(tempContainers);
+  var fieldArray = new Array();
+  
+  return JSON.stringify(tempContainers);
 }
 
 // Creates tabs from json
@@ -188,8 +187,8 @@ function createTabs(json, clientView = false){
       obj.fields.forEach(createFields);
     }
     clones.sort(function(a, b){
-      var a = $(a).attr('class').split('order_')[1];
-      var b = $(b).attr('class').split('order_')[1];
+      var a = parseInt($(a).attr('class').split('order_')[1]);
+      var b =  parseInt($(b).attr('class').split('order_')[1]);
       return a - b;
     });
     clones.forEach(function(clone){
@@ -215,8 +214,8 @@ function createTabs(json, clientView = false){
       }
     }));
   }
-
   ordenateFields();
+  resizeCanvas()
 }
 
 // Creates the fields related to the createTabs function

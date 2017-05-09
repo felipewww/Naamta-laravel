@@ -27,6 +27,8 @@
         </div>
     </div>
 </div>
+<script src="{{ asset("js/template/signature_pad.js") }}"></script>
+<!-- Reference https://github.com/szimek/signature_pad -->
 
 <script src="{{ asset("js/template/blanko-form-builder.js") }}"></script>
 <script src="{{ asset("js/template/blanko-form-creator.js") }}"></script>

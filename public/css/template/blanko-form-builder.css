@@ -8,11 +8,12 @@
     border: 1px solid #e8e8e8;
     transition: 0.5s;
     display: inline-block;
-    width: 100%;
+    width: 99%;
     vertical-align: top;
 }
 #drag-container .draggable-input.half-row{
     width: 49%;
+    margin-right: 1%;
 }
 #drag-container .span-required{
     display: none;
@@ -166,7 +167,7 @@
     border: 2px dotted #dedede;
 }
 #drag-container #blankSpace.half-row{
-    width: 48%;
+    width: 49%;
 }
 #history a{
     color: #333;
@@ -244,4 +245,41 @@
 
 .ordenation{
     color: #bfbfbf;
+}
+#drag-container button[type="submit"]{
+  background: #67953f;
+  border: 1px solid #67953f;
+  color: #ffffff;
+}
+#drag-container button[type="submit"]:hover,#drag-container button[type="submit"]:focus,#drag-container button[type="submit"]:active {
+  background: #67953f;
+  opacity: 0.8;
+  color: #ffffff;
+  border: 1px solid #67953f;
+}
+#drag-container button[type="reset"]{
+  background: #d43f3a;
+  border: 1px solid #d43f3a;
+  color: #ffffff;
+}
+#drag-container button[type="reset"]:hover,#drag-container button[type="reset"]:focus,#drag-container button[type="reset"]:active {
+  background: #d43f3a;
+  opacity: 0.8;
+  color: #ffffff;
+  border: 1px solid #d43f3a;
+}
+
+#drag-container h3{
+    font-weight: bold;
+}
+
+#drag-container canvas{
+    border: 1px solid #ddd;
+}
+
+@media screen and (max-width: 1330px){
+    #drag-container .half-row{
+        margin-left: 0;
+        width: 100% !important;
+    }
 }
