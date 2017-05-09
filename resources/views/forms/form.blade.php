@@ -42,9 +42,9 @@
                 <div class="form-group col-sm-6">
                     <label class="col-sm-12">Status</label>
                     <div class="col-sm-12">
-                        <select class="form-control" required="" id="template">
-                            <option>Active</option>
-                            <option>Inactive</option>
+                        <select class="form-control" name="status">
+                            <option value="1" {{ (isset($email) && $email->status == 1 ? "selected" : "") }} >Active</option>
+                            <option value="0" {{ (isset($email) && $email->status == 0 ? "selected" : "") }} >Inactive</option>
                         </select>
                     </div>
                 </div>
