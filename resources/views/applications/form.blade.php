@@ -17,18 +17,26 @@
 
 @section('scripts')
     <script type="text/javascript" src="/js/appSteps.js"></script>
+    <script>
+        appSteps.appID = {{ $application->id }};
+    </script>
 @endsection
 
 @section('content')
+    @include('partials._modal_steps')
+
     <div class="row">
         <div class="col-md-12">
             <div class="">
                 <!-- Tabstyle start -->
                 <section>
                     <div class="sttabs">
-                        <a href="#" class="btn btn-save m-r-20" style="width: 120px; float: right;" onclick="appSteps.save()"><i class="fa fa-check"></i> Save</a>
-                        <a href="/applications/{{ $application->id }}/settings" class="btn btn-save m-r-20" style="width: 120px; float: right;"><i class="fa fa-check"></i>Settings </a>
-                        <div class="clearfix"></div>
+                        <div>
+                            <span class="btn btn-save m-r-20" style="width: 120px; float: right;" onclick="appSteps.save()"><i class="fa fa-check"></i> Save</span>
+                            <a href="/applications/{{ $application->id }}/settings" class="btn btn-save m-r-20" style="width: 120px; float: right;"><i class="fa fa-check"></i>Settings </a>
+                            <div class="clearfix"></div>
+                        </div>
+                        <br>
                         {{--<div class="content-wrap">--}}
                         <div class="">
                             <section id="active">
@@ -52,6 +60,15 @@
                                                             No
                                                         @endif
                                                     </h5>
+                                                    <h5 class="m-t-20 m-b-0">
+                                                        <b>Status:</b>
+                                                        @if( $step->status )
+                                                            Active
+                                                        @else
+                                                            Inactive
+                                                        @endif
+                                                    </h5>
+                                                    <br>
                                                     @if( $step->usesEmails->isNotempty() )
                                                         <table class="table table-responsive color-table muted-table">
                                                             <thead>
@@ -74,6 +91,13 @@
                                                     <div class="row action">
                                                         <div class="col-md-6">
                                                             <a href="/applications/step/{{ $step->id  }}" class="btn btn-circle pull-right btn-custom2"><i class="fa fa-pencil"></i></a>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            @if( $step->status )
+                                                                <span data-currentstatus="{{ $step->status }}" onclick="appSteps.changeStatus(this, {{ $step->id }})" class="btn btn-circle pull-right btn-custom"><i class="fa fa-ban"></i></span>
+                                                            @else
+                                                                <span data-currentstatus="{{ $step->status }}" onclick="appSteps.changeStatus(this, {{ $step->id }})" class="btn btn-circle pull-right btn-save"><i class="fa fa-check"></i></span>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>

@@ -14,6 +14,101 @@ Script = {
         })
     },
 
+    safeLeave: function ()
+    {
+        console.log('here');
+        var _this = Script.safeLeave;
+
+        _this.elements = ['a'];
+        //_this.status = false; //false means cannot change page without warning user
+        
+        _this.setElements = function ()
+        {
+            //todo
+        };
+        
+        _this.setStatus = function (status) {
+            _this.status = status;
+        };
+
+        _this.start = function (status)
+        {
+            if (!status) { status = true; } //true permit to continue without verification
+            _this.status = status;
+            _this.$modal = $('#stepModalConfirm');
+
+            var $modal = _this.$modal;
+
+            $modal.on('show.bs.modal', function (e) {
+                var stay    = $modal.find('#stepModalStay')[0];
+                var leave   = $modal.find('#stepModalLeave')[0];
+
+                if (!_this.modalButtonsSetted)
+                {
+                    $(stay).on('click', function () {
+                        _this.reset();
+                    });
+
+                    $(leave).on('click', function () {
+                        _this.status = true;
+
+                        if (_this.elementClicked == 'F5') {
+                            window.location.reload(); //force F5
+                        }else{
+                            _this.elementClicked.click(); //go to link --force
+                        }
+                    });
+
+                    _this.modalButtonsSetted = true;
+                }
+            });
+
+            document.onkeydown  = fkey;
+            document.onkeypress = fkey;
+            document.onkeyup    = fkey;
+
+            function fkey(e){
+
+                if (e.keyCode == 116) {
+                    if (!_this.status) {
+                        e.preventDefault();
+                        _this.confirm(e, 'F5');
+                    }
+                }
+            }
+
+            for(var idx in _this.elements)
+            {
+                var e = _this.elements[idx];
+
+                $(e).each(function () {
+                    $(this).on('click', function (e) {
+                        if (!_this.status)
+                        {
+                            e.preventDefault();
+                            _this.confirm(e, $(this)[0]);
+                        }
+                    })
+                });
+            }
+
+            return _this;
+        };
+
+        _this.confirm = function (e, element)
+        {
+            _this.elementClicked = element;
+            _this.$modal.modal('show');
+        };
+
+        _this.reset = function ()
+        {
+            _this.elementClicked = null;
+        };
+
+        return _this;
+    },
+
     createElement: function (element, innerHTML, attrs, styles)
     {
         if (typeof innerHTML == 'object') {
