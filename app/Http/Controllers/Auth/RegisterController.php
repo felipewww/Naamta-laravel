@@ -96,9 +96,9 @@ class RegisterController extends Controller
             ]);
 
             $application = Application::create([
-                //'staff_id' => $newAppType->id,
                 'client_id' => $client->id,
-                'description' => " "
+                'description' => " ",
+                'status' => 0
             ]);
 
             /*
