@@ -16,18 +16,18 @@ class Controller extends BaseController
      *
      * @return response of saved itens
      */
-    protected function _convertFormToJson($form){
+    protected function _convertFormToJson($form, $clone = false){
 
         $_return = array();
         foreach ($form->containers as $i => $c){
             $_return[$i]["config"] = [
-                'id'    =>  $c->id,
+                'id'    =>  ($clone ? null : $c->id),
                 'title'  =>  $c->name,
                 'tabId' =>  $c->id,
             ];
 
             foreach($c->fields as $k => $v){
-                $_return[$i]["fields"][$k]["id"] =  $v->id;
+                $_return[$i]["fields"][$k]["id"] =  ($clone ? null : $v->id);
                 $_return[$i]["fields"][$k]["type"] =  $v->type;
                 $_return[$i]["fields"][$k]["container_id"] =  $v->container_id;
                 $_return[$i]["fields"][$k]["isEditable"] =  true;

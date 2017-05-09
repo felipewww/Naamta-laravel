@@ -93,12 +93,18 @@ class FormsController extends Controller
      *
      * @return Response
      */
-    public function create()
+    public function create(Request $request, $id = null)
     {
+        if(isset($id)){
+            $clone = FormTemplate::with( array( 'containers', 'containers.fields') )->findOrFail($id);
+            $clone->id = null;
+            return view('forms.form')->with(['form' => $clone, 'containers' => $this->_convertFormToJson($clone, true)]);
+        }
         // get all the nerds
         // load the view and pass the nerds
         return view('forms.form');
     }
+
 
     /**
      * Show the form for creating a new resource.
