@@ -6,10 +6,22 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Library\PageInfo;
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    use PageInfo {
+        PageInfo::__construct as public __pageinfo;
+    }
+
+    public $pageInfo;
+    
+    public function __construct()
+    {
+        $this->pageInfo = $this->__pageinfo();
+    }
 
     /**
      * Convert a form to json.

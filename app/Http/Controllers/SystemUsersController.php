@@ -16,6 +16,7 @@ class SystemUsersController extends Controller
 
     public function __construct()
     {
+        parent::__construct();
         $this->middleware(function ($request, $next) {
             $user = \Auth::user()->authorizeRoles(['admin']);;
             return $next($request);
@@ -33,8 +34,12 @@ class SystemUsersController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request){
+        $this->pageInfo->title              = 'System';
+        $this->pageInfo->category->title    = 'Users';
+        $this->pageInfo->subCategory->title = 'Users List';
+
         $this->dataTablesInit();
-        return view('systemUsers.list', ['dataTables' => $this->dataTables ]);
+        return view('systemUsers.list', ['dataTables' => $this->dataTables, 'pageInfo' => $this->pageInfo ]);
     }
 
     public function dataTablesConfig()
@@ -78,7 +83,12 @@ class SystemUsersController extends Controller
     }
     
     public function create(Request $request){
-        return view('systemUsers.form')->with('roles', $this->roles);
+
+        $this->pageInfo->title              = 'System';
+        $this->pageInfo->category->title    = 'Users';
+        $this->pageInfo->subCategory->title = 'Users List';
+
+        return view('systemUsers.form')->with(['roles', $this->roles, 'pageInfo' => $this->pageInfo]);
     }
     
     public function store(Request $request){
@@ -87,14 +97,18 @@ class SystemUsersController extends Controller
     }
     
     public function edit(Request $request, $id){
-        
+
+        $this->pageInfo->title              = 'System';
+        $this->pageInfo->category->title    = 'Users';
+        $this->pageInfo->subCategory->title = 'User Edit';
+
         $user = User::findOrFail($id);
         
         if($user->roles->first()->name == 'client'){
             return redirect('users');
         }
         
-        return view('systemUsers.form')->with(['user' => $user, 'roles'=>$this->roles]);
+        return view('systemUsers.form')->with(['user' => $user, 'roles'=>$this->roles, 'pageInfo' => $this->pageInfo]);
     }
     
     public function update(Request $request, $id){

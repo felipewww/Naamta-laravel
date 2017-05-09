@@ -8,8 +8,8 @@
 
 - LAYOUT
 -[x] eventos e icones dos botoes de ação
--[ ] alterar topos das páginas
--[ ] delete do step default
+-[x] alterar topos das páginas
+-[x] delete do step default
 -[x] sweetalert? Não, bootstrap modal
 -[x] criar um safeLeave, mensagem de aviso antes de sair da página, caso tenho feito alteração em STEPS
 -[x] status dos steps clonados

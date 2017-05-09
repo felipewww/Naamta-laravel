@@ -28,6 +28,7 @@ class UserTypesController extends Controller
     
     public function __construct(Request $request)
     {
+        parent::__construct();
         $this->middleware(function ($request, $next) {
             $user = \Auth::user()->authorizeRoles(['admin']);;
             return $next($request);
@@ -41,8 +42,12 @@ class UserTypesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request){
+        $this->pageInfo->title              = 'User Types Default';
+        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->subCategory->title = 'User Types List';
+
         $this->dataTablesInit();
-        return view('userTypes.list', ['dataTables' => $this->dataTables ]);
+        return view('userTypes.list', ['dataTables' => $this->dataTables, 'pageInfo' => $this->pageInfo ]);
     }
 
     public function dataTablesConfig()
@@ -88,8 +93,12 @@ class UserTypesController extends Controller
      */
     public function create()
     {
+        $this->pageInfo->title              = 'User Types Default';
+        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->subCategory->title = 'User Types Create';
+
         // load the view and pass the email
-        return view('userTypes.form');
+        return view('userTypes.form', ['pageInfo' => $this->pageInfo]);
     }
     
     /**
@@ -127,10 +136,13 @@ class UserTypesController extends Controller
      * @return Response
      */
     public function edit($id){
-        
+        $this->pageInfo->title              = 'User Types Default';
+        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->subCategory->title = 'User Types List';
+
         $userType = UserType::findOrFail($id);
         
-        return view('userTypes.form')->with(['userType' => $userType]);
+        return view('userTypes.form')->with(['userType' => $userType, 'pageInfo' => $this->pageInfo]);
     }
     
     /**

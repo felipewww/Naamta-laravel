@@ -9,7 +9,7 @@
                     <h4 class="modal-title">Are you sure you want to delete this step?</h4>
                 </div>
                 <div class="modal-body">
-                    <p>This action can be reverted.</p>
+                    <p>This action cannot be reverted.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" id="stepModalCancel" value="stay" class="btn btn-default" data-dismiss="modal">Cancel</button>
