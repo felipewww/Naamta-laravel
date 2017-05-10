@@ -20,7 +20,7 @@ class Controller extends BaseController
 
     public function __construct()
     {
-        $this->__pageinfo();
+        $this->pageInfo = $this->__pageinfo();
     }
 
     /*
