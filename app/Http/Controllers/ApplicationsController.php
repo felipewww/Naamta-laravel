@@ -99,7 +99,9 @@ class ApplicationsController extends Controller
      */
     public function update(Request $request, $id, Response $res)
     {
-        $validator = Validator::make($request->all(), $this->rules)->validate();
+//        $validator = Validator::make($request->all(), $this->rules)->validate();
+//        $validator = \Illuminate\Validation\Validator::make($request->all(), $this->rules)->validate();
+//        dd('$userApplication');
         \DB::beginTransaction();
         try{
             $application = Application::where('id', $id)->first();
