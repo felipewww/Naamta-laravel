@@ -71,6 +71,10 @@ class FormsController extends Controller
                             ],
                             [
                                 'html' => '',
+                                'attributes' => ['class' => 'btn btn-warning btn-circle fa fa-clone m-l-10', 'href' => '/forms/'.$reg->id.'/clone']
+                            ],
+                            [
+                                'html' => '',
                                 'attributes' => ['class' => 'btn btn-warning btn-circle fa fa-pencil m-l-10', 'href' => '/forms/'.$reg->id.'/edit']
                             ],
                             [
@@ -98,15 +102,25 @@ class FormsController extends Controller
      *
      * @return Response
      */
-    public function create()
-    {
-        $this->pageInfo->title              = 'Form Templates';
+    public function create(Request $request, $id = null)
+    {   $this->pageInfo->title              = 'Form Templates';
         $this->pageInfo->category->title    = 'Workflow';
         $this->pageInfo->subCategory->title = 'Form Create';
+
+        if(isset($id)){
+            $this->pageInfo->subCategory->title = 'Form Clone';
+            $clone = FormTemplate::with( array( 'containers', 'containers.fields', 'containers.fields.comments') )->findOrFail($id);
+            $clone->id = null;
+            $clone->name = "";
+            $clone->status = 0;
+            return view('forms.form')->with(['form' => $clone, 'containers' => $this->_convertFormToJson($clone, true), 'pageInfo' => $this->pageInfo]);
+        }
+
         // get all the nerds
         // load the view and pass the nerds
         return view('forms.form', ['pageInfo' => $this->pageInfo]);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -142,7 +156,7 @@ class FormsController extends Controller
         $this->pageInfo->category->title    = 'Workflow';
         $this->pageInfo->subCategory->title = 'Form View';
 
-        $form = FormTemplate::with( array( 'containers', 'containers.fields') )->findOrFail($id);
+        $form = FormTemplate::withTrashed()->with( array( 'containers', 'containers.fields', 'containers.fields.comments') )->findOrFail($id);
 
         return view('forms.show')->with(['form' => $form, 'containers' => $this->_convertFormToJson($form), 'pageInfo' => $this->pageInfo]);
 
@@ -153,7 +167,7 @@ class FormsController extends Controller
         $this->pageInfo->category->title    = 'Workflow';
         $this->pageInfo->subCategory->title = 'Form Edit';
 
-        $form = FormTemplate::with( array( 'containers', 'containers.fields') )->findOrFail($id);
+        $form = FormTemplate::with( array( 'containers', 'containers.fields', 'containers.fields.comments') )->findOrFail($id);
        
         return view('forms.form')->with(['form' => $form, 'containers' => $this->_convertFormToJson($form), 'pageInfo' => $this->pageInfo]);
 

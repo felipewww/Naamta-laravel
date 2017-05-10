@@ -28,4 +28,9 @@ class Field extends Model
     {
         return $this->hasOne('App\Models\Container');
     }
+
+    public function comments()
+    {
+        return $this->hasMany('App\Models\Comment','field', 'id');
+    }
 }

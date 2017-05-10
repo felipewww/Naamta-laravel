@@ -6,8 +6,10 @@
     $route = route('forms.store');
     $method = 'POST';
     if(isset($form) && $form!=null){
-        $route = route('forms.update', ['id' => $form->id]);
-        $method = 'PUT';
+        if($form->id!=null){
+            $route = route('forms.update', ['id' => $form->id]);
+            $method = 'PUT';
+        }
     }else{
         $form = new App\Models\FormTemplate();
     }
@@ -42,9 +44,9 @@
                 <div class="form-group col-sm-6">
                     <label class="col-sm-12">Status</label>
                     <div class="col-sm-12">
-                        <select class="form-control" required="" id="template">
-                            <option>Active</option>
-                            <option>Inactive</option>
+                        <select class="form-control" name="status">
+                            <option value="1" {{ (isset($form) && $form->status == 1 ? "selected" : "") }} >Active</option>
+                            <option value="0" {{ (isset($form) && $form->status == 0 ? "selected" : "") }} >Inactive</option>
                         </select>
                     </div>
                 </div>
@@ -70,6 +72,8 @@
         </div>
     </div>
 </form>
+<script src="{{ asset("js/template/signature_pad.js") }}"></script>
+<!-- Reference https://github.com/szimek/signature_pad -->
 
 <script src="{{ asset("js/template/blanko-form-builder.js") }}"></script>
 <script src="{{ asset("js/template/blanko-form-creator.js") }}"></script>

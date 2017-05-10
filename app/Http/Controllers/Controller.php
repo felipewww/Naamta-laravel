@@ -17,12 +17,10 @@ class Controller extends BaseController
     use PageInfo {
         PageInfo::__construct as public __pageinfo;
     }
-    
-    public $pageInfo;
-    
+
     public function __construct()
     {
-        $this->pageInfo = $this->__pageinfo();
+        $this->__pageinfo();
     }
 
     /*
@@ -30,23 +28,28 @@ class Controller extends BaseController
      *
      * @return response of saved itens
      */
-    protected function _convertFormToJson(FormTemplate $form)
-    {
+
+    protected function _convertFormToJson($form, $clone = false){
         $_return = array();
         foreach ($form->containers as $i => $c){
             $_return[$i]["config"] = [
-                'id'    =>  $c->id,
+                'id'    =>  ($clone ? $i : $c->id),
                 'title'  =>  $c->name,
-                'tabId' =>  $c->id,
+                'tabId' =>  ($clone ? "": $c->id),
             ];
 
             foreach($c->fields as $k => $v){
-                $_return[$i]["fields"][$k]["id"] =  $v->id;
+                $_return[$i]["fields"][$k]["id"] =  ($clone ? null : $v->id);
                 $_return[$i]["fields"][$k]["type"] =  $v->type;
                 $_return[$i]["fields"][$k]["container_id"] =  $v->container_id;
                 $_return[$i]["fields"][$k]["isEditable"] =  true;
+                $_return[$i]["fields"][$k]["comments"] = array();
+                if(isset($v->comments) && count($v->comments) > 0){
+                    foreach ($v->comments as $comment) {
+                        array_push($_return[$i]["fields"][$k]["comments"], array("username" => $comment->user_name, "msg" => $comment->text));
+                    }
+                }
                 $_return[$i]["fields"][$k]["options"] =  json_decode($v->config);
-                $_return[$i]["fields"][$k]["commments"] =  json_decode("[{username : 'John',msg : 'A Comment'},{username : 'Josephine', msg : 'Another Comment'}]");
             }
         }
         return json_encode($_return);

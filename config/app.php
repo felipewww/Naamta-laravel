@@ -51,7 +51,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://naamta-backend.azurewebsites.net'),
+    'url' => env('APP_URL', 'http://localhost.naamta.dev'),
 
     /*http://naamta-backend.azurewebsites.net
     |--------------------------------------------------------------------------

@@ -54,4 +54,21 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/steps/saveDefaultStepsPosition', 'StepsController@saveDefaultStepsPosition');
 
     Route::get('/applications/step/{id}',  'StepsController@appStep');
+
+    Route::get('/forms/{id}/clone',  'FormsController@create');
+
+    Route::post('/forms/comment', function (Request $request) {
+        try{
+            \App\Models\Comment::create([
+                'userId'    => Auth::id(),
+                'userName'  => Auth::user()->name,
+                'text'      => $request->text,
+                'field'     => $request->field,
+            ]);
+            return true;
+        }catch (Exception $e){
+            return false;
+        }
+    });
+
 });
