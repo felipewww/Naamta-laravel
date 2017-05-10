@@ -103,6 +103,10 @@ return [
         ],
     ],
 
+    'users_application' => [
+        'needs_client' => 'An application needs at least one type "client".'
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes

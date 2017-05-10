@@ -118,13 +118,20 @@ class RegisterController extends Controller
                 $uTypesClones[$defaultID] = $newAppType->id;
             }
 
+            $clientType = ApplicationUserTypes::create([
+                'slug' => 'client',
+                'title' => 'Client',
+                'status' => 1,
+                'application_id' => $application->id,
+            ]);
             /*
              * Create application user where his type is the last type found
              * */
             $appUsers = UserApplication::create([
                 'application_id' => $application->id,
                 'user_id' => $user->id,
-                'user_type' => $newAppType->id,
+//                'user_type' => $newAppType->id,
+                'user_type' => $clientType->id,
             ]);
 
             /*

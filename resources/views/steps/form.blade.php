@@ -122,16 +122,16 @@
                                     The default <strong>{{$vars->itemName}}</strong> for this step was excluded at {{ \Carbon\Carbon::parse($vars->morphItem->deleted_at)->format('Y/m/d')}}
                                     but it still is used in this step.<br>You can see the selected item <a target="_blank" href="{{ $vars->seeItemLink }}">Clicking here</a>
                                 @else
-                                    <div class="alert alert-info">
-                                    You can see the selected <strong>{{$vars->itemName}}</strong> <a style="color: #000" target="_blank" href="{{ $vars->seeItemLink }}">clicking here</a>
+                                    <div class="alert alert-dark">
+                                    You can see the selected <strong>{{$vars->itemName}}</strong> <a target="_blank" href="{{ $vars->seeItemLink }}">clicking here</a>
                                 @endif
                                     </div> {{-- close both div.alert--}}
                            @endif
 
-                           <div class="form-group select_list" id="list_forms" style="display: none">
+                           <div class="form-group select_list" id="list_forms">
                                <label class="col-sm-12">Select a Form</label>
                                <div class="col-sm-12">
-                                   <select class="form-control" name="morphs_item">
+                                   <select class="form-control chosen" name="morphs_item">
                                        <option value="">Select a Form</option>
                                        @foreach($forms as $form)
                                            <option {{ $form->selected }} value="{{ $form->id }}">{{  $form->name }}</option>
@@ -140,10 +140,10 @@
                                </div>
                            </div>
 
-                           <div class="form-group select_list" id="list_screens" style="display: none">
+                           <div class="form-group select_list" id="list_screens">
                                <label class="col-sm-12">Select a Screen</label>
                                <div class="col-sm-12">
-                                   <select class="form-control" name="morphs_item">
+                                   <select class="form-control chosen" name="morphs_item">
                                        <option value="">Select a Screen</option>
                                        @foreach($screens as $screen)
                                            <option {{ $screen->id }} value="{{ $screen->id }}">{{ $screen->title }}</option>
@@ -210,7 +210,7 @@
 
 
                        <div class="form-group text-center m-t-20">
-                           <a href="/steps" class="btn btn-danger waves-effect waves-light m-r-20 ">Cancel</a>
+                           <a href="{{ $backLink }}" class="btn btn-danger waves-effect waves-light m-r-20 ">Cancel</a>
                            <input type="submit" class="btn btn-success waves-effect waves-light m-r-20" value="Save">
                        </div>
 
