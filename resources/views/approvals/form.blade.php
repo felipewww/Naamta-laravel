@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
 @php
-    $page = "screens";
+    $page = "approvals";
     
-    $route = route('screens.store');
+    $route = route('approvals.store');
     $method = 'POST';
-    if(isset($screen) && $screen!=null){
+    if(isset($approval) && $approval!=null){
         $method = 'PUT';
-        $route = route('screens.update', ['id' => $screen->id]);
+        $route = route('approvals.update', ['id' => $approval->id]);
         
     }else{
-        $screen = new App\Models\Screen();
+        $approval = new App\Models\Approval();
     }
 
 @endphp
@@ -20,7 +20,7 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
-                <div class="panel-heading">Add Screen</div>
+                <div class="panel-heading">Add Approval</div>
                 <div class="panel-body">
                     <form class="form-horizontal" role="form" method="POST" action="{{ $route }}">
                         {{ csrf_field() }}
@@ -29,7 +29,7 @@
                             <label for="title" class="col-md-4 control-label">Title</label>
 
                             <div class="col-md-6">
-                                <input id="title" type="text" class="form-control" name="title" value="{{ $screen->title!=null ? $screen->title : old('title') }}" required>
+                                <input id="title" type="text" class="form-control" name="title" value="{{ $approval->title!=null ? $approval->title : old('title') }}" required>
 
                                 @if ($errors->has('title'))
                                     <span class="help-block">
@@ -41,7 +41,7 @@
                         <div class="form-group{{ $errors->has('description') ? ' has-error' : '' }}">
                             <label for="text" class="col-md-4 control-label">Description</label>
                             <div class="col-md-6">
-                                <textarea id="description" type="text" class="form-control" name="description" rows="5" required>{{ $screen->description!=null ? $screen->description : old('description') }}</textarea>
+                                <textarea id="description" type="text" class="form-control" name="description" rows="5" required>{{ $approval->description!=null ? $approval->description : old('description') }}</textarea>
                                 @if ($errors->has('description'))
                                     <span class="help-block">
                                         <strong>{{ $errors->first('description') }}</strong>

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @php
-    $page = "screens";
+    $page = "approvals";
 @endphp
 
 @include('partials.dataTables')
@@ -11,7 +11,7 @@
         <div>
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Screens
+                    Approvals
                      <a role="button" href="{{ URL::to($page . '/create') }}" class="btn btn-default btn-rounded btn-condensed btn-xs pull-right">Add</span></a>
                 </div>
 

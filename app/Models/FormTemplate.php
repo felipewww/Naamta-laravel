@@ -28,4 +28,9 @@ class FormTemplate extends Model
     {
         return $this->hasMany('App\Models\Container');
     }
+
+    public function history()
+    {
+        return $this->hasMany('App\Models\HistoryFormTemplate');
+    }
 }

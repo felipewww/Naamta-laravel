@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateApprovalTable extends Migration
+class CreateHistoryReportsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,18 @@ class CreateApprovalTable extends Migration
      */
     public function up()
     {
-        Schema::create('approvals', function (Blueprint $table) {
+        Schema::create('history_reports', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title');
-            $table->text('description');
-            $table->tinyInteger('has_report')->default(0);
+            $table->integer('report_id')->unsigned();
             $table->softDeletes();
             $table->timestamps();
+
+            $table->foreign('report_id')
+                ->references('id')->on('reports')
+                ->onDelete('cascade');
         });
+
+        DB::statement("ALTER TABLE history_forms ADD report_json MEDIUMBLOB");
     }
 
     /**
@@ -31,7 +35,7 @@ class CreateApprovalTable extends Migration
     public function down()
     {
         DB::statement('SET FOREIGN_KEY_CHECKS = 0');
-        Schema::dropIfExists('approvals');
+        Schema::dropIfExists('history_reports');
         DB::statement('SET FOREIGN_KEY_CHECKS = 1');
     }
 }

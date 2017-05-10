@@ -18,7 +18,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Approval;
 
-class ApprovalController extends Controller
+class ApprovalsController extends Controller
 {
     use DataTablesExtensions;
     private $approvals;

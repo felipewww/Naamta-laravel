@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Report extends Model
+class HistoryReport extends Model
 {
     use SoftDeletes;
 
@@ -15,8 +15,13 @@ class Report extends Model
      * @var array
      */
     protected $fillable = [
-       'id', 'title', 'approval_id', 'form'
+       'id', 'report_json'
     ];
+
+    public function report()
+    {
+        return $this->hasOne('App\Models\Report');
+    }
 
     /**
      * The attributes that should be mutated to dates.

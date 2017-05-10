@@ -15,8 +15,16 @@ class Approval extends Model
      * @var array
      */
     protected $fillable = [
-       'id', 'title', 'description', 'form'
+       'id', 'title', 'description', 'has_report'
     ];
+
+    public function report()
+    {
+        if($this->has_report)
+            return $this->hasOne('App\Models\Approval');
+
+        return null;
+    }
 
     /**
      * The attributes that should be mutated to dates.

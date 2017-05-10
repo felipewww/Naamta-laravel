@@ -43,6 +43,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::resource('/emails', 'EmailsController');
     Route::resource('/forms',  'FormsController');
     Route::resource('/screens', 'ScreensController');
+    Route::resource('/approvals', 'ApprovalsController');
     Route::resource('/applications',  'ApplicationsController');
 
     Route::post('/step/delete',  'ApplicationsController@deleteStep');
