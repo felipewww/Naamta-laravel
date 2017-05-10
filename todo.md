@@ -16,3 +16,6 @@
 -[ ] tratamentos de error em ajax
 
 -[x]Exibir mensagem em FROMS.SHOW quando o form for trashed (vindo do step)
+-[x]ajustar vlaidação de form do appSettings, textarea de description é obrigatorio
+-[x]botão CANCEL da edição do step da aplicação, deve voltar aos steps da app, esta indo para os steps default
+-[x]choosen na seleção de form/screen do step

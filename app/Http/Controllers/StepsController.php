@@ -342,9 +342,11 @@ class StepsController extends Controller
         if ( $id instanceof ApplicationStep ) {
             $step = $id;
             $action = 'edit';
+            $backLink = '/applications/'.$step->application->id.'/edit';
         }else{
             $step = Step::findOrFail($id);
             $action = 'edit';
+            $backLink = '/steps';
         }
 
         $vars = $this->defaultVars($action, $step);
@@ -385,7 +387,8 @@ class StepsController extends Controller
                 'pageInfo'  => $this->pageInfo,
                 'stepFrom'  => $this->stepFrom,
                 'forms'     => $forms,
-                'screens'   => $screens
+                'screens'   => $screens,
+                'backLink'  => $backLink
             ]
         );
     }

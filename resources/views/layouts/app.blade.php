@@ -36,8 +36,8 @@
     <script src="{{ asset("js/template/waves.js") }}"></script>
     <script src="{{ asset("js/template/custom.js") }}"></script>
     <script src="{{ asset("js/template/jasny-bootstrap.js") }}"></script>
-    @yield('scripts')
     <script src="{{ asset("js/script.js") }}"></script>
+    @yield('scripts')
 
 
 </head>
@@ -126,6 +126,15 @@
                 </div>
                 <!-- .row -->
                 <div class="row">
+                    @if (count($errors) > 0)
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     @yield('content')
                 </div>
             </div>

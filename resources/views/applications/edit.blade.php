@@ -22,8 +22,19 @@
             <div class="panel panel-default">
                 <div class="panel-heading">Applications</div>
                 <div class="panel-body">
+
+                    {{--@if (count($errors) > 0)--}}
+                        {{--<div class="alert alert-danger">--}}
+                            {{--<ul>--}}
+                                {{--@foreach ($errors->all() as $error)--}}
+                                    {{--<li>{{ $error }}</li>--}}
+                                {{--@endforeach--}}
+                            {{--</ul>--}}
+                        {{--</div>--}}
+                    {{--@endif--}}
+
                     @if( $hasInactiveSteps )
-                    <div class="alert alert-danger">
+                    <div class="alert alert-dark">
                         <strong>Warning!</strong> This application has one ore more steps inactivated and cannot be activated for a while. <a href="/applications/{{$application->id}}/edit">Click here to solve it.</a>
                     </div>
                     @endif

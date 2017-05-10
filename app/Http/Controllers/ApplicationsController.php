@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 use App\Library\DataTablesExtensions;
 use App\Models\ApplicationStep;
+use App\Models\ApplicationUserTypes;
 use App\Models\ApplicationUsesEmail;
 use App\Models\FormTemplate;
 use App\Models\Screen;
 use App\Models\Step;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\URL;
-use Validator;
+use PhpParser\Node\Expr\Error;
+//use Validator;
 use Session;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
@@ -18,6 +20,7 @@ use App\Models\Application;
 use App\Models\User;
 use App\Models\UserType;
 use App\Models\UserApplication;
+use Illuminate\Support\Facades\Validator;
 
 class ApplicationsController extends Controller
 {
@@ -34,8 +37,9 @@ class ApplicationsController extends Controller
     private $usersApplication;
 
     private $rules = [
+        'staff_id'    => 'required',
+        'users_application' => 'required|users_application.needs_client',
         'description' => 'required|min:3|max:255',
-        'staff_id'    => 'required'
     ];
 
     public function __construct()
@@ -99,9 +103,30 @@ class ApplicationsController extends Controller
      */
     public function update(Request $request, $id, Response $res)
     {
-//        $validator = Validator::make($request->all(), $this->rules)->validate();
-//        $validator = \Illuminate\Validation\Validator::make($request->all(), $this->rules)->validate();
-//        dd('$userApplication');
+        Validator::extend('users_application.needs_client', function ($attribute, $value, $parameters, $validator) {
+
+            if ( !is_array($value) ) {
+                return false;
+            }
+
+            $request = Request::capture();
+
+            $arrTypes = [];
+            foreach($request->users_application as $uApp){
+                $user_type = trim(explode(",", $uApp)[1]);
+                array_push($arrTypes, ApplicationUserTypes::where('id', $user_type)->first()->slug);
+            }
+
+
+            if( array_search('client', $arrTypes) === false ){
+                return false;
+            }
+
+            return true;
+        });
+
+        $validator = Validator::make($request->all(), $this->rules)->validate();
+
         \DB::beginTransaction();
         try{
             $application = Application::where('id', $id)->first();
@@ -112,17 +137,16 @@ class ApplicationsController extends Controller
                 'status'     => $request->status,
             ]);
 
-            if(is_array($request->users_application)){
-                UserApplication::where('application_id', $id)->delete();
-                foreach($request->users_application as $uApp){
-                    $_arrUApp = explode(",", $uApp);
-                    $userApplication  = UserApplication::create([
-                        'application_id'  => $id,
-                        'user_id'         => trim(explode(",", $uApp)[0]),
-                        'user_type'       => trim(explode(",", $uApp)[1]),
-                    ]);
-                }
+            UserApplication::where('application_id', $id)->delete();
+            foreach($request->users_application as $uApp){
+                $_arrUApp = explode(",", $uApp);
+                $userApplication  = UserApplication::create([
+                    'application_id'  => $id,
+                    'user_id'         => trim(explode(",", $uApp)[0]),
+                    'user_type'       => trim(explode(",", $uApp)[1]),
+                ]);
             }
+
             \DB::commit();
             \Session::flash('success','Application updated: ' . $request->title);
         } catch(Exception $e){
@@ -130,8 +154,8 @@ class ApplicationsController extends Controller
             \DB::rollBack();
             throw $e;
         }
-        return Redirect::to('applications');
 
+        return Redirect::to('applications');
     }
 
     public function settings(Request $request, $id)
@@ -153,7 +177,7 @@ class ApplicationsController extends Controller
                 'staffs' => $staffs,
                 'usersApplication'  => $usersApplication,
                 'hasInactiveSteps'  => $hasInactiveSteps,
-                'pageInfo' => $this->pageInfo
+                'pageInfo' => $this->pageInfo,
             ]
         );
     }
