@@ -114,6 +114,45 @@
                            @endif
                        </div>
 
+                       @if( $stepFrom == 'application' )
+
+                           @if( isset($vars->morphItem) )
+                                @if( $vars->morphItem->deleted_at )
+                                    <div class="alert alert-danger">
+                                    The default <strong>{{$vars->itemName}}</strong> for this step was excluded at {{ \Carbon\Carbon::parse($vars->morphItem->deleted_at)->format('Y/m/d')}}
+                                    but it still is used in this step.<br>You can see the selected item <a target="_blank" href="{{ $vars->seeItemLink }}">Clicking here</a>
+                                @else
+                                    <div class="alert alert-info">
+                                    You can see the selected <strong>{{$vars->itemName}}</strong> <a style="color: #000" target="_blank" href="{{ $vars->seeItemLink }}">clicking here</a>
+                                @endif
+                                    </div> {{-- close both div.alert--}}
+                           @endif
+
+                           <div class="form-group select_list" id="list_forms" style="display: none">
+                               <label class="col-sm-12">Select a Form</label>
+                               <div class="col-sm-12">
+                                   <select class="form-control" name="morphs_item">
+                                       <option value="">Select a Form</option>
+                                       @foreach($forms as $form)
+                                           <option {{ $form->selected }} value="{{ $form->id }}">{{  $form->name }}</option>
+                                       @endforeach
+                                   </select>
+                               </div>
+                           </div>
+
+                           <div class="form-group select_list" id="list_screens" style="display: none">
+                               <label class="col-sm-12">Select a Screen</label>
+                               <div class="col-sm-12">
+                                   <select class="form-control" name="morphs_item">
+                                       <option value="">Select a Screen</option>
+                                       @foreach($screens as $screen)
+                                           <option {{ $screen->id }} value="{{ $screen->id }}">{{ $screen->title }}</option>
+                                       @endforeach
+                                   </select>
+                               </div>
+                           </div>
+                       @endif
+
                        <div class="form-group" id="show-screen">
                            <label class="col-sm-12">Uses E-mail?</label>
                            <div class="col-sm-12" id="screen">

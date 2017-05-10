@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FormTemplate;
+use App\Models\Screen;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -16,7 +18,7 @@ class Controller extends BaseController
         PageInfo::__construct as public __pageinfo;
     }
 
-    public $pageInfo;
+//    public $pageInfo;
     
     public function __construct()
     {
@@ -28,8 +30,8 @@ class Controller extends BaseController
      *
      * @return response of saved itens
      */
-    protected function _convertFormToJson($form){
-
+    protected function _convertFormToJson(FormTemplate $form)
+    {
         $_return = array();
         foreach ($form->containers as $i => $c){
             $_return[$i]["config"] = [
@@ -48,5 +50,22 @@ class Controller extends BaseController
             }
         }
         return json_encode($_return);
+    }
+
+    protected function _convertScreenToJson(Screen $screen)
+    {
+        return json_encode($screen->getAttributes());
+    }
+
+    protected function _setSelectedItem(&$items, $id)
+    {
+        foreach ($items as $item)
+        {
+            $item->offsetSet('selected', '');
+            if ( $item->id == $id )
+            {
+                $item->selected = 'selected="selected"';
+            }
+        }
     }
 }

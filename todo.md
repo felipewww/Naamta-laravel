@@ -14,3 +14,5 @@
 -[x] criar um safeLeave, mensagem de aviso antes de sair da página, caso tenho feito alteração em STEPS
 -[x] status dos steps clonados
 -[ ] tratamentos de error em ajax
+
+-[x]Exibir mensagem em FROMS.SHOW quando o form for trashed (vindo do step)

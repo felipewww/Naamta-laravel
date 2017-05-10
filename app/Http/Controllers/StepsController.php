@@ -8,6 +8,7 @@ use App\Models\ApplicationStep;
 use App\Models\ApplicationUsesEmail;
 use App\Models\EmailTemplate;
 use App\Models\FormTemplate;
+use App\Models\Screen;
 use App\Models\Screens;
 use App\Models\UserType;
 use App\Models\UsesEmail;
@@ -25,6 +26,7 @@ class StepsController extends Controller
      */
     private $steps;
     private $step;
+    public $stepFrom = 'default';
 
     public function __construct()
     {
@@ -173,6 +175,29 @@ class StepsController extends Controller
         );
     }
 
+    protected function _saveJsonClone(Request $request)
+    {
+        switch ($request->morphs_from)
+        {
+            case FormTemplate::class:
+                $form = FormTemplate::where('id', $request->morphs_item)->first();
+                $json = $this->_convertFormToJson($form);
+                break;
+
+            case Screens::class:
+                $screen = Screen::where('id', $request->morphs_item)->first();
+                $json = $this->_convertScreenToJson($screen);
+                break;
+
+            default:
+                throw new \Error('morphs_from not send. return and set Form or Screen template.');
+                break;
+        }
+
+        $this->step->morphs_id = $request->morphs_item;
+        $this->step->morphs_json = $json;
+    }
+
     public function update($id, Request $request)
     {
         \DB::beginTransaction();
@@ -186,6 +211,7 @@ class StepsController extends Controller
 
             case 'clone':
                 $this->step = ApplicationStep::findOrFail($id);
+                $this->_saveJsonClone($request);
                 $redirect = '/applications/step/'.$id;
                 break;
         }
@@ -312,6 +338,7 @@ class StepsController extends Controller
 
     public function appStep($id)
     {
+        $this->stepFrom = 'application';
         $step = ApplicationStep::findOrFail($id);
         return $this->edit($step);
     }
@@ -333,9 +360,43 @@ class StepsController extends Controller
         $vars = $this->defaultVars($action, $step);
         $vars->step = $step;
 
+        $forms      = FormTemplate::where('status', 1)->get();
+        $screens    = Screen::all();
+
+        if ($step->morphs_id)
+        {
+            //dd('has morphs');
+            switch ($step->morphs_from)
+            {
+                case FormTemplate::class:
+                    $vars->seeItemLink = '/forms/'.$step->morphs_id;
+                    $vars->morphItem = FormTemplate::withTrashed()->where('id', $step->morphs_id)->first();
+                    $vars->itemName = 'Form';
+                    $this->_setSelectedItem($forms, $step->morphs_id);
+                    break;
+
+                case Screens::class:
+                    $vars->seeItemLink = '/screens/'.$step->morphs_id;
+                    $vars->morphItem = Screen::withTrashed()->where('id', $step->morphs_id)->first();
+                    $vars->itemName = 'Screen';
+                    $this->_setSelectedItem($screens, $step->morphs_id);
+                    break;
+                
+                default:
+                    throw new \Error('Morph item not found in both table, even on trash. Contact the system administrator');
+                    break;
+            }
+        }
+
         return view(
             'steps.form',
-            ['vars' => $vars, 'pageInfo' => $this->pageInfo]
+            [
+                'vars'      => $vars,
+                'pageInfo'  => $this->pageInfo,
+                'stepFrom'  => $this->stepFrom,
+                'forms'     => $forms,
+                'screens'   => $screens
+            ]
         );
     }
 

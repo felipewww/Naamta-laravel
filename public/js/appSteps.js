@@ -65,20 +65,28 @@ var appSteps = {
             dataType: 'json',
             success: function (data) {
 
-                $(e).attr('data-currentstatus', data.newStatus);
-                if (data.newStatus)
-                {
-                    $(e).removeClass('btn-save');
-                    $(e).addClass('btn-custom');
-                    $(e).find('> i').first().removeClass('fa-check');
-                    $(e).find('> i').first().addClass('fa-ban');
+                if (data.approved) {
+                    $(e).attr('data-currentstatus', data.newStatus);
+                    if (data.newStatus)
+                    {
+                        $(e).removeClass('btn-save');
+                        $(e).addClass('btn-custom');
+                        $(e).find('> i').first().removeClass('fa-check');
+                        $(e).find('> i').first().addClass('fa-ban');
+                    }
+                    else
+                    {
+                        $(e).removeClass('btn-custom');
+                        $(e).addClass('btn-save');
+                        $(e).find('> i').first().removeClass('fa-ban');
+                        $(e).find('> i').first().addClass('fa-check');
+                    }
                 }
                 else
                 {
-                    $(e).removeClass('btn-custom');
-                    $(e).addClass('btn-save');
-                    $(e).find('> i').first().removeClass('fa-ban');
-                    $(e).find('> i').first().addClass('fa-check');
+                    var title   = 'Action not allowed';
+                    var content = 'You cannot approve this step because it has no form or screen related. Please, click on edit button and fill correctly settings before active.';
+                    Script.xmodal().setTitle(title).setContent(content).setHeader('alert-danger').show();
                 }
             },
             error: function (data) {

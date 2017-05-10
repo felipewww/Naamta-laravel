@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use App\Library\DataTablesExtensions;
 use App\Models\ApplicationStep;
 use App\Models\ApplicationUsesEmail;
+use App\Models\FormTemplate;
+use App\Models\Screen;
 use App\Models\Step;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\URL;
@@ -182,9 +184,15 @@ class ApplicationsController extends Controller
         $step           = ApplicationStep::where('id', $request->id)->first();
         $newStatus      = ($request->currentStatus == '1') ? 0 : 1;
         $step->status   = $newStatus;
-        $step->save();
+
+        $approved = ( $step->morphs_json ) ? true : false;
+
+        if ($approved) {
+            $step->save();
+        }
 
         $res = [
+            'approved' => $approved,
             'reqStatus' => true,
             'newStatus' => $newStatus
         ];
