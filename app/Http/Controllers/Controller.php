@@ -17,15 +17,15 @@ class Controller extends BaseController
     use PageInfo {
         PageInfo::__construct as public __pageinfo;
     }
-
-//    public $pageInfo;
+    
+    public $pageInfo;
     
     public function __construct()
     {
         $this->pageInfo = $this->__pageinfo();
     }
 
-    /**
+    /*
      * Convert a form to json.
      *
      * @return response of saved itens

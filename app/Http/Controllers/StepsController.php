@@ -140,14 +140,6 @@ class StepsController extends Controller
             }
 
             $vars->usedEmails = $usedEmails;
-
-            $vars->functest = function($opt, $opts){
-                $str = '';
-                if ( $opt == 1 ) {
-                    $str = 'selected';
-                }
-                return $str;
-            };
         }
         else
         {
@@ -156,8 +148,6 @@ class StepsController extends Controller
             $vars->usedEmails   = false;
             $vars->userTypes    = UserType::all();
         }
-
-        //dd($vars);
 
         return $vars;
     }
@@ -381,7 +371,7 @@ class StepsController extends Controller
                     $vars->itemName = 'Screen';
                     $this->_setSelectedItem($screens, $step->morphs_id);
                     break;
-                
+
                 default:
                     throw new \Error('Morph item not found in both table, even on trash. Contact the system administrator');
                     break;
