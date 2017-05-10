@@ -11,12 +11,83 @@ Script = {
             // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
             var modal = $(this)
             modal.find('.modal-content form').attr("action", action)
-        })
+        });
+
+        this.setDefaultModal();
+    },
+
+    _modal: function ()
+    {
+        var _parent = this;
+        var _this = Script._modal;
+
+        _this.show = function () {
+            console.log(_parent.modal);
+            _parent.modal.show();
+        };
+        
+        return this;
+    },
+
+    xmodal: function () {
+        var __parent = this;
+        
+        this.modalName = '#defaultModal';
+
+        this.e = $('#defaultModal');
+
+        //$(this.e).find('.modal-header').first().addClass('alert-danger');
+        // $(this.e).find('.modal-header').first().addClass('alert-custom2');
+        // $(this.e).find('.modal-header').first().addClass('alert-custom');
+
+        this.show = function () {
+            this.e.modal().show();
+        };
+        
+        this.setTitle = function (title) {
+
+            if (!title) {
+                title = 'Title is not defined.';
+            }
+
+            $(this.e).find('.modal-title').first().html(title);
+
+            return __parent;
+        };
+
+        this.setContent = function (content) {
+
+            if (!content) {
+                content = 'The content is not defined.';
+            }
+
+            $(this.e).find('.modal-body').first().html(content);
+
+            return __parent;
+        };
+
+        this.setHeader = function (type) {
+            if (!type) {
+                type = 'alert-custom';
+            }
+
+            var h = $(this.e).find('.modal-header').first();
+            console.log(h);
+            $(this.e).find('.modal-header').first().addClass(type);
+
+            return __parent;
+        };
+
+        return this;
+    },
+
+    setDefaultModal: function () {
+        //this.modal = $('#defaultModal').modal();
+        this.modal = $('#defaultModal');
     },
 
     safeLeave: function ()
     {
-        console.log('here');
         var _this = Script.safeLeave;
 
         _this.elements = ['a'];

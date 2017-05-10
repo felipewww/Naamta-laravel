@@ -13,6 +13,7 @@ var Steps = {
         if (this.action == 'edit')
         {
             this.moveEventsEmails();
+            this.showSelectsScreenForm();
         }
     },
 
@@ -47,6 +48,56 @@ var Steps = {
                 }
             }
         }
+    },
+
+    showSelectsScreenForm: function ()
+    {
+        var radios = $('[name*="morphs_from"]');
+
+        $(radios).each(function () {
+            var $this = $(this);
+            // var e = $this[0];
+            //$(this).on('change', func)
+            var e = $(this)[0];
+
+            if (e.checked) { Steps.__showSelect(e.value); }
+
+            e.addEventListener('change', function () {
+                Steps.__showSelect(this.value)
+            })
+        })
+    },
+    
+    __showSelect: function (value) 
+    {
+        var selectContainer = 'list_';
+
+        var all = $('.select_list');
+
+        all.each(function () {
+            $(this).find('select').first().removeAttr('required');
+            $(this).find('select').first().removeAttr('name');
+        });
+
+        all.hide();
+
+        switch (value)
+        {
+            case "App\\Models\\FormTemplate":
+                selectContainer += 'forms';
+                break;
+
+            case "App\\Models\\Screens":
+                selectContainer += 'screens';
+                break;
+        }
+
+        selectContainer = $('#'+selectContainer);
+        selectContainer.show();
+
+        selectContainer.find('select').first().attr('required','required');
+        selectContainer.find('select').first().attr('name','morphs_item');
+
     },
 
     setTemplate: function () {
