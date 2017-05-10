@@ -5,17 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class FormTemplate extends Model
+class Approval extends Model
 {
     use SoftDeletes;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'status'
+       'id', 'title', 'description', 'has_report'
     ];
+
+    public function report()
+    {
+        if($this->has_report)
+            return $this->hasOne('App\Models\Approval');
+
+        return null;
+    }
 
     /**
      * The attributes that should be mutated to dates.
@@ -23,14 +32,4 @@ class FormTemplate extends Model
      * @var array
      */
     protected $dates = ['deleted_at'];
-
-    public function containers()
-    {
-        return $this->hasMany('App\Models\Container');
-    }
-
-    public function history()
-    {
-        return $this->hasMany('App\Models\HistoryFormTemplate');
-    }
 }

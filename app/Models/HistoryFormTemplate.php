@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class FormTemplate extends Model
+class HistoryFormTemplate extends Model
 {
     use SoftDeletes;
     /**
@@ -14,9 +14,8 @@ class FormTemplate extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'status'
+        'id', 'form_json'
     ];
-
     /**
      * The attributes that should be mutated to dates.
      *
@@ -24,13 +23,8 @@ class FormTemplate extends Model
      */
     protected $dates = ['deleted_at'];
 
-    public function containers()
+    public function form()
     {
-        return $this->hasMany('App\Models\Container');
-    }
-
-    public function history()
-    {
-        return $this->hasMany('App\Models\HistoryFormTemplate');
+        return $this->hasOne('App\Models\Form');
     }
 }

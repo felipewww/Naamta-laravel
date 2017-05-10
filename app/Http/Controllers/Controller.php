@@ -13,10 +13,10 @@ use App\Library\PageInfo;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-
     use PageInfo {
         PageInfo::__construct as public __pageinfo;
     }
+    public $pageInfo;
 
     public function __construct()
     {
@@ -28,7 +28,6 @@ class Controller extends BaseController
      *
      * @return response of saved itens
      */
-
     protected function _convertFormToJson($form, $clone = false){
         $_return = array();
         foreach ($form->containers as $i => $c){
