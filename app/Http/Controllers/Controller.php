@@ -16,7 +16,7 @@ class Controller extends BaseController
     use PageInfo {
         PageInfo::__construct as public __pageinfo;
     }
-    public $pageInfo;
+    //public $pageInfo;
 
     public function __construct()
     {
