@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Client;
 
 class HomeController extends Controller
 {
@@ -32,8 +34,23 @@ class HomeController extends Controller
         $this->pageInfo->category->title    = '';
         $this->pageInfo->subCategory->title = 'Homepage';
 
-        return view('homes.'.Auth::user()->roles[0]->name, ['pageInfo' => $this->pageInfo]);
+        $userType = Auth::user()->roles[0]->name;
+
+        if($userType==="client"){
+            $application = Client::where("user_id", Auth::id())->first()->application()->first();
+            if(isset($application)){
+                if($application->status===0)
+                    return view('homes.wait_approval', ['pageInfo' => $this->pageInfo]);
+
+                return $this->applicationDashboard($request, $application->id);
+            }
+        }
+        return view('homes.'.$userType, ['pageInfo' => $this->pageInfo]);
     }
 
+    public function applicationDashboard(Request $request, $id){
+        $application = Application::find($id);
+        return view('homes.application', ['pageInfo' => $this->pageInfo,'application' => $application]);
+    }
 
 }

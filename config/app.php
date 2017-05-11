@@ -177,8 +177,6 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\ShortcodesServiceProvider::class,
-        App\Providers\ShortcodesServiceProvider::class,
-
     ],
 
     /*
@@ -193,7 +191,6 @@ return [
     */
 
     'aliases' => [
-
         'App' => Illuminate\Support\Facades\App::class,
         'Artisan' => Illuminate\Support\Facades\Artisan::class,
         'Auth' => Illuminate\Support\Facades\Auth::class,
@@ -229,5 +226,4 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Shortcode' => Webwizo\Shortcodes\Facades\Shortcode::class,
     ],
-
 ];

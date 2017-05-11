@@ -28,4 +28,9 @@ class Client extends Model
     {
         return $this->belongsToOne('App\Models\User', 'user_id');
     }
+
+    public function application()
+    {
+        return $this->hasOne('App\Models\Application', 'client_id', 'id');
+    }
 }
