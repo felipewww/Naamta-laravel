@@ -7,6 +7,7 @@ use App\Library\DataTablesExtensions;
 
 use App\Http\Controllers\Controller;
 
+use App\Models\Approval;
 use Illuminate\Support\Facades\URL;
 use Validator;
 use Session;
@@ -15,8 +16,6 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
 
 use Illuminate\Http\Request;
-
-use App\Models\Approval;
 
 class ApprovalsController extends Controller
 {
@@ -113,8 +112,9 @@ class ApprovalsController extends Controller
         \DB::beginTransaction();
         try{
             Approval::create([
-                'title'       => $request->title,
-                'description' => $request->description
+                'title'         => $request->title,
+                'description'   => $request->description,
+                'has_report'    => 0,
             ]);
             \Session::flash('success','Approval template created: ' . $request->title);
             \DB::commit();

@@ -36,8 +36,8 @@
     <script src="{{ asset("js/template/waves.js") }}"></script>
     <script src="{{ asset("js/template/custom.js") }}"></script>
     <script src="{{ asset("js/template/jasny-bootstrap.js") }}"></script>
-    @yield('scripts')
     <script src="{{ asset("js/script.js") }}"></script>
+    @yield('scripts')
 
 
 </head>
@@ -102,7 +102,8 @@
                     @endif
                     @if(Auth::user()!=null && (Auth::user()->isAdmin() || Auth::user()->isStaff()))
                         <li> <a href="{{ url('forms') }}"> Form Types</a></li>
-                        <li> <a href="{{ url('screens') }}"> Screen Types</a></li>
+                        <li> <a href="{{ url('approvals') }}"> Approval Templates</a></li>
+                        {{--<li> <a href="{{ url('screens') }}"> Screen Types</a></li>--}}
                         <li> <a href="{{ url('applications') }}"> Applications</a></li>
                     @endif
                 </ul>
@@ -126,6 +127,15 @@
                 </div>
                 <!-- .row -->
                 <div class="row">
+                    @if (count($errors) > 0)
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     @yield('content')
                 </div>
             </div>

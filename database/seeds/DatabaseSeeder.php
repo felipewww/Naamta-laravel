@@ -21,5 +21,6 @@ class DatabaseSeeder extends Seeder
         $this->call(EmailTemplates::class);
         $this->call(StepsSeeder::class);
         $this->call(UsesEmailsSeeder::class);
+        $this->call(ApprovalsSeeder::class);
     }
 }

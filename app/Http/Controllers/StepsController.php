@@ -6,10 +6,11 @@ use App\Library\PageInfo;
 use App\Models\Application;
 use App\Models\ApplicationStep;
 use App\Models\ApplicationUsesEmail;
+use App\Models\Approval;
 use App\Models\EmailTemplate;
 use App\Models\FormTemplate;
 use App\Models\Screen;
-use App\Models\Screens;
+//use App\Models\Screens;
 use App\Models\UserType;
 use App\Models\UsesEmail;
 use Illuminate\Database\QueryException;
@@ -66,7 +67,8 @@ class StepsController extends Controller
     {
         $vars = new \stdClass();
         $vars->steps            = $this->steps;
-        $vars->morphs_from      = [FormTemplate::class, Screens::class];
+//        $vars->morphs_from      = [FormTemplate::class, Screens::class];
+        $vars->morphs_from      = [FormTemplate::class, Approval::class];
         $vars->emailTemplates   = EmailTemplate::all();
 
         if ( $action == 'edit' )
@@ -174,9 +176,14 @@ class StepsController extends Controller
                 $json = $this->_convertFormToJson($form);
                 break;
 
-            case Screens::class:
-                $screen = Screen::where('id', $request->morphs_item)->first();
-                $json = $this->_convertScreenToJson($screen);
+//            case Screens::class:
+//                $screen = Screen::where('id', $request->morphs_item)->first();
+//                $json = $this->_convertScreenToJson($screen);
+//                break;
+
+            case Approval::class:
+                $approval = Approval::where('id', $request->morphs_item)->first();
+                $json = $this->_convertScreenToJson($approval);
                 break;
 
             default:
@@ -250,8 +257,8 @@ class StepsController extends Controller
 
     public function store(Request $request)
     {
-        $success = $request->emails_success;
-        $rejected = $request->emails_rejected;
+//        $success = $request->emails_success;
+//        $rejected = $request->emails_rejected;
 
         $request->offsetUnset('emails_success');
         $request->offsetUnset('emails_rejected');
@@ -342,16 +349,19 @@ class StepsController extends Controller
         if ( $id instanceof ApplicationStep ) {
             $step = $id;
             $action = 'edit';
+            $backLink = '/applications/'.$step->application->id.'/edit';
         }else{
             $step = Step::findOrFail($id);
             $action = 'edit';
+            $backLink = '/steps';
         }
 
         $vars = $this->defaultVars($action, $step);
         $vars->step = $step;
 
         $forms      = FormTemplate::where('status', 1)->get();
-        $screens    = Screen::all();
+//        $approvals    = Screen::all();
+        $approvals    = Approval::all();
 
         if ($step->morphs_id)
         {
@@ -365,11 +375,11 @@ class StepsController extends Controller
                     $this->_setSelectedItem($forms, $step->morphs_id);
                     break;
 
-                case Screens::class:
-                    $vars->seeItemLink = '/screens/'.$step->morphs_id;
-                    $vars->morphItem = Screen::withTrashed()->where('id', $step->morphs_id)->first();
-                    $vars->itemName = 'Screen';
-                    $this->_setSelectedItem($screens, $step->morphs_id);
+                case Approval::class:
+                    $vars->seeItemLink = '/approvals/'.$step->morphs_id;
+                    $vars->morphItem = Approval::withTrashed()->where('id', $step->morphs_id)->first();
+                    $vars->itemName = 'Approval';
+                    $this->_setSelectedItem($approvals, $step->morphs_id);
                     break;
 
                 default:
@@ -385,7 +395,8 @@ class StepsController extends Controller
                 'pageInfo'  => $this->pageInfo,
                 'stepFrom'  => $this->stepFrom,
                 'forms'     => $forms,
-                'screens'   => $screens
+                'approvals' => $approvals,
+                'backLink'  => $backLink
             ]
         );
     }
