@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Providers;
-
+use App\Shortcodes\BoldShortcode;
+use App\Shortcodes\ItalicShortcode;
 use Illuminate\Support\ServiceProvider;
 
 class ShortcodesServiceProvider extends ServiceProvider
@@ -13,7 +14,6 @@ class ShortcodesServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        parent::boot();
     }
 
     /**
@@ -23,7 +23,7 @@ class ShortcodesServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        Shortcode::register('b', BoldShortcode::class);
-        Shortcode::register('i', ItalicShortcode::class);
+        \Shortcode::register('b', BoldShortcode::class);
+        \Shortcode::register('i', ItalicShortcode::class);
     }
 }
