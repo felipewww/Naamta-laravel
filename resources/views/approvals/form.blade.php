@@ -2,13 +2,13 @@
 
 @php
     $page = "approvals";
-    
+
     $route = route('approvals.store');
     $method = 'POST';
     if(isset($approval) && $approval!=null){
         $method = 'PUT';
         $route = route('approvals.update', ['id' => $approval->id]);
-        
+
     }else{
         $approval = new App\Models\Approval();
     }

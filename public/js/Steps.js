@@ -13,7 +13,7 @@ var Steps = {
         if (this.action == 'edit')
         {
             this.moveEventsEmails();
-            this.showSelectsScreenForm();
+            this.showSelectsApprovalForm();
         }
     },
 
@@ -50,7 +50,7 @@ var Steps = {
         }
     },
 
-    showSelectsScreenForm: function ()
+    showSelectsApprovalForm: function ()
     {
         var radios = $('[name*="morphs_from"]');
 
@@ -87,8 +87,8 @@ var Steps = {
                 selectContainer += 'forms';
                 break;
 
-            case "App\\Models\\Screens":
-                selectContainer += 'screens';
+            case "App\\Models\\Approval":
+                selectContainer += 'approvals';
                 break;
         }
 

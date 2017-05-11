@@ -25,7 +25,7 @@ class StepsSeeder extends Seeder
             ],
             [
                 'id'                => 2,
-                'morphs_from'       => \App\Models\Screens::class,
+                'morphs_from'       => \App\Models\Approval::class,
                 'responsible'       => 1,
                 'status'            => 1,
                 'title'             => 'Step B [screen]',
@@ -45,7 +45,7 @@ class StepsSeeder extends Seeder
             ],
             [
                 'id'                => 4,
-                'morphs_from'       => \App\Models\Screens::class,
+                'morphs_from'       => \App\Models\Approval::class,
                 'responsible'       => 1,
                 'status'            => 1,
                 'title'             => 'Step D [screen]',
@@ -65,7 +65,7 @@ class StepsSeeder extends Seeder
             ],
             [
                 'id'                => 6,
-                'morphs_from'       => \App\Models\Screens::class,
+                'morphs_from'       => \App\Models\Approval::class,
                 'responsible'       => 1,
                 'status'            => 1,
                 'title'             => 'Step F [screen]',

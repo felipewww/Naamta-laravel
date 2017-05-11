@@ -104,8 +104,8 @@
                                <label for="type_form"> Form </label>
                            </div>
                            <div class="radio radio-success col-sm-2">
-                               <input {{ ( $vars->morphs_from[1] == $vars->step->morphs_from ) ? 'checked' : ''  }} type="radio" required name="morphs_from" id="type_screen" value="{{ $vars->morphs_from[1] }}" >
-                               <label for="type_screen"> Screen </label>
+                               <input {{ ( $vars->morphs_from[1] == $vars->step->morphs_from ) ? 'checked' : ''  }} type="radio" required name="morphs_from" id="type_approval" value="{{ $vars->morphs_from[1] }}" >
+                               <label for="type_approval"> Approval </label>
                            </div>
                            @if ($errors->has('title'))
                                <span class="help-block">
@@ -140,22 +140,22 @@
                                </div>
                            </div>
 
-                           <div class="form-group select_list" id="list_screens">
-                               <label class="col-sm-12">Select a Screen</label>
+                           <div class="form-group select_list" id="list_approvals">
+                               <label class="col-sm-12">Select a Approval</label>
                                <div class="col-sm-12">
                                    <select class="form-control chosen" name="morphs_item">
-                                       <option value="">Select a Screen</option>
-                                       @foreach($screens as $screen)
-                                           <option {{ $screen->id }} value="{{ $screen->id }}">{{ $screen->title }}</option>
+                                       <option value="">Select a Approval</option>
+                                       @foreach($approvals as $approval)
+                                           <option {{ $approval->selected }} value="{{ $approval->id }}">{{ $approval->title }}</option>
                                        @endforeach
                                    </select>
                                </div>
                            </div>
                        @endif
 
-                       <div class="form-group" id="show-screen">
+                       <div class="form-group" id="show-approval">
                            <label class="col-sm-12">Uses E-mail?</label>
-                           <div class="col-sm-12" id="screen">
+                           <div class="col-sm-12" id="approval">
                                <div id="emails_success">
                                    <h2>on step success</h2>
                                    <span class="button_add_mail" href="#">Add e-mail</span>

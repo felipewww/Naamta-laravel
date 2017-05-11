@@ -102,7 +102,8 @@
                     @endif
                     @if(Auth::user()!=null && (Auth::user()->isAdmin() || Auth::user()->isStaff()))
                         <li> <a href="{{ url('forms') }}"> Form Types</a></li>
-                        <li> <a href="{{ url('screens') }}"> Screen Types</a></li>
+                        <li> <a href="{{ url('approvals') }}"> Approval Templates</a></li>
+                        {{--<li> <a href="{{ url('screens') }}"> Screen Types</a></li>--}}
                         <li> <a href="{{ url('applications') }}"> Applications</a></li>
                     @endif
                 </ul>
