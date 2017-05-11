@@ -26,8 +26,8 @@ class WorkflowController extends Controller
         });
     }
 
-    public function show(Request $request, $idApp, $idStep){
-        $step = ApplicationStep::findOrFail($idStep);
+    public function show(Request $request, $id){
+        $step = ApplicationStep::findOrFail($id);
         if ($step->morphs_id)
         {
             switch ($step->morphs_from)
