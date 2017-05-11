@@ -58,6 +58,8 @@ Route::group(['middleware' => 'auth'], function(){
 
     Route::get('/forms/{id}/clone',  'FormsController@create');
 
+    Route::get('/workflow/step/{id}/show/',  'WorkflowController@show');
+
     Route::post('/forms/comment', function (Request $request) {
         try{
             \App\Models\Comment::create([
@@ -72,4 +74,12 @@ Route::group(['middleware' => 'auth'], function(){
         }
     });
 
+    Route::get('/emails/{id}/test', function (Request $request, $id) {
+        try{
+            $mail = \App\Models\EmailTemplate::find($id);
+            return View::make('emails.view')->with("email", $mail)->withShortcodes();
+        }catch (Exception $e){
+            echo "false: " . $e;
+        }
+    });
 });

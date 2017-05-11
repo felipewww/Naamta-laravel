@@ -24,7 +24,7 @@ class CreateHistoryReportsTable extends Migration
                 ->onDelete('cascade');
         });
 
-        DB::statement("ALTER TABLE history_forms ADD report_json MEDIUMBLOB");
+        DB::statement("ALTER TABLE history_reports ADD report_json MEDIUMBLOB");
     }
 
     /**

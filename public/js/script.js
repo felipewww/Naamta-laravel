@@ -14,6 +14,8 @@ Script = {
         });
 
         this.setDefaultModal();
+
+        $('.chosen').chosen();
     },
 
     _modal: function ()

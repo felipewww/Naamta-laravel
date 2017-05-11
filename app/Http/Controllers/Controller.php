@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Approval;
 use App\Models\FormTemplate;
 use App\Models\Screen;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -54,9 +55,9 @@ class Controller extends BaseController
         return json_encode($_return);
     }
 
-    protected function _convertScreenToJson(Screen $screen)
+    protected function _convertScreenToJson(Approval $approval)
     {
-        return json_encode($screen->getAttributes());
+        return json_encode($approval->getAttributes());
     }
 
     protected function _setSelectedItem(&$items, $id)

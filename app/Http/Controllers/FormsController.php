@@ -159,7 +159,6 @@ class FormsController extends Controller
         $form = FormTemplate::withTrashed()->with( array( 'containers', 'containers.fields', 'containers.fields.comments') )->findOrFail($id);
 
         return view('forms.show')->with(['form' => $form, 'containers' => $this->_convertFormToJson($form), 'pageInfo' => $this->pageInfo]);
-
     }
 
     public function edit(Request $request, $id){
