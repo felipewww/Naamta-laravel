@@ -59,6 +59,6 @@ class HomeController extends Controller
     public function applicationDashboard(Request $request, $id){
         $application = Application::find($id);
         $stepsWithForm = $application->steps->where("morphs_from", FormTemplate::class )->all();
-        return view('homes.application', ['pageInfo' => $this->pageInfo,'application' => $application, 'stepsWithForm' => $stepsWithForm]);
+        return view('homes.application', ['pageInfo' => $this->pageInfo, 'application' => $application, 'stepsWithForm' => $stepsWithForm]);
     }
 }

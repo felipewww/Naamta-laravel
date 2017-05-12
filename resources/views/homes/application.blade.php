@@ -21,6 +21,7 @@
                     if($currentStep===null){
                         $currentStep = $application->steps->first();
                     }
+
                 @endphp
                 <h3 class="box-title m-b-0"><b>Current Step :</b> {{$currentStep->title}}</h3>
 
@@ -39,9 +40,6 @@
             </div>
             <div class="white-box">
                 <h3 class="box-title m-b-0"><b>Application Info</b></h3>
-
-                <h4>Responsible:</h4>
-                <p class="m-b-40">{{ $application->responsible->name }}</p>
 
                 <h4>Application Started:</h4>
                 <p class="m-b-40">{{ $application->created_at }}</p>
