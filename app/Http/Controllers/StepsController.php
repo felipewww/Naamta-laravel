@@ -52,8 +52,8 @@ class StepsController extends Controller
         $this->pageInfo->subCategory->title = 'Default steps';
 
         $vars = new \stdClass();
-        $vars->steps        = Step::where('status', 1)->orderBy('ordination')->get();
-        $vars->inactives    = Step::where('status', 0)->get();
+        $vars->steps        = Step::where('status', '1')->orderBy('ordination')->get();
+        $vars->inactives    = Step::where('status', '0')->get();
         
         return view(
             'steps.list', [

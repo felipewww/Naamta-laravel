@@ -67,7 +67,7 @@ var appSteps = {
 
                 if (data.approved) {
                     $(e).attr('data-currentstatus', data.newStatus);
-                    if (data.newStatus)
+                    if (data.newStatus == '1')
                     {
                         $(e).removeClass('btn-save');
                         $(e).addClass('btn-custom');

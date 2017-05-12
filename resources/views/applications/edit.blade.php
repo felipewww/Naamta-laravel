@@ -63,6 +63,7 @@
                             <label for="title" class="col-md-4 control-label">Responsible</label>
                             <div class="col-md-6">
                                 <select class="form-control" name="staff_id" required="">
+                                    <option value="0">Select an user</option>
                                     @foreach($staffs as $staff)
                                         <option value="{{ $staff->id }}" {{ (isset($application) && $application->staff_id == $staff->id ? "selected" : "") }}>{{ $staff->name }}</option>
                                     @endforeach
