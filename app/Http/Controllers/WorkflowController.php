@@ -95,7 +95,13 @@ class WorkflowController extends Controller
         try{
             $step = ApplicationStep::findOrFail($request->id);
             $step->morphs_json = $request->form_json;
+            $step->status = "approved";
             $step->save();
+
+            $nexStep = ApplicationStep::findOrFail( $step->nextStep()->id);
+            $nexStep->status = "current";
+            $nexStep->save();
+
             return json_encode(['status' => 'success', 'message' => 'Form saved']);
         }catch (Exception $e){
             return json_encode(['status' => 'error', 'message' => 'Error']);
