@@ -14,7 +14,7 @@ Script = {
         });
 
         this.setDefaultModal();
-
+        
         try{
             $('.chosen').chosen();
         }catch (e){
@@ -41,10 +41,6 @@ Script = {
         this.modalName = '#defaultModal';
 
         this.e = $('#defaultModal');
-
-        //$(this.e).find('.modal-header').first().addClass('alert-danger');
-        // $(this.e).find('.modal-header').first().addClass('alert-custom2');
-        // $(this.e).find('.modal-header').first().addClass('alert-custom');
 
         this.show = function () {
             this.e.modal().show();
@@ -88,7 +84,6 @@ Script = {
     },
 
     setDefaultModal: function () {
-        //this.modal = $('#defaultModal').modal();
         this.modal = $('#defaultModal');
     },
 
@@ -97,7 +92,6 @@ Script = {
         var _this = Script.safeLeave;
 
         _this.elements = ['a'];
-        //_this.status = false; //false means cannot change page without warning user
         
         _this.setElements = function ()
         {

@@ -5,6 +5,7 @@ $(document).ready(function () {
 var Steps = {
     containers: {},
     action: 'create',
+    from: null,
 
     init: function () {
         this.setTemplate();
@@ -13,8 +14,8 @@ var Steps = {
         if (this.action == 'edit')
         {
             this.moveEventsEmails();
-            this.showSelectsApprovalForm();
         }
+            this.showSelectsApprovalForm();
     },
 
     moveEventsEmails: function ()
@@ -52,12 +53,10 @@ var Steps = {
 
     showSelectsApprovalForm: function ()
     {
+        // var _this = this;
         var radios = $('[name*="morphs_from"]');
 
         $(radios).each(function () {
-            var $this = $(this);
-            // var e = $this[0];
-            //$(this).on('change', func)
             var e = $(this)[0];
 
             if (e.checked) { Steps.__showSelect(e.value); }
@@ -90,6 +89,13 @@ var Steps = {
             case "App\\Models\\Approval":
                 selectContainer += 'approvals';
                 break;
+        }
+
+        /**
+         * The "form select" is showed only when editing a cloned step
+         * */
+        if (value == "App\\Models\\FormTemplate" && this.action == 'edit' && this.from != 'clone') {
+            return false;
         }
 
         selectContainer = $('#'+selectContainer);

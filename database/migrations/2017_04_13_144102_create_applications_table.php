@@ -38,14 +38,7 @@ class CreateApplicationsTable extends Migration
             $table->foreign('application_id')
                 ->references('id')->on('applications');
         });
-
-        Schema::table('applications', function (Blueprint $table) {
-            $table->integer('staff_id')->unsigned()->nullable();
-            
-            $table->foreign('staff_id')
-                ->references('id')->on('application_user_types')
-                ->onDelete('set null');
-        });
+        
     }
 
     /**

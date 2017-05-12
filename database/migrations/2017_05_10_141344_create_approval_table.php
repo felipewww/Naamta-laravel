@@ -21,6 +21,14 @@ class CreateApprovalTable extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
+
+        Schema::table('steps', function (Blueprint $table) {
+            $table->integer('morphs_id')->unsigned()->nullable();
+
+            $table->foreign('morphs_id')
+                ->references('id')->on('approvals')
+                ->onDelete('set null');
+        });
     }
 
     /**

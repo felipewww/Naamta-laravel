@@ -68,6 +68,14 @@
                                                             Inactive
                                                         @endif
                                                     </h5>
+                                                    <h5 class="m-t-20 m-b-0">
+                                                        <b>Type:</b>
+                                                        @if( $step->morphs_from == \App\Models\FormTemplate::class )
+                                                            <span style="color: blue; font-weight: bold;">Forms</span>
+                                                        @else
+                                                            Approvals
+                                                        @endif
+                                                    </h5>
                                                     <br>
                                                     @if( $step->usesEmails->isNotempty() )
                                                         <table class="table table-responsive color-table muted-table">
