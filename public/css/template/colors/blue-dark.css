@@ -218,7 +218,6 @@ a.logo img{
 
 .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
     color: white !important;
-    border: 1px solid #F59623;
     background-color: #F59623;
 }
 
@@ -301,8 +300,10 @@ div.logo{
   }
 }
 
-
-.sttabs nav li.tab-current a h3{
+.sttabs nav li h3{
+  cursor: pointer;
+}
+.sttabs nav li.tab-current h3{
   color: #f59623;
 }
 
@@ -311,10 +312,6 @@ div.logo{
   display: none;
 }
 
-.panel-heading{
-  background-color: #fafafa;
-  cursor: move;
-}
 
 .lobipanel .white-box{
   padding-top: 0;
@@ -366,4 +363,71 @@ h5 + table{
 
 .panel > .white-box{
   padding-top: 0;
+}
+.chosen-container{
+  width: 100% !important;
+}
+
+.chosen-container .search-choice{
+  background-color: white;
+  border-radius: 0;
+}
+
+.form-group .chosen-container-multi .chosen-choices li.search-choice {
+    border: 1px solid #aaa;
+    max-width: 100%;
+    border-radius: 0;
+    background-color: #fff;
+    background-image: none;
+    box-shadow: none;
+    cursor: default;
+    padding: 10px;
+    padding-right: 20px;
+}
+11px
+.form-group .chosen-container-multi .chosen-results{
+  padding: 5px 10px;
+}
+
+.form-group .chosen-container-multi .chosen-choices{
+  padding: 5px;
+}
+
+.form-group .chosen-container-active .chosen-choices{
+  box-shadow: none;
+  border: 1px solid #2b2b2b;
+}
+
+.form-group .chosen-container-multi .chosen-choices li.search-choice .search-choice-close{
+  top: 10px;
+  right: 4px;
+}
+
+.form-group .chosen-container-single .chosen-single{
+    padding: 8px;
+    padding-bottom: 28px;
+    border-radius: 0;
+    background: #fff;
+}
+
+.form-group .chosen-container-single .chosen-single div b{
+    background-position: 0px 7px;
+}
+.form-group .chosen-container-active.chosen-with-drop .chosen-single div b {
+    background-position: -15px 8px;
+}
+
+
+table.setDataTables tbody tr td{
+  padding: 20px 5px !important;
+}
+
+table.dataTable tbody tr.selected a, table.dataTable tbody th.selected a, table.dataTable tbody td.selected a{
+  color: white !important;
+}
+table.dataTable tbody>tr.selected, table.dataTable tbody>tr>.selected{
+  background-color: #eaeaea !important;
+}
+table.dataTable tbody tr.selected, table.dataTable tbody th.selected, table.dataTable tbody td.selected{
+  color: #000 !important;
 }

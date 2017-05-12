@@ -286,14 +286,12 @@
     margin-right: 10px;
 }
 
-
 @media screen and (max-width: 1330px){
     #drag-container .half-row{
         margin-left: 0;
         width: 100% !important;
     }
 }
-
 
 #drag-container .half-row .col-lg-2{
     width: 50%;

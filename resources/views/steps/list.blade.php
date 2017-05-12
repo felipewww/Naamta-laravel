@@ -31,13 +31,13 @@
                             </ul>
                         </nav>
                         <div class="clearfix"></div>
-                        <div class="content-wrap">
+                        <div class="content-wrap steps">
                             <section id="active">
                                 <!-- .row -->
                                 <div class="row">
                                     <div id="sortables" class="col-md-12">
                                         @foreach($vars->steps as $step)
-                                        <div class="col-md-2 step-sortable" data-stepid="{{$step->id}}">
+                                        <div class="col-sm-6 col-md-4 col-lg-3 step-sortable" data-stepid="{{$step->id}}">
                                             <div class="panel draggable" draggable="true">
                                                 <div class="white-box">
                                                     <div class="panel-heading p-b-10 p-t-10">
@@ -74,13 +74,13 @@
                                                     <h5 class="m-t-0 m-b-20"><b>Form:</b> Form 1</h5>
 
                                                     <div class="row action">
-                                                        <div class="col-md-12">
+                                                        <div class="col-sm-6">
                                                             <span onclick="sysSteps.changeStatus(this)" data-status="1" class="btn btn-custom">Inactivate</span>
                                                         </div>
-                                                        <div class="col-md-6">
+                                                        <div class="col-sm-3">
                                                             <a href="/steps/{{ $step->id }}/edit" class="btn btn-circle pull-right btn-custom2" data-dismiss="modal"><i class="fa fa-pencil"></i></a>
                                                         </div>
-                                                        <div class="col-md-6">
+                                                        <div class="col-sm-3">
                                                             <span onclick="sysSteps.confirmDelete(this, {{ $step->id }})" class="btn btn-circle pull-right btn-danger" data-dismiss="modal"><i class="fa fa-close"></i></span>
                                                         </div>
                                                     </div>
@@ -96,7 +96,7 @@
                                 <div class="row">
                                     <div id="not-sortables" class="col-md-12">
                                         @foreach($vars->inactives as $step)
-                                            <div class="col-md-2 step-sortable" data-stepid="{{$step->id}}">
+                                            <div class="col-sm-6 col-md-4 col-lg-3 step-sortable" data-stepid="{{$step->id}}">
                                                 <div class="panel draggable" draggable="true">
                                                     <div class="white-box">
                                                         <div class="panel-heading p-b-10 p-t-10">
@@ -133,10 +133,10 @@
                                                         <h5 class="m-t-0 m-b-20"><b>Form:</b> Form 1</h5>
 
                                                         <div class="row action">
-                                                            <div class="col-md-6">
+                                                            <div class="col-sm-6">
                                                                 <a href="#" onclick="sysSteps.changeStatus(this)" data-status="0" class="btn btn-def">Activate</a>
                                                             </div>
-                                                            <div class="col-md-6">
+                                                            <div class="col-sm-6">
                                                                 <a href="editstep.html" class="btn btn-circle pull-right btn-custom2"><i class="fa fa-pencil"></i></a>
                                                             </div>
                                                         </div>
