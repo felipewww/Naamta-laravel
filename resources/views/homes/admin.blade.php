@@ -22,7 +22,7 @@
                                 <ul class="list-inline two-part">
                                     <li></li>
                                     <li class="text-right">
-                                        <a href="applicationdetail.html" class="btn btn-success">Details</a>
+                                        <a href="/application/{{$activeApplication->id}}/dashboard" class="btn btn-success">Details</a>
                                     </li>
                                 </ul>
                             </div>

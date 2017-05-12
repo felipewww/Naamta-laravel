@@ -61,5 +61,4 @@ class HomeController extends Controller
         $application = Application::find($id);
         return view('homes.application', ['pageInfo' => $this->pageInfo,'application' => $application]);
     }
-
 }
