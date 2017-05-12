@@ -14,10 +14,13 @@ class HomeController extends Controller
      *
      * @return void
      */
+    public $vars;
+
     public function __construct()
     {
         parent::__construct();
-       $this->middleware(function ($request, $next) {
+        $this->vars = new \stdClass();
+        $this->middleware(function ($request, $next) {
             $user = \Auth::user()->authorizeRoles(['admin', 'staff', 'client']);;
             return $next($request);
         });
@@ -30,11 +33,12 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        $this->pageInfo->title              = 'Homepage';
-        $this->pageInfo->category->title    = '';
-        $this->pageInfo->subCategory->title = 'Homepage';
-
         $userType = Auth::user()->roles[0]->name;
+
+        $this->pageInfo->title              = Auth::user()->name."'s".' Dashboard';
+        $this->pageInfo->category->title    = $userType;
+        $this->pageInfo->subCategory->title = 'Homepage';
+        $this->vars->userType = $userType;
 
         if($userType==="client"){
             $application = Client::where("user_id", Auth::id())->first()->application()->first();
@@ -45,7 +49,12 @@ class HomeController extends Controller
                 return $this->applicationDashboard($request, $application->id);
             }
         }
-        return view('homes.'.$userType, ['pageInfo' => $this->pageInfo]);
+        else{
+            $this->vars->activeApplications = Application::where('status', 1)->get();
+            $this->vars->inactiveApplications = Application::where('status', 0)->get();
+        }
+
+        return view('homes.'.$userType, ['vars' => $this->vars, 'pageInfo' => $this->pageInfo]);
     }
 
     public function applicationDashboard(Request $request, $id){

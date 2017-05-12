@@ -1,18 +1,92 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">Dashboard</div>
+    {{--<div id="page-wrapper">--}}
+        <div class="container-fluid">
+            {{--<div class="alert alert-custom">You have <a href="#">4 Applications</a> in need of your attention (of <a href="#">10 under your supervision</a>)</div>--}}
 
-                <div class="panel-body">
-                    You are a Admin!
+            <!-- .row -->
+            <div class="row">
+                <div class="col-md-9 p-r-20">
+                    <h3 class="box-title">Active Applications</h3>
+                    <div class="row">
+                        @foreach($vars->activeApplications as $activeApplication)
+                        <div class="col-md-6">
+                            <div class="white-box">
+                                <h3 class="box-title">Application : Client 1</h3>
+
+                                <h5><b>Current Step:</b> Step 2</h5>
+                                <h5><b>Next Action Due Date:</b> March, 17, 2017</h5>
+                                <h5><b>Last Step Submitted:</b> Today at 10:02 a.m.</h5>
+                                <h5><b>Responsible:</b> Staff 1</h5>
+                                <ul class="list-inline two-part">
+                                    <li></li>
+                                    <li class="text-right">
+                                        <a href="applicationdetail.html" class="btn btn-success">Details</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="col-md-3 p-l-20">
+                    <h3 class="box-title">New Registrations</h3>
+                    @foreach($vars->inactiveApplications as $inactiveApplication)
+                    <div class="white-box">
+                        <h4 class="m-b-20"><b>{{ $inactiveApplication->client->company }}</b></h4>
+
+                        <ul class="list-inline two-part">
+                            <li></li>
+                            <li class="text-right">
+                                <a href="/applications/{{ $inactiveApplication->id }}/edit" class="btn btn-success m-t-10">Details</a>
+                            </li>
+                        </ul>
+                    </div>
+                    @endforeach
                 </div>
             </div>
-        </div>
-    </div>
-</div>
+            <!-- .row -->
 
+            <!-- .right-sidebar -->
+            <div class="right-sidebar">
+                <div class="slimscrollright">
+                    <div class="rpanel-title"> Service Panel <span><i class="ti-close right-side-toggle"></i></span> </div>
+                    <div class="r-panel-body">
+                        <ul class="m-t-20 chatonline">
+                            <li><b>Chat option</b></li>
+                            <li>
+                                <a href="javascript:void(0)"><img src="../plugins/images/users/varun.jpg" alt="user-img" class="img-circle"> <span>Varun Dhavan <small class="text-success">online</small></span></a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)"><img src="../plugins/images/users/genu.jpg" alt="user-img" class="img-circle"> <span>Genelia Deshmukh <small class="text-warning">Away</small></span></a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)"><img src="../plugins/images/users/ritesh.jpg" alt="user-img" class="img-circle"> <span>Ritesh Deshmukh <small class="text-danger">Busy</small></span></a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)"><img src="../plugins/images/users/arijit.jpg" alt="user-img" class="img-circle"> <span>Arijit Sinh <small class="text-muted">Offline</small></span></a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)"><img src="../plugins/images/users/govinda.jpg" alt="user-img" class="img-circle"> <span>Govinda Star <small class="text-success">online</small></span></a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)"><img src="../plugins/images/users/hritik.jpg" alt="user-img" class="img-circle"> <span>John Abraham<small class="text-success">online</small></span></a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)"><img src="../plugins/images/users/john.jpg" alt="user-img" class="img-circle"> <span>Hritik Roshan<small class="text-success">online</small></span></a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)"><img src="../plugins/images/users/pawandeep.jpg" alt="user-img" class="img-circle"> <span>Pwandeep rajan <small class="text-success">online</small></span></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- /.right-sidebar -->
+        </div>
+        <!-- /.container-fluid -->
+
+    {{--</div>--}}
+    <!-- /#page-wrapper -->
 @endsection
