@@ -222,7 +222,8 @@ class StepsController extends Controller
             case 'clone':
                 $this->step = ApplicationStep::findOrFail($id);
                 $this->_saveJsonClone($request);
-                $redirect = '/applications/step/'.$id;
+                $redirect = '/applications/'.$this->step->application->id.'/edit';
+                //$redirect = '/applications/step/'.$id;
                 break;
         }
 
