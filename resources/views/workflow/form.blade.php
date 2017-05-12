@@ -1,16 +1,6 @@
 @extends('layouts.app')
 
 @php
-    $page = "forms";
-    
-    $route = route('forms.store');
-    $method = 'POST';
-    if(isset($form) && $form!=null){
-        $route = route('forms.update', ['id' => $form->id]);
-        $method = 'PUT';
-    }else{
-        $form = new App\Models\FormTemplate();
-    }
 
 @endphp
 
