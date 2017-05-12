@@ -109,7 +109,8 @@ function toFieldObject(){
     var comment = {
         fieldId : obj.id,
         username : $(this).find('span.username').text(),
-        msg : $(this).find('span.message').text()
+        msg : $(this).find('span.message').text(),
+        type : $(this).attr('comment-type')
       };
     obj.comments.push(comment);
   });
