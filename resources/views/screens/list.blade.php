@@ -12,7 +12,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Screens
-                     <a role="button" href="{{ URL::to($page . '/create') }}" class="btn btn-default btn-rounded btn-condensed btn-xs pull-right">Add</span></a>
+                     <a role="button" href="{{ URL::to($page . '/create') }}" class="btn btn-success pull-right">Add</span></a>
                 </div>
 
                 <div class="panel-body">

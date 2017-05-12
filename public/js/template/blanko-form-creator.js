@@ -11,8 +11,8 @@ var clones = new Array();
 
 // Retrieve variables from storage
  //var form = localStorage.getItem('form');
- fieldCounter = localStorage.getItem('fieldCounter');
- tabCounter = localStorage.getItem('tabCounter');
+ //fieldCounter = localStorage.getItem('fieldCounter');
+ //tabCounter = localStorage.getItem('tabCounter');
 
 //if(form != null){
 // createTabs(form);
@@ -269,7 +269,7 @@ function createFields(obj, index, array, isRule){
 
   if(obj.comments != null){
     obj.comments.forEach(function(comment){
-      appendComment(comment.username, comment.msg, $(clone));
+      appendComment(comment.username, comment.msg, comment.type, $(clone));
     })
   }
 

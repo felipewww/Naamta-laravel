@@ -157,29 +157,43 @@
                            <label class="col-sm-12">Uses E-mail?</label>
                            <div class="col-sm-12" id="approval">
                                <div id="emails_success">
-                                   <h2>on step success</h2>
-                                   <span class="button_add_mail" href="#">Add e-mail</span>
+                                   <h4>On Step Success</h4>
+                                   <span class="btn btn-success button_add_mail" href="#">Add e-mail</span>
                                </div>
-
+                                <hr>
                                <div id="emails_rejected">
-                                   <h2>on step rejected</h2>
-                                   <span class="button_add_mail" href="#">Add e-mail</span>
+                                   <h4>On Step Rejected</h4>
+                                   <span class="btn btn-success button_add_mail" href="#">Add e-mail</span>
                                </div>
-
+                              <hr>
                                <div id="mail-component" style="visibility: hidden;">
-                                   <h2 class="delete_component">Delete</h2>
-                                   <select style="width: 20%;">
-                                       <option>Select an E-mail template</option>
-                                       @foreach($vars->emailTemplates as $tpl)
-                                           <option value="{{$tpl->id}}">{{ $tpl->title }}</option>
-                                       @endforeach
-                                   </select>
-                                   <select multiple style="width: 80%;">
+
+                                   <div class="col-sm-4">
+                                    <h6>E-mail Template</h6>
+                                   </div>
+                                   <div class="col-sm-8">
+                                    <h6>User Types</h6>
+                                   </div>
+                                  <div class="col-sm-4">
+                                     <select class="form-control">
+                                         <option>Select an E-mail template</option>
+                                         @foreach($vars->emailTemplates as $tpl)
+                                             <option value="{{$tpl->id}}">{{ $tpl->title }}</option>
+                                         @endforeach
+                                     </select>
+                                   </div>
+                                   <div class="col-sm-6">
+                                   <select multiple class="form-control">
                                        <option>Select an user type</option>
                                        @foreach($vars->userTypes as $utype)
                                            <option value="{{$utype->id}}">{{ $utype->title }}</option>
                                        @endforeach
                                    </select>
+                                   </div>
+                                   <div class="col-sm-2">
+                                   <span class="btn btn-danger pull-right delete_component">Delete</span>
+                                   </div>
+                                   <div class="clearfix"></div>
                                </div>
 
                                @if( $vars->usedEmails )
@@ -187,14 +201,14 @@
                                    <div id="eventsEmails">
                                    @foreach($vars->usedEmails as $event => $usedMail)
                                        @foreach($usedMail as $email_id => $staffs_id)
-                                           <div class="mail-component-{{ $event }}" style="">
-                                               <h2 class="delete_component">Delete</h2>
-                                               <select name="usedemails[{{$event}}][{{$email_id}}][id]" style="width: 20%;">
+                                           <div class="mail-component-{{ $event }}">
+                                               <span class="btn btn-danger pull-right delete_component">Delete</span>
+                                               <select name="usedemails[{{$event}}][{{$email_id}}][id]">
                                                    @foreach($vars->emailTemplates as $tpl)
                                                        <option {{ ( $tpl->id == $email_id ) ? 'selected' : ''  }} value="{{$tpl->id}}">{{ $tpl->title }}</option>
                                                    @endforeach
                                                </select>
-                                               <select name="usedemails[{{$event}}][{{$email_id}}][staffs][]" multiple style="width: 80%;">
+                                               <select name="usedemails[{{$event}}][{{$email_id}}][staffs][]" multiple>
                                                    <option>Select an user type</option>
                                                    @foreach($vars->userTypes as $utype)
                                                        <option {{ ( gettype(array_search($utype->id, $staffs_id)) == 'integer'  ? 'selected' : '') }} value="{{$utype->id}}">{{ $utype->title }}</option>
@@ -211,7 +225,7 @@
 
                        <div class="form-group text-center m-t-20">
                            <a href="{{ $backLink }}" class="btn btn-danger waves-effect waves-light m-r-20 ">Cancel</a>
-                           <input type="submit" class="btn btn-success waves-effect waves-light m-r-20" value="Save">
+                           <button type="submit" class="btn btn-save waves-effect waves-light m-r-20" value="Save">Save</button>
                        </div>
 
                     </form>
