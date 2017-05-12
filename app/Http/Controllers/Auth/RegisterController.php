@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Models\ApplicationStep;
 use App\Models\ApplicationUserTypes;
 use App\Models\ApplicationUsesEmail;
+use App\Models\Approval;
 use App\Models\Step;
 use App\Models\User;
 use App\Models\Role;
@@ -130,10 +131,8 @@ class RegisterController extends Controller
             $appUsers = UserApplication::create([
                 'application_id' => $application->id,
                 'user_id' => $user->id,
-//                'user_type' => $newAppType->id,
                 'user_type' => $clientType->id,
             ]);
-//            dd($uTypesClones);
 
             /*
              * Clone default steps with new ID
@@ -147,7 +146,7 @@ class RegisterController extends Controller
                     $newRefID = $default_ids[$step->previous_step];
                 }
 
-                $appSteps = ApplicationStep::create([
+                $dataNewStep = [
                     'application_id'    => $application->id,
                     'previous_step'     => $newRefID,
                     'responsible'       => $uTypesClones[$step->responsible], //Keep the usertype relation with new id
@@ -156,7 +155,16 @@ class RegisterController extends Controller
                     'ordination'        => $step->ordination,
                     'status'            => '0',
                     'morphs_from'       => $step->morphs_from,
-                ]);
+                ];
+
+                if ($step->morphs_from == Approval::class && $step->morphs_id > 0) {
+                    $dataNewStep['morphs_id'] = $step->morphs_id;
+                    $dataNewStep['morphs_json'] = $this->_convertApprovalToJson( Approval::where('id', $step->morphs_id)->first() );
+//                    dd('here', $dataNewStep);
+                }
+
+
+                $appSteps = ApplicationStep::create($dataNewStep);
 
                 $default_ids[$step->id] = $appSteps->id;
 
@@ -182,7 +190,6 @@ class RegisterController extends Controller
 
 
             \DB::commit();
-//            dd('here');
             return $user;
 
         } catch (Exception $e){

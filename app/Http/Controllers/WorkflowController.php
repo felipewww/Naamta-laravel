@@ -33,11 +33,11 @@ class WorkflowController extends Controller
             switch ($step->morphs_from)
             {
                 case FormTemplate::class:
-                    return $this->applicationForm($step->morphs_json);
+                    return $this->applicationForm($step->id, $step->morphs_json);
                     break;
 
                 case Approval::class:
-                    return $this->applicationApproval($step->morphs_json);
+                    return $this->applicationApproval($step->id, $step->morphs_json);
                     break;
 
                 default:
@@ -47,22 +47,18 @@ class WorkflowController extends Controller
         }
     }
 
-    private function applicationForm($form){
-
+    private function applicationForm($stepId, $form){
         $this->pageInfo->title              = 'Workflow';
         $this->pageInfo->category->title    = 'Form';
         $this->pageInfo->subCategory->title = 'View';
-
-        return view('workflow.form')->with(['containers' => $form, 'pageInfo' => $this->pageInfo]);
+        return view('workflow.form')->with(['stepId' => $stepId, 'containers' => $form, 'pageInfo' => $this->pageInfo]);
     }
 
-    public function applicationApproval($approval){
-
+    public function applicationApproval($stepId, $approval){
         $this->pageInfo->title              = 'Workflow';
         $this->pageInfo->category->title    = 'Approval';
         $this->pageInfo->subCategory->title = 'View';
-
-        return view('workflow.approval')->with(['approval' => json_decode($approval), 'pageInfo' => $this->pageInfo]);
+        return view('workflow.approval')->with(['stepId' => $stepId,'approval' => json_decode($approval), 'pageInfo' => $this->pageInfo]);
     }
     /**
      * Show the application dashboard.
@@ -80,8 +76,9 @@ class WorkflowController extends Controller
         if($userType==="client"){
             $application = Client::where("user_id", Auth::id())->first()->application()->first();
             if(isset($application)){
-                if($application->status===0)
+                if($application->status===0){
                     return view('homes.wait_approval', ['pageInfo' => $this->pageInfo]);
+                }
 
                 return $this->applicationDashboard($request, $application->id);
             }
@@ -94,4 +91,14 @@ class WorkflowController extends Controller
         return view('homes.application', ['pageInfo' => $this->pageInfo,'application' => $application]);
     }
 
+    public function saveStepForm(Request $request){
+        try{
+            $step = ApplicationStep::findOrFail($request->id);
+            $step->morphs_json = $request->form_json;
+            $step->save();
+            return json_encode(['status' => 'success', 'message' => 'Form saved']);
+        }catch (Exception $e){
+            return json_encode(['status' => 'error', 'message' => 'Error']);
+        }
+    }
 }

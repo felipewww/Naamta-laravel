@@ -55,7 +55,7 @@ class Controller extends BaseController
         return json_encode($_return);
     }
 
-    protected function _convertScreenToJson(Approval $approval)
+    protected function _convertApprovalToJson(Approval $approval)
     {
         return json_encode($approval->getAttributes());
     }

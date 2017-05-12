@@ -67,7 +67,6 @@ class StepsController extends Controller
     {
         $vars = new \stdClass();
         $vars->steps            = $this->steps;
-//        $vars->morphs_from      = [FormTemplate::class, Screens::class];
         $vars->morphs_from      = [FormTemplate::class, Approval::class];
         $vars->emailTemplates   = EmailTemplate::all();
 
@@ -169,6 +168,16 @@ class StepsController extends Controller
 
     protected function _saveJsonClone(Request $request)
     {
+        /**
+         * If it's a clone, the morphs_from cant be update, so, get morphs_from from the edited step.
+         * Beacause the radio buttons are hidden, and them not sended in the post
+         * */
+        if ($request->_stepFrom == 'clone') {
+            $request->offsetSet('morphs_from', $this->step->morphs_from);
+        }
+
+//        dd($request->all());
+
         switch ($request->morphs_from)
         {
             case FormTemplate::class:
@@ -183,7 +192,7 @@ class StepsController extends Controller
 
             case Approval::class:
                 $approval = Approval::where('id', $request->morphs_item)->first();
-                $json = $this->_convertScreenToJson($approval);
+                $json = $this->_convertApprovalToJson($approval);
                 break;
 
             default:
@@ -203,6 +212,10 @@ class StepsController extends Controller
         {
             case 'default':
                 $this->step = Step::findOrFail($id);
+                if ($request->morphs_from == Approval::class) {
+                    $this->_saveJsonClone($request);
+                    unset($this->step->morphs_json); //Este attributo é criado no metodo, mas nao existirá na tabela de steps default
+                }
                 $redirect = '/steps/'.$id.'/edit';
                 break;
 
@@ -257,9 +270,6 @@ class StepsController extends Controller
 
     public function store(Request $request)
     {
-//        $success = $request->emails_success;
-//        $rejected = $request->emails_rejected;
-
         $request->offsetUnset('emails_success');
         $request->offsetUnset('emails_rejected');
 

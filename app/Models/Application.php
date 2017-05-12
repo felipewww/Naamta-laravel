@@ -12,12 +12,16 @@ class Application extends Model
      * @var array
      */
     protected $fillable = [
-        'client_id', 'description', 'staff_id', 'status'
+        'client_id', 'description', 'status'
     ];
 
     public function steps()
     {
         return $this->hasMany(ApplicationStep::class);
+    }
+    public function responsible()
+    {
+        return $this->hasOne('App\Models\User', 'id', 'staff_id');
     }
 
     public function users()

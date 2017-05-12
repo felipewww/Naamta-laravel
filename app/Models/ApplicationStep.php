@@ -13,13 +13,18 @@ class ApplicationStep extends Model
      * @var array
      */
     protected $fillable = [
-      'responsible', 'status', 'email_id', 'step_id', 'previous_step', 'application_id', 'morphs_from', 'title' ,'description' ,'status', 'ordination'
+        'responsible',
+        'status',
+        'email_id',
+        'step_id',
+        'previous_step',
+        'application_id',
+        'morphs_from',
+        'morphs_id',
+        'morphs_json',
+        'title' ,'description' ,'status',
+        'ordination'
     ];
-
-    public function form()
-    {
-        return $this->hasOne('App\Models\Form');
-    }
 
     public function screen()
     {
@@ -49,5 +54,23 @@ class ApplicationStep extends Model
     public function userTypes()
     {
         return $this->belongsToMany(ApplicationUserTypes::class, 'application_uses_emails', 'application_step_id', 'received_by');
+    }
+
+
+    public function previousStep(){
+        $prev = ApplicationStep::where("ordination", (($this->ordination>0 ? ($this->ordination - 1): 0)))->first();
+        if($prev->id === $this->id){
+            return null;
+        }
+        return $prev;
+    }
+
+    public function nextStep(){
+        $next = ApplicationStep::where("ordination", ($this->ordination + 1))->first();
+        if($next->id === $this->title){
+            return null;
+        }
+
+        return $next;
     }
 }

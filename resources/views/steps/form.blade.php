@@ -1,8 +1,6 @@
 @extends('layouts.app')
 
 @php
-    {{--$route = '';--}}
-    {{--$method = '';--}}
     $page = "steps";
 
     $route = route('steps.store');
@@ -22,6 +20,9 @@
 
 @section('scripts')
     <script type="text/javascript" src="{{ asset('js/Steps.js')  }}"></script>
+    <script type="text/javascript">
+        Steps.from = '{{$vars->stepFrom}}';
+    </script>
 @endsection
 
 @section('content')
@@ -100,11 +101,11 @@
 
                        <div class="form-group {{ $errors->has('title') ? ' has-error' : '' }}">
                            <div class="radio radio-success col-sm-2">
-                               <input {{ ( $vars->morphs_from[0] == $vars->step->morphs_from ) ? 'checked' : ''  }} type="radio" required name="morphs_from" id="type_form" value="{{ $vars->morphs_from[0] }}">
+                               <input {{ ( $vars->stepFrom == 'clone' ) ? 'disabled="disabled"' : '' }} {{ ( $vars->morphs_from[0] == $vars->step->morphs_from ) ? 'checked' : ''  }} type="radio" required name="morphs_from" id="type_form" value="{{ $vars->morphs_from[0] }}">
                                <label for="type_form"> Form </label>
                            </div>
                            <div class="radio radio-success col-sm-2">
-                               <input {{ ( $vars->morphs_from[1] == $vars->step->morphs_from ) ? 'checked' : ''  }} type="radio" required name="morphs_from" id="type_approval" value="{{ $vars->morphs_from[1] }}" >
+                               <input {{ ( $vars->stepFrom == 'clone' ) ? 'disabled="disabled"' : '' }} {{ ( $vars->morphs_from[1] == $vars->step->morphs_from ) ? 'checked' : ''  }} type="radio" required name="morphs_from" id="type_approval" value="{{ $vars->morphs_from[1] }}" >
                                <label for="type_approval"> Approval </label>
                            </div>
                            @if ($errors->has('title'))
@@ -114,8 +115,7 @@
                            @endif
                        </div>
 
-                       @if( $stepFrom == 'application' )
-
+                       {{--@if( $stepFrom == 'application' )--}}
                            @if( isset($vars->morphItem) )
                                 @if( $vars->morphItem->deleted_at )
                                     <div class="alert alert-danger">
@@ -151,7 +151,7 @@
                                    </select>
                                </div>
                            </div>
-                       @endif
+                       {{--@endif--}}
 
                        <div class="form-group" id="show-approval">
                            <label class="col-sm-12">Uses E-mail?</label>
