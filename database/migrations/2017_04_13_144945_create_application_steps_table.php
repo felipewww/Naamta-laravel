@@ -18,7 +18,8 @@ class CreateApplicationStepsTable extends Migration
 
             $table->string('title');
             $table->string('description');
-            $table->tinyInteger('status')->default(0);
+//            $table->tinyInteger('status')->default(0);
+            $table->enum('status', ['0','1','approved','reproved','current']);
             $table->integer('ordination');
             $table->integer('responsible')->unsigned();
             $table->integer('application_id')->unsigned();

@@ -135,11 +135,16 @@ class ApplicationsController extends Controller
         try{
             $application = Application::where('id', $id)->first();
 
-            Application::where('id', $id)->update([
-                'description'  => $request->description,
-                'staff_id'     => $request->staff_id,
-                'status'     => $request->status,
-            ]);
+                $request->offsetUnset('_token');
+            if ($request->staff_id == 0) {
+                $request->offsetUnset('staff_id');
+            }
+
+//            Application::where('id', $id)->update([
+//                'description'  => $request->description,
+//                'staff_id'     => $request->staff_id,
+//                'status'     => $request->status,
+//            ]);
 
             UserApplication::where('application_id', $id)->delete();
             foreach($request->users_application as $uApp){
@@ -150,6 +155,10 @@ class ApplicationsController extends Controller
                     'user_type'       => trim(explode(",", $uApp)[1]),
                 ]);
             }
+
+            $request->offsetUnset('users_application');
+            $request->offsetUnset('_method');
+            Application::where('id', $id)->update($request->all());
 
             \DB::commit();
             \Session::flash('success','Application updated: ' . $request->title);
@@ -172,7 +181,7 @@ class ApplicationsController extends Controller
         $application    = Application::FindOrFail($id);
         $userTypes      = $application->userTypes;
         $staffs         = User::all();
-        $hasInactiveSteps = $application->steps()->where('status', 0)->get()->count();
+        $hasInactiveSteps = $application->steps()->where('status', '0')->get()->count();
 
         return view('applications.edit',
             [
@@ -212,7 +221,7 @@ class ApplicationsController extends Controller
     public function changeStepStatus(Request $request)
     {
         $step           = ApplicationStep::where('id', $request->id)->first();
-        $newStatus      = ($request->currentStatus == '1') ? 0 : 1;
+        $newStatus      = ($request->currentStatus == '1') ? '0' : '1';
         $step->status   = $newStatus;
 
         $approved = ( $step->morphs_json ) ? true : false;

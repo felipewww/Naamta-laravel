@@ -133,6 +133,7 @@ class RegisterController extends Controller
 //                'user_type' => $newAppType->id,
                 'user_type' => $clientType->id,
             ]);
+//            dd($uTypesClones);
 
             /*
              * Clone default steps with new ID
@@ -153,7 +154,7 @@ class RegisterController extends Controller
                     'title'             => $step->title,
                     'description'       => $step->description,
                     'ordination'        => $step->ordination,
-                    'status'            => 0,
+                    'status'            => '0',
                     'morphs_from'       => $step->morphs_from,
                 ]);
 
@@ -181,7 +182,7 @@ class RegisterController extends Controller
 
 
             \DB::commit();
-            
+//            dd('here');
             return $user;
 
         } catch (Exception $e){
