@@ -37,7 +37,7 @@ class ApplicationsController extends Controller
     public $vars;
 
     private $rules = [
-        'staff_id'    => 'required',
+//        'staff_id'    => 'required',
         'users_application' => 'required|users_application.needs_client',
         'description' => 'required|min:3|max:255',
     ];
@@ -133,9 +133,9 @@ class ApplicationsController extends Controller
 
 
                 $request->offsetUnset('_token');
-            if ($request->staff_id == 0) {
-                $request->offsetUnset('staff_id');
-            }
+//            if ($request->staff_id == 0) {
+//                $request->offsetUnset('staff_id');
+//            }
 
             UserApplication::where('application_id', $id)->delete();
             foreach($request->users_application as $uApp){
@@ -149,13 +149,17 @@ class ApplicationsController extends Controller
 
             $request->offsetUnset('users_application');
             $request->offsetUnset('_method');
-            Application::where('id', $id)->update($request->all());
+//dd($request->all());
+            $application->update($request->all());
+//            Application::where('id', $id)->update($request->all());
 
         } catch(Exception $e){
             \Session::flash('error','Application update failed: ' . $e);
             \DB::rollBack();
             throw $e;
         }
+
+        \DB::commit();
 
         return Redirect::to('/applications/'.$id.'/edit');
     }

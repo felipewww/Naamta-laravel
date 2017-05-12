@@ -13,7 +13,17 @@ class ApplicationStep extends Model
      * @var array
      */
     protected $fillable = [
-      'responsible', 'status', 'email_id', 'step_id', 'previous_step', 'application_id', 'morphs_from', 'title' ,'description' ,'status', 'ordination'
+        'responsible',
+        'status',
+        'email_id',
+        'step_id',
+        'previous_step',
+        'application_id',
+        'morphs_from',
+        'morphs_id',
+        'morphs_json',
+        'title' ,'description' ,'status',
+        'ordination'
     ];
 
     public function form()

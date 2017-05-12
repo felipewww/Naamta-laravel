@@ -20,6 +20,9 @@
 
 @section('scripts')
     <script type="text/javascript" src="{{ asset('js/Steps.js')  }}"></script>
+    <script type="text/javascript">
+        Steps.from = '{{$vars->stepFrom}}';
+    </script>
 @endsection
 
 @section('content')
@@ -60,6 +63,24 @@
                            </div>
                        </div>
 
+                       {{--<div class="form-group {{ $errors->has('title') ? ' has-error' : '' }}" id="forms">--}}
+                           {{--<label class="col-sm-12">Previous Step</label>--}}
+                           {{--<div class="col-sm-12">--}}
+                               {{--<select class="form-control" name="previous_step">--}}
+                                   {{--<option value="">Select previous step (if exists)</option>--}}
+                                   {{--@foreach($vars->steps as $step)--}}
+                                       {{--<option {{ $step->selected  }} value="{{ $step->id }}">{{  $step->title }}</option>--}}
+                                   {{--@endforeach--}}
+                               {{--</select>--}}
+
+                               {{--@if ($errors->has('title'))--}}
+                                   {{--<span class="help-block">--}}
+                                        {{--<strong>{{ $errors->first('title') }}</strong>--}}
+                                    {{--</span>--}}
+                               {{--@endif--}}
+                           {{--</div>--}}
+                       {{--</div>--}}
+
                        <div class="form-group {{ $errors->has('title') ? ' has-error' : '' }}" id="forms">
                            <label class="col-sm-12">Responsible</label>
                            <div class="col-sm-12">
@@ -80,11 +101,11 @@
 
                        <div class="form-group {{ $errors->has('title') ? ' has-error' : '' }}">
                            <div class="radio radio-success col-sm-2">
-                               <input {{ ( $vars->morphs_from[0] == $vars->step->morphs_from ) ? 'checked' : ''  }} type="radio" required name="morphs_from" id="type_form" value="{{ $vars->morphs_from[0] }}">
+                               <input {{ ( $vars->stepFrom == 'clone' ) ? 'disabled="disabled"' : '' }} {{ ( $vars->morphs_from[0] == $vars->step->morphs_from ) ? 'checked' : ''  }} type="radio" required name="morphs_from" id="type_form" value="{{ $vars->morphs_from[0] }}">
                                <label for="type_form"> Form </label>
                            </div>
                            <div class="radio radio-success col-sm-2">
-                               <input {{ ( $vars->morphs_from[1] == $vars->step->morphs_from ) ? 'checked' : ''  }} type="radio" required name="morphs_from" id="type_approval" value="{{ $vars->morphs_from[1] }}" >
+                               <input {{ ( $vars->stepFrom == 'clone' ) ? 'disabled="disabled"' : '' }} {{ ( $vars->morphs_from[1] == $vars->step->morphs_from ) ? 'checked' : ''  }} type="radio" required name="morphs_from" id="type_approval" value="{{ $vars->morphs_from[1] }}" >
                                <label for="type_approval"> Approval </label>
                            </div>
                            @if ($errors->has('title'))

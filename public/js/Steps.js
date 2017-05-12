@@ -5,6 +5,7 @@ $(document).ready(function () {
 var Steps = {
     containers: {},
     action: 'create',
+    from: null,
 
     init: function () {
         this.setTemplate();
@@ -90,7 +91,10 @@ var Steps = {
                 break;
         }
 
-        if (value == "App\\Models\\FormTemplate" && this.action == 'edit') {
+        /**
+         * The "form select" is showed only when editing a cloned step
+         * */
+        if (value == "App\\Models\\FormTemplate" && this.action == 'edit' && this.from != 'clone') {
             return false;
         }
 
