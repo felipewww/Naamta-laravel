@@ -1,8 +1,6 @@
 @extends('layouts.app')
 
 @php
-    {{--$route = '';--}}
-    {{--$method = '';--}}
     $page = "steps";
 
     $route = route('steps.store');
@@ -61,24 +59,6 @@
                                @endif
                            </div>
                        </div>
-
-                       {{--<div class="form-group {{ $errors->has('title') ? ' has-error' : '' }}" id="forms">--}}
-                           {{--<label class="col-sm-12">Previous Step</label>--}}
-                           {{--<div class="col-sm-12">--}}
-                               {{--<select class="form-control" name="previous_step">--}}
-                                   {{--<option value="">Select previous step (if exists)</option>--}}
-                                   {{--@foreach($vars->steps as $step)--}}
-                                       {{--<option {{ $step->selected  }} value="{{ $step->id }}">{{  $step->title }}</option>--}}
-                                   {{--@endforeach--}}
-                               {{--</select>--}}
-
-                               {{--@if ($errors->has('title'))--}}
-                                   {{--<span class="help-block">--}}
-                                        {{--<strong>{{ $errors->first('title') }}</strong>--}}
-                                    {{--</span>--}}
-                               {{--@endif--}}
-                           {{--</div>--}}
-                       {{--</div>--}}
 
                        <div class="form-group {{ $errors->has('title') ? ' has-error' : '' }}" id="forms">
                            <label class="col-sm-12">Responsible</label>

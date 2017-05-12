@@ -25,8 +25,6 @@ use Illuminate\Support\Facades\Validator;
 
 class ApplicationsController extends Controller
 {
-//    use DataTablesExtensions;
-
     /**
      * Create a new controller instance.
      *
@@ -70,8 +68,6 @@ class ApplicationsController extends Controller
         $this->pageInfo->title              = 'All Applications';
         $this->pageInfo->category->title    = 'Applications';
         $this->pageInfo->subCategory->title = 'List';
-
-//        $this->dataTablesInit();
 
         $home = new HomeController();
         return $home->index($request);
@@ -135,16 +131,11 @@ class ApplicationsController extends Controller
         try{
             $application = Application::where('id', $id)->first();
 
+
                 $request->offsetUnset('_token');
             if ($request->staff_id == 0) {
                 $request->offsetUnset('staff_id');
             }
-
-//            Application::where('id', $id)->update([
-//                'description'  => $request->description,
-//                'staff_id'     => $request->staff_id,
-//                'status'     => $request->status,
-//            ]);
 
             UserApplication::where('application_id', $id)->delete();
             foreach($request->users_application as $uApp){
@@ -160,8 +151,6 @@ class ApplicationsController extends Controller
             $request->offsetUnset('_method');
             Application::where('id', $id)->update($request->all());
 
-            \DB::commit();
-            \Session::flash('success','Application updated: ' . $request->title);
         } catch(Exception $e){
             \Session::flash('error','Application update failed: ' . $e);
             \DB::rollBack();

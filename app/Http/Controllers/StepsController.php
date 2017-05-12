@@ -67,7 +67,6 @@ class StepsController extends Controller
     {
         $vars = new \stdClass();
         $vars->steps            = $this->steps;
-//        $vars->morphs_from      = [FormTemplate::class, Screens::class];
         $vars->morphs_from      = [FormTemplate::class, Approval::class];
         $vars->emailTemplates   = EmailTemplate::all();
 
@@ -257,9 +256,6 @@ class StepsController extends Controller
 
     public function store(Request $request)
     {
-//        $success = $request->emails_success;
-//        $rejected = $request->emails_rejected;
-
         $request->offsetUnset('emails_success');
         $request->offsetUnset('emails_rejected');
 
