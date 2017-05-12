@@ -294,3 +294,7 @@
     }
 }
 
+
+#drag-container .half-row .col-lg-2{
+    width: 50%;
+}
