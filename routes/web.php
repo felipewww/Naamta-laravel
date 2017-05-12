@@ -48,6 +48,11 @@ Route::group(['middleware' => 'auth'], function(){
 
     Route::post('/step/delete',  'ApplicationsController@deleteStep');
 
+    Route::get('/application/{id}/dashboard',  function(\Illuminate\Http\Request $request, $id){
+        $home = new \App\Http\Controllers\HomeController();
+        return $home->applicationDashboard($request, $id);
+        //dd($id);
+    });
     Route::get('/applications/{id}/settings',  'ApplicationsController@settings');
     Route::post('/applications/{id}/saveStepsPosition', 'ApplicationsController@saveStepsPosition');
     Route::post('/applications/{id}/changeStepStatus', 'ApplicationsController@changeStepStatus');

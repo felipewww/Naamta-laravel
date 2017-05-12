@@ -90,6 +90,7 @@
                 <ul class="wp-side-menu">
                     @if(Auth::user()!=null && Auth::user()->isAdmin())
                         <li class="nav-small-cap">USERS</li>
+                        <li> <a href="{{ url('') }}"> Dashboard</a></li>
                         <li> <a href="{{ url('users') }}">Users List</a> </li>
                         <li> <a href="{{ url('usertypes') }}">User Types</a></li>
                     @endif
@@ -104,7 +105,7 @@
                         <li> <a href="{{ url('forms') }}"> Form Types</a></li>
                         <li> <a href="{{ url('approvals') }}"> Approval Templates</a></li>
                         {{--<li> <a href="{{ url('screens') }}"> Screen Types</a></li>--}}
-                        <li> <a href="{{ url('applications') }}"> Applications</a></li>
+                        {{--<li> <a href="{{ url('applications') }}"> Applications</a></li>--}}
                     @endif
                 </ul>
             </div>

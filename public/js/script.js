@@ -15,7 +15,11 @@ Script = {
 
         this.setDefaultModal();
 
-        $('.chosen').chosen();
+        try{
+            $('.chosen').chosen();
+        }catch (e){
+            console.log('Chosen não existe');
+        }
     },
 
     _modal: function ()

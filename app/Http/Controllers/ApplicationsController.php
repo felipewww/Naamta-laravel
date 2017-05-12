@@ -9,6 +9,7 @@ use App\Models\FormTemplate;
 use App\Models\Screen;
 use App\Models\Step;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
 use PhpParser\Node\Expr\Error;
 //use Validator;
@@ -24,7 +25,7 @@ use Illuminate\Support\Facades\Validator;
 
 class ApplicationsController extends Controller
 {
-    use DataTablesExtensions;
+//    use DataTablesExtensions;
 
     /**
      * Create a new controller instance.
@@ -35,6 +36,7 @@ class ApplicationsController extends Controller
     private $staffs;
     private $userTypes;
     private $usersApplication;
+    public $vars;
 
     private $rules = [
         'staff_id'    => 'required',
@@ -69,8 +71,10 @@ class ApplicationsController extends Controller
         $this->pageInfo->category->title    = 'Applications';
         $this->pageInfo->subCategory->title = 'List';
 
-        $this->dataTablesInit();
-        return view('applications.list', ['dataTables' => $this->dataTables, 'pageInfo' => $this->pageInfo]);
+//        $this->dataTablesInit();
+
+        $home = new HomeController();
+        return $home->index($request);
     }
 
     public function edit(Request $request, $id)
@@ -96,7 +100,7 @@ class ApplicationsController extends Controller
         );
     }
 
-    /**
+    /*
      * Store a newly created resource in storage.
      *
      * @return Response
@@ -155,7 +159,7 @@ class ApplicationsController extends Controller
             throw $e;
         }
 
-        return Redirect::to('applications');
+        return Redirect::to('/applications/'.$id.'/edit');
     }
 
     public function settings(Request $request, $id)
@@ -235,40 +239,5 @@ class ApplicationsController extends Controller
         ];
 
         return json_encode($res);
-    }
-
-    private function dataTablesConfig()
-    {
-        $data = [];
-        foreach ($this->applications as $reg)
-        {
-            $newInfo = [
-                $reg->id,
-                $reg->client->company,
-                ($reg->status) ? 'Active' : 'Inactive',
-                [
-                    'rowActions' =>
-                    [
-                        [
-                            'html' => '',
-                            'attributes' => ['class' => 'btn btn-warning btn-circle fa fa-pencil m-l-10', 'href' => '/applications/'.$reg->id.'/edit']
-                        ],
-                        [
-                            'html' => '',
-                            'attributes' => ['class' => 'btn btn-danger btn-circle fa fa-trash m-l-10']
-                        ]
-                    ]
-                ]
-            ];
-            array_push($data, $newInfo);
-        }
-
-        $this->data_info = $data;
-        $this->data_cols = [
-            ['title' => 'id', 'width' => '40px'],
-            ['title' => 'Client'],
-            ['title' => 'Status'],
-            ['title' => 'Actions', 'width' => '100px'],
-        ];
     }
 }
