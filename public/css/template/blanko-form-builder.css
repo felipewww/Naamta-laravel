@@ -277,9 +277,20 @@
     border: 1px solid #ddd;
 }
 
+#drag-container .rules .form-group{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#drag-container .drag-options .col-lg-2{
+    margin-right: 10px;
+}
+
+
 @media screen and (max-width: 1330px){
     #drag-container .half-row{
         margin-left: 0;
         width: 100% !important;
     }
 }
+

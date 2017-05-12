@@ -2,6 +2,7 @@ var isEditable = true;
 var fieldCounter = 0; // FIELD ID
 var tabCounter = 0; //TAB ID
 var username = 'User Name'; // USER NAME
+var ruleField;
 
 // Temporary variables
 var tempContainers;
@@ -23,7 +24,7 @@ Example
 var tabObj1 = {
   config : {
     id : 1959595,
-    title: 'Title'
+    title: 'Title',
   },
   fields : [
     {
@@ -80,7 +81,12 @@ function toFieldObject(){
     type :  $(this).attr('id').split("__")[0],
     isEditable : isEditable,
     options : {
-      options : []
+      options : [],
+      rules : {
+        ruleAction : $(this).find('.rule-action').val(),
+        ruleTarget : $(this).find('.rule-target').val(),
+        conditions : []
+      }
     },
       comments : []
   };
@@ -97,36 +103,62 @@ function toFieldObject(){
   obj.options.class = ($(this).hasClass('half-row')) ? 'half-row' : '';
 
 
-    var comments = $(this).find('.comments li');
+  var comments = $(this).find('.comments li');
 
-    comments.each(function(){
-      var comment = {
-          username : $(this).find('span.username').text(),
-          msg : $(this).find('span.message').text()
-        };
-      obj.comments.push(comment);
-    });
+  comments.each(function(){
+    var comment = {
+        fieldId : obj.id,
+        username : $(this).find('span.username').text(),
+        msg : $(this).find('span.message').text()
+      };
+    obj.comments.push(comment);
+  });
 
-    if(obj.type == 'select'){
-        var options = $(this).find('select option');
-        options.each(function(){
-            var option = {
-                label : $(this).text(),
-        value : $(this).val()
-            };
-            obj.options.options.push(option);
-        });
+  var rules = $(this).find('.rules tr:not(:first-of-type)');
+
+  rules.each(function(){
+    var rule = {
+      page : {
+        id : $(this).find('td.page-id').attr('page-id'),
+        label : $(this).find('td.page-id').text()
+      },
+      field : {
+        id : $(this).find('td.field-id').attr('field-id'),
+        index : $(this).find('td.field-id .ordenation').text(),
+        label : $(this).find('td.field-id .field-label').text(),
+      },
+      comparison : {
+        value : $(this).find('td.comparison').attr('value'),
+        label : $(this).find('td.comparison').text(),
+      },
+      value : {
+        value : $(this).find('td.value').attr('value'),
+        label : $(this).find('td.value').text()
       }
+    }
+    obj.options.rules.conditions.push(rule);
+  });
 
-    if(obj.type == 'radio-group'){
-      var options = $(this).find('.drag-input .radio');
+  if(obj.type == 'select'){
+      var options = $(this).find('.drag-input select option');
       options.each(function(){
         var option = {
-          label : $(this).find('label').text(),
-          value : $(this).find('input').val()
+            label : $(this).text(),
+            value : $(this).val()
         };
         obj.options.options.push(option);
-     });
+      });
+    }
+
+  if(obj.type == 'radio-group'){
+    var options = $(this).find('.drag-input .radio');
+    options.each(function(){
+      var option = {
+        label : $(this).find('label').text(),
+        value : $(this).find('input').val()
+      };
+      obj.options.options.push(option);
+   });
   }
 
   if(obj.type == 'checkbox-group'){
@@ -203,7 +235,7 @@ function createTabs(json, clientView = false){
     $('#drag-container').addClass('client-view');
     $('.draggable-input').removeClass('panel');
     $('.tabs-options').remove();
-    $('.drag-heading').remove();
+    $('.drag-heading').hide();
     $('#list-container').remove();
     $('.drag-options').remove();
     $('.tab-control .fa').remove();
@@ -216,14 +248,15 @@ function createTabs(json, clientView = false){
   }
   ordenateFields();
   resizeCanvas()
+  updateRulesPages();
 }
 
 // Creates the fields related to the createTabs function
 // Relates to createTabs
 // Uses configureField
-function createFields(obj){
+function createFields(obj, index, array, isRule){
   var clone = $('#input-types #' + obj.type).clone();
-  console.log(obj);
+  
   $('.tab-control .tab-config').toggle(obj.isEditable);
   $('.tab-control .tab-remove').toggle(obj.isEditable);
   clone.find('.drag-heading').toggle(obj.isEditable);
@@ -233,16 +266,35 @@ function createFields(obj){
   addEvents(clone[0], obj.id);
   clones.splice(obj.options.ordenate, 0, clone);
 
-  if(obj.comments!=null){
+  if(obj.comments != null){
     obj.comments.forEach(function(comment){
       appendComment(comment.username, comment.msg, $(clone));
     })
+  }
+
+  //rules
+  clone.find('.rule-action').val(obj.options.rules.ruleAction);
+  clone.find('.rule-target').val(obj.options.rules.ruleTarget);
+
+  if(obj.options.rules != null){
+    obj.options.rules.conditions.forEach(function(condition){
+      var page = condition.page;
+      var field = condition.field;
+      var comparison = condition.comparison;
+      var value = condition.value;
+      addRule( clone.find('.rules'), page, field, comparison, value);
+    });
+  }
+
+  if(isRule != null){
+    ruleField = clone;
   }
 }
 
 // Field values according to json from createTabs
 // Relates to createFields
 function configureField(node, options, type){
+
   /*Visual*/
   node.addClass('order_' + options.ordenate);
 
@@ -288,6 +340,8 @@ function configureField(node, options, type){
   node.find('.max-value').val(options.max);
   node.find('.step-value').val(options.step);
   node.find('input[value="' + options.type+'"]' ).prop('checked', true);
+
+  
 }
 
 // Creates form from current tabs and fields

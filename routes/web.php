@@ -63,6 +63,8 @@ Route::group(['middleware' => 'auth'], function(){
 
     Route::get('/forms/{id}/clone',  'FormsController@create');
 
+    Route::get('/workflow/step/{id}/show/',  'WorkflowController@show');
+
     Route::post('/forms/comment', function (Request $request) {
         try{
             \App\Models\Comment::create([
