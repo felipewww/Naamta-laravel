@@ -19,6 +19,10 @@ class Application extends Model
     {
         return $this->hasMany(ApplicationStep::class);
     }
+    public function responsible()
+    {
+        return $this->hasOne('App\Models\User', 'id', 'staff_id');
+    }
 
     public function users()
     {

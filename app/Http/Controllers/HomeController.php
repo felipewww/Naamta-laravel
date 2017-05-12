@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Application;
+use App\Models\FormTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Client;
@@ -43,22 +44,21 @@ class HomeController extends Controller
         if($userType==="client"){
             $application = Client::where("user_id", Auth::id())->first()->application()->first();
             if(isset($application)){
-                if($application->status===0)
+                if($application->status===0){
                     return view('homes.wait_approval', ['pageInfo' => $this->pageInfo]);
-
+                }
                 return $this->applicationDashboard($request, $application->id);
             }
         }
-        else{
-            $this->vars->activeApplications = Application::where('status', 1)->get();
-            $this->vars->inactiveApplications = Application::where('status', 0)->get();
-        }
+        $this->vars->activeApplications = Application::where('status', 1)->get();
+        $this->vars->inactiveApplications = Application::where('status', 0)->get();
 
-        return view('homes.'.$userType, ['vars' => $this->vars, 'pageInfo' => $this->pageInfo]);
+        return view('homes.admin', ['vars' => $this->vars, 'pageInfo' => $this->pageInfo]);
     }
 
     public function applicationDashboard(Request $request, $id){
         $application = Application::find($id);
-        return view('homes.application', ['pageInfo' => $this->pageInfo,'application' => $application]);
+        $stepsWithForm = $application->steps->where("morphs_from", FormTemplate::class )->all();
+        return view('homes.application', ['pageInfo' => $this->pageInfo,'application' => $application, 'stepsWithForm' => $stepsWithForm]);
     }
 }

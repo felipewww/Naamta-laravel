@@ -26,11 +26,6 @@ class ApplicationStep extends Model
         'ordination'
     ];
 
-    public function form()
-    {
-        return $this->hasOne('App\Models\Form');
-    }
-
     public function screen()
     {
         return $this->hasOne('App\Models\Screen');
@@ -59,5 +54,23 @@ class ApplicationStep extends Model
     public function userTypes()
     {
         return $this->belongsToMany(ApplicationUserTypes::class, 'application_uses_emails', 'application_step_id', 'received_by');
+    }
+
+
+    public function previousStep(){
+        $prev = ApplicationStep::where("ordination", (($this->ordination>0 ? ($this->ordination - 1): 0)))->first();
+        if($prev->id === $this->id){
+            return null;
+        }
+        return $prev;
+    }
+
+    public function nextStep(){
+        $next = ApplicationStep::where("ordination", ($this->ordination + 1))->first();
+        if($next->id === $this->title){
+            return null;
+        }
+
+        return $next;
     }
 }

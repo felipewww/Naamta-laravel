@@ -46,7 +46,7 @@ class ApplicationsController extends Controller
     {
         parent::__construct();
         $this->middleware(function ($request, $next) {
-            $user = \Auth::user()->authorizeRoles(['admin']);;
+            $user = \Auth::user()->authorizeRoles(['admin', 'staff']);;
             return $next($request);
         });
         $this->applications     = Application::all();
