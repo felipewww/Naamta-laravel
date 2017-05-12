@@ -16,17 +16,26 @@
     <div class="row">
         <div class="col-sm-12 col-md-4">
             <div class="white-box">
-                <h3 class="box-title m-b-0"><b>Current Step :</b> {{$application->steps->first()->title}}</h3>
+                @php
+                    $currentStep = $application->steps->where("status", "current")->first();
+                    if($currentStep===null){
+                        $currentStep = $application->steps->first();
+                    }
+                @endphp
+                <h3 class="box-title m-b-0"><b>Current Step :</b> {{$currentStep->title}}</h3>
 
                 <h4>Last Step Submitted:</h4>
-                <p class="m-b-40">{{ $application->steps->first()->created_at }}</p>
+                <p class="m-b-40">{{ $currentStep->created_at }}</p>
 
                 <h4>Next Step:</h4>
-                <p class="m-b-40">Step : {{$application->steps->get(1)->title}}</p>
+                <p class="m-b-40">Step : {{($currentStep->nextStep()!=null ? $currentStep->nextStep()->title : "It's the last step")}}</p>
 
                 <h4>Previous Step:</h4>
-                <p class="">Step : Undefined</p>
-
+                <p class="">Step :  {{($currentStep->previousStep()!=null ? $currentStep->previousStep()->title : "It's the first step")}}</p>
+                @if($currentStep->responsible == Auth::id())
+                    <a href="/workflow/step/{{$currentStep->id}}/show" class="btn btn-success pull-right">View</a>
+                @endif
+                <div class="clearfix"></div>
             </div>
             <div class="white-box">
                 <h3 class="box-title m-b-0"><b>Application Info</b></h3>
@@ -42,6 +51,7 @@
 
                 <h4>Applicant’s Representative:</h4>
                 <p class="">{{ $application->client->user->name }}</p>
+
             </div>
         </div>
         <div class="col-sm-12 col-md-4">
@@ -101,20 +111,22 @@
                 <div class="table-responsive">
                     <table id="allforms" class="table table-striped">
                         <thead>
-                        <tr>
-                            <th>Form</th>
-                            <th>Status</th>
-                            <th style="width: 120px">Action</th>
-                        </tr>
+                            <tr>
+                                <th>Form</th>
+                                <th>Status</th>
+                                <th style="width: 120px">Action</th>
+                            </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Form 1</td>
-                                <td>Approved</td>
-                                <td>
-                                    <button class="btn btn-warning btn-circle"><i class="fa fa-pencil"></i></button>
-                                </td>
-                            </tr>
+                            @foreach($stepsWithForm as $k => $formStep)
+                                <tr>
+                                    <td>Form {{ ($k + 1) }}</td>
+                                    <td>Approved</td>
+                                    <td>
+                                        <a href="/workflow/step/{{$formStep->id}}/show" class="btn btn-warning btn-circle"><i class="fa fa-pencil"></i></a>
+                                    </td>
+                                </tr>
+                            @endforeach
                             {{--<tr>
                                 <td>Form 2</td>
                                 <td>Approved</td>
