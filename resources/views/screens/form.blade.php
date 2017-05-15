@@ -8,7 +8,6 @@
     if(isset($screen) && $screen!=null){
         $method = 'PUT';
         $route = route('screens.update', ['id' => $screen->id]);
-        
     }else{
         $screen = new App\Models\Screen();
     }
