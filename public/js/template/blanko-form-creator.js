@@ -10,15 +10,6 @@ var tempContainers;
 var tempFields;
 var clones = new Array();
 
-// Retrieve variables from storage
- //var form = localStorage.getItem('form');
- //fieldCounter = localStorage.getItem('fieldCounter');
- //tabCounter = localStorage.getItem('tabCounter');
-
-//if(form != null){
-// createTabs(form);
-//}
-
 /*
 Example
 
@@ -243,7 +234,6 @@ function createTabs(json, clientView = false){
       $(clone).appendTo('.tab.active');
       ordenateFields();
       updateRulesPages();
-      resizeCanvas();
     });
   });
   

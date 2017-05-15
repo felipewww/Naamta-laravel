@@ -449,3 +449,7 @@ table.dataTable tbody tr.selected, table.dataTable tbody th.selected, table.data
     clear: left;
   }
 }
+
+.fill-btn{
+  width: 100%;
+}

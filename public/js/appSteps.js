@@ -70,13 +70,13 @@ var appSteps = {
                     if (data.newStatus == '1')
                     {
                         $(e).removeClass('btn-save');
-                        $(e).addClass('btn-custom');
+                        $(e).addClass('btn-danger');
                         $(e).find('> i').first().removeClass('fa-check');
                         $(e).find('> i').first().addClass('fa-ban');
                     }
                     else
                     {
-                        $(e).removeClass('btn-custom');
+                        $(e).removeClass('btn-danger');
                         $(e).addClass('btn-save');
                         $(e).find('> i').first().removeClass('fa-ban');
                         $(e).find('> i').first().addClass('fa-check');
