@@ -34,7 +34,12 @@
                 <h4>Previous Step:</h4>
                 <p class="">Step :  {{($currentStep->previousStep()!=null ? $currentStep->previousStep()->title : "It's the first step")}}</p>
                 @if($currentStep->responsible == Auth::id())
-                    <a href="/workflow/step/{{$currentStep->id}}/show" class="btn btn-success pull-right">View</a>
+                    @if($currentStep->morphs_from === "App\Models\Approval")
+                        <button onclick="workflow.sendApproval('reproved', {{$currentStep->id}});" class="btn btn-danger pull-left">Reprove</button>
+                        <button onclick="workflow.sendApproval('approved', {{$currentStep->id}});" class="btn btn-primary pull-right">Approve</button>
+                    @else
+                        <a href="/workflow/step/{{$currentStep->id}}/show" class="btn btn-success pull-right">View Form</a>
+                    @endif
                 @endif
                 <div class="clearfix"></div>
             </div>
@@ -163,4 +168,8 @@
 </div>
 <!-- /.container-fluid -->
 
+@endsection
+
+@section('scripts')
+    <script src="{{ asset("js/workflow.js") }}"></script>
 @endsection

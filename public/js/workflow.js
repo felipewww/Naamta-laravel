@@ -7,7 +7,6 @@ workflow = {
     init: function ()
     {
         _this = this;
-        createTabs($('input[name=containers]').val(), true);
     },
 
     sendForm: function () {
@@ -20,11 +19,29 @@ workflow = {
             data: sequence,
             success: function (data) {
                 console.log('Success!');
+                window.location.href = window.location.protocol + "//" + window.location.hostname;
             },
             error: function (data) {
                 console.log('Error!');
             }
         });
-        console.log(sequence);
+    },
+
+    sendApproval: function (status, stepId) {
+        _this = this;
+
+        var sequence = { _token: window.Laravel.csrfToken, id:stepId, status: status };
+        $.ajax({
+            url: '/workflow/saveApproval',
+            method: 'POST',
+            data: sequence,
+            success: function (data) {
+                console.log('Success!');
+                location.reload();
+            },
+            error: function (data) {
+                console.log('Error!');
+            }
+        });
     }
 };
