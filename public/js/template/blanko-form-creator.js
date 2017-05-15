@@ -254,7 +254,15 @@ function createTabs(json, clientView = false){
       }
     }));
   }
-  
+
+  [].forEach.call($('.tab .draggable-input'), function(field){
+      var dataId = parseInt($(field).attr('data-id'));  
+      console.log(dataId);
+      console.log(fieldCounter);
+      if(fieldCounter <=  dataId){
+        fieldCounter = dataId++;
+      }
+  });
 }
 
 // Creates the fields related to the createTabs function
@@ -271,6 +279,10 @@ function createFields(obj, index, array, isRule){
   obj.options.signature;
   addEvents(clone[0], obj.id, obj.options.signature);
   clones.splice(obj.options.ordenate, 0, clone);
+
+  obj.options.options.forEach(function(option){
+    addOption(obj.type, clone, option.label, option.value, option.prop, obj.id);
+  });
 
   if(obj.comments != null){
     obj.comments.forEach(function(comment){
@@ -334,10 +346,6 @@ function configureField(node, options, type){
   node.find('.update-required').toggleClass('required', options.isRequired);
 
   node.find('.update-value').text(options.value);
-
-  options.options.forEach(function(obj){
-    addOption(type, node, obj.label, obj.value, obj.prop);
-  });
 
   /*Options*/
   node = node.find('.drag-options');

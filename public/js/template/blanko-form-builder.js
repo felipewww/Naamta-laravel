@@ -165,6 +165,7 @@ function addEvents(elem, id = null, signature = null){
   // Update Help Text
   $(elem).find('.drag-options .help-text').keyup(function(){
     $(elem).find('.drag-label .help .text').text($(this).val());
+    $(elem).find('.drag-input .help .text').text($(this).val());
     if($(this).val() == ""){
       $(elem).find('.help .icon').hide();
     }else{
@@ -209,6 +210,8 @@ function addEvents(elem, id = null, signature = null){
   });
 
   // Update Required
+  
+  $(elem).find('.span-required').toggle($(elem).find('.drag-options .is-required').prop('checked'));
   $(elem).find('.drag-options .is-required').change(function(){
     var isRequired = $(this).prop('checked');
     $(elem).find('.span-required').toggle(isRequired);
@@ -276,7 +279,7 @@ function addEvents(elem, id = null, signature = null){
     var label = field.find('.label-input');
     var value = field.find('.value-input');
     if(label.val() != "" && value.val() != ""){
-      addOption( type , field, label.val(), value.val(), false);
+      addOption( type , field, label.val(), value.val(), false, id);
       label.val('');
       value.val('');
     }
@@ -321,7 +324,9 @@ function addEvents(elem, id = null, signature = null){
         penColor: "rgb(13,5,40)"
     });
 
-    sign.fromDataURL(signature);
+    if(signature != null){
+      sign.fromDataURL(signature);
+    }
 
     canvasArray.push({
       field : id,
@@ -336,11 +341,12 @@ function addEvents(elem, id = null, signature = null){
   }
 
   //rules
-  var comparisonOptions = '<option value="==">Is</option><option value="!=">Is not</option><option value="<">Less than</option><option value="<=">Less or equal</option><option value=">">More than</option><option value=">=">More or equal</option>';
-  var addRules = '<h4>Rules</h4><div class="row m-b-20"><select class="col-lg-2 rule-action"><option value="hide">Hide if</option><option value="show">Show if</option></select> <select class="col-lg-2 rule-target"><option value="all">All</option><option value="any">Any</option></select></div><h5>New Condition</h5><div class="form-group row rule"><div class="col-lg-2"><select class="tabs form-control"></select></div><div class="col-lg-2"><select class="fields form-control"><option value="initial">Select Field</option></select></div><div class="col-lg-2"><select class="form-control comparison">'+ comparisonOptions +'</select></div><div class="col-lg-2 input-holder"><input type="text" class="form-control" placeholder="Value"></div> <button class=" add-rule btn btn-default">Add Condition</button></div>';
-  addRules += '<table class="table rules"><tr><td> Page</td><td> Field</td><td>comparison </td><td>Value </td><td class="text-right">Delete</td> </tr></table>';
-  $(elem).find('.drag-options').append(addRules);
-
+  if( $(elem).find('.rules-container').length <= 0){
+    var comparisonOptions = '<option value="==">Is</option><option value="!=">Is not</option><option value="<">Less than</option><option value="<=">Less or equal</option><option value=">">More than</option><option value=">=">More or equal</option>';
+    var addRules = '<div class="rules-container"><h4>Rules</h4><div class="row m-b-20"><select class="col-lg-2 rule-action"><option value="hide">Hide if</option><option value="show">Show if</option></select> <select class="col-lg-2 rule-target"><option value="all">All</option><option value="any">Any</option></select></div><h5>New Condition</h5><div class="form-group row rule"><div class="col-lg-2"><select class="tabs form-control"></select></div><div class="col-lg-2"><select class="fields form-control"><option value="initial">Select Field</option></select></div><div class="col-lg-2"><select class="form-control comparison">'+ comparisonOptions +'</select></div><div class="col-lg-2 input-holder"><input type="text" class="form-control" placeholder="Value"></div> <button class=" add-rule btn btn-default">Add Condition</button></div>';
+    addRules += '<table class="table rules"><tr><td> Page</td><td> Field</td><td>comparison </td><td>Value </td><td class="text-right">Delete</td> </tr></table></div>';
+    $(elem).find('.drag-options').append(addRules);
+  }
   $(elem).find('.add-rule').click(function(e){
     e.preventDefault();
     node = $(this).closest('.draggable-input').find('.rules');
@@ -360,9 +366,29 @@ function addEvents(elem, id = null, signature = null){
       label : $(this).parent().find('select.comparison option:selected').text()
     }
 
+    var input = $(this).parent().find('.input-holder .rule-value');
+    console.log(fields.label);
+    switch(fields.label){
+      case ' Text Area': 
+        ruleValue = input.text();
+        ruleValueLabel = input.text();
+        break;
+      case ' Select':
+        ruleValue = input.val();
+        ruleValueLabel = input.find(':selected').text();
+        break;
+      case ' Checkbox':
+        ruleValue = input.val();
+        ruleValueLabel = input.find(':selected').text();
+        break;
+      default :
+        ruleValue = input.val();
+        ruleValueLabel = input.val();
+        break;
+    }
     value = {
-      value: $(this).parent().find('.input-holder input').val(),
-      label : $(this).parent().find('.input-holder input').val()
+      value: ruleValue,
+      label : ruleValueLabel
     } 
 
     if( (pages.id != 'initial') && (fields.id != 'initial') && (value.value != '')){
@@ -387,11 +413,16 @@ function addEvents(elem, id = null, signature = null){
       title = $(field).find('.drag-heading h4').text();
       ordenation = $(field).find('.drag-heading .ordenation').text()
       if( ( (title != "Button") && (title != "Paragraph") && (title != "Header") && (title != "Signature") && (title != "File Upload") ) && ( elemId != id) ){
-        options += '<option value="'+ id +'" ordenation="'+ ordenation +'">'+ ordenation + title +'</option>'; 
+        options += '<option value="'+ id +'" ordenation="'+ ordenation +'">'+ ordenation + title +'</option>';
       }
     });
     $(this).closest('.drag-options').find('.fields').html(options);
   });
+
+  $(elem).find('.fields').on('change', function(){
+    fieldId = $(this).find('option:selected').val();
+    getOptions($(elem),fieldId);
+  })
 
   updateRulesPages();
 }
@@ -563,15 +594,15 @@ function addTab(obj = null){
 }
 
 // Adds options to field groups
-function addOption(type, node, label, value, prop){
+function addOption(type, node, label, value, prop, id){
       var html;
       if(type == 'checkbox-group'){
         prop = (prop) ? 'checked' : '';
-        html = '<div class="checkbox checkbox-success"><input type="checkbox" value="' + value + '" '+ prop  +'><label>'+ label + '</label></div>'
+        html = '<div class="checkbox checkbox-success"><input type="checkbox" name="radio-group__'+ id +'" value="' + value + '" '+ prop  +'><label>'+ label + '</label></div>'
         $(html).appendTo(node.find('.drag-input .checkbox-group'));
       }else if(type == 'radio-group'){
         prop = (prop) ? 'checked' : '';
-        html = '<div class="radio radio-success"> <input type="radio" name="radio-group" value="'+ value +'" '+ prop +'> <label> '+ label +' </label> </div>';
+        html = '<div class="radio radio-success"> <input type="radio" name="radio-group__'+ id +'" value="'+ value +'" '+ prop +'> <label> '+ label +' </label> </div>';
         $(html).appendTo(node.find('.drag-input .form-group'));
       }else if(type == 'select'){
         prop = (prop) ? 'selected' : '';
@@ -640,7 +671,7 @@ function addRule(node, page, field, comparison, value) {
 
   $('.rule .tabs').val('initial');
   $('.rule .fields').val('initial');
-  $('.rule .input-holder input').val('');
+  $('.rule .input-holder').html('<input type="text">');
 }
  
 function updateRulesPages(){
@@ -649,4 +680,35 @@ function updateRulesPages(){
     ruleOptions += '<option value="'+ $(this).attr('href').replace('#tab', '') +'">'+ $(this).text() +'</option>'
   });
   $('.rule').find('.tabs').html(ruleOptions);
+}
+
+
+function getOptions(node, fieldId){
+  var field = $('.draggable-input[id*="'+fieldId+'"]');
+  var type = field.attr('id').split('__')[0];
+  clone = field.find('.drag-input').clone();
+  if( type == 'checkbox'){
+    html = '<select class="rule-value"><option value="true">Checked</option><option value="false">Unchecked</option></select>';
+    node.find('.rule .input-holder').html(html);
+  }else if( type == 'checkbox-group' ){
+
+  }else if( type == 'radio-group' ){
+
+  }else if( type == 'select' ){
+    var html = '<select class="rule-value">';
+    var options = clone.find('select option');
+    [].forEach.call(options, function(option){
+      val = $(option).attr('value');
+      console.log(option);
+      label = $(option).text();
+      html+= '<option value="'+ val +'">'+ label +'</option>'
+    });
+    html += '</select>';
+    node.find('.rule .input-holder').html(html);
+  }else{
+    clone.find('input').addClass('rule-value');
+    clone.find('textarea').addClass('rule-value');
+    node.find('.rule .input-holder').html(clone);
+  }
+  
 }
