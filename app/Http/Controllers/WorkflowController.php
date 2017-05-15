@@ -77,4 +77,31 @@ class WorkflowController extends Controller
             return json_encode(['status' => 'error', 'message' => 'Error']);
         }
     }
+
+    public function saveApproval(Request $request){
+        try{
+
+            $step = ApplicationStep::findOrFail($request->id);
+            $step->morphs_json = $request->form_json;
+            $step->status = $request->status;
+            $step->save();
+
+            switch ($request->status){
+                case 'reproved':
+                    $nexStep = ApplicationStep::findOrFail( $step->previousStep()->id);
+                    $nexStep->status = "current";
+                    $nexStep->save();
+                    break;
+                default:
+                    $nexStep = ApplicationStep::findOrFail( $step->nextStep()->id);
+                    $nexStep->status = "current";
+                    $nexStep->save();
+                    break;
+            }
+
+            return json_encode(['status' => 'success', 'message' => 'Form saved']);
+        }catch (Exception $e){
+            return json_encode(['status' => 'error', 'message' => 'Error']);
+        }
+    }
 }
