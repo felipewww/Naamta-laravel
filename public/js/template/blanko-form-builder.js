@@ -242,8 +242,11 @@ function addEvents(elem, id = null, signature = null){
   //Expand Field
   $(elem).find('.drag-heading .expand-field').click(function(){
     var field = $(this).closest('.draggable-input');
-    $(this).toggleClass('fa-expand');
-    $(this).toggleClass('fa-compress');
+    if(field.hasClass('half-row')){
+      $(this).addClass('fa-expand').removeClass('fa-compress');
+    }else{
+        $(this).addClass('fa-compress').removeClass('fa-expand');
+    }
     field.toggleClass('half-row');
     $(field).find(canvas).hide();
     field.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',   
@@ -613,6 +616,13 @@ function ordenateFields(){
     })
   })
 
+  var rules = $('.rules td');
+
+  rules.each(function(){
+    var id = $(this).attr('field-id');
+    $(this).find('.ordenation').html($('.draggable-input[data-id="'+ id +'"] .drag-heading .ordenation').text());
+  });
+
 }
 
 function resizeCanvas() {
@@ -620,7 +630,6 @@ function resizeCanvas() {
     if($(this).hasClass('empty')){
     var dragInput = $(this).closest('.drag-input');
     this.width = dragInput.width();
-    $(this).show();
     }
   });
 }
