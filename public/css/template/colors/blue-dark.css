@@ -440,12 +440,12 @@ table.dataTable tbody tr.selected, table.dataTable tbody th.selected, table.data
   }
 }
 @media screen and (min-width: 992px) and (max-width: 1199px){
-  .step-sortable:nth-of-type(3n+1):not(:first-of-type){
+  .step-sortable:nth-of-type(4n+1):not(:first-of-type){
     clear: left;
   }
 }
 @media screen and (min-width: 1200px){
-  .step-sortable:nth-of-type(4n+1):not(:first-of-type){
+  .step-sortable:nth-of-type(6n+1):not(:first-of-type){
     clear: left;
   }
 }
