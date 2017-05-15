@@ -1,3 +1,4 @@
+var thiss;
 var isEditable = true;
 var fieldCounter = 0; // FIELD ID
 var tabCounter = 0; //TAB ID
@@ -11,8 +12,8 @@ var clones = new Array();
 
 // Retrieve variables from storage
  //var form = localStorage.getItem('form');
- fieldCounter = localStorage.getItem('fieldCounter');
- tabCounter = localStorage.getItem('tabCounter');
+ //fieldCounter = localStorage.getItem('fieldCounter');
+ //tabCounter = localStorage.getItem('tabCounter');
 
 //if(form != null){
 // createTabs(form);
@@ -88,20 +89,28 @@ function toFieldObject(){
         conditions : []
       }
     },
-      comments : []
+    comments : []
   };
-
+  
   obj.options.ordenate = parseInt($(this).find('.ordenation').text().replace('(','').replace(')','')) ;
   obj.options.isRequired = $(this).find('.is-required').prop('checked');
-  obj.options.label = $(this).find('.label-text').val();
-  obj.options.help = $(this).find('.help-text').val();
-  obj.options.value = $(this).find('.value').val();
-  obj.options.min = $(this).find('.min-value').val();
-  obj.options.max = $(this).find('.max-value').val();
+  obj.options.label = $(this).find('.update-label').text();
+  obj.options.help = $(this).find('.help .text').val();
+  obj.options.value = $(this).find('.update-value').val();
+  obj.options.checked = $(this).find('.update-value').prop('checked');
+  obj.options.min = $(this).find('.update-min').attr('min');
+  obj.options.max = $(this).find('.update-max').attr('max');
   obj.options.step = $(this).find('.step-value').val();
   obj.options.type = $(this).find('[type=radio]:checked').val();
   obj.options.class = ($(this).hasClass('half-row')) ? 'half-row' : '';
 
+  if(obj.type == 'signature'){
+    [].forEach.call(canvasArray, function(sign){
+      if(sign.field == obj.id){
+        obj.options.signature = sign.signature.toDataURL()
+      }
+    })
+  }
 
   var comments = $(this).find('.comments li');
 
@@ -126,11 +135,11 @@ function toFieldObject(){
       field : {
         id : $(this).find('td.field-id').attr('field-id'),
         index : $(this).find('td.field-id .ordenation').text(),
-        label : $(this).find('td.field-id .field-label').text(),
+        label : $(this).find('td.field-id .field-label').text()
       },
       comparison : {
         value : $(this).find('td.comparison').attr('value'),
-        label : $(this).find('td.comparison').text(),
+        label : $(this).find('td.comparison').text()
       },
       value : {
         value : $(this).find('td.value').attr('value'),
@@ -145,7 +154,8 @@ function toFieldObject(){
       options.each(function(){
         var option = {
             label : $(this).text(),
-            value : $(this).val()
+            value : $(this).val(),
+            prop : $(this).prop('selected')
         };
         obj.options.options.push(option);
       });
@@ -156,7 +166,9 @@ function toFieldObject(){
     options.each(function(){
       var option = {
         label : $(this).find('label').text(),
-        value : $(this).find('input').val()
+        value : $(this).find('input').val(),
+        prop : $(this).find('input').prop('checked')
+
       };
       obj.options.options.push(option);
    });
@@ -167,7 +179,8 @@ function toFieldObject(){
     options.each(function(){
       var option = {
         label : $(this).find('label').text(),
-        value : $(this).find('input').val()
+        value : $(this).find('input').val(),
+        prop : $(this).find('input').prop('checked')
       };
       obj.options.options.push(option);
     });
@@ -226,7 +239,10 @@ function createTabs(json, clientView = false){
     });
     clones.forEach(function(clone){
       $(clone).appendTo('.tab.active');
-    })
+      ordenateFields();
+      updateRulesPages();
+      resizeCanvas();
+    });
   });
   
   $('.tab-control').removeClass('active');
@@ -247,9 +263,6 @@ function createTabs(json, clientView = false){
       }
     }));
   }
-  ordenateFields();
-  resizeCanvas()
-  updateRulesPages();
 }
 
 // Creates the fields related to the createTabs function
@@ -263,13 +276,13 @@ function createFields(obj, index, array, isRule){
   clone.find('.drag-heading').toggle(obj.isEditable);
   clone.find('.drag-options').toggle(obj.isEditable);
   configureField(clone, obj.options, obj.type);
-
-  addEvents(clone[0], obj.id);
+  obj.options.signature;
+  addEvents(clone[0], obj.id, obj.options.signature);
   clones.splice(obj.options.ordenate, 0, clone);
 
   if(obj.comments != null){
     obj.comments.forEach(function(comment){
-      appendComment(comment.username, comment.msg, $(clone));
+      appendComment(comment.username, comment.msg, comment.type, $(clone));
     })
   }
 
@@ -315,7 +328,11 @@ function configureField(node, options, type){
     'step' : options.step,
   });
 
-  if( type == 'button'){
+  if( type == 'checkbox' ){
+    node.find('.drag-input input').prop('checked', options.checked)
+  }
+
+  if( type == 'button' ){
     node.find('.drag-input button').attr({'type' : options.type});
   }
 
@@ -327,7 +344,7 @@ function configureField(node, options, type){
   node.find('.update-value').text(options.value);
 
   options.options.forEach(function(obj){
-    addOption(type, node, obj.label, obj.value);
+    addOption(type, node, obj.label, obj.value, obj.prop);
   });
 
   /*Options*/
@@ -341,8 +358,6 @@ function configureField(node, options, type){
   node.find('.max-value').val(options.max);
   node.find('.step-value').val(options.step);
   node.find('input[value="' + options.type+'"]' ).prop('checked', true);
-
-  
 }
 
 // Creates form from current tabs and fields
