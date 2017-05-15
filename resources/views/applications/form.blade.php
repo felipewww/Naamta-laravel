@@ -33,7 +33,7 @@
                     <div class="sttabs">
                         <div>
                             <span class="btn btn-save m-r-20" style="width: 120px; float: right;" onclick="appSteps.save()"><i class="fa fa-check"></i> Save</span>
-                            <a href="/applications/{{ $application->id }}/settings" class="btn btn-save m-r-20" style="width: 120px; float: right;"><i class="fa fa-check"></i>Settings </a>
+                            <a href="/applications/{{ $application->id }}/settings" class="btn btn-custom2 m-r-20" style="width: 120px; float: right;"><i class="fa fa-cog"></i> Settings </a>
                             <div class="clearfix"></div>
                         </div>
                         <br>

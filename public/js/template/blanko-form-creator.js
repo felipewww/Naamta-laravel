@@ -93,7 +93,7 @@ function toFieldObject(){
   };
   
   obj.options.ordenate = parseInt($(this).find('.ordenation').text().replace('(','').replace(')','')) ;
-  obj.options.isRequired = $(this).find('.is-required').prop('checked');
+  obj.options.isRequired = $(this).find('.update-required').hasClass('required');
   obj.options.label = $(this).find('.update-label').text();
   obj.options.help = $(this).find('.help .text').text();
   obj.options.value = $(this).find('.update-value').val();
@@ -223,6 +223,8 @@ function toJson(){
 // Creates tabs from json
 // Uses createFields
 function createTabs(json, clientView = false){
+
+  $('#drag-container').toggleClass('client-view', clientView);
   $('.tab-control').remove();
   var objs = JSON.parse(json);
   
@@ -249,7 +251,6 @@ function createTabs(json, clientView = false){
   $('.tab-control:first-of-type').addClass('active');
 
   if(clientView){
-    $('#drag-container').addClass('client-view');
     $('.draggable-input').removeClass('panel');
     $('.tabs-options').remove();
     $('.drag-heading').hide();
@@ -263,6 +264,7 @@ function createTabs(json, clientView = false){
       }
     }));
   }
+  
 }
 
 // Creates the fields related to the createTabs function

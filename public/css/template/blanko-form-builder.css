@@ -197,6 +197,7 @@
 }
 .comments .username{
     color: #333;
+    font-weight: 400;
 }
 .comments .username:after{
     content: ": ";
