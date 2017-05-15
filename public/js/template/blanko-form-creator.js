@@ -93,9 +93,9 @@ function toFieldObject(){
   };
   
   obj.options.ordenate = parseInt($(this).find('.ordenation').text().replace('(','').replace(')','')) ;
-  obj.options.isRequired = $(this).find('.is-required').prop('checked');
+  obj.options.isRequired = $(this).find('.update-required').hasClass('required');
   obj.options.label = $(this).find('.update-label').text();
-  obj.options.help = $(this).find('.help .text').val();
+  obj.options.help = $(this).find('.help .text').text();
   obj.options.value = $(this).find('.update-value').val();
   obj.options.checked = $(this).find('.update-value').prop('checked');
   obj.options.min = $(this).find('.update-min').attr('min');
@@ -223,6 +223,8 @@ function toJson(){
 // Creates tabs from json
 // Uses createFields
 function createTabs(json, clientView = false){
+
+  $('#drag-container').toggleClass('client-view', clientView);
   $('.tab-control').remove();
   var objs = JSON.parse(json);
   
@@ -249,20 +251,20 @@ function createTabs(json, clientView = false){
   $('.tab-control:first-of-type').addClass('active');
 
   if(clientView){
-    $('#drag-container').addClass('client-view');
     $('.draggable-input').removeClass('panel');
     $('.tabs-options').remove();
     $('.drag-heading').hide();
     $('#list-container').remove();
     $('.drag-options').remove();
-    $('.tab-control .fa').remove();
-    $('.help').append($('<i>', {
+    $('nav .tab-control .fa').remove();
+    $('.help .comment-icon').html($('<i>', {
       class : 'fa fa-comments toggle-comments',
       click : function(){
         $(this).closest('.draggable-input').find('.drag-comments').toggleClass('hidden');
       }
     }));
   }
+  
 }
 
 // Creates the fields related to the createTabs function
@@ -315,7 +317,7 @@ function configureField(node, options, type){
   node.find('.update-label').text(options.label);
   node.find('.update-label').val(options.label);
   node.find('.help .text').text(options.help);
-  if(options.help == '') node.find('.help .icon').hide();
+  if(node.find('.help .text').text() == '') node.find('.help .icon').hide();
 
   //Size of the field
   node.addClass(options.class);

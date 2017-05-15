@@ -15,9 +15,6 @@
     width: 49%;
     margin-right: 1%;
 }
-#drag-container .span-required{
-    display: none;
-}
 #drag-container .on-drag{
     opacity: 0.5;
     cursor: move;
@@ -72,6 +69,12 @@
     background-color: #686868;
     color: white;
     padding: 5px;
+}
+#drag-container .help .comment-icon{
+    display: inline;
+}
+#drag-container .help .comment-icon.has-comments{
+    color: #f59623;
 }
 #drag-container .help .icon:hover + .text{
     display: block;
@@ -194,6 +197,7 @@
 }
 .comments .username{
     color: #333;
+    font-weight: 400;
 }
 .comments .username:after{
     content: ": ";

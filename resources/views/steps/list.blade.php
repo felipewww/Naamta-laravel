@@ -37,7 +37,7 @@
                                 <div class="row">
                                     <div id="sortables" class="col-md-12">
                                         @foreach($vars->steps as $step)
-                                        <div class="col-sm-6 col-md-4 col-lg-3 step-sortable" data-stepid="{{$step->id}}">
+                                        <div class="col-sm-6 col-md-3 col-lg-2 step-sortable" data-stepid="{{$step->id}}">
                                             <div class="panel draggable" draggable="true">
                                                 <div class="white-box">
                                                     <div class="panel-heading p-b-10 p-t-10">
@@ -96,7 +96,7 @@
                                 <div class="row">
                                     <div id="not-sortables" class="col-md-12">
                                         @foreach($vars->inactives as $step)
-                                            <div class="col-sm-6 col-md-4 col-lg-3 step-sortable" data-stepid="{{$step->id}}">
+                                            <div class="col-sm-6 col-md-3 col-lg-2 step-sortable" data-stepid="{{$step->id}}">
                                                 <div class="panel draggable" draggable="true">
                                                     <div class="white-box">
                                                         <div class="panel-heading p-b-10 p-t-10">

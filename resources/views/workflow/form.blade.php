@@ -28,7 +28,7 @@
             <div id="drag-container"></div>
         </div>
         <div class="white-box">
-            <button onclick="workflow.sendForm();" class="btn btn-primary pull-right">Enviar Formulário</button>
+            <button onclick="workflow.sendForm();" class="btn btn-primary pull-right">Submit Form</button>
             <div class="clearfix"></div>
         </div>
     </div>
@@ -39,7 +39,9 @@
 <script src="{{ asset("js/template/blanko-form-builder.js") }}"></script>
 <script src="{{ asset("js/template/blanko-form-creator.js") }}"></script>
 <script src="{{ asset("js/template/blanko-form-checkpoint.js") }}"></script>
-
+<script>
+    createTabs($('input[name=containers]').val(), true);
+</script>
 @endsection
 
 @section('scripts')

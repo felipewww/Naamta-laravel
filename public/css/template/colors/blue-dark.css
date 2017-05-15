@@ -431,3 +431,21 @@ table.dataTable tbody>tr.selected, table.dataTable tbody>tr>.selected{
 table.dataTable tbody tr.selected, table.dataTable tbody th.selected, table.dataTable tbody td.selected{
   color: #000 !important;
 }
+
+
+
+@media screen and (max-width: 991px){
+  .step-sortable:nth-of-type(2n+1):not(:first-of-type){
+    clear: left;
+  }
+}
+@media screen and (min-width: 992px) and (max-width: 1199px){
+  .step-sortable:nth-of-type(4n+1):not(:first-of-type){
+    clear: left;
+  }
+}
+@media screen and (min-width: 1200px){
+  .step-sortable:nth-of-type(6n+1):not(:first-of-type){
+    clear: left;
+  }
+}

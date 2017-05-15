@@ -33,7 +33,7 @@
                     <div class="sttabs">
                         <div>
                             <span class="btn btn-save m-r-20" style="width: 120px; float: right;" onclick="appSteps.save()"><i class="fa fa-check"></i> Save</span>
-                            <a href="/applications/{{ $application->id }}/settings" class="btn btn-save m-r-20" style="width: 120px; float: right;"><i class="fa fa-check"></i>Settings </a>
+                            <a href="/applications/{{ $application->id }}/settings" class="btn btn-custom2 m-r-20" style="width: 120px; float: right;"><i class="fa fa-cog"></i> Settings </a>
                             <div class="clearfix"></div>
                         </div>
                         <br>
@@ -44,7 +44,7 @@
                                 <div class="row">
                                     <div id="sortables" class="col-md-12">
                                         @foreach($steps as $step)
-                                        <div class="col-md-2 step-sortable" data-stepid="{{$step->id}}">
+                                        <div class="col-sm-6 col-md-3 col-lg-2 step-sortable" data-stepid="{{$step->id}}">
                                             <div class="panel">
                                                 <div class="white-box">
                                                     <div class="panel-heading p-b-10 p-t-10">
