@@ -246,7 +246,8 @@ function createTabs(json, clientView = false){
     $('.drag-heading li:not(:first-of-type)').remove();
     $('#list-container').remove();
     $('.drag-options').remove();
-    $('nav .tab-control').remove();
+    $('.tab .modal').remove()
+    $('nav .tab-control .fa').remove();
     $('.help .comment-icon').html($('<i>', {
       class : 'fa fa-comments toggle-comments',
       click : function(){
@@ -257,8 +258,6 @@ function createTabs(json, clientView = false){
 
   [].forEach.call($('.tab .draggable-input'), function(field){
       var dataId = parseInt($(field).attr('data-id'));  
-      console.log(dataId);
-      console.log(fieldCounter);
       if(fieldCounter <=  dataId){
         fieldCounter = dataId++;
       }

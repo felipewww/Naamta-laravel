@@ -49,7 +49,8 @@
 }
 #drag-container .drag-heading .fa-compress, #drag-container .drag-heading .fa-expand{
     transform: rotate(45deg);
-}   
+}
+
 #drag-container .help {
     display: inline;
     position: relative;
@@ -212,11 +213,14 @@
     padding: 20px;
     width: 33%;
 }
-#drag-container.client-view .draggable-input:nth-of-type(3n+1){
-    clear: left;
-}
 #drag-container.client-view .draggable-input.expanded{
-    width: 100%;
+    width: 99%;
+}
+#drag-container.client-view .draggable-input.expanded + .draggable-input:nth-of-type(3n){
+    margin-left: 66%;
+}
+#drag-container.client-view .draggable-input.expanded + .draggable-input:nth-of-type(3n-1){
+    margin-left: 33%;
 }
 #drag-container.client-view .draggable-input.half-row{
     margin-right: 0;
@@ -303,4 +307,14 @@
 
 #drag-container .half-row .col-lg-2{
     width: 50%;
+}
+
+@media screen and (max-width: 992px){
+    #drag-container{
+        padding: 0;
+    }
+    #drag-container.client-view .draggable-input{
+        width: 100%;
+        padding: 5px;
+    }
 }

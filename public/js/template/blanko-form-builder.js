@@ -256,7 +256,7 @@ function addEvents(elem, id = null, signature = null){
     var field = $(this).closest('.draggable-input');
     $(this).toggleClass('fa-expand').toggleClass('fa-compress');
     
-    field.toggleClass('expanded');
+    field.toggleClass('expanded').siblings().removeClass('expanded');
     field.toggleClass('half-row');
     //$(field).find(canvas).hide();
     field.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',   
