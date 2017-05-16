@@ -295,10 +295,7 @@ function addEvents(elem, id = null, signature = null){
     $(this).closest('tr').remove();
   });
 
-
-
   //Comments
-
   var commentType = $(elem).find('input[type="radio"][name="comment-type"]');
   commentType.attr('name', commentType.attr('name') + id);
   $(commentType[1]).prop('checked', true);
@@ -369,11 +366,15 @@ function addEvents(elem, id = null, signature = null){
     var input = $(this).parent().find('.input-holder .rule-value');
     console.log(fields.label);
     switch(fields.label){
-      case ' Text Area': 
-        ruleValue = input.text();
-        ruleValueLabel = input.text();
-        break;
       case ' Select':
+        ruleValue = input.val();
+        ruleValueLabel = input.find(':selected').text();
+        break;
+      case ' Checkbox Group':
+        ruleValue = input.val();
+        ruleValueLabel = input.find(':selected').text();
+        break;
+      case ' Radio Group':
         ruleValue = input.val();
         ruleValueLabel = input.find(':selected').text();
         break;
@@ -691,15 +692,30 @@ function getOptions(node, fieldId){
     html = '<select class="rule-value"><option value="true">Checked</option><option value="false">Unchecked</option></select>';
     node.find('.rule .input-holder').html(html);
   }else if( type == 'checkbox-group' ){
-
+    var html = '<select class="rule-value form-control">';
+    var options = clone.find('.checkbox');
+    [].forEach.call(options, function(option){
+      val = $(option).find('input').attr('value');
+      label = $(option).find('label').text();
+      html+= '<option value="'+ val +'">'+ label +'</option>'
+    });
+    html += '</select>';
+    node.find('.rule .input-holder').html(html);
   }else if( type == 'radio-group' ){
-
+    var html = '<select class="rule-value form-control">';
+    var options = clone.find('.radio');
+    [].forEach.call(options, function(option){
+      val = $(option).find('input').attr('value');
+      label = $(option).find('label').text();
+      html+= '<option value="'+ val +'">'+ label +'</option>'
+    });
+    html += '</select>';
+    node.find('.rule .input-holder').html(html);
   }else if( type == 'select' ){
-    var html = '<select class="rule-value">';
+    var html = '<select class="rule-value form-control">';
     var options = clone.find('select option');
     [].forEach.call(options, function(option){
       val = $(option).attr('value');
-      console.log(option);
       label = $(option).text();
       html+= '<option value="'+ val +'">'+ label +'</option>'
     });
