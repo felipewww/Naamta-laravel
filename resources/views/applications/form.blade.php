@@ -98,11 +98,11 @@
 
                                                     <div class="row action">
                                                         <div class="col-md-6">
-                                                            <a href="/applications/step/{{ $step->id  }}" class="btn btn-circle pull-right btn-custom2"><i class="fa fa-pencil"></i></a>
+                                                            <a href="/applications/step/{{ $step->id  }}" class="btn btn-circle pull-left btn-custom2"><i class="fa fa-pencil"></i></a>
                                                         </div>
                                                         <div class="col-md-6">
                                                             @if( $step->status )
-                                                                <span data-currentstatus="{{ $step->status }}" onclick="appSteps.changeStatus(this, {{ $step->id }})" class="btn btn-circle pull-right btn-custom"><i class="fa fa-ban"></i></span>
+                                                                <span data-currentstatus="{{ $step->status }}" onclick="appSteps.changeStatus(this, {{ $step->id }})" class="btn btn-circle pull-right btn-danger"><i class="fa fa-ban"></i></span>
                                                             @else
                                                                 <span data-currentstatus="{{ $step->status }}" onclick="appSteps.changeStatus(this, {{ $step->id }})" class="btn btn-circle pull-right btn-save"><i class="fa fa-check"></i></span>
                                                             @endif

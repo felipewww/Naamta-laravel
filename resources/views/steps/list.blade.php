@@ -74,14 +74,16 @@
                                                     <h5 class="m-t-0 m-b-20"><b>Form:</b> Form 1</h5>
 
                                                     <div class="row action">
-                                                        <div class="col-sm-6">
-                                                            <span onclick="sysSteps.changeStatus(this)" data-status="1" class="btn btn-custom">Inactivate</span>
+                                                        <div>
+                                                            <div class="col-sm-6">
+                                                                <a href="/steps/{{ $step->id }}/edit" class="btn btn-circle pull-left btn-custom2" data-dismiss="modal"><i class="fa fa-pencil"></i></a>
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <span onclick="sysSteps.confirmDelete(this, {{ $step->id }})" class="btn btn-circle pull-right btn-danger" data-dismiss="modal"><i class="fa fa-close"></i></span>
+                                                            </div>
                                                         </div>
-                                                        <div class="col-sm-3">
-                                                            <a href="/steps/{{ $step->id }}/edit" class="btn btn-circle pull-right btn-custom2" data-dismiss="modal"><i class="fa fa-pencil"></i></a>
-                                                        </div>
-                                                        <div class="col-sm-3">
-                                                            <span onclick="sysSteps.confirmDelete(this, {{ $step->id }})" class="btn btn-circle pull-right btn-danger" data-dismiss="modal"><i class="fa fa-close"></i></span>
+                                                        <div class="col-sm-12 m-t-10">
+                                                            <span onclick="sysSteps.changeStatus(this)" data-status="1" class="btn btn-default fill-btn">Inactivate</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -134,7 +136,7 @@
 
                                                         <div class="row action">
                                                             <div class="col-sm-6">
-                                                                <a href="#" onclick="sysSteps.changeStatus(this)" data-status="0" class="btn btn-def">Activate</a>
+                                                                <a href="#" onclick="sysSteps.changeStatus(this)" data-status="0" class="btn btn-success">Activate</a>
                                                             </div>
                                                             <div class="col-sm-6">
                                                                 <a href="editstep.html" class="btn btn-circle pull-right btn-custom2"><i class="fa fa-pencil"></i></a>

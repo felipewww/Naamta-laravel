@@ -70,6 +70,10 @@
     color: white;
     padding: 5px;
 }
+
+#drag-container .drag-input{
+    overflow: hidden;
+}
 #drag-container .help .comment-icon{
     display: inline;
 }
@@ -80,7 +84,7 @@
     display: block;
 }
 #drag-container #list-container{
-    width: 30%;
+    width: 15%;
     margin-left: 20px;
     display: inline-block;
     vertical-align: top;
@@ -146,7 +150,7 @@
     display: block;
 }
 #drag-container .form-holder{
-    width: 60%;
+    width: 75%;
     display: inline-block;
     vertical-align: top;
 }
@@ -288,13 +292,6 @@
 
 #drag-container .drag-options .col-lg-2{
     margin-right: 10px;
-}
-
-@media screen and (max-width: 1330px){
-    #drag-container .half-row{
-        margin-left: 0;
-        width: 100% !important;
-    }
 }
 
 #drag-container .half-row .col-lg-2{

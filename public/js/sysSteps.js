@@ -111,16 +111,16 @@ sysSteps = {
         if ( currentStatus == 1 )
         {
             $(e).html('Activate');
-            $(e).removeClass('btn-custom');
-            $(e).addClass('btn-def');
+            $(e).removeClass('btn-default');
+            $(e).addClass('btn-success');
             $(e).attr('data-status', 0);
             $(this.containerInactives).append(parent);
         }
         else if(currentStatus == 0)
         {
             $(e).html('Inactivate');
-            $(e).removeClass('btn-def');
-            $(e).addClass('btn-custom');
+            $(e).removeClass('btn-success');
+            $(e).addClass('btn-default');
             $(e).attr('data-status', 1);
             $(this.container).append(parent);
         }
