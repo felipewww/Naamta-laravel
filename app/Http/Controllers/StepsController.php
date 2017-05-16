@@ -176,8 +176,6 @@ class StepsController extends Controller
             $request->offsetSet('morphs_from', $this->step->morphs_from);
         }
 
-//        dd($request->all());
-
         switch ($request->morphs_from)
         {
             case FormTemplate::class:
@@ -238,7 +236,6 @@ class StepsController extends Controller
          * such as userType, usesEmails with same names, but, searching in different tables.
          * */
         $this->step->userTypes()->detach();
-
         if ($request->usedemails)
         {
             foreach ($request->usedemails as $action => $email)
@@ -259,7 +256,7 @@ class StepsController extends Controller
             }
         }
 
-        $this->verifyNewEmails('clone');
+        $this->verifyNewEmails($request->_stepFrom);
         $request->offsetUnset('usedemails');
 
         $this->step->update($request->all());
@@ -331,7 +328,6 @@ class StepsController extends Controller
                             'received_by'   => $userTypeID,
                             'send_when'     => $send_when,
                         ];
-
                         try{
                             $model::create($reg);
                         }catch (QueryException $e){
@@ -368,6 +364,7 @@ class StepsController extends Controller
         }
 
         $vars = $this->defaultVars($action, $step);
+//        dd($vars);
         $vars->step = $step;
 
         $forms      = FormTemplate::where('status', 1)->get();
@@ -398,7 +395,7 @@ class StepsController extends Controller
                     break;
             }
         }
-
+//dd($vars->usedEmails);
         return view(
             'steps.form',
             [
