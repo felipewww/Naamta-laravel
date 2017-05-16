@@ -240,20 +240,22 @@ function addEvents(elem, id = null, signature = null){
     $(this).closest('.draggable-input').remove();
     ordenateFields();
   });
-  
-  if($(elem).hasClass('half-row')){
+
+  if($('#drag-container.client-view').length > 0){
+    $(elem).removeClass('half-row');
     $(elem).find('.drag-heading .expand-field').addClass('fa-expand').removeClass('fa-compress');
   }else{
-    $(elem).find('.drag-heading .expand-field').addClass('fa-compress').removeClass('fa-expand');
+    if($(elem).hasClass('half-row')){
+      $(elem).find('.drag-heading .expand-field').addClass('fa-expand').removeClass('fa-compress');
+    }else{
+      $(elem).find('.drag-heading .expand-field').addClass('fa-compress').removeClass('fa-expand');
+    }
   }
 
   $(elem).find('.drag-heading .expand-field').click(function(){
     var field = $(this).closest('.draggable-input');
-    if(!field.hasClass('half-row')){
-      $(this).addClass('fa-expand').removeClass('fa-compress');
-    }else{
-      $(this).addClass('fa-compress').removeClass('fa-expand');
-    }
+    $(this).toggleClass('fa-expand').toggleClass('fa-compress');
+    
     field.toggleClass('expanded');
     field.toggleClass('half-row');
     //$(field).find(canvas).hide();
@@ -261,7 +263,6 @@ function addEvents(elem, id = null, signature = null){
       function(e) {
         
     });
-    
   });
 
   // Clone Field
