@@ -243,10 +243,10 @@ function createTabs(json, clientView = false){
   if(clientView){
     $('.draggable-input').removeClass('panel');
     $('.tabs-options').remove();
-    $('.drag-heading').hide();
+    $('.drag-heading li:not(:first-of-type)').remove();
     $('#list-container').remove();
     $('.drag-options').remove();
-    $('nav .tab-control .fa').remove();
+    $('nav .tab-control').remove();
     $('.help .comment-icon').html($('<i>', {
       class : 'fa fa-comments toggle-comments',
       click : function(){

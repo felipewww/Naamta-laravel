@@ -50,6 +50,9 @@
                         </select>
                     </div>
                 </div>
+                <div class="form-group text-center m-t-20">
+                    <button type="submit" class="btn btn-success center-block waves-effect waves-light">Submit Form</button>
+                </div>
                 <div class="clearfix"></div>
             </div>
         </div>
@@ -65,9 +68,6 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="white-box">
-                <div class="form-group text-center m-t-20">
-                    <button type="submit" class="btn btn-success waves-effect waves-light m-r-20 ">Submit Form</button>
-                </div>
             </div>
         </div>
     </div>
