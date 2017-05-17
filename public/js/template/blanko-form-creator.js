@@ -72,7 +72,7 @@ function toFieldObject(){
     id : $(this).attr('data-id'),
     type :  $(this).attr('id').split("__")[0],
     isEditable : isEditable,
-    options : {
+    settings : {
       options : [],
       rules : {
         ruleAction : $(this).find('.rule-action').val(),
@@ -83,22 +83,22 @@ function toFieldObject(){
     comments : []
   };
   
-  obj.options.ordenate = parseInt($(this).find('.ordenation').text().replace('(','').replace(')','')) ;
-  obj.options.isRequired = $(this).find('.update-required').hasClass('required');
-  obj.options.label = $(this).find('.update-label').text();
-  obj.options.help = $(this).find('.help .text').text();
-  obj.options.value = $(this).find('.update-value').val();
-  obj.options.checked = $(this).find('.update-value').prop('checked');
-  obj.options.min = $(this).find('.update-min').attr('min');
-  obj.options.max = $(this).find('.update-max').attr('max');
-  obj.options.step = $(this).find('.step-value').val();
-  obj.options.type = $(this).find('[type=radio]:checked').val();
-  obj.options.class = ($(this).hasClass('half-row')) ? 'half-row' : '';
+  obj.settings.ordenate = parseInt($(this).find('.ordenation').text().replace('(','').replace(')','')) ;
+  obj.settings.isRequired = $(this).find('.update-required').hasClass('required');
+  obj.settings.label = $(this).find('.update-label').text();
+  obj.settings.help = $(this).find('.help .text').text();
+  obj.settings.value = $(this).find('.update-value').val();
+  obj.settings.checked = $(this).find('.update-value').prop('checked');
+  obj.settings.min = $(this).find('.update-min').attr('min');
+  obj.settings.max = $(this).find('.update-max').attr('max');
+  obj.settings.step = $(this).find('.step-value').val();
+  obj.settings.type = $(this).find('[type=radio]:checked').val();
+  obj.settings.class = ($(this).hasClass('half-row')) ? 'half-row' : '';
 
   if(obj.type == 'signature'){
     [].forEach.call(canvasArray, function(sign){
       if(sign.field == obj.id){
-        obj.options.signature = sign.signature.toDataURL()
+        obj.settings.signature = sign.signature.toDataURL()
       }
     })
   }
@@ -137,7 +137,7 @@ function toFieldObject(){
         label : $(this).find('td.value').text()
       }
     }
-    obj.options.rules.conditions.push(rule);
+    obj.settings.rules.conditions.push(rule);
   });
 
   if(obj.type == 'select'){
@@ -148,7 +148,7 @@ function toFieldObject(){
             value : $(this).val(),
             prop : $(this).prop('selected')
         };
-        obj.options.options.push(option);
+        obj.settings.options.push(option);
       });
     }
 
@@ -161,7 +161,7 @@ function toFieldObject(){
         prop : $(this).find('input').prop('checked')
 
       };
-      obj.options.options.push(option);
+      obj.settings.options.push(option);
    });
   }
 
@@ -173,7 +173,7 @@ function toFieldObject(){
         value : $(this).find('input').val(),
         prop : $(this).find('input').prop('checked')
       };
-      obj.options.options.push(option);
+      obj.settings.options.push(option);
     });
   }
   tempFields.push(obj);
@@ -274,12 +274,12 @@ function createFields(obj, index, array, isRule){
   $('.tab-control .tab-remove').toggle(obj.isEditable);
   clone.find('.drag-heading').toggle(obj.isEditable);
   clone.find('.drag-options').toggle(obj.isEditable);
-  configureField(clone, obj.options, obj.type);
-  obj.options.signature;
-  addEvents(clone[0], obj.id, obj.options.signature);
-  clones.splice(obj.options.ordenate, 0, clone);
+  configureField(clone, obj.settings, obj.type);
+  obj.settings.signature;
+  addEvents(clone[0], obj.id, obj.settings.signature);
+  clones.splice(obj.settings.ordenate, 0, clone);
 
-  obj.options.options.forEach(function(option){
+  obj.settings.options.forEach(function(option){
     addOption(obj.type, clone, option.label, option.value, option.prop, obj.id);
   });
 
@@ -290,11 +290,11 @@ function createFields(obj, index, array, isRule){
   }
 
   //rules
-  clone.find('.rule-action').val(obj.options.rules.ruleAction);
-  clone.find('.rule-target').val(obj.options.rules.ruleTarget);
+  clone.find('.rule-action').val(obj.settings.rules.ruleAction);
+  clone.find('.rule-target').val(obj.settings.rules.ruleTarget);
 
-  if(obj.options.rules != null){
-    obj.options.rules.conditions.forEach(function(condition){
+  if(obj.settings.rules != null){
+    obj.settings.rules.conditions.forEach(function(condition){
       var page = condition.page;
       var field = condition.field;
       var comparison = condition.comparison;
