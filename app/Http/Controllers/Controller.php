@@ -127,30 +127,29 @@ class Controller extends BaseController
                     $setting->options = $config->options;
 
                 if(isset($config->rules)){
-                    foreach($config->rules as $r){
-                        $rule = new Rule();
-                        $setting->rules()->save($rule);
+                    $r = $config->rules;
+                    $rule = new Rule();
+                    $setting->rule()->save($rule);
 
-                        if(isset($r->ruleAction))
-                            $rule->ruleAction = $r->ruleAction;
+                    if(isset($r->ruleAction))
+                        $rule->ruleAction = $r->ruleAction;
 
-                        if(isset($r->ruleTarget))
-                            $rule->ruleTarget = $r->ruleTarget;
+                    if(isset($r->ruleTarget))
+                        $rule->ruleTarget = $r->ruleTarget;
 
-                        if(isset($r->conditions)){
-                            foreach($r->conditions as $co) {
-                                $condition = new Condition(
-                                    [
-                                        "page" => $c->page,
-                                        "field" => $co->field,
-                                        "comparison" => $co->comparison,
-                                        "value" => $co->value,
-                                    ]);
-                                $setting->rules()->conditions()->save($condition);
-                            }
+                    if(isset($r->conditions)){
+                        foreach($r->conditions as $co) {
+                            $condition = new Condition(
+                                [
+                                    "page" => $c->page,
+                                    "field" => $co->field,
+                                    "comparison" => $co->comparison,
+                                    "value" => $co->value,
+                                ]);
+                            $rule->conditions()->save($condition);
                         }
-                        $setting->rules()->save($rule);
                     }
+                    $setting->rule()->save($rule);
                 }
                 $field->setting()->save($setting);
                 $container->fields()->save($field);

@@ -21,7 +21,7 @@ class WorkflowController extends Controller
     {
         parent::__construct();
         $this->middleware(function ($request, $next) {
-            $user = \Auth::user()->authorizeRoles(['admin', 'staff', 'client']);;
+            \Auth::user()->authorizeRoles(['admin', 'staff', 'client']);;
             return $next($request);
         });
     }
@@ -34,7 +34,8 @@ class WorkflowController extends Controller
             {
                 case FormTemplate::class:
                     $form = Form::with(array('containers', 'containers.config', 'containers.fields', 'containers.fields.comments',
-                        'containers.fields.setting', 'containers.fields.setting.rules', 'containers.fields.setting.rules.conditions') )->findOrFail("591dd3cf6096d91f28002d2f");
+                        'containers.fields.setting', 'containers.fields.setting.rule', 'containers.fields.setting.rule.conditions'))->findOrFail($step->morphs_id);
+                    //var_dump($this->_convertFormMongoToJson($form));
                     //var_dump($this->_convertFormMongoToJson($form));
                     //die(json_encode($form));
                     return $this->applicationForm($step->id, json_encode($form));
