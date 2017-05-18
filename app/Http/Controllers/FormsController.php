@@ -7,6 +7,7 @@ use App\Library\DataTablesExtensions;
 
 use App\Http\Controllers\Controller;
 
+use App\MModels\Form;
 use Illuminate\Support\Facades\URL;
 use Validator;
 use Session;
@@ -121,6 +122,13 @@ class FormsController extends Controller
         return view('forms.form', ['pageInfo' => $this->pageInfo]);
     }
 
+    public function mongo(Request $request, $id = null)
+    {
+        if(isset($id)){
+            $form = FormTemplate::with( array( 'containers', 'containers.fields', 'containers.fields.comments') )->findOrFail($id);
+            var_dump($this->_storeFormToMongo($form));
+        }
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -157,7 +165,7 @@ class FormsController extends Controller
         $this->pageInfo->subCategory->title = 'Form View';
 
         $form = FormTemplate::withTrashed()->with( array( 'containers', 'containers.fields', 'containers.fields.comments') )->findOrFail($id);
-
+       
         return view('forms.show')->with(['form' => $form, 'containers' => $this->_convertFormToJson($form), 'pageInfo' => $this->pageInfo]);
     }
 
@@ -169,7 +177,6 @@ class FormsController extends Controller
         $form = FormTemplate::with( array( 'containers', 'containers.fields', 'containers.fields.comments') )->findOrFail($id);
        
         return view('forms.form')->with(['form' => $form, 'containers' => $this->_convertFormToJson($form), 'pageInfo' => $this->pageInfo]);
-
     }
     
     public function update(Request $request, $id){
@@ -217,6 +224,7 @@ class FormsController extends Controller
         $_excludeContainers = array();
         foreach($_requestContainers as $k => $_arrC){
             $key = array_search($_arrC->config->tabId, $_oldContainers);
+
             if($key!==false){
                 array_push($_excludeContainers, $_oldContainers[$key]);
             }
@@ -230,6 +238,7 @@ class FormsController extends Controller
             $_oldFields = Field::where('container_id', $container->id)->get()->toArray();
             $_oldFields = array_column($_oldFields, 'id');
             $_excludeFields = array();
+
             if(isset($_arrC->fields)){
                 foreach($_arrC->fields as $key => $value){
 
