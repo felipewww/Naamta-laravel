@@ -20,6 +20,7 @@ class UserTableSeeder extends Seeder
         $admin->name = 'Administrator';
         $admin->email = 'admin@blanko.be';
         $admin->password = bcrypt('123456');
+        $admin->verified = true;
         $admin->save();
         $admin->roles()->attach($role_admin);
 
@@ -27,6 +28,7 @@ class UserTableSeeder extends Seeder
         $staff->name = 'Staff';
         $staff->email = 'staff@blanko.be';
         $staff->password = bcrypt('123456');
+        $staff->verified = true;
         $staff->save();
         $staff->roles()->attach($role_staff);
 
@@ -34,6 +36,7 @@ class UserTableSeeder extends Seeder
         $client->name = 'Client';
         $client->email = 'client@blanko.be';
         $client->password = bcrypt('123456');
+        $client->verified = true;
         $client->save();
         $client->roles()->attach($role_client);
     }

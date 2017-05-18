@@ -2,20 +2,15 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Models\ApplicationStep;
-use App\Models\ApplicationUserTypes;
-use App\Models\ApplicationUsesEmail;
-use App\Models\Approval;
-use App\Models\Step;
+use App\Http\Controllers\ApplicationsController;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Client;
 use App\Models\Application;
 
 use App\Http\Controllers\Controller;
-use App\Models\UserApplication;
-use App\Models\UserType;
-use App\Models\UsesEmail;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
@@ -48,7 +43,8 @@ class RegisterController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest');
+        parent::__construct();
+//        $this->middleware('guest');
     }
 
     /*
@@ -78,116 +74,56 @@ class RegisterController extends Controller
         \DB::beginTransaction();
 
         try{
-            
             $user = User::create([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'password' => bcrypt($data['password'])
+                'name'      => $data['name'],
+                'email'     => $data['email'],
+                'verified'  => false,
+                'password'  => bcrypt($data['password'])
             ]);
-        
-            $user   
+            
+
+            $user
                 ->roles()
                 ->attach(Role::where('name', 'client')->first());
-
-            $uTypes = UserType::all();
 
             $client = Client::create([
                 'company' => $data["company"],
                 'user_id' => $user->id
             ]);
 
-            $application = Application::create([
+            //Generate token and send email
+            $actService = new ActivationService();
+
+
+            $application = new Application([
                 'client_id' => $client->id,
-                'description' => " ",
-                'status' => 0
+                'description' => "Waiting for pre-approval",
+                'status' => 'wt_emailconfirm'
             ]);
 
             /*
-             * Clone user types default with new ids.
+             * Set as TRUE to test the complete proccess (sending e-mails, waiting approval and etc. within 'local' or 'staging'
              * */
-            $uTypesClones = []; //temp relations between new id (will be generated in this loop) and old id.
-            foreach ($uTypes as $cloneType)
+            $fullProccess = true;
+
+            switch (app('env') )
             {
-                $defaultID = $cloneType->id;
-                unset($cloneType['id']);
-                unset($cloneType['created_at']);
-                unset($cloneType['updated_at']);
+                case 'local' || 'staging':
+                    if (!$fullProccess) {
+                        $application->status = '0';
+                        $user->verified = true;
+                        ApplicationsController::cloneApplication($application, $user);
+                    }else{
+                        $this->doFullProccess($application, $actService, $user);
+                    }
+                    break;
 
-                $cloneType->setAttribute('application_id', $application->id);
-
-                $newAppType = ApplicationUserTypes::create($cloneType->getAttributes());
-                $uTypesClones[$defaultID] = $newAppType->id;
+                case 'production':
+                    $this->doFullProccess($application, $actService, $user);
+                    break;
             }
 
-            $clientType = ApplicationUserTypes::create([
-                'slug' => 'client',
-                'title' => 'Client',
-                'status' => 1,
-                'application_id' => $application->id,
-            ]);
-            /*
-             * Create application user where his type is the last type found
-             * */
-            $appUsers = UserApplication::create([
-                'application_id' => $application->id,
-                'user_id' => $user->id,
-                'user_type' => $clientType->id,
-            ]);
-
-            /*
-             * Clone default steps with new ID
-             * */
-            $defaultSteps = Step::where('status', 1)->get();
-            $default_ids = [];
-            foreach ($defaultSteps as $step)
-            {
-                $newRefID = null;
-                if ($step->previous_step) {
-                    $newRefID = $default_ids[$step->previous_step];
-                }
-
-                $dataNewStep = [
-                    'application_id'    => $application->id,
-                    'previous_step'     => $newRefID,
-                    'responsible'       => $uTypesClones[$step->responsible], //Keep the usertype relation with new id
-                    'title'             => $step->title,
-                    'description'       => $step->description,
-                    'ordination'        => $step->ordination,
-                    'status'            => '0',
-                    'morphs_from'       => $step->morphs_from,
-                ];
-
-                if ($step->morphs_from == Approval::class && $step->morphs_id > 0) {
-                    $dataNewStep['morphs_id'] = $step->morphs_id;
-                    $dataNewStep['morphs_json'] = $this->_convertApprovalToJson( Approval::where('id', $step->morphs_id)->first() );
-//                    dd('here', $dataNewStep);
-                }
-
-
-                $appSteps = ApplicationStep::create($dataNewStep);
-
-                $default_ids[$step->id] = $appSteps->id;
-
-                /*
-                 * Clone UsesEmails default with new IDs using default temporary relationship user types
-                 * */
-                $emails = UsesEmail::where('step_id', $step->id)->get();
-
-                foreach ($emails as $clone)
-                {
-
-                    $cloneID = $clone->received_by;
-                    unset($clone['id']);
-                    unset($clone['step_id']);
-                    unset($clone['received_by']);
-                    $clone->application_step_id = $appSteps->id;
-                    $newEmailRelation = new ApplicationUsesEmail($clone->getAttributes());
-
-                    $newEmailRelation->received_by = $uTypesClones[$cloneID]; //$newAppType->id;
-                    $newEmailRelation->save();
-                }
-            }
-
+            $application->save();
 
             \DB::commit();
             return $user;
@@ -195,7 +131,40 @@ class RegisterController extends Controller
         } catch (Exception $e){
             \DB::rollBack();
             throw $e;
-        }        
+        }
+    }
+
+    function doFullProccess(Application &$application, ActivationService &$actService, User &$user)
+    {
+        $actService->sendActivationMail($user);
+    }
+
+    public function emailConfirmation(Request $request, $token = null)
+    {
+        $actService = new \App\Http\Controllers\Auth\ActivationService();
+        $actService->activateNewUser($token);
+        return redirect()->to('/');
+    }
+
+    public function resendConfirmationToken(Request $request, $token = null, $id)
+    {
+        /*
+         * Resend only if data combine
+         * */
+        $act = \App\Models\UserActivation::where(
+            [
+                'token' => $token,
+                'user_id' => $id
+            ])
+            ->first();
+
+        if (!$act) { throw new Error('Forbidden'); }
+
+        $actService = new \App\Http\Controllers\Auth\ActivationService();
+        $actService->sendActivationMail(\App\Models\User::findOrFail($id));
+
+        Auth::logout();
+        return redirect()->to('/');
 
     }
 }

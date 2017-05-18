@@ -11,6 +11,8 @@ class User extends Authenticatable
 {
     use HasApiTokens, Notifiable, SoftDeletes;
 
+//    public $id;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -92,5 +94,9 @@ class User extends Authenticatable
             return true;
         }
         return false;
+    }
+
+    public function client(){
+        return $this->belongsTo(Client::class, 'id', 'user_id');
     }
 }

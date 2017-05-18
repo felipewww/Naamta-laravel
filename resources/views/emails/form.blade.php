@@ -1,5 +1,16 @@
 @extends('layouts.app')
 
+@section('styles')
+    <link href="https://cdn.quilljs.com/1.2.4/quill.snow.css" rel="stylesheet">
+@endsection
+
+@section('scripts')
+    {{--<script type="text/javascript" src="{{ asset('js/quill.js') }}"></script>--}}
+    <script type="text/javascript" src="{{ asset('js/Emails.js') }}"></script>
+    <!-- Include the Quill library -->
+    <script src="https://cdn.quilljs.com/1.2.4/quill.js"></script>
+@endsection
+
 @php
     $page = "emails";
     
@@ -41,7 +52,9 @@
                         <div class="form-group{{ $errors->has('text') ? ' has-error' : '' }}">
                             <label for="text" class="col-md-4 control-label">Text</label>
                             <div class="col-md-6">
-                                <textarea id="text" type="text" class="form-control" name="text" required>{{ $email->text!=null ? $email->text : old('text') }}</textarea>
+                                {{--<textarea id="text" type="text" class="form-control" name="text" required>{{ $email->text!=null ? $email->text : old('text') }}</textarea>--}}
+                                <textarea id="text-hidden" type="text" class="hidden" name="text" required></textarea>
+                                <div id="text">{!! $email->text !!}</div>
 
                                 @if ($errors->has('text'))
                                     <span class="help-block">
@@ -69,7 +82,7 @@
                        
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary">
+                                <button id="sendform" type="submit" class="btn btn-primary">
                                     Submit
                                 </button>
                             </div>

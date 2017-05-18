@@ -17,5 +17,8 @@
     "vue": "^2.1.10",
     "gulp": "~3.8.11",
     "laravel-elixir": "*"
-}
+  },
+  "dependencies": {
+    "quill": "^1.2.4"
+  }
 }
