@@ -181,6 +181,7 @@ class StepsController extends Controller
             case FormTemplate::class:
                 $form = FormTemplate::where('id', $request->morphs_item)->first();
                 $json = $this->_convertFormToJson($form);
+                $this->_storeFormToMongo($json);
                 break;
 
 //            case Screens::class:

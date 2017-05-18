@@ -177,6 +177,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\ShortcodesServiceProvider::class,
+        Jenssegers\Mongodb\MongodbServiceProvider::class,
+        Jenssegers\Mongodb\MongodbQueueServiceProvider::class,
     ],
 
     /*
@@ -225,5 +227,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Shortcode' => Webwizo\Shortcodes\Facades\Shortcode::class,
+        'Moloquent' => Jenssegers\Mongodb\Eloquent\Model::class,
+
     ],
 ];

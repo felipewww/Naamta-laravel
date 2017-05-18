@@ -1,5 +1,7 @@
 <?php
-
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
+use Jenssegers\Mongodb\Eloquent\Model;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,7 +17,13 @@ Route::get('register/confirmation/{token}', 'Auth\RegisterController@emailConfir
 Route::get('register/confirmation/resend/{token}/{id}', 'Auth\RegisterController@resendConfirmationToken');
 
 Auth::routes();
+Route::get('/test', function (Request $request) {
 
+//<<<<<<< HEAD
+//=======
+});
+//Route::group(['middleware' => 'auth'], function(){
+//>>>>>>> 159286fd23bf5851f4e9d210b85acbe96fdfd758
 
 Route::group(['middleware' => 'auth'], function(){
 
@@ -65,7 +73,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/applications/step/{id}',  'StepsController@appStep');
 
     Route::get('/forms/{id}/clone',  'FormsController@create');
-
+    Route::get('/forms/{id}/mongo',  'FormsController@mongo');
     Route::get('/workflow/step/{id}/show/',  'WorkflowController@show');
     Route::post('/workflow/saveStepForm',  'WorkflowController@saveStepForm');
     Route::post('/workflow/saveApproval',  'WorkflowController@saveApproval');
