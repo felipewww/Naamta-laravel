@@ -1,5 +1,7 @@
 <?php
-
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
+use Jenssegers\Mongodb\Eloquent\Model;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,7 +15,9 @@
 
 
 Auth::routes();
+Route::get('/test', function (Request $request) {
 
+});
 Route::group(['middleware' => 'auth'], function(){
 
 //    Route::get('/', function () {
@@ -62,7 +66,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/applications/step/{id}',  'StepsController@appStep');
 
     Route::get('/forms/{id}/clone',  'FormsController@create');
-
+    Route::get('/forms/{id}/mongo',  'FormsController@mongo');
     Route::get('/workflow/step/{id}/show/',  'WorkflowController@show');
     Route::post('/workflow/saveStepForm',  'WorkflowController@saveStepForm');
     Route::post('/workflow/saveApproval',  'WorkflowController@saveApproval');
