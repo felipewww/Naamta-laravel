@@ -45,6 +45,13 @@ var Steps = {
             {
                 var element = obj[0];
                 if (element) {
+
+                    (function (element) {
+                        var btnDelete = element.getElementsByClassName('delete_component')[0];
+                        btnDelete.onclick=function () {
+                            element.parentNode.removeChild(element);
+                        };
+                    })(element);
                     this.containers[idx].appendChild(element);
                 }
             }

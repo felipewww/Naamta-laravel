@@ -149,9 +149,7 @@ class ApplicationsController extends Controller
 
             $request->offsetUnset('users_application');
             $request->offsetUnset('_method');
-//dd($request->all());
             $application->update($request->all());
-//            Application::where('id', $id)->update($request->all());
 
         } catch(Exception $e){
             \Session::flash('error','Application update failed: ' . $e);
