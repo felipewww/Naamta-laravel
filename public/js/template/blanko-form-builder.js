@@ -393,7 +393,7 @@ function addEvents(elem, id = null, signature = null){
       label : ruleValueLabel
     } 
 
-    if( (pages.id != 'initial') && (fields.id != 'initial') && (value.value != '')){
+    if( (pages._id != 'initial') && (fields._id != 'initial') && (value.value != '')){
       addRule(node, pages, fields, comparison, value);
 
       $(elem).find('a.remove-row').click(function(e){
@@ -503,7 +503,7 @@ function appendNavigation(){
 function addTab(obj = null){
   var title = (obj != null) ? obj.title : 'New Page';
   $('.tab-control').removeClass('active');
-  var tabId = (obj != null) ? obj.id : tabCounter++;
+  var tabId = (obj != null) ? obj._id : tabCounter++;
   localStorage.setItem('tabCounter', tabCounter);
   // create tab navigation
   var navTab = $('<li>', { // create list element
@@ -666,7 +666,7 @@ function ordenateFields(){
 
 function addRule(node, page, field, comparison, value) {
   
-    var html =  '<tr> <td class="page-id" page-id="' + page.id + '">' + page.label + '</td> <td class="field-id" field-id="' + field.id + '"><span class="ordenation">'+ field.index + '</span><span class="field-label">' + field.label + '</span></td><td class="comparison" value="'+ comparison.value +'">'+ comparison.label+'</td> <td class="value" value="'+ value.value +'">'+ value.label +'</td> <td><a class="remove-row close col-lg-1">×</a></td> </tr>';
+    var html =  '<tr> <td class="page-id" page-id="' + page._id + '">' + page.label + '</td> <td class="field-id" field-id="' + field._id + '"><span class="ordenation">'+ field.index + '</span><span class="field-label">' + field.label + '</span></td><td class="comparison" value="'+ comparison.value +'">'+ comparison.label+'</td> <td class="value" value="'+ value.value +'">'+ value.label +'</td> <td><a class="remove-row close col-lg-1">×</a></td> </tr>';
     node.append(html);
 
 
