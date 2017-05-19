@@ -413,9 +413,9 @@ function addEvents(elem, id = null, signature = null){
     [].forEach.call(fields, function(field, index){
       id = $(field).attr('id').split('__')[1];
       title = $(field).find('.drag-heading h4').text();
-      ordenation = $(field).find('.drag-heading .ordenation').text()
+      ordenation = $(field).find('.drag-heading .ordenation').text().replace('(', '').replace(')','');
       if( ( (title != "Static Paragraph") && (title != "Static Header") && (title != "Signature") && (title != "File Upload") ) && ( elemId != id) ){
-        options += '<option value="'+ id +'" ordenation="'+ ordenation +'">'+ ordenation + title +'</option>';
+        options += '<option value="'+ id +'" ordenation="'+ ordenation +'">('+ ordenation + ')' + title +'</option>';
       }
     });
     $(this).closest('.drag-options').find('.fields').html(options);
@@ -645,7 +645,7 @@ function ordenateFields(){
   var fields = $('.form-holder .draggable-input');
 
   fields.each(function(index){
-    $(this).find('.drag-heading .ordenation').text('(' + (index+1) + ') ' );
+    $(this).find('.drag-heading .ordenation').text('(' + (index+1) + ')' );
     var fieldId = $(this).attr('id').split('__')[1];
     $('.rules tr td').each(function(){
       if($(this).attr('field-id') == fieldId ){

@@ -125,7 +125,7 @@ function toFieldObject(){
       },
       field : {
         id : $(this).find('td.field-id').attr('field-id'),
-        index : $(this).find('td.field-id .ordenation').text(),
+        index : $(this).find('td.field-id .ordenation').text().replace('(','').replace(')',''),
         label : $(this).find('td.field-id .field-label').text()
       },
       comparison : {
