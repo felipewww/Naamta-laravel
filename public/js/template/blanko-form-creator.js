@@ -217,7 +217,6 @@ function createTabs(json, clientView = false){
   $('#drag-container').toggleClass('client-view', clientView);
   $('.tab-control').remove();
   var objs = JSON.parse(json);
-  
   objs.forEach(function(obj){
     clones = new Array();
     addTab(obj.config);
@@ -287,6 +286,7 @@ function createFields(obj, index, array, isRule){
       appendComment(comment.username, comment.msg, comment.type, $(clone));
     })
   }
+  console.log(obj.setting.rule)
 
   //rules
   clone.find('.rule-action').val(obj.setting.rule.ruleAction);
@@ -298,6 +298,10 @@ function createFields(obj, index, array, isRule){
     var comparison = condition.comparison;
     var value = condition.value;
     addRule( clone.find('.rules'), page, field, comparison, value);
+    if(obj.isEditable) {
+      //activateRule(obj.setting.rule.ruleAction, obj.setting.rule.ruleTarget, page, field, comparison, value);
+      //console.log(obj.setting.rule.ruleAction, obj.setting.rule.ruleTarget, page, field, comparison, value)
+    }
   });
 
   if(isRule != null){
@@ -394,4 +398,21 @@ function toHtml(){
   // });
 
   return 
+}
+
+function activateRule(fieldId, action, target, page, field, comparison, value) {
+  $("."+field.index).focusout(function(){
+      if(eval($("#"+fieldId).val() + comparison.value + value.value)){
+        alert("teste");
+        switch(action){
+          case "show":
+            $("#"+target.id).show();
+           // fieldId
+                break;
+          case "hide":
+            $("#"+target.id).hide();
+                break;
+        }
+      }
+  });
 }
