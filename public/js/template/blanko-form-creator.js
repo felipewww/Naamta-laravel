@@ -120,12 +120,12 @@ function toFieldObject(){
   rules.each(function(){
     var rule = {
       page : {
-        id : $(this).find('td.page-id').attr('page-id'),
+        _id : $(this).find('td.page-id').attr('page-id'),
         label : $(this).find('td.page-id').text()
       },
       field : {
-        id : $(this).find('td.field-id').attr('field-id'),
-        index : $(this).find('td.field-id .ordenation').text().replace('(','').replace(')',''),
+        _id : $(this).find('td.field-id').attr('field-id'),
+        index : $(this).find('td.field-id .ordenation').text().replace('(', '').replace(')',''),
         label : $(this).find('td.field-id .field-label').text()
       },
       comparison : {
@@ -243,7 +243,7 @@ function createTabs(json, clientView = false){
     $('.tabs-options').remove();
     $('.drag-heading li:not(:first-of-type)').remove();
     $('#list-container').remove();
-    $('.drag-options').remove();
+    $('.drag-options').hide();
     $('.tab .modal').remove()
     $('nav .tab-control .fa').remove();
     $('.help .comment-icon').html($('<i>', {
@@ -286,6 +286,7 @@ function createFields(obj, index, array, isRule){
       appendComment(comment.username, comment.msg, comment.type, $(clone));
     })
   }
+
   console.log(obj.setting.rule)
 
   //rules
