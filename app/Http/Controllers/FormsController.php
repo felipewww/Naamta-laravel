@@ -251,8 +251,6 @@ class FormsController extends Controller
                     $field = Field::firstOrNew(array('id' => $value->_id));
                     $field->container_id = $container->id;
                     $field->type = $value->type;
-                    $value->setting->rule->conditions->field->id = $value->_id;
-                    $value->setting->rule->conditions->field->id = $value->_id;
                     $field->config = json_encode($value->setting);
                     $field->status = 1;
                     $field->save();
