@@ -41,13 +41,13 @@ class Controller extends BaseController
         $_return = array();
         foreach ($form->containers as $i => $c){
             $_return[$i]["config"] = [
-                'id'    =>  ($clone ? $i : $c->id),
+                '_id'    =>  ($clone ? $i : $c->id),
                 'title'  =>  $c->name,
                 'tabId' =>  ($clone ? "": $c->id),
             ];
 
             foreach($c->fields as $k => $v){
-                $_return[$i]["fields"][$k]["id"] =  ($clone ? null : $v->id);
+                $_return[$i]["fields"][$k]["_id"] =  ($clone ? null : $v->id);
                 $_return[$i]["fields"][$k]["type"] =  $v->type;
                 $_return[$i]["fields"][$k]["container_id"] =  $v->container_id;
                 $_return[$i]["fields"][$k]["isEditable"] =  true;
@@ -57,9 +57,10 @@ class Controller extends BaseController
                         array_push($_return[$i]["fields"][$k]["comments"], array("username" => $comment->user_name, "msg" => $comment->text));
                     }
                 }
-                $_return[$i]["fields"][$k]["options"] =  json_decode($v->config);
+                $_return[$i]["fields"][$k]["setting"] =  json_decode($v->config);
             }
         }
+
         return json_encode($_return);
     }
     

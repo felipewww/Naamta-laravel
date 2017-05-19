@@ -34,7 +34,7 @@ class WorkflowController extends Controller
             {
                 case FormTemplate::class:
                     $form = Form::with(array('containers', 'containers.config', 'containers.fields', 'containers.fields.comments',
-                        'containers.fields.setting', 'containers.fields.setting.rule', 'containers.fields.setting.rule.conditions'))->findOrFail($step->morphs_id);
+                        'containers.fields.setting', 'containers.fields.setting.rule', 'containers.fields.setting.rule.conditions') )->findOrFail($step->morphs_id);
                     //var_dump($this->_convertFormMongoToJson($form));
                     //var_dump($this->_convertFormMongoToJson($form));
                     //die(json_encode($form));

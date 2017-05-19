@@ -214,7 +214,6 @@ function toJson(){
 // Creates tabs from json
 // Uses createFields
 function createTabs(json, clientView = false){
-
   $('#drag-container').toggleClass('client-view', clientView);
   $('.tab-control').remove();
   var objs = JSON.parse(json);
@@ -298,7 +297,6 @@ function createFields(obj, index, array, isRule){
     var field = condition.field;
     var comparison = condition.comparison;
     var value = condition.value;
-    console.log(obj.setting.rule);
     addRule( clone.find('.rules'), page, field, comparison, value);
   });
 
