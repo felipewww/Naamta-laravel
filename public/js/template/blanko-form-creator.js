@@ -213,7 +213,7 @@ function toJson(){
 
 // Creates tabs from json
 // Uses createFields
-function createTabs(json, clientView = false){
+function createTabs(json, clientView = false, isClient){
   $('#drag-container').toggleClass('client-view', clientView);
   $('.tab-control').remove();
   var objs = JSON.parse(json);
@@ -252,6 +252,10 @@ function createTabs(json, clientView = false){
         $(this).closest('.draggable-input').find('.drag-comments').toggleClass('hidden');
       }
     }));
+  }
+
+  if(isClient){
+    $('.comments li[comment-type="internal"]').hide();
   }
 
   // [].forEach.call($('.tab .draggable-input'), function(field){
