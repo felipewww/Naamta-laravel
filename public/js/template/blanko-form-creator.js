@@ -290,11 +290,6 @@ function createFields(obj, index, array, isRule){
       appendComment(comment.username, comment.msg, comment.type, $(clone));
     })
   }
-<<<<<<< HEAD
-=======
-
-  console.log(obj.setting.rule)
->>>>>>> 8953361e9fa3f821f32499a590174bbc2e7f20db
 
   //rules
   clone.find('.rule-action').val(obj.setting.rule.ruleAction);

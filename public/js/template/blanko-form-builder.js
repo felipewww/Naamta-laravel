@@ -654,7 +654,7 @@ function ordenateFields(){
 
   rules.each(function(){
     var id = $(this).attr('field-id');
-    console.log($('.draggable-input[id*="'+ id +'"]'));
+    //console.log($('.draggable-input[id*="'+ id +'"]'));
     $(this).find('.ordenation').html();
   });
 
