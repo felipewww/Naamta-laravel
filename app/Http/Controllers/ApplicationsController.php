@@ -6,6 +6,7 @@ use App\Models\ApplicationStepApprovals;
 use App\Models\ApplicationUserTypes;
 use App\Models\ApplicationUsesEmail;
 use App\Models\Approval;
+use App\Models\FormTemplate;
 use App\Models\Step;
 use App\Models\UsesEmail;
 use Illuminate\Http\Response;
@@ -258,7 +259,22 @@ class ApplicationsController extends Controller
         $newStatus      = ($request->currentStatus == '1') ? '0' : '1';
         $step->status   = $newStatus;
 
-        $approved = ( $step->morphs_json ) ? true : false;
+        switch ($step->morphs_from)
+        {
+            case FormTemplate::class:
+                $rel = $step->SQLForms;
+                $approved = !$rel->isEmpty();
+                break;
+
+            case Approval::class:
+                $rel = $step->morphs_id;
+                $approved = ($rel > 0) ? true : false;
+                break;
+
+            default:
+                throw new \Error('Morphs_from is not defined or Step not found.');
+                break;
+        }
 
         if ($approved) {
             $step->save();
