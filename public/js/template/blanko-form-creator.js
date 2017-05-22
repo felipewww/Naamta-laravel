@@ -286,7 +286,6 @@ function createFields(obj, index, array, isRule){
       appendComment(comment.username, comment.msg, comment.type, $(clone));
     })
   }
-  console.log(obj.setting.rule)
 
   //rules
   clone.find('.rule-action').val(obj.setting.rule.ruleAction);
@@ -298,14 +297,14 @@ function createFields(obj, index, array, isRule){
     var comparison = condition.comparison;
     var value = condition.value;
     addRule( clone.find('.rules'), page, field, comparison, value);
-    if(obj.isEditable) {
-      //activateRule(obj.setting.rule.ruleAction, obj.setting.rule.ruleTarget, page, field, comparison, value);
-      //console.log(obj.setting.rule.ruleAction, obj.setting.rule.ruleTarget, page, field, comparison, value)
-    }
+
   });
 
   if(isRule != null){
     ruleField = clone;
+  }
+  if(obj.isEditable) {
+    activateRule(obj.setting.ordenate, obj.setting.rule.ruleAction, obj.setting.rule.ruleTarget, obj.setting.rule.conditions);
   }
 }
 
@@ -393,26 +392,56 @@ function toHtml(){
   //       value : $(this).val()
   //     });
   //   });
-  //   console.log(JSON.stringify(obj));
   //   event.preventDefault();
   // });
 
-  return 
+  return ;
 }
+//activateRule(action, target, page, field, comparison, value)
+function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
+  var cond = "";
+  var changes = "";
+  if(conditions.length >0){
+    var i = 0;
 
-function activateRule(fieldId, action, target, page, field, comparison, value) {
-  $("."+field.index).focusout(function(){
-      if(eval($("#"+fieldId).val() + comparison.value + value.value)){
-        alert("teste");
-        switch(action){
-          case "show":
-            $("#"+target.id).show();
-           // fieldId
-                break;
-          case "hide":
-            $("#"+target.id).hide();
-                break;
+    conditions.forEach(function( condition){
+      var is_last_item = (i == (conditions.length - 1));
+
+      var page = condition.page;
+      var field = condition.field;
+      var comparison = condition.comparison;
+      var value = condition.value;
+      changes += "'.order_"+field.index + " .drag-input .form-control'";
+      cond += " " + "$('.order_"+field.index + " .drag-input .form-control').val()" + comparison.value + value.value;
+      if(conditions.length>1 && !is_last_item){
+        cond += (ruleTarget == "all" ? " && " : " || " );
+        changes += ", ";
+      }
+      i++;
+    });
+
+    $(eval(changes)).change(function() {
+      if(eval(cond)){
+        if(ruleAction === "show"){
+          $(".order_" + obj_id).show();
+        }else{
+          $(".order_" + obj_id).hide();
+        }
+      }else{
+        if(ruleAction === "show"){
+          $(".order_" + obj_id).hide();
+        }else{
+          $(".order_" + obj_id).show();
         }
       }
-  });
+    });
+    $(document).ready(function(){
+      if(ruleAction === "show"){
+        $(".order_" + obj_id).hide();
+      }else{
+        $(".order_" + obj_id).show();
+      }
+    })
+  }
 }
+
