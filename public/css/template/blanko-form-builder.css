@@ -309,6 +309,15 @@
     width: 50%;
 }
 
+h4[class*="open-"]{
+    display: inline-block;
+}
+h4[class*="open-"].active{
+    display: inline-block;
+    font-weight: bold;
+}
+
+
 @media screen and (max-width: 992px){
     #drag-container{
         padding: 0;
@@ -318,3 +327,4 @@
         padding: 5px;
     }
 }
+

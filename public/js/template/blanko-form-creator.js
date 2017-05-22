@@ -3,7 +3,6 @@ var isEditable = true;
 var fieldCounter = 0; // FIELD ID
 var tabCounter = 0; //TAB ID
 var username = 'User Name'; // USER NAME
-var ruleField;
 
 // Temporary variables
 var tempContainers;
@@ -221,7 +220,9 @@ function createTabs(json, clientView = false, isClient){
     clones = new Array();
     addTab(obj.config);
     if(obj.fields != undefined){
-      obj.fields.forEach(createFields);
+      [].forEach.call(obj.fields, function(obj){
+        createFields(obj, clientView);
+      });
     }
     clones.sort(function(a, b){
       var a = parseInt($(a).attr('class').split('order_')[1]);
@@ -269,7 +270,7 @@ function createTabs(json, clientView = false, isClient){
 // Creates the fields related to the createTabs function
 // Relates to createTabs
 // Uses configureField
-function createFields(obj, index, array, isRule){
+function createFields(obj, clientView){
   var clone = $('#input-types #' + obj.type).clone();
   $('.tab-control .tab-config').toggle(obj.isEditable);
   $('.tab-control .tab-remove').toggle(obj.isEditable);
@@ -303,10 +304,7 @@ function createFields(obj, index, array, isRule){
 
   });
 
-  if(isRule != null){
-    ruleField = clone;
-  }
-  if(obj.isEditable) {
+  if(obj.isEditable && clientView) {
     activateRule(obj.setting.ordenate, obj.setting.rule.ruleAction, obj.setting.rule.ruleTarget, obj.setting.rule.conditions);
   }
 }
