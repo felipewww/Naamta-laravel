@@ -34,4 +34,9 @@ class Step extends Model
     {
         return $this->belongsToMany(UserType::class, 'uses_emails', 'step_id', 'received_by');
     }
+
+    public function Approval()
+    {
+        return $this->hasOne(Approval::class, 'id', 'morphs_id');
+    }
 }

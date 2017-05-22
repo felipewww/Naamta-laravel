@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\MModels\Form;
 use App\Models\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,9 +36,6 @@ class WorkflowController extends Controller
                 case FormTemplate::class:
                     $form = Form::with(array('containers', 'containers.config', 'containers.fields', 'containers.fields.comments',
                         'containers.fields.setting', 'containers.fields.setting.rule', 'containers.fields.setting.rule.conditions') )->findOrFail($step->morphs_id);
-                    //var_dump($this->_convertFormMongoToJson($form));
-                    //var_dump($this->_convertFormMongoToJson($form));
-                    //die(json_encode($form));
                     return $this->applicationForm($step->id, json_encode($form));
                     break;
 

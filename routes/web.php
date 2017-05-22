@@ -13,16 +13,15 @@ use Jenssegers\Mongodb\Eloquent\Model;
 |
 */
 
+Route::get('register/confirmation/{token}', 'Auth\RegisterController@emailConfirmation');
+Route::get('register/confirmation/resend/{token}/{id}', 'Auth\RegisterController@resendConfirmationToken');
 
 Auth::routes();
 Route::get('/test', function (Request $request) {
-
+    
 });
-Route::group(['middleware' => 'auth'], function(){
 
-//    Route::get('/', function () {
-//        return view('/home');
-//    });
+Route::group(['middleware' => 'auth'], function(){
 
     Route::get('/', 'HomeController@index');
     Route::get('/home', 'HomeController@index');
@@ -55,12 +54,16 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/application/{id}/dashboard',  function(\Illuminate\Http\Request $request, $id){
         $home = new \App\Http\Controllers\HomeController();
         return $home->applicationDashboard($request, $id);
-        //dd($id);
     });
     Route::get('/applications/{id}/settings',  'ApplicationsController@settings');
     Route::post('/applications/{id}/saveStepsPosition', 'ApplicationsController@saveStepsPosition');
     Route::post('/applications/{id}/changeStepStatus', 'ApplicationsController@changeStepStatus');
-    
+
+    Route::get('/applications/{id}/payment/first_form', 'ClientFirstFormController@staffView');
+    Route::post('/applications/client/first_form', 'ClientFirstFormController@firstFormSave');
+
+    Route::get('/applications/{id}/payment/{action}', 'ApplicationsController@validatePayment');
+
     Route::post('/steps/saveDefaultStepsPosition', 'StepsController@saveDefaultStepsPosition');
 
     Route::get('/applications/step/{id}',  'StepsController@appStep');
@@ -83,15 +86,6 @@ Route::group(['middleware' => 'auth'], function(){
             return true;
         }catch (Exception $e){
             return false;
-        }
-    });
-
-    Route::get('/emails/{id}/test', function (Request $request, $id) {
-        try{
-            $mail = \App\Models\EmailTemplate::find($id);
-            return View::make('emails.view')->with("email", $mail)->withShortcodes();
-        }catch (Exception $e){
-            echo "false: " . $e;
         }
     });
 });

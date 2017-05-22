@@ -1,20 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Library\DataTablesExtensions;
 use App\Models\ApplicationStep;
+use App\Models\ApplicationStepApprovals;
 use App\Models\ApplicationUserTypes;
 use App\Models\ApplicationUsesEmail;
-use App\Models\FormTemplate;
-use App\Models\Screen;
+use App\Models\Approval;
 use App\Models\Step;
+use App\Models\UsesEmail;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\URL;
-use PhpParser\Node\Expr\Error;
 //use Validator;
 use Session;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Http\Request;
 use App\Models\Application;
@@ -84,6 +80,32 @@ class ApplicationsController extends Controller
         
         $steps = $application->steps()->with(['usesEmails', 'usesEmails.receivedBy', 'usesEmails.template'])->orderBy('ordination')->get();
 
+        /*
+         * After 3 years, the application will be cloned by a server service as a new application, becoming a new application, wainting payment and etc, but,
+         * with steps already configured
+         * */
+        if ($application->type == 'cloned' && $application->status == '0') {
+            //TODO
+        }
+        
+        /*
+         * If an application doesn't have steps, it's a new register and is waiting to system user approve
+         * */
+        if ($steps->isEmpty()) {
+            //dd('Waiting payment');
+            $this->pageInfo->title              = 'New register waiting payment';
+            $this->pageInfo->category->title    = 'Application';
+            $this->pageInfo->subCategory->title = 'Waiting';
+
+            return view('applications.new_register',
+                [
+                    'application' => $application,
+                    'pageInfo'          => $this->pageInfo
+                ]
+            );
+        }
+
+
         return view('applications.form',
             [
                 'application'       => $application,
@@ -94,6 +116,33 @@ class ApplicationsController extends Controller
                 'pageInfo'          => $this->pageInfo
             ]
         );
+    }
+
+    public function validatePayment($id, $action)
+    {
+        $application = Application::findOrFail($id);
+
+        switch ($action)
+        {
+            case 'allow';
+                $application->status = '0';
+                $application->save();
+                ApplicationsController::cloneApplication($application, $application->client->user);
+                $view = '/applications/'.$id.'/edit';
+                break;
+
+            case 'deny';
+                $application->client->user->forceDelete();
+                $application->forceDelete();
+                $view = '/';
+                break;
+
+            default:
+                throw new \Error('Action missing');
+                break;
+        }
+
+        return redirect()->to($view);
     }
 
     /*
@@ -131,11 +180,7 @@ class ApplicationsController extends Controller
         try{
             $application = Application::where('id', $id)->first();
 
-
-                $request->offsetUnset('_token');
-//            if ($request->staff_id == 0) {
-//                $request->offsetUnset('staff_id');
-//            }
+            $request->offsetUnset('_token');
 
             UserApplication::where('application_id', $id)->delete();
             foreach($request->users_application as $uApp){
@@ -188,8 +233,6 @@ class ApplicationsController extends Controller
 
     public function saveStepsPosition($appID, Request $request)
     {
-        $application = Application::FindOrFail($appID);
-
         \DB::beginTransaction();
         $previous_step = null;
         $i = 0;
@@ -239,5 +282,90 @@ class ApplicationsController extends Controller
         ];
 
         return json_encode($res);
+    }
+
+    public static function cloneApplication(Application $application, User $user)
+    {
+        $uTypes = UserType::all();
+
+        /*
+        * Clone user types default with new ids.
+        * */
+        $uTypesClones = []; //temp relations between new id (will be generated in this loop) and old id.
+        foreach ($uTypes as $cloneType)
+        {
+            $defaultID = $cloneType->id;
+            unset($cloneType['id']);
+            unset($cloneType['created_at']);
+            unset($cloneType['updated_at']);
+
+            $cloneType->setAttribute('application_id', $application->id);
+
+            $newAppType = ApplicationUserTypes::create($cloneType->getAttributes());
+            $uTypesClones[$defaultID] = $newAppType->id;
+        }
+
+        $clientType = ApplicationUserTypes::create([
+            'slug' => 'client',
+            'title' => 'Client',
+            'status' => 1,
+            'application_id' => $application->id,
+        ]);
+
+        /*
+         * Create application user where his type is the last type found
+         * */
+        $appUsers = UserApplication::create([
+            'application_id' => $application->id,
+            'user_id' => $user->id,
+            'user_type' => $clientType->id,
+        ]);
+
+        /*
+         * Clone default steps with new ID
+         * */
+        $arr = [];
+        $defaultSteps = Step::where('status', 1)->orderBy('ordination')->get();
+        $default_ids = [];
+        foreach ($defaultSteps as $step)
+        {
+            $newRefID = null;
+            if ($step->previous_step) {
+                $newRefID = $default_ids[$step->previous_step];
+            }
+
+            $dataNewStep = [
+                'application_id'    => $application->id,
+                'previous_step'     => $newRefID,
+                'responsible'       => $uTypesClones[$step->responsible], //Keep the usertype relation with new id
+                'title'             => $step->title,
+                'description'       => $step->description,
+                'ordination'        => $step->ordination,
+                'status'            => '0',
+                'morphs_from'       => $step->morphs_from,
+                'morphs_id'         => $step->morphs_id,
+            ];
+
+            $appSteps = ApplicationStep::create($dataNewStep);
+            $default_ids[$step->id] = $appSteps->id;
+
+            /*
+             * Clone UsesEmails default with new IDs using default temporary relationship user types
+             * */
+            $emails = UsesEmail::where('step_id', $step->id)->get();
+
+            foreach ($emails as $clone)
+            {
+                $cloneID = $clone->received_by;
+                unset($clone['id']);
+                unset($clone['step_id']);
+                unset($clone['received_by']);
+                $clone->application_step_id = $appSteps->id;
+                $newEmailRelation = new ApplicationUsesEmail($clone->getAttributes());
+
+                $newEmailRelation->received_by = $uTypesClones[$cloneID]; //$newAppType->id;
+                $newEmailRelation->save();
+            }
+        }
     }
 }

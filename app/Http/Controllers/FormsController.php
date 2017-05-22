@@ -240,8 +240,7 @@ class FormsController extends Controller
             $_excludeFields = array();
 
             if(isset($_arrC->fields)){
-                foreach($_arrC->fields as $key => $value){
-
+                foreach($_arrC->fields as $key => $value) {
                     $fKey = array_search($value->_id, $_oldFields);
 
                     if($fKey!==false){

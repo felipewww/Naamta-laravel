@@ -33,4 +33,10 @@ class Client extends Model
     {
         return $this->hasOne('App\Models\Application', 'client_id', 'id');
     }
+
+    public function firstForm()
+    {
+        return $this->hasOne(ClientFirstForm::class);
+//        return $this->belongsTo(ClientFirstForm::class);
+    }
 }

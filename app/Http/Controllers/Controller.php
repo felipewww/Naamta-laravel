@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Approval;
-use App\Models\FormTemplate;
-use App\Models\Screen;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -64,8 +62,15 @@ class Controller extends BaseController
         return json_encode($_return);
     }
     
+    protected static function _storeApprovalToMongo($approval)
+    {
+        $mApproval = \App\MModels\Approval::create(['title' => $approval->title, 'description' => $approval->description]);
+        $mApproval->save();
+        
+        return $mApproval->_id;
+    }
+    
     protected function _storeFormToMongo($form){
-
         $mForm = Form::create(['name' => $form->name, 'status' => $form->status]);
         foreach ($form->containers as $i => $c){
             $container = new Container([]);
@@ -192,11 +197,42 @@ class Controller extends BaseController
         return json_encode($approval->getAttributes());
     }
 
+    protected function _setMultipleSelectItem(&$items, Array $ids)
+    {
+        $a = [];
+        foreach ($items as $key => $item)
+        {
+            $item->offsetSet('disabled', '');
+
+            if ($item->deleted_at) {
+                $item->disabled = 'disabled="disabled"';
+            }
+            $item->offsetSet('selected', '');
+
+            $valid = in_array($item->id, $ids);
+            if ( $valid )
+            {
+                //Enable deleted item for allow to keep deleted-form related with this step
+                if ($item->deleted_at) {
+                    $item->disabled = '';
+                }
+
+                array_push($a, array_search($item->id, $ids));
+                $item->selected = 'selected="selected"';
+            }
+
+            if ($item->disabled == 'disabled="disabled"') {
+                $items->forget($key);
+            }
+        }
+    }
+
     protected function _setSelectedItem(&$items, $id)
     {
         foreach ($items as $item)
         {
             $item->offsetSet('selected', '');
+
             if ( $item->id == $id )
             {
                 $item->selected = 'selected="selected"';

@@ -15,6 +15,16 @@ trait PageInfo{
         $this->subCategory  = new SubCategory();
         return $this;
     }
+
+    /**
+     * @deprecated 
+     */
+    function setPageInfo($title, $category, $subCategory)
+    {
+        $this->title = $title;
+        $this->category = $category;
+        $this->subCategory = $subCategory;
+    }
 }
 
 class Category{

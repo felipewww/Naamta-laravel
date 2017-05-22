@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Auth\ActivationService;
 use App\Models\Application;
+use App\Models\ClientFirstForm;
 use App\Models\FormTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,6 +36,17 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
+        if (!Auth::user()->verified) {
+            $activation = new ActivationService();
+            return view('homes.wait_emailverify', 
+                [
+                    'pageInfo' => $this->pageInfo,
+                    'user' => Auth::user(),
+                    'token' => $activation->getActivation(Auth::user())->token
+                ]
+            );
+        }
+
         $userType = Auth::user()->roles[0]->name;
 
         $this->pageInfo->title              = Auth::user()->name."'s".' Dashboard';
@@ -41,24 +54,44 @@ class HomeController extends Controller
         $this->pageInfo->subCategory->title = 'Homepage';
         $this->vars->userType = $userType;
 
-        if($userType==="client"){
+        if($userType === "client"){
             $application = Client::where("user_id", Auth::id())->first()->application()->first();
             if(isset($application)){
-                if($application->status===0){
+                if($application->status == '0' || $application->status == 'wt_payment'){
                     return view('homes.wait_approval', ['pageInfo' => $this->pageInfo]);
                 }
                 return $this->applicationDashboard($request, $application->id);
             }
         }
-        $this->vars->activeApplications = Application::where('status', 1)->get();
-        $this->vars->inactiveApplications = Application::where('status', 0)->get();
+        $this->vars->activeApplications = Application::where('status', '1')->get();
+
+        $this->vars->inactiveApplications = Application::whereIn('status', ['0', 'wt_payment'])->get();
 
         return view('homes.admin', ['vars' => $this->vars, 'pageInfo' => $this->pageInfo]);
     }
 
     public function applicationDashboard(Request $request, $id){
         $application = Application::find($id);
-        $stepsWithForm = $application->steps->where("morphs_from", FormTemplate::class )->all();
-        return view('homes.application', ['pageInfo' => $this->pageInfo, 'application' => $application, 'stepsWithForm' => $stepsWithForm]);
+        if ( $application->status == 'wt_firstform' ) {
+
+            $this->pageInfo->title              = Auth::user()->name."'s".' Registration';
+            $this->pageInfo->category->title    = 'Registration';
+            $this->pageInfo->subCategory->title = 'Form';
+            $this->vars->userType = '$userType';
+
+            return view('applications.first_form',[
+                'application'   => $application,
+                'pageInfo'      => $this->pageInfo,
+                'withAction'    => true,
+            ]);
+
+        }else{
+            $stepsWithForm = $application->steps->where("morphs_from", FormTemplate::class )->all();
+            return view('homes.application', [
+                'pageInfo' => $this->pageInfo,
+                'application' => $application,
+                'stepsWithForm' => $stepsWithForm
+            ]);
+        }
     }
 }

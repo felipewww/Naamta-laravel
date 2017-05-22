@@ -15,21 +15,24 @@ class CreateApplicationUsersTable extends Migration
     {
         Schema::create('application_users', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('application_id')->unsigned()->nullable();
-            $table->integer('user_id')->unsigned()->nullable();
-            $table->integer('user_type')->unsigned()->nullable();
+//            $table->integer('application_id')->unsigned()->nullable();
+//            $table->integer('user_id')->unsigned()->nullable();
+//            $table->integer('user_type')->unsigned()->nullable();
+            $table->integer('application_id')->unsigned();
+            $table->integer('user_id')->unsigned();
+            $table->integer('user_type')->unsigned();
 
             $table->foreign('application_id')
                     ->references('id')->on('applications')
-                    ->onDelete('set null');
+                    ->onDelete('cascade');
 
             $table->foreign('user_id')
                     ->references('id')->on('users')
-                    ->onDelete('set null');
+                    ->onDelete('cascade');
 
             $table->foreign('user_type')
                     ->references('id')->on('application_user_types')
-                    ->onDelete('set null');
+                    ->onDelete('cascade');
 
             $table->timestamps();
         });
