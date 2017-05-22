@@ -240,7 +240,7 @@ class FormsController extends Controller
             $_excludeFields = array();
 
             if(isset($_arrC->fields)){
-                foreach($_arrC->fields as $key => $value){
+                foreach($_arrC->fields as $key => $value) {
                     $fKey = array_search($value->_id, $_oldFields);
 
                     if($fKey!==false){
@@ -250,7 +250,6 @@ class FormsController extends Controller
                     $field = Field::firstOrNew(array('id' => $value->_id));
                     $field->container_id = $container->id;
                     $field->type = $value->type;
-                    
                     $field->config = json_encode($value->setting);
                     $field->status = 1;
                     $field->save();

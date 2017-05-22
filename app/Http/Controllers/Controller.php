@@ -39,13 +39,13 @@ class Controller extends BaseController
         $_return = array();
         foreach ($form->containers as $i => $c){
             $_return[$i]["config"] = [
-                'id'    =>  ($clone ? $i : $c->id),
+                '_id'    =>  ($clone ? $i : $c->id),
                 'title'  =>  $c->name,
                 'tabId' =>  ($clone ? "": $c->id),
             ];
 
             foreach($c->fields as $k => $v){
-                $_return[$i]["fields"][$k]["id"] =  ($clone ? null : $v->id);
+                $_return[$i]["fields"][$k]["_id"] =  ($clone ? null : $v->id);
                 $_return[$i]["fields"][$k]["type"] =  $v->type;
                 $_return[$i]["fields"][$k]["container_id"] =  $v->container_id;
                 $_return[$i]["fields"][$k]["isEditable"] =  true;
@@ -55,9 +55,10 @@ class Controller extends BaseController
                         array_push($_return[$i]["fields"][$k]["comments"], array("username" => $comment->user_name, "msg" => $comment->text));
                     }
                 }
-                $_return[$i]["fields"][$k]["options"] =  json_decode($v->config);
+                $_return[$i]["fields"][$k]["setting"] =  json_decode($v->config);
             }
         }
+
         return json_encode($_return);
     }
     
@@ -65,12 +66,11 @@ class Controller extends BaseController
     {
         $mApproval = \App\MModels\Approval::create(['title' => $approval->title, 'description' => $approval->description]);
         $mApproval->save();
-
+        
         return $mApproval->_id;
     }
     
     protected function _storeFormToMongo($form){
-
         $mForm = Form::create(['name' => $form->name, 'status' => $form->status]);
         foreach ($form->containers as $i => $c){
             $container = new Container([]);
@@ -131,30 +131,29 @@ class Controller extends BaseController
                     $setting->options = $config->options;
 
                 if(isset($config->rules)){
-                    foreach($config->rules as $r){
-                        $rule = new Rule();
-                        $setting->rules()->save($rule);
+                    $r = $config->rules;
+                    $rule = new Rule();
+                    $setting->rule()->save($rule);
 
-                        if(isset($r->ruleAction))
-                            $rule->ruleAction = $r->ruleAction;
+                    if(isset($r->ruleAction))
+                        $rule->ruleAction = $r->ruleAction;
 
-                        if(isset($r->ruleTarget))
-                            $rule->ruleTarget = $r->ruleTarget;
+                    if(isset($r->ruleTarget))
+                        $rule->ruleTarget = $r->ruleTarget;
 
-                        if(isset($r->conditions)){
-                            foreach($r->conditions as $co) {
-                                $condition = new Condition(
-                                    [
-                                        "page" => $c->page,
-                                        "field" => $co->field,
-                                        "comparison" => $co->comparison,
-                                        "value" => $co->value,
-                                    ]);
-                                $setting->rules()->conditions()->save($condition);
-                            }
+                    if(isset($r->conditions)){
+                        foreach($r->conditions as $co) {
+                            $condition = new Condition(
+                                [
+                                    "page" => $c->page,
+                                    "field" => $co->field,
+                                    "comparison" => $co->comparison,
+                                    "value" => $co->value,
+                                ]);
+                            $rule->conditions()->save($condition);
                         }
-                        $setting->rules()->save($rule);
                     }
+                    $setting->rule()->save($rule);
                 }
                 $field->setting()->save($setting);
                 $container->fields()->save($field);

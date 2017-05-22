@@ -17,8 +17,8 @@ class Setting extends Model
     {
         return $this->belongsTo(Field::class);
     }
-    public function rules()
+    public function rule()
     {
-        return $this->hasMany(Rule::class);
+        return $this->hasOne(Rule::class);
     }
 }

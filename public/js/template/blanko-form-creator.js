@@ -120,12 +120,12 @@ function toFieldObject(){
   rules.each(function(){
     var rule = {
       page : {
-        id : $(this).find('td.page-id').attr('page-id'),
+        _id : $(this).find('td.page-id').attr('page-id'),
         label : $(this).find('td.page-id').text()
       },
       field : {
-        id : $(this).find('td.field-id').attr('field-id'),
-        index : $(this).find('td.field-id .ordenation').text(),
+        _id : $(this).find('td.field-id').attr('field-id'),
+        index : $(this).find('td.field-id .ordenation').text().replace('(', '').replace(')',''),
         label : $(this).find('td.field-id .field-label').text()
       },
       comparison : {
@@ -213,12 +213,10 @@ function toJson(){
 
 // Creates tabs from json
 // Uses createFields
-function createTabs(json, clientView = false){
-
+function createTabs(json, clientView = false, isClient){
   $('#drag-container').toggleClass('client-view', clientView);
   $('.tab-control').remove();
   var objs = JSON.parse(json);
-  
   objs.forEach(function(obj){
     clones = new Array();
     addTab(obj.config);
@@ -245,7 +243,7 @@ function createTabs(json, clientView = false){
     $('.tabs-options').remove();
     $('.drag-heading li:not(:first-of-type)').remove();
     $('#list-container').remove();
-    $('.drag-options').remove();
+    $('.drag-options').hide();
     $('.tab .modal').remove()
     $('nav .tab-control .fa').remove();
     $('.help .comment-icon').html($('<i>', {
@@ -254,6 +252,10 @@ function createTabs(json, clientView = false){
         $(this).closest('.draggable-input').find('.drag-comments').toggleClass('hidden');
       }
     }));
+  }
+
+  if(isClient){
+    $('.comments li[comment-type="internal"]').hide();
   }
 
   // [].forEach.call($('.tab .draggable-input'), function(field){
@@ -269,7 +271,6 @@ function createTabs(json, clientView = false){
 // Uses configureField
 function createFields(obj, index, array, isRule){
   var clone = $('#input-types #' + obj.type).clone();
-  
   $('.tab-control .tab-config').toggle(obj.isEditable);
   $('.tab-control .tab-remove').toggle(obj.isEditable);
   clone.find('.drag-heading').toggle(obj.isEditable);
@@ -298,12 +299,15 @@ function createFields(obj, index, array, isRule){
     var field = condition.field;
     var comparison = condition.comparison;
     var value = condition.value;
-    console.log(obj.setting.rule);
     addRule( clone.find('.rules'), page, field, comparison, value);
+
   });
 
   if(isRule != null){
     ruleField = clone;
+  }
+  if(obj.isEditable) {
+    activateRule(obj.setting.ordenate, obj.setting.rule.ruleAction, obj.setting.rule.ruleTarget, obj.setting.rule.conditions);
   }
 }
 
@@ -339,15 +343,12 @@ function configureField(node, options, type){
   }
 
   // required
-
   node.find('.span-required').toggle(options.isRequired);
   node.find('.update-required').toggleClass('required', options.isRequired);
 
   node.find('.update-value').text(options.value);
-
   /*Options*/
   node = node.find('.drag-options');
-
   node.find('.is-required').prop('checked', options.isRequired);
   node.find('.label-text').val(options.label);
   node.find('.help-text').val(options.help);
@@ -391,9 +392,56 @@ function toHtml(){
   //       value : $(this).val()
   //     });
   //   });
-  //   console.log(JSON.stringify(obj));
   //   event.preventDefault();
   // });
 
-  return 
+  return ;
 }
+//activateRule(action, target, page, field, comparison, value)
+function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
+  var cond = "";
+  var changes = "";
+  if(conditions.length >0){
+    var i = 0;
+
+    conditions.forEach(function( condition){
+      var is_last_item = (i == (conditions.length - 1));
+
+      var page = condition.page;
+      var field = condition.field;
+      var comparison = condition.comparison;
+      var value = condition.value;
+      changes += "'.order_"+field.index + " .drag-input .form-control'";
+      cond += " " + "$('.order_"+field.index + " .drag-input .form-control').val()" + comparison.value + value.value;
+      if(conditions.length>1 && !is_last_item){
+        cond += (ruleTarget == "all" ? " && " : " || " );
+        changes += ", ";
+      }
+      i++;
+    });
+
+    $(eval(changes)).change(function() {
+      if(eval(cond)){
+        if(ruleAction === "show"){
+          $(".order_" + obj_id).show();
+        }else{
+          $(".order_" + obj_id).hide();
+        }
+      }else{
+        if(ruleAction === "show"){
+          $(".order_" + obj_id).hide();
+        }else{
+          $(".order_" + obj_id).show();
+        }
+      }
+    });
+    $(document).ready(function(){
+      if(ruleAction === "show"){
+        $(".order_" + obj_id).hide();
+      }else{
+        $(".order_" + obj_id).show();
+      }
+    })
+  }
+}
+
