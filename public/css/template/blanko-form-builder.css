@@ -311,6 +311,7 @@
 
 h4[class*="open-"]{
     display: inline-block;
+    cursor: pointer;
 }
 h4[class*="open-"].active{
     display: inline-block;

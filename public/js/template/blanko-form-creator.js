@@ -256,7 +256,9 @@ function createTabs(json, clientView = false, isClient){
   }
 
   if(isClient){
-    $('.comments li[comment-type="internal"]').hide();
+    $('.internal-comments').remove();
+    $('.open-internal').remove();
+
   }
 
   // [].forEach.call($('.tab .draggable-input'), function(field){
