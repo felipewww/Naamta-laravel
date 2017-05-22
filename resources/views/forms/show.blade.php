@@ -35,6 +35,6 @@
 <script src="{{ asset("js/template/blanko-form-checkpoint.js") }}"></script>
 
 <script>
-    createTabs('<?=$containers?>', true);
+    createTabs('<?=$containers?>', true, true);
 </script>
 @endsection

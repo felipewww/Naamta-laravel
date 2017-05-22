@@ -353,12 +353,12 @@ function addEvents(elem, id = null, signature = null){
     e.preventDefault();
     node = $(this).closest('.draggable-input').find('.rules');
     pages = {
-      id : $(this).parent().find('select.tabs').val(),
+      _id : $(this).parent().find('select.tabs').val(),
       label : $(this).parent().find('select.tabs option:selected').text()
     };
 
     fields = {
-      id : $(this).parent().find('select.fields').val(),
+      _id : $(this).parent().find('select.fields').val(),
       index : $(this).parent().find('select.fields option:selected').attr('ordenation'),
       label : $(this).parent().find('select.fields option:selected').text().split(')')[1]
     };
@@ -369,7 +369,6 @@ function addEvents(elem, id = null, signature = null){
     }
 
     var input = $(this).parent().find('.input-holder .rule-value');
-    console.log(fields.label);
     switch(fields.label){
       case ' Select':
         ruleValue = input.val();
@@ -645,20 +644,18 @@ function ordenateFields(){
   var fields = $('.form-holder .draggable-input');
 
   fields.each(function(index){
-    $(this).find('.drag-heading .ordenation').text('(' + (index+1) + ')' );
+    var fieldIndex = index+1;
+    $(this).find('.drag-heading .ordenation').text('(' + (fieldIndex) + ')' );
     var fieldId = $(this).attr('id').split('__')[1];
-    $('.rules tr td').each(function(){
-      if($(this).attr('field-id') == fieldId ){
-        $(this).find('.drag-heading .ordenation').text('('+ (index+1) +')');
-      }
-    })
+    
   })
 
   var rules = $('.rules td');
 
   rules.each(function(){
     var id = $(this).attr('field-id');
-    $(this).find('.ordenation').html($('.draggable-input[data-id="'+ id +'"] .drag-heading .ordenation').text());
+    console.log($('.draggable-input[id*="'+ id +'"]'));
+    $(this).find('.ordenation').html();
   });
 
 }
@@ -666,9 +663,8 @@ function ordenateFields(){
 
 function addRule(node, page, field, comparison, value) {
   
-    var html =  '<tr> <td class="page-id" page-id="' + page._id + '">' + page.label + '</td> <td class="field-id" field-id="' + field._id + '"><span class="ordenation">'+ field.index + '</span><span class="field-label">' + field.label + '</span></td><td class="comparison" value="'+ comparison.value +'">'+ comparison.label+'</td> <td class="value" value="'+ value.value +'">'+ value.label +'</td> <td><a class="remove-row close col-lg-1">×</a></td> </tr>';
+    var html =  '<tr> <td class="page-id" page-id="' + page._id + '">' + page.label + '</td> <td class="field-id" field-id="' + field._id + '"><span class="ordenation">('+ field.index + ')</span> <span class="field-label">' + field.label + '</span></td><td class="comparison" value="'+ comparison.value +'">'+ comparison.label+'</td> <td class="value" value="'+ value.value +'">'+ value.label +'</td> <td><a class="remove-row close col-lg-1">×</a></td> </tr>';
     node.append(html);
-
 
   node.find('a.remove-row').click(function(e){
     e.preventDefault();
