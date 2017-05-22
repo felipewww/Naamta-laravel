@@ -241,17 +241,17 @@ class FormsController extends Controller
 
             if(isset($_arrC->fields)){
                 foreach($_arrC->fields as $key => $value){
-
-                    $fKey = array_search($value->id, $_oldFields);
+                    $fKey = array_search($value->_id, $_oldFields);
 
                     if($fKey!==false){
                         array_push($_excludeFields, $_oldFields[$fKey]);
                     }
 
-                    $field = Field::firstOrNew(array('id' => $value->id));
+                    $field = Field::firstOrNew(array('id' => $value->_id));
                     $field->container_id = $container->id;
                     $field->type = $value->type;
-                    $field->config = json_encode($value->options);
+                    
+                    $field->config = json_encode($value->setting);
                     $field->status = 1;
                     $field->save();
                 }

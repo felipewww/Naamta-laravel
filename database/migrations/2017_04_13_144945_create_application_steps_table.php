@@ -26,7 +26,10 @@ class CreateApplicationStepsTable extends Migration
             $table->integer('previous_step')->unsigned()->nullable();
 
             $table->string('morphs_from');
-            $table->integer('morphs_id')->nullable();
+//            $table->integer('morphs_id')->nullable();
+//
+//            $table->foreign('morphs_id')
+//                ->references('id')->on('approvals');
 
             $table->foreign('application_id')
                 ->references('id')->on('applications')
@@ -41,7 +44,7 @@ class CreateApplicationStepsTable extends Migration
             $table->timestamps();
         });
 
-        DB::statement("ALTER TABLE application_steps ADD morphs_json MEDIUMBLOB");
+//        DB::statement("ALTER TABLE application_steps ADD morphs_json MEDIUMBLOB");
     }
 
     /**

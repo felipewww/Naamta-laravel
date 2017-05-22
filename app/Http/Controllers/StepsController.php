@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Library\PageInfo;
 use App\Models\Application;
 use App\Models\ApplicationStep;
 use App\Models\ApplicationUsesEmail;
 use App\Models\Approval;
 use App\Models\EmailTemplate;
 use App\Models\FormTemplate;
-use App\Models\Screen;
-//use App\Models\Screens;
 use App\Models\UserType;
 use App\Models\UsesEmail;
 use Illuminate\Database\QueryException;
@@ -179,28 +176,43 @@ class StepsController extends Controller
         switch ($request->morphs_from)
         {
             case FormTemplate::class:
-                $form = FormTemplate::where('id', $request->morphs_item)->first();
-                $json = $this->_convertFormToJson($form);
-                $this->_storeFormToMongo($json);
+
+                /*
+                 * Remove all forms related sql/mongo
+                 * */
+                foreach ($this->step->Forms as $relForm)
+                {
+                    $mForm = \App\MModels\Form::where('_id', $relForm->mform_id)->first();
+                    $mForm->delete();
+                    $relForm->delete();
+                }
+
+                /*
+                 * create form and nosql relation
+                 **/
+                foreach ($request->morphs_item as $formID)
+                {
+                    $formTemplate = FormTemplate::withTrashed()->where('id', $formID)->first();
+                    $_id = $this->_storeFormToMongo($formTemplate);
+
+                    $this->step->Forms()->create([
+                        'mform_id' => $_id,
+                        'form_templates_id' => $formTemplate->id
+                    ]);
+                }
+
                 break;
 
-//            case Screens::class:
-//                $screen = Screen::where('id', $request->morphs_item)->first();
-//                $json = $this->_convertScreenToJson($screen);
-//                break;
-
             case Approval::class:
+                $request->offsetSet('morphs_item', $request->morphs_item[0]);
                 $approval = Approval::where('id', $request->morphs_item)->first();
-                $json = $this->_convertApprovalToJson($approval);
+                $this->step->morphs_id = $approval->id;
                 break;
 
             default:
                 throw new \Error('morphs_from not send. return and set Form or Screen template.');
                 break;
         }
-
-        $this->step->morphs_id = $request->morphs_item;
-        $this->step->morphs_json = $json;
     }
 
     public function update($id, Request $request)
@@ -365,38 +377,40 @@ class StepsController extends Controller
         }
 
         $vars = $this->defaultVars($action, $step);
-//        dd($vars);
         $vars->step = $step;
 
-        $forms      = FormTemplate::where('status', 1)->get();
-//        $approvals    = Screen::all();
+        $forms      = FormTemplate::withTrashed()->where('status', 1)->get();
         $approvals    = Approval::all();
 
-        if ($step->morphs_id)
+        switch ($step->morphs_from)
         {
-            //dd('has morphs');
-            switch ($step->morphs_from)
-            {
-                case FormTemplate::class:
-                    $vars->seeItemLink = '/forms/'.$step->morphs_id;
-                    $vars->morphItem = FormTemplate::withTrashed()->where('id', $step->morphs_id)->first();
-                    $vars->itemName = 'Form';
-                    $this->_setSelectedItem($forms, $step->morphs_id);
-                    break;
+            case FormTemplate::class:
 
-                case Approval::class:
-                    $vars->seeItemLink = '/approvals/'.$step->morphs_id;
-                    $vars->morphItem = Approval::withTrashed()->where('id', $step->morphs_id)->first();
-                    $vars->itemName = 'Approval';
-                    $this->_setSelectedItem($approvals, $step->morphs_id);
-                    break;
+                $selecteds = [];
+                foreach ($step->SQLForms as $form)
+                {
+                    array_push($selecteds, $form->form_templates_id);
+                }
 
-                default:
-                    throw new \Error('Morph item not found in both table, even on trash. Contact the system administrator');
-                    break;
-            }
+                $vars->seeItemLink = '/forms/'.$step->morphs_id;
+                $vars->morphItem = FormTemplate::withTrashed()->where('id', $step->morphs_id)->first();
+                $vars->itemName = 'Form';
+                //$this->_setSelectedItem($forms, $step->morphs_id);
+                $this->_setMultipleSelectItem($forms, $selecteds);
+                break;
+
+            case Approval::class:
+                $vars->seeItemLink = '/approvals/'.$step->morphs_id;
+                $vars->morphItem = Approval::withTrashed()->where('id', $step->morphs_id)->first();
+                $vars->itemName = 'Approval';
+                $this->_setSelectedItem($approvals, $step->morphs_id);
+                break;
+
+            default:
+                throw new \Error('Morph item not found in both table, even on trash. Contact the system administrator');
+                break;
         }
-//dd($vars->usedEmails);
+
         return view(
             'steps.form',
             [

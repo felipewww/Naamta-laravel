@@ -18,12 +18,8 @@ Route::get('register/confirmation/resend/{token}/{id}', 'Auth\RegisterController
 
 Auth::routes();
 Route::get('/test', function (Request $request) {
-
-//<<<<<<< HEAD
-//=======
+    
 });
-//Route::group(['middleware' => 'auth'], function(){
-//>>>>>>> 159286fd23bf5851f4e9d210b85acbe96fdfd758
 
 Route::group(['middleware' => 'auth'], function(){
 

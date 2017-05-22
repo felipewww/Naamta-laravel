@@ -104,13 +104,16 @@ class RegisterController extends Controller
             /*
              * Set as TRUE to test the complete proccess (sending e-mails, waiting approval and etc. within 'local' or 'staging'
              * */
-            $fullProccess = true;
+            $fullProccess = false;
 
             switch (app('env') )
             {
                 case 'local' || 'staging':
                     if (!$fullProccess) {
+                        $user->verified = true;
+                        $user->save();
                         $application->status = '0';
+                        $application->save();
                         $user->verified = true;
                         ApplicationsController::cloneApplication($application, $user);
                     }else{

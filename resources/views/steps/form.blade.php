@@ -131,10 +131,10 @@
                            <div class="form-group select_list" id="list_forms">
                                <label class="col-sm-12">Select a Form</label>
                                <div class="col-sm-12">
-                                   <select class="form-control chosen" name="morphs_item">
+                                   <select class="form-control chosen" name="morphs_items" multiple>
                                        <option value="">Select a Form</option>
                                        @foreach($forms as $form)
-                                           <option {{ $form->selected }} value="{{ $form->id }}">{{  $form->name }}</option>
+                                           <option {{ $form->disabled }} {{ $form->selected }} value="{{ $form->id }}">{{  $form->name }}</option>
                                        @endforeach
                                    </select>
                                </div>
@@ -143,7 +143,7 @@
                            <div class="form-group select_list" id="list_approvals">
                                <label class="col-sm-12">Select a Approval</label>
                                <div class="col-sm-12">
-                                   <select class="form-control chosen" name="morphs_item">
+                                   <select class="form-control chosen" name="morphs_items[]">
                                        <option value="">Select a Approval</option>
                                        @foreach($approvals as $approval)
                                            <option {{ $approval->selected }} value="{{ $approval->id }}">{{ $approval->title }}</option>

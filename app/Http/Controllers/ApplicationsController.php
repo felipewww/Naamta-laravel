@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\ApplicationStep;
+use App\Models\ApplicationStepApprovals;
 use App\Models\ApplicationUserTypes;
 use App\Models\ApplicationUsesEmail;
 use App\Models\Approval;
@@ -232,8 +233,6 @@ class ApplicationsController extends Controller
 
     public function saveStepsPosition($appID, Request $request)
     {
-        $application = Application::FindOrFail($appID);
-
         \DB::beginTransaction();
         $previous_step = null;
         $i = 0;
@@ -325,7 +324,8 @@ class ApplicationsController extends Controller
         /*
          * Clone default steps with new ID
          * */
-        $defaultSteps = Step::where('status', 1)->get();
+        $arr = [];
+        $defaultSteps = Step::where('status', 1)->orderBy('ordination')->get();
         $default_ids = [];
         foreach ($defaultSteps as $step)
         {
@@ -343,17 +343,10 @@ class ApplicationsController extends Controller
                 'ordination'        => $step->ordination,
                 'status'            => '0',
                 'morphs_from'       => $step->morphs_from,
+                'morphs_id'         => $step->morphs_id,
             ];
 
-            if ($step->morphs_from == Approval::class && $step->morphs_id > 0) {
-                $dataNewStep['morphs_id'] = $step->morphs_id;
-                self::_convertApprovalToJson(Approval::where('id', $step->morphs_id)->first());
-//                $dataNewStep['morphs_json'] = $this->_convertApprovalToJson( Approval::where('id', $step->morphs_id)->first() );
-            }
-
-
             $appSteps = ApplicationStep::create($dataNewStep);
-
             $default_ids[$step->id] = $appSteps->id;
 
             /*
@@ -363,7 +356,6 @@ class ApplicationsController extends Controller
 
             foreach ($emails as $clone)
             {
-
                 $cloneID = $clone->received_by;
                 unset($clone['id']);
                 unset($clone['step_id']);

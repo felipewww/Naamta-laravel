@@ -32,6 +32,7 @@ class StepsSeeder extends Seeder
                 'previous_step'     => 1,
                 'ordination'        => 1,
                 'description'       => Faker::create()->paragraph(1),
+                'morphs_id'         => 1
             ],
             [
                 'id'                => 3,
@@ -52,6 +53,7 @@ class StepsSeeder extends Seeder
                 'previous_step'     => 3,
                 'ordination'        => 3,
                 'description'       => Faker::create()->paragraph(1),
+                'morphs_id'         => 2
             ],
             [
                 'id'                => 5,
@@ -72,6 +74,7 @@ class StepsSeeder extends Seeder
                 'previous_step'     => 5,
                 'ordination'        => 5,
                 'description'       => Faker::create()->paragraph(1),
+                'morphs_id'         => 3
             ]
         ];
 

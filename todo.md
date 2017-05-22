@@ -22,3 +22,8 @@
 
 -[ ] Fluxo de 3 anos deve ser um novo registro do mesmo usuario e um backup geral. A aplicação (steps, forms e etc)
 e a aplicação terá todos os status alterados para FALSE, definindo-a como uma NEW REGISTERED APPLICATION.
+
+Sexta feira eu fiz o clone da aplicação completa, jogando para o mongo. Falta agora quando alterar a Approvals,
+deletar o relacionamento no sql e no mongo e criar o novo. O form parece que ja estava feito isso, mas precisa testar.
+
+Falta também exibir o ID do item (approval/form) selecionado buscando das tabelas _forms e _approvals de relacionamento.

@@ -109,7 +109,7 @@ var Steps = {
         selectContainer.show();
 
         selectContainer.find('select').first().attr('required','required');
-        selectContainer.find('select').first().attr('name','morphs_item');
+        selectContainer.find('select').first().attr('name','morphs_item[]');
 
     },
 

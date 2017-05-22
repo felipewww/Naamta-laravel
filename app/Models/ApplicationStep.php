@@ -36,11 +36,6 @@ class ApplicationStep extends Model
         return $this->hasOne('App\Models\Step');
     }
 
-//    public function application()
-//    {
-//        return $this->hasOne('App\Models\Application');
-//    }
-
     public function application()
     {
         return $this->belongsTo('App\Models\Application', 'application_id', 'id');
@@ -56,6 +51,20 @@ class ApplicationStep extends Model
         return $this->belongsToMany(ApplicationUserTypes::class, 'application_uses_emails', 'application_step_id', 'received_by');
     }
 
+    public function Forms()
+    {
+        return $this->hasMany(ApplicationStepForms::class);
+    }
+
+    public function SQLForms()
+    {
+        return $this->hasMany(ApplicationStepForms::class);
+    }
+
+    public function Approval()
+    {
+        return $this->hasOne(ApplicationStepApprovals::class);
+    }
 
     public function previousStep(){
         $prev = ApplicationStep::where("ordination", (($this->ordination>0 ? ($this->ordination - 1): 0)))->first();

@@ -32,4 +32,9 @@ class Approval extends Model
      * @var array
      */
     protected $dates = ['deleted_at'];
+
+    public function Step()
+    {
+//        return $this->belongsToMany(Step::class, 'application_step_approvals');
+    }
 }
