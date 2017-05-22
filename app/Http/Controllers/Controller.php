@@ -66,8 +66,6 @@ class Controller extends BaseController
     
     protected function _storeFormToMongo($form){
 
-        $_return = array();
-
         $mForm = Form::create(['name' => $form->name, 'status' => $form->status]);
         foreach ($form->containers as $i => $c){
             $container = new Container([]);

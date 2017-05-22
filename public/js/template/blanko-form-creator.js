@@ -271,7 +271,6 @@ function createTabs(json, clientView = false, isClient){
 // Uses configureField
 function createFields(obj, index, array, isRule){
   var clone = $('#input-types #' + obj.type).clone();
-  
   $('.tab-control .tab-config').toggle(obj.isEditable);
   $('.tab-control .tab-remove').toggle(obj.isEditable);
   clone.find('.drag-heading').toggle(obj.isEditable);
@@ -344,15 +343,12 @@ function configureField(node, options, type){
   }
 
   // required
-
   node.find('.span-required').toggle(options.isRequired);
   node.find('.update-required').toggleClass('required', options.isRequired);
 
   node.find('.update-value').text(options.value);
-
   /*Options*/
   node = node.find('.drag-options');
-
   node.find('.is-required').prop('checked', options.isRequired);
   node.find('.label-text').val(options.label);
   node.find('.help-text').val(options.help);
