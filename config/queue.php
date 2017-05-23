@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('QUEUE_DRIVER', 'sync'),
+    'default' => env('QUEUE_DRIVER', 'database'),
 
     /*
     |--------------------------------------------------------------------------
@@ -35,7 +35,7 @@ return [
         ],
 
         'database' => [
-            'driver' => 'mongodb',
+            'driver' => 'database',
             'table'  => 'jobs',
             'queue'  => 'default',
             'expire' => 60,

@@ -2,22 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\WorkflowEmails;
 use App\MModels\Form;
-use App\Models\Application;
 use App\Models\ApplicationUserTypes;
-use App\Models\ApplicationUsesEmail;
 use App\Models\EmailTemplate;
 use App\Models\User;
 use App\Models\UserApplication;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Client;
 use App\Models\ApplicationStep;
 use App\Models\FormTemplate;
 use App\Models\Approval;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Redirect;
 
 class WorkflowController extends Controller
 {
@@ -48,6 +43,11 @@ class WorkflowController extends Controller
         });
     }
 
+    /*
+     * **********************************************************
+     * Remeber, this function requires "artisan queue:listen"
+     * **********************************************************
+     */
     public function stepActions(Request $request)
     {
         if ( $this->step->responsible != Auth::user()->id ) {
@@ -79,33 +79,29 @@ class WorkflowController extends Controller
             foreach ($usersRelated as $userApp)
             {
                 $user = User::findOrFail($userApp->user_id);
+
                 $contentComplement = '';
 
                 if (app('env') == 'local')
                 {
-                    $contentComplement = 'This e-mail should have been sent to: '.$uType->title.', User: '.$user->name.' | '.$user->email.'<br>';
-
-                    $user = new User([
-                        'name'  => 'Local Temp User',
-                        'email' => env('MAIL_LOCAL_RECEIVER')
-                    ]);
+                    $contentComplement = 'This e-mail should have been sent to: '.$uType->title.', User: '.$user->name.' | '.$user->email.'when step is '.$request->status.'<br>';
                 }
 
-                Mail::to($user)->queue(
-                    new WorkflowEmails($request->status, [
-                        'title' => $emailTemplate->title,
-                        'text' => $contentComplement.$emailTemplate->text
-                    ])
-//                Mail::to($user)->send(
-//                    new WorkflowEmails($request->status, [
-//                        'title' => $emailTemplate->title,
-//                        'text' => $contentComplement.$emailTemplate->text
-//                    ])
-                );
+                $mailData = [
+                    'title' => $emailTemplate->title,
+                    'text' => $contentComplement.$emailTemplate->text
+                ];
+
+                //$c = new Carbon();
+                //$delay = $c->now()->addMinutes(1);
+                //$job = (new \App\Jobs\WorkflowEmails($request, $mailData, $user))->delay($delay);
+                $job = (new \App\Jobs\WorkflowEmails($request, $mailData, $user));
+
+                dispatch($job);
             }
         }
 
-        return json_encode(['status' => true]);
+        return $this->saveStepForm($request);
     }
 
     public function show(Request $request, $id){
