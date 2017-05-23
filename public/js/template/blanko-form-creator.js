@@ -102,7 +102,7 @@ function toFieldObject(){
     })
   }
 
-  obj.comments = getComments(obj._id);
+  obj.comments = getComments(this, obj._id);
 
 
   var rules = $(this).find('.rules tr:not(:first-of-type)');
@@ -465,11 +465,8 @@ function checkFieldValue(id, value, options){
   return obj;
 }
 
-function getComments(id){
-  var elem = $('.draggable-input[data-id="'+id+'"]');
-
+function getComments(elem, id){
   var result = new Array();
-
   var comments = $(elem).find('.comments li');
 
   comments.each(function(){
@@ -482,4 +479,15 @@ function getComments(id){
     result.push(comment);
   });
   return result;
+}
+
+
+function saveComments(id, username, message, type){
+  var comment = {
+    fieldId : id,
+    username : username,
+    msg : message,
+    type : type
+  };
+  console.log(comment);
 }

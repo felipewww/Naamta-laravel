@@ -324,6 +324,7 @@ function addEvents(elem, id = null, signature = null){
     var message = $(elem).find('.comment-msg');
     var type = message.attr('comment-type');
     appendComment(username, message.val(), type, $(elem));
+    saveComments(id, username, message.val(), type);
     message.val('');
   });
 
@@ -420,7 +421,7 @@ function addEvents(elem, id = null, signature = null){
     }
   });
 
-  $(elem).find('.tabs').on('change', function(){
+  $(elem).find('.tabs').change(function(){
     var id = $(this).find(':selected').val();
     var fields = $('#tab' + id).find('.draggable-input');
     var elemId = $(this).closest('.draggable-input').attr('id').split('__')[1];
@@ -437,7 +438,7 @@ function addEvents(elem, id = null, signature = null){
     $(this).closest('.drag-options').find('.fields').html(options);
   });
 
-  $(elem).find('.fields').on('change', function(){
+  $(elem).find('.fields').change(function(){
     fieldId = $(this).find('option:selected').val();
     getOptions($(elem),fieldId);
   })
@@ -448,18 +449,10 @@ function addEvents(elem, id = null, signature = null){
   //On Change
 
   // On Change Value
-  $(elem).find('.drag-input .update-value').keyup(function(){
+  $(elem).find('.drag-input .update-value').change(function(){
     var val = $(this).val();
     checkFieldValue(id, val, []);
   });
-
-  // On Change Date Field Value
-  if(type == 'date-field'){
-    $(elem).find('.drag-input .update-value').change(function(){
-      var val = $(this).val();
-    checkFieldValue(id, val, []);
-    });
-  }
 
   if(type == 'select'){
     $(elem).find('.drag-input .update-value').change(function(){
@@ -478,7 +471,7 @@ function addEvents(elem, id = null, signature = null){
   }
 
   if(type == 'radio-group'){
-    $(elem).find('.drag-input input[type="radio"]').on('change', function(){
+    $(elem).find('.drag-input input[type="radio"]').change(function(){
       var optionsArray = new Array();
       var options = $(this).closest('.drag-input').find('.radio');
       options.each(function(){
@@ -494,7 +487,7 @@ function addEvents(elem, id = null, signature = null){
   }
 
   if(type == 'checkbox-group'){
-    $(elem).find('.drag-input input[type="checkbox"]').on('change', function(){
+    $(elem).find('.drag-input input[type="checkbox"]').change(function(){
       var optionsArray = new Array();
       var options = $(this).closest('.drag-input').find('.checkbox');
       options.each(function(){
