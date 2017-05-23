@@ -39,10 +39,11 @@
 <script src="{{ asset("js/template/blanko-form-builder.js") }}"></script>
 <script src="{{ asset("js/template/blanko-form-creator.js") }}"></script>
 <script src="{{ asset("js/template/blanko-form-checkpoint.js") }}"></script>
+
 <script>
-    console.log($('input[name=containers]').val());
     createTabs($('input[name=containers]').val(), true, true);
 </script>
+
 @endsection
 
 @section('scripts')

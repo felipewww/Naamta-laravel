@@ -63,8 +63,9 @@ class WorkflowController extends Controller
     public function saveStepForm(Request $request){
         try{
             $step = ApplicationStep::findOrFail($request->id);
-            $step->morphs_json = $request->form_json;
-            $step->status = "approved";
+            if($this->_updateFormToMongo(\GuzzleHttp\json_decode($request->form_json)))
+                $step->status = "approved";
+
             $step->save();
 
             $nexStep = ApplicationStep::findOrFail( $step->nextStep()->id);
