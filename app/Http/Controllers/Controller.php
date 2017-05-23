@@ -183,7 +183,7 @@ class Controller extends BaseController
                     if(isset($v->comments) && count($v->comments) > 0){
                         foreach ($v->comments as $comment) {
                             if(!isset($comment->_id)){
-                                $comment = new Comment(["username" => $comment->user_name, "msg" => $comment->text]);
+                                $comment = new Comment(["username" => $comment->username, "msg" => $comment->msg]);
                                 $field->comments()->save($comment);
                             }
                         }
@@ -212,7 +212,7 @@ class Controller extends BaseController
             if(isset($v->comments) && count($v->comments) > 0){
                 foreach ($v->comments as $comment) {
                     if(!isset($comment->_id)){
-                        $comment = new Comment(["username" => $comment->user_name, "msg" => $comment->text]);
+                        $comment = new Comment(["username" => $comment->username, "msg" => $comment->msg]);
                         $field->comments()->save($comment);
                     }
                 }
@@ -228,11 +228,11 @@ class Controller extends BaseController
     protected function _addCommentToMongo($item){
         try{
             $field = Field::find($item->fieldId);
-            if(!isset($item->comment)){
-                $comment = new Comment(["username" => $item->comment->user_name, "msg" => $item->comment->text]);
+            if(isset($item)){
+                $comment = new Comment(["username" => $item->username, "msg" => $item->msg, "type" => $item->type]);
                 $field->comments()->save($comment);
             }
-            return true;
+            return $comment->_id;
         }catch (Exception $e){
             return false;
         }

@@ -107,8 +107,8 @@ class WorkflowController extends Controller
 
     public function addFieldComment(Request $request){
         try{
-            $this->_addCommentToMongo($request->field);
-            return json_encode(['status' => 'success', 'message' => 'Comment added']);
+            $comment_id = $this->_addCommentToMongo(\GuzzleHttp\json_decode($request->comment));
+            return json_encode(['status' => 'success', 'message' => 'Comment added', 'commentId' => $comment_id]);
         }catch (Exception $e){
             return json_encode(['status' => 'error', 'message' => 'Error']);
         }
@@ -116,7 +116,7 @@ class WorkflowController extends Controller
 
     public function updateFormField(Request $request){
         try{
-            $this->_updateFieldToMongo(json_decode(json_encode($request->field), FALSE));
+            $this->_updateFieldToMongo(\GuzzleHttp\json_decode($request->field));
             return json_encode(['status' => 'success', 'message' => 'Comment added']);
         }catch (Exception $e){
             return json_encode(['status' => 'error', 'message' => 'Error']);

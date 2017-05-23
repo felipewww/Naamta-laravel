@@ -27,6 +27,9 @@
         </div>
     </div>
 </div>
+<script>
+    var username = '{{ Auth::user()->name }}';
+</script>
 <script src="{{ asset("js/template/signature_pad.js") }}"></script>
 <!-- Reference https://github.com/szimek/signature_pad -->
 
@@ -35,7 +38,6 @@
 <script src="{{ asset("js/template/blanko-form-checkpoint.js") }}"></script>
 
 <script>
-    console.log('<?=$containers?>');
-    createTabs('<?=$containers?>', true, false);
+    createTabs('<?=$containers?>', true, "{{ Auth::user()->isClient() ? true : false }}");
 </script>
 @endsection

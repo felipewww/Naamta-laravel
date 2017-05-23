@@ -2,7 +2,7 @@ var thiss;
 var isEditable = true;
 var fieldCounter = 0; // FIELD ID
 var tabCounter = 0; //TAB ID
-var username = 'User Name'; // USER NAME
+
 
 // Temporary variables
 var tempContainers;
@@ -102,7 +102,7 @@ function toFieldObject(){
     })
   }
 
-  obj.comments = getComments(obj._id);
+  obj.comments = getComments(this, obj._id);
 
 
   var rules = $(this).find('.rules tr:not(:first-of-type)');
@@ -448,9 +448,10 @@ function checkFieldValue(id, value, options){
     obj.setting.options = options;
   }
 
-  var sequence = { _token: window.Laravel.csrfToken, field: obj };
+  var sequence = { _token: window.Laravel.csrfToken, field: JSON.stringify(obj) };
   $.ajax({
     url: '/workflow/updateFormField',
+    dataType: "json",
     method: 'POST',
     data: sequence,
     success: function (data) {
@@ -465,11 +466,8 @@ function checkFieldValue(id, value, options){
   return obj;
 }
 
-function addComment(id){
-  var elem = $('.draggable-input[data-id="'+id+'"]');
-
+function getComments(elem, id){
   var result = new Array();
-
   var comments = $(elem).find('.comments li');
 
   comments.each(function(){
@@ -481,20 +479,33 @@ function addComment(id){
       };
     result.push(comment);
   });
-  var sequence = { _token: window.Laravel.csrfToken, field: result.prop() };
-  $.ajax({
-    url: '/workflow/addFieldComment',
-    method: 'POST',
-    data: sequence,
-    success: function (data) {
-      console.log('Success!');
-      window.location.href = window.location.protocol + "//" + window.location.hostname;
-    },
-    error: function (data) {
-      console.log('Error!');
-    }
-  });
 
   return result;
+}
+
+
+function saveComments(id, username, message, type){
+  var comment = {
+    fieldId : id,
+    username : username,
+    msg : message,
+    type : type
+  };
+
+  var sequence = { _token: window.Laravel.csrfToken, comment:  JSON.stringify(comment)  };
+  $.ajax({
+    url: '/workflow/addFieldComment',
+    dataType: "json",
+    method: 'POST',
+    data: sequence,
+    success: function (result) {
+      return commentCallback(result);
+    },
+    error: function (data) {
+    }
+  });
+}
+function commentCallback(result) {
+  console.log(result.commentId);
 }
 
