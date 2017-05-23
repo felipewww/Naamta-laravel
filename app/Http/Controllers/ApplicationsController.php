@@ -11,6 +11,7 @@ use App\Models\Step;
 use App\Models\UsesEmail;
 use Illuminate\Http\Response;
 //use Validator;
+use Illuminate\Support\Facades\Auth;
 use Session;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Http\Request;

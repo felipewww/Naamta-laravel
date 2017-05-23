@@ -32,12 +32,16 @@ workflow = {
 
         var sequence = { _token: window.Laravel.csrfToken, id:stepId, status: status };
         $.ajax({
+            // url: '/workflow/saveApproval',
             url: '/workflow/saveApproval',
             method: 'POST',
             data: sequence,
+            dataType: 'json',
             success: function (data) {
+                if (data.status) {
+                    location.reload();
+                }
                 console.log('Success!');
-                location.reload();
             },
             error: function (data) {
                 console.log('Error!');

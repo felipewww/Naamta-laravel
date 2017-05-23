@@ -27,3 +27,6 @@ Sexta feira eu fiz o clone da aplicação completa, jogando para o mongo. Falta 
 deletar o relacionamento no sql e no mongo e criar o novo. O form parece que ja estava feito isso, mas precisa testar.
 
 Falta também exibir o ID do item (approval/form) selecionado buscando das tabelas _forms e _approvals de relacionamento.
+
+##quando subir para producao
+-[ ] Lembrar de configurar o listener de jobs (php artisan queue:listen)
