@@ -3,16 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\MModels\Form;
-use App\Models\Application;
+use App\Models\ApplicationUserTypes;
+use App\Models\EmailTemplate;
+use App\Models\User;
+use App\Models\UserApplication;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Client;
 use App\Models\ApplicationStep;
 use App\Models\FormTemplate;
 use App\Models\Approval;
 
 class WorkflowController extends Controller
 {
+    public $step;
+    public $application;
     /**
      * Create a new controller instance.
      *
@@ -23,8 +28,96 @@ class WorkflowController extends Controller
         parent::__construct();
         $this->middleware(function ($request, $next) {
             \Auth::user()->authorizeRoles(['admin', 'staff', 'client']);;
+
+            $this->step = ApplicationStep::findOrFail($request->id);
+            $this->application = $this->step->application;
+            $userVerify = UserApplication::where('application_id', $this->step->application->id)
+                ->where('user_id', Auth::user()->id)
+                ->get();
+
+            if ( $userVerify->isEmpty() ){
+                return redirect('/');
+            }
+
             return $next($request);
         });
+    }
+
+    /*
+     * **********************************************************
+     * Remeber, this function requires "artisan queue:listen"
+     * **********************************************************
+     */
+    public function stepActions(Request $request)
+    {
+        if ( $this->step->responsible != Auth::user()->id ) {
+            //dd('voce nao tem permissao de ação neste step');
+            return redirect('/');
+        }
+
+        switch ($request->status)
+        {
+            case 'approved';
+                $receivedByList = $this->step->usesEmails()->where('send_when','success')->get();
+                break;
+
+            case 'reproved';
+                $receivedByList = $this->step->usesEmails()->where('send_when','rejected')->get();
+                break;
+
+            default:
+                $receivedByList = [];
+                break;
+        }
+
+        foreach ($receivedByList as $receiver)
+        {
+            $uType          = ApplicationUserTypes::where('application_id', $this->application->id)->where('id', $receiver->received_by)->first();
+            $emailTemplate  = EmailTemplate::where('id', $receiver->email_id)->first();
+            $usersRelated   = UserApplication::where('user_type', $uType->id)->where('application_id', $this->application->id)->get();
+
+            foreach ($usersRelated as $userApp)
+            {
+                $user = User::findOrFail($userApp->user_id);
+
+                $contentComplement = '';
+
+                if (app('env') == 'local')
+                {
+                    $contentComplement = 'This e-mail should have been sent to: '.$uType->title.', User: '.$user->name.' | '.$user->email.'when step is '.$request->status.'<br>';
+                }
+
+                $mailData = [
+                    'title' => $emailTemplate->title,
+                    'text' => $contentComplement.$emailTemplate->text
+                ];
+
+                /*
+                 * Não delete este comentário!
+                 */
+                $c = new Carbon();
+                $delay = $c->now()->addMinutes(1);
+                $job = (new \App\Jobs\WorkflowEmails($request, $mailData, $user))->delay($delay);
+//                $job = (new \App\Jobs\WorkflowEmails($request, $mailData, $user));
+
+                dispatch($job);
+            }
+        }
+
+        switch ($this->step->morphs_from)
+        {
+            case FormTemplate::class:
+                return $this->saveStepForm($request);
+                break;
+
+            case Approval::class:
+                return $this->saveApproval($request);
+                break;
+
+            default:
+                return json_encode(['status' => false]);
+                break;
+        }
     }
 
     public function show(Request $request, $id, $formId = null){
@@ -39,6 +132,7 @@ class WorkflowController extends Controller
                 break;
             case Approval::class:
                 return $this->applicationApproval($step->id, $step->morphs_json);
+//                return $this->applicationApproval($step->id, $step->morphs_json);
                 break;
             default:
                 throw new \Error('Morph item not found in both table, even on trash. Contact the system administrator');
@@ -82,7 +176,7 @@ class WorkflowController extends Controller
         try{
 
             $step = ApplicationStep::findOrFail($request->id);
-            $step->morphs_json = $request->form_json;
+//            $step->morphs_json = $request->form_json;
             $step->status = $request->status;
             $step->save();
 

@@ -18,7 +18,6 @@ class CreateApplicationStepsTable extends Migration
 
             $table->string('title');
             $table->string('description');
-//            $table->tinyInteger('status')->default(0);
             $table->enum('status', ['0','1','approved','reproved','current']);
             $table->integer('ordination');
             $table->integer('responsible')->unsigned();
@@ -26,10 +25,6 @@ class CreateApplicationStepsTable extends Migration
             $table->integer('previous_step')->unsigned()->nullable();
 
             $table->string('morphs_from');
-//            $table->integer('morphs_id')->nullable();
-//
-//            $table->foreign('morphs_id')
-//                ->references('id')->on('approvals');
 
             $table->foreign('application_id')
                 ->references('id')->on('applications')
@@ -43,8 +38,6 @@ class CreateApplicationStepsTable extends Migration
                     ->onDelete('restrict');
             $table->timestamps();
         });
-
-//        DB::statement("ALTER TABLE application_steps ADD morphs_json MEDIUMBLOB");
     }
 
     /**
