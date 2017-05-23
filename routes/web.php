@@ -77,6 +77,8 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/workflow/updateFormField',  'WorkflowController@updateFormField');
     Route::post('/workflow/addFieldComment',  'WorkflowController@addFieldComment');
 
+    Route::get('/usersync',  'SystemUsersController@syncUsers');
+
     Route::post('/forms/comment', function (Request $request) {
         try{
             \App\Models\Comment::create([
