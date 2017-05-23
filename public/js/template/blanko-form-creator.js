@@ -102,7 +102,7 @@ function toFieldObject(){
     })
   }
 
-  obj.comments = getComments(this, obj._id);
+  obj.comments = getComments(obj._id);
 
 
   var rules = $(this).find('.rules tr:not(:first-of-type)');
@@ -279,7 +279,7 @@ function createFields(obj, clientView){
 
   if(obj.comments != null){
     obj.comments.forEach(function(comment){
-      appendComment(comment.username, comment.msg, comment.type, $(clone));
+      appendComment(comment.username, comment.msg, comment.type, $(clone), comment._id);
     })
   }
 
@@ -466,12 +466,14 @@ function checkFieldValue(id, value, options){
   return obj;
 }
 
-function getComments(elem, id){
+function getComments(id){
+  var elem = $('.draggable-input[data-id="'+id+'"]');
   var result = new Array();
   var comments = $(elem).find('.comments li');
 
   comments.each(function(){
     var comment = {
+        _id : $(this).attr('comment-id'),
         fieldId : id,
         username : $(this).find('span.username').text(),
         msg : $(this).find('span.message').text(),

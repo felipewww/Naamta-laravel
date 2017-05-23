@@ -702,15 +702,15 @@ function getHash(elem){
   return $(elem).find('a').attr('href');
 }
 
-function appendComment(user, msg, type = 'external', node){
+function appendComment(user, msg, type = 'external', node, id){
   if(msg != ''){
-    var comment = '<li comment-type="'+ type +'"><p><span class="username">'+ user +'</span><span class="message">'+ msg +'</span></p></li>';
-
+    var comment = '<li comment-type="'+ type +'" comment-id="'+ ((id != null) ? id : '') +'"><p><span class="username">'+ user +'</span><span class="message">'+ msg +'</span></p></li>';
     if(type == 'external'){
       node.find('.external-comments').append(comment);
     }else{
       node.find('.internal-comments').append(comment);
     }
+
     node.find('.comment-icon').addClass('has-comments');
   }
 }
