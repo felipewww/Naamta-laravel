@@ -455,7 +455,7 @@ function checkFieldValue(id, value, options){
     data: sequence,
     success: function (data) {
       console.log('Success!');
-      window.location.href = window.location.protocol + "//" + window.location.hostname;
+      //window.location.href = window.location.protocol + "//" + window.location.hostname;
     },
     error: function (data) {
       console.log('Error!');
@@ -465,7 +465,7 @@ function checkFieldValue(id, value, options){
   return obj;
 }
 
-function getComments(id){
+function addComment(id){
   var elem = $('.draggable-input[data-id="'+id+'"]');
 
   var result = new Array();
@@ -481,5 +481,20 @@ function getComments(id){
       };
     result.push(comment);
   });
+  var sequence = { _token: window.Laravel.csrfToken, field: result.prop() };
+  $.ajax({
+    url: '/workflow/addFieldComment',
+    method: 'POST',
+    data: sequence,
+    success: function (data) {
+      console.log('Success!');
+      window.location.href = window.location.protocol + "//" + window.location.hostname;
+    },
+    error: function (data) {
+      console.log('Error!');
+    }
+  });
+
   return result;
 }
+

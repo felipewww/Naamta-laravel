@@ -116,7 +116,7 @@ class WorkflowController extends Controller
 
     public function updateFormField(Request $request){
         try{
-            $this->_updateFieldToMongo($request->field);
+            $this->_updateFieldToMongo(json_decode(json_encode($request->field), FALSE));
             return json_encode(['status' => 'success', 'message' => 'Comment added']);
         }catch (Exception $e){
             return json_encode(['status' => 'error', 'message' => 'Error']);
