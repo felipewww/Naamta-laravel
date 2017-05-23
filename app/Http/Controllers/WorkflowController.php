@@ -104,4 +104,23 @@ class WorkflowController extends Controller
             return json_encode(['status' => 'error', 'message' => 'Error']);
         }
     }
+
+    public function addFieldComment(Request $request){
+        try{
+            $this->_addCommentToMongo($request->field);
+            return json_encode(['status' => 'success', 'message' => 'Comment added']);
+        }catch (Exception $e){
+            return json_encode(['status' => 'error', 'message' => 'Error']);
+        }
+    }
+
+    public function updateFormField(Request $request){
+        try{
+            $this->_updateFieldToMongo($request->field);
+            return json_encode(['status' => 'success', 'message' => 'Comment added']);
+        }catch (Exception $e){
+            return json_encode(['status' => 'error', 'message' => 'Error']);
+        }
+    }
+
 }

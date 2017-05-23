@@ -227,7 +227,7 @@ class Controller extends BaseController
 
     protected function _addCommentToMongo($item){
         try{
-            $field = Field::find($item->_id);
+            $field = Field::find($item->fieldId);
             if(!isset($item->comment)){
                 $comment = new Comment(["username" => $item->comment->user_name, "msg" => $item->comment->text]);
                 $field->comments()->save($comment);

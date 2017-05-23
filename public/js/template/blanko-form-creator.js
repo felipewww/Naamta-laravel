@@ -447,8 +447,20 @@ function checkFieldValue(id, value, options){
   }else{
     obj.setting.options = options;
   }
-  
-  console.log(obj);
+
+  var sequence = { _token: window.Laravel.csrfToken, field: obj };
+  $.ajax({
+    url: '/workflow/updateFormField',
+    method: 'POST',
+    data: sequence,
+    success: function (data) {
+      console.log('Success!');
+      window.location.href = window.location.protocol + "//" + window.location.hostname;
+    },
+    error: function (data) {
+      console.log('Error!');
+    }
+  });
 
   return obj;
 }
@@ -469,6 +481,5 @@ function getComments(id){
       };
     result.push(comment);
   });
-
   return result;
 }
