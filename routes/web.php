@@ -59,6 +59,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/applications/{id}/saveStepsPosition', 'ApplicationsController@saveStepsPosition');
     Route::post('/applications/{id}/changeStepStatus', 'ApplicationsController@changeStepStatus');
 
+
     Route::get('/applications/{id}/payment/first_form', 'ClientFirstFormController@staffView');
     Route::post('/applications/client/first_form', 'ClientFirstFormController@firstFormSave');
 
@@ -71,8 +72,10 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/forms/{id}/clone',  'FormsController@create');
     Route::get('/forms/{id}/mongo',  'FormsController@mongo');
     Route::get('/workflow/step/{id}/show/',  'WorkflowController@show');
+//    Route::get('/workflow/step/action/{id}/{action}', 'WorkflowController@stepActions');
     Route::post('/workflow/saveStepForm',  'WorkflowController@saveStepForm');
-    Route::post('/workflow/saveApproval',  'WorkflowController@saveApproval');
+//    Route::post('/workflow/saveApproval',  'WorkflowController@saveApproval');
+    Route::post('/workflow/saveApproval',  'WorkflowController@stepActions');
 
 
     Route::post('/forms/comment', function (Request $request) {

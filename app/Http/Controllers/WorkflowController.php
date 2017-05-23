@@ -2,17 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\WorkflowEmails;
 use App\MModels\Form;
 use App\Models\Application;
+use App\Models\ApplicationUserTypes;
+use App\Models\ApplicationUsesEmail;
+use App\Models\EmailTemplate;
+use App\Models\User;
+use App\Models\UserApplication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Client;
 use App\Models\ApplicationStep;
 use App\Models\FormTemplate;
 use App\Models\Approval;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Redirect;
 
 class WorkflowController extends Controller
 {
+    public $step;
+    public $application;
     /**
      * Create a new controller instance.
      *
@@ -23,12 +33,85 @@ class WorkflowController extends Controller
         parent::__construct();
         $this->middleware(function ($request, $next) {
             \Auth::user()->authorizeRoles(['admin', 'staff', 'client']);;
+
+            $this->step = ApplicationStep::findOrFail($request->id);
+            $this->application = $this->step->application;
+            $userVerify = UserApplication::where('application_id', $this->step->application->id)
+                ->where('user_id', Auth::user()->id)
+                ->get();
+
+            if ( $userVerify->isEmpty() ){
+                return redirect('/');
+            }
+
             return $next($request);
         });
     }
 
+    public function stepActions(Request $request)
+    {
+        if ( $this->step->responsible != Auth::user()->id ) {
+            //dd('voce nao tem permissao de ação neste step');
+            return redirect('/');
+        }
+
+        switch ($request->status)
+        {
+            case 'approved';
+                $receivedByList = $this->step->usesEmails()->where('send_when','success')->get();
+                break;
+
+            case 'reproved';
+                $receivedByList = $this->step->usesEmails()->where('send_when','rejected')->get();
+                break;
+
+            default:
+                $receivedByList = [];
+                break;
+        }
+
+        foreach ($receivedByList as $receiver)
+        {
+            $uType          = ApplicationUserTypes::where('application_id', $this->application->id)->where('id', $receiver->received_by)->first();
+            $emailTemplate  = EmailTemplate::where('id', $receiver->email_id)->first();
+            $usersRelated   = UserApplication::where('user_type', $uType->id)->where('application_id', $this->application->id)->get();
+
+            foreach ($usersRelated as $userApp)
+            {
+                $user = User::findOrFail($userApp->user_id);
+                $contentComplement = '';
+
+                if (app('env') == 'local')
+                {
+                    $contentComplement = 'This e-mail should have been sent to: '.$uType->title.', User: '.$user->name.' | '.$user->email.'<br>';
+
+                    $user = new User([
+                        'name'  => 'Local Temp User',
+                        'email' => env('MAIL_LOCAL_RECEIVER')
+                    ]);
+                }
+
+                Mail::to($user)->queue(
+                    new WorkflowEmails($request->status, [
+                        'title' => $emailTemplate->title,
+                        'text' => $contentComplement.$emailTemplate->text
+                    ])
+//                Mail::to($user)->send(
+//                    new WorkflowEmails($request->status, [
+//                        'title' => $emailTemplate->title,
+//                        'text' => $contentComplement.$emailTemplate->text
+//                    ])
+                );
+            }
+        }
+
+        return json_encode(['status' => true]);
+    }
+
     public function show(Request $request, $id){
+
         $step = ApplicationStep::findOrFail($id);
+
         if ($step->morphs_id)
         {
             switch ($step->morphs_from)
