@@ -130,8 +130,8 @@ class Controller extends BaseController
                 if(isset($config->options))
                     $setting->options = $config->options;
 
-                if(isset($config->rules)){
-                    $r = $config->rules;
+                if(isset($config->rule)){
+                    $r = $config->rule;
                     $rule = new Rule();
                     $setting->rule()->save($rule);
 
@@ -145,7 +145,7 @@ class Controller extends BaseController
                         foreach($r->conditions as $co) {
                             $condition = new Condition(
                                 [
-                                    "page" => $c->page,
+                                    "page" => $co->page,
                                     "field" => $co->field,
                                     "comparison" => $co->comparison,
                                     "value" => $co->value,
@@ -161,9 +161,7 @@ class Controller extends BaseController
             $config = new Config(['title' =>  $c->name, 'tabId' => $c->id]);
             $container->config()->save($config);
         }
-
         return $mForm->_id;
-
     }
 
     protected function _convertFormMongoToJson($form){

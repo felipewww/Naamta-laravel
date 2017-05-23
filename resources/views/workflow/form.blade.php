@@ -40,7 +40,8 @@
 <script src="{{ asset("js/template/blanko-form-creator.js") }}"></script>
 <script src="{{ asset("js/template/blanko-form-checkpoint.js") }}"></script>
 <script>
-    createTabs($('input[name=containers]').val(), true);
+    console.log($('input[name=containers]').val());
+    createTabs($('input[name=containers]').val(), true, true);
 </script>
 @endsection
 

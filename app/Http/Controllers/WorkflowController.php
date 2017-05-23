@@ -27,26 +27,22 @@ class WorkflowController extends Controller
         });
     }
 
-    public function show(Request $request, $id){
+    public function show(Request $request, $id, $formId = null){
         $step = ApplicationStep::findOrFail($id);
-        if ($step->morphs_id)
+        switch ($step->morphs_from)
         {
-            switch ($step->morphs_from)
-            {
-                case FormTemplate::class:
-                    $form = Form::with(array('containers', 'containers.config', 'containers.fields', 'containers.fields.comments',
-                        'containers.fields.setting', 'containers.fields.setting.rule', 'containers.fields.setting.rule.conditions') )->findOrFail($step->morphs_id);
-                    return $this->applicationForm($step->id, json_encode($form));
-                    break;
-
-                case Approval::class:
-                    return $this->applicationApproval($step->id, $step->morphs_json);
-                    break;
-
-                default:
-                    throw new \Error('Morph item not found in both table, even on trash. Contact the system administrator');
-                    break;
-            }
+            case FormTemplate::class:
+                $itemId = (isset($formId) ? $step->forms()->findOrFail($formId)->mform_id : $step->forms()->first()->mform_id);
+                $form = Form::with(array('containers', 'containers.config', 'containers.fields', 'containers.fields.comments',
+                    'containers.fields.setting', 'containers.fields.setting.rule', 'containers.fields.setting.rule.conditions') )->findOrFail($itemId);
+                return $this->applicationForm($step->id, json_encode($form->containers));
+                break;
+            case Approval::class:
+                return $this->applicationApproval($step->id, $step->morphs_json);
+                break;
+            default:
+                throw new \Error('Morph item not found in both table, even on trash. Contact the system administrator');
+                break;
         }
     }
 
