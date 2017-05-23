@@ -92,40 +92,51 @@ class WorkflowController extends Controller
                     'text' => $contentComplement.$emailTemplate->text
                 ];
 
-                //$c = new Carbon();
-                //$delay = $c->now()->addMinutes(1);
-                //$job = (new \App\Jobs\WorkflowEmails($request, $mailData, $user))->delay($delay);
-                $job = (new \App\Jobs\WorkflowEmails($request, $mailData, $user));
+                /*
+                 * Não delete este comentário!
+                 */
+                $c = new Carbon();
+                $delay = $c->now()->addMinutes(1);
+                $job = (new \App\Jobs\WorkflowEmails($request, $mailData, $user))->delay($delay);
+//                $job = (new \App\Jobs\WorkflowEmails($request, $mailData, $user));
 
                 dispatch($job);
             }
         }
 
-        return $this->saveStepForm($request);
+        switch ($this->step->morphs_from)
+        {
+            case FormTemplate::class:
+                return $this->saveStepForm($request);
+                break;
+
+            case Approval::class:
+                return $this->saveApproval($request);
+                break;
+
+            default:
+                return json_encode(['status' => false]);
+                break;
+        }
     }
 
-    public function show(Request $request, $id){
-
+    public function show(Request $request, $id, $formId = null){
         $step = ApplicationStep::findOrFail($id);
-
-        if ($step->morphs_id)
+        switch ($step->morphs_from)
         {
-            switch ($step->morphs_from)
-            {
-                case FormTemplate::class:
-                    $form = Form::with(array('containers', 'containers.config', 'containers.fields', 'containers.fields.comments',
-                        'containers.fields.setting', 'containers.fields.setting.rule', 'containers.fields.setting.rule.conditions') )->findOrFail($step->morphs_id);
-                    return $this->applicationForm($step->id, json_encode($form));
-                    break;
-
-                case Approval::class:
-                    return $this->applicationApproval($step->id, $step->morphs_json);
-                    break;
-
-                default:
-                    throw new \Error('Morph item not found in both table, even on trash. Contact the system administrator');
-                    break;
-            }
+            case FormTemplate::class:
+                $itemId = (isset($formId) ? $step->forms()->findOrFail($formId)->mform_id : $step->forms()->first()->mform_id);
+                $form = Form::with(array('containers', 'containers.config', 'containers.fields', 'containers.fields.comments',
+                    'containers.fields.setting', 'containers.fields.setting.rule', 'containers.fields.setting.rule.conditions') )->findOrFail($itemId);
+                return $this->applicationForm($step->id, json_encode($form->containers));
+                break;
+            case Approval::class:
+                return $this->applicationApproval($step->id, $step->morphs_json);
+//                return $this->applicationApproval($step->id, $step->morphs_json);
+                break;
+            default:
+                throw new \Error('Morph item not found in both table, even on trash. Contact the system administrator');
+                break;
         }
     }
 
@@ -146,8 +157,9 @@ class WorkflowController extends Controller
     public function saveStepForm(Request $request){
         try{
             $step = ApplicationStep::findOrFail($request->id);
-            $step->morphs_json = $request->form_json;
-            $step->status = "approved";
+            if($this->_updateFormToMongo(\GuzzleHttp\json_decode($request->form_json)))
+                $step->status = "approved";
+
             $step->save();
 
             $nexStep = ApplicationStep::findOrFail( $step->nextStep()->id);
@@ -164,7 +176,7 @@ class WorkflowController extends Controller
         try{
 
             $step = ApplicationStep::findOrFail($request->id);
-            $step->morphs_json = $request->form_json;
+//            $step->morphs_json = $request->form_json;
             $step->status = $request->status;
             $step->save();
 
@@ -186,4 +198,23 @@ class WorkflowController extends Controller
             return json_encode(['status' => 'error', 'message' => 'Error']);
         }
     }
+
+    public function addFieldComment(Request $request){
+        try{
+            $comment_id = $this->_addCommentToMongo(\GuzzleHttp\json_decode($request->comment));
+            return json_encode(['status' => 'success', 'message' => 'Comment added', 'commentId' => $comment_id]);
+        }catch (Exception $e){
+            return json_encode(['status' => 'error', 'message' => 'Error']);
+        }
+    }
+
+    public function updateFormField(Request $request){
+        try{
+            $this->_updateFieldToMongo(\GuzzleHttp\json_decode($request->field));
+            return json_encode(['status' => 'success', 'message' => 'Comment added']);
+        }catch (Exception $e){
+            return json_encode(['status' => 'error', 'message' => 'Error']);
+        }
+    }
+
 }

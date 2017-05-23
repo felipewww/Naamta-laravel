@@ -2,7 +2,7 @@ var thiss;
 var isEditable = true;
 var fieldCounter = 0; // FIELD ID
 var tabCounter = 0; //TAB ID
-var username = 'User Name'; // USER NAME
+
 
 // Temporary variables
 var tempContainers;
@@ -102,17 +102,8 @@ function toFieldObject(){
     })
   }
 
-  var comments = $(this).find('.comments li');
+  obj.comments = getComments(this, obj._id);
 
-  comments.each(function(){
-    var comment = {
-        fieldId : obj._id,
-        username : $(this).find('span.username').text(),
-        msg : $(this).find('span.message').text(),
-        type : $(this).attr('comment-type')
-      };
-    obj.comments.push(comment);
-  });
 
   var rules = $(this).find('.rules tr:not(:first-of-type)');
 
@@ -280,7 +271,6 @@ function createFields(obj, clientView){
   clone.find('.drag-options').toggle(obj.isEditable);
   configureField(clone, obj.setting, obj.type);
   obj.setting.signature;
-  addEvents(clone[0], obj._id, obj.setting.signature);
   clones.splice(obj.setting.ordenate, 0, clone);
 
   obj.setting.options.forEach(function(option){
@@ -293,6 +283,7 @@ function createFields(obj, clientView){
     })
   }
 
+  addEvents(clone[0], obj._id, obj.setting.signature);
   //rules
   clone.find('.rule-action').val(obj.setting.rule.ruleAction);
   clone.find('.rule-target').val(obj.setting.rule.ruleTarget);
@@ -443,5 +434,78 @@ function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
       }
     })
   }
+}
+
+function checkFieldValue(id, value, options){
+  var obj = {
+    _id : id,
+    setting : {}
+  };
+
+  if(value != null){
+    obj.setting.value = value;
+  }else{
+    obj.setting.options = options;
+  }
+
+  var sequence = { _token: window.Laravel.csrfToken, field: JSON.stringify(obj) };
+  $.ajax({
+    url: '/workflow/updateFormField',
+    dataType: "json",
+    method: 'POST',
+    data: sequence,
+    success: function (data) {
+      console.log('Success!');
+      //window.location.href = window.location.protocol + "//" + window.location.hostname;
+    },
+    error: function (data) {
+      console.log('Error!');
+    }
+  });
+
+  return obj;
+}
+
+function getComments(elem, id){
+  var result = new Array();
+  var comments = $(elem).find('.comments li');
+
+  comments.each(function(){
+    var comment = {
+        fieldId : id,
+        username : $(this).find('span.username').text(),
+        msg : $(this).find('span.message').text(),
+        type : $(this).attr('comment-type')
+      };
+    result.push(comment);
+  });
+
+  return result;
+}
+
+
+function saveComments(id, username, message, type){
+  var comment = {
+    fieldId : id,
+    username : username,
+    msg : message,
+    type : type
+  };
+
+  var sequence = { _token: window.Laravel.csrfToken, comment:  JSON.stringify(comment)  };
+  $.ajax({
+    url: '/workflow/addFieldComment',
+    dataType: "json",
+    method: 'POST',
+    data: sequence,
+    success: function (result) {
+      return commentCallback(result);
+    },
+    error: function (data) {
+    }
+  });
+}
+function commentCallback(result) {
+  console.log(result.commentId);
 }
 

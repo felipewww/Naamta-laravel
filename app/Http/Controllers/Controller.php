@@ -16,6 +16,7 @@ use \App\MModels\Condition;
 use \App\MModels\Comment;
 use \App\MModels\Setting;
 use \App\MModels\Rule;
+use Mockery\CountValidator\Exception;
 
 class Controller extends BaseController
 {
@@ -130,8 +131,8 @@ class Controller extends BaseController
                 if(isset($config->options))
                     $setting->options = $config->options;
 
-                if(isset($config->rules)){
-                    $r = $config->rules;
+                if(isset($config->rule)){
+                    $r = $config->rule;
                     $rule = new Rule();
                     $setting->rule()->save($rule);
 
@@ -145,7 +146,7 @@ class Controller extends BaseController
                         foreach($r->conditions as $co) {
                             $condition = new Condition(
                                 [
-                                    "page" => $c->page,
+                                    "page" => $co->page,
                                     "field" => $co->field,
                                     "comparison" => $co->comparison,
                                     "value" => $co->value,
@@ -161,36 +162,80 @@ class Controller extends BaseController
             $config = new Config(['title' =>  $c->name, 'tabId' => $c->id]);
             $container->config()->save($config);
         }
-
         return $mForm->_id;
-
     }
 
-    protected function _convertFormMongoToJson($form){
-        $_return = array();
+    protected function _updateFormToMongo($containers){
+        try{
+            foreach ($containers as $i => $c){
+                //$container = Container::find($c->_id);
+                foreach($c->fields as $k => $v){
+                    $field = Field::find($v->_id);
+                    if(isset($v->setting->value)){
+                        $field->setting->value = $v->setting->value;
+                        $field->setting->save();
+                    }
+                    if(isset($v->setting->options)){
+                        $field->setting->options = $v->setting->options;
+                        $field->setting->save();
+                    }
 
-        foreach ($form->containers as $i => $c){
-            $_return[$i]["config"] = [
-                'id'    => $c->config->_id,
-                'title'  => $c->config->title,
-                'tabId' =>  $c->config->tabId,
-            ];
+                    if(isset($v->comments) && count($v->comments) > 0){
+                        foreach ($v->comments as $comment) {
+                            if(!isset($comment->_id)){
+                                $comment = new Comment(["username" => $comment->username, "msg" => $comment->msg]);
+                                $field->comments()->save($comment);
+                            }
+                        }
+                    }
+                    $field->save();
+                }
+            }
+            return true;
+        }catch (Exception $e){
+            return false;
+        }
+    }
 
-            foreach($c->fields as $k => $v){
-                $_return[$i]["fields"][$k]["id"] =  $v->id;
-                $_return[$i]["fields"][$k]["type"] =  $v->type;
-                $_return[$i]["fields"][$k]["container_id"] =  $v->container_id;
-                $_return[$i]["fields"][$k]["isEditable"] =  true;
-                $_return[$i]["fields"][$k]["comments"] = array();
-                if(isset($v->comments) && count($v->comments) > 0){
-                    foreach ($v->comments as $comment) {
-                        array_push($_return[$i]["fields"][$k]["comments"], array("username" => $comment->user_name, "msg" => $comment->text));
+    protected function _updateFieldToMongo($v){
+        try{
+            $field = Field::find($v->_id);
+            if(isset($v->setting->value)){
+                $field->setting->value = $v->setting->value;
+                $field->setting->save();
+            }
+            if(isset($v->setting->options)){
+                $field->setting->options = $v->setting->options;
+                $field->setting->save();
+            }
+
+            if(isset($v->comments) && count($v->comments) > 0){
+                foreach ($v->comments as $comment) {
+                    if(!isset($comment->_id)){
+                        $comment = new Comment(["username" => $comment->username, "msg" => $comment->msg]);
+                        $field->comments()->save($comment);
                     }
                 }
-                $_return[$i]["fields"][$k]["options"] =  json_decode($v->config);
             }
+            $field->save();
+            return true;
+
+        }catch (Exception $e){
+            return false;
         }
-        return json_encode($_return);
+    }
+
+    protected function _addCommentToMongo($item){
+        try{
+            $field = Field::find($item->fieldId);
+            if(isset($item)){
+                $comment = new Comment(["username" => $item->username, "msg" => $item->msg, "type" => $item->type]);
+                $field->comments()->save($comment);
+            }
+            return $comment->_id;
+        }catch (Exception $e){
+            return false;
+        }
     }
     protected function _convertApprovalToJson(Approval $approval)
     {

@@ -21,8 +21,9 @@ class ApplicationStep extends Model
         'application_id',
         'morphs_from',
         'morphs_id',
-        'morphs_json',
-        'title' ,'description' ,'status',
+        'title',
+        'description',
+        'status',
         'ordination'
     ];
 
