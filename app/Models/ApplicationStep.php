@@ -29,17 +29,17 @@ class ApplicationStep extends Model
 
     public function screen()
     {
-        return $this->hasOne('App\Models\Screen');
+        return $this->hasOne(Screen::class);
     }
 
     public function step()
     {
-        return $this->hasOne('App\Models\Step');
+        return $this->hasOne(Step::class);
     }
 
     public function application()
     {
-        return $this->belongsTo('App\Models\Application', 'application_id', 'id');
+        return $this->belongsTo(Application::class, 'application_id', 'id');
     }
 
     public function usesEmails()

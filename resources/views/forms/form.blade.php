@@ -50,7 +50,7 @@
                         </select>
                     </div>
                 </div>
-
+                <div class="clearfix"></div>
             </div>
         </div>
     </div>
@@ -64,14 +64,11 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-12">
-            <div class="white-box">
-                <button type="submit" class="btn btn-success center-block waves-effect waves-light pull-right">Submit Form</button>
-
-            </div>
+        <div class="white-box">
+            <button type="submit" class="btn btn-success center-block waves-effect waves-light pull-right">Submit Form</button>
+            <div class="clearfix"></div>
         </div>
     </div>
-    <div class="clearfix"></div>
 </form>
 <script>
     var username = '{{ Auth::user()->name }}';

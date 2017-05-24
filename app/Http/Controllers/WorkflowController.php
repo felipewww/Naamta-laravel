@@ -28,16 +28,16 @@ class WorkflowController extends Controller
     {
         parent::__construct();
         $this->middleware(function ($request, $next) {
-            \Auth::user()->authorizeRoles(['admin', 'staff', 'client']);;
-
-            $this->step = ApplicationStep::findOrFail($request->id);
-            $this->application = $this->step->application;
-            $userVerify = UserApplication::where('application_id', $this->step->application->id)
-                ->where('user_id', Auth::user()->id)
-                ->get();
-
-            if ( $userVerify->isEmpty() ){
-                return redirect('/');
+            \Auth::user()->authorizeRoles(['admin', 'staff', 'client']);
+            if($request->id!==null){
+                $this->step = ApplicationStep::findOrFail($request->id);
+                $this->application = $this->step->application;
+                $userVerify = UserApplication::where('application_id', $this->step->application->id)
+                    ->where('user_id', Auth::user()->id)
+                    ->get();
+                if ( $userVerify->isEmpty() ){
+                    return redirect('/');
+                }
             }
 
             return $next($request);

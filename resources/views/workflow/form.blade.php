@@ -44,11 +44,12 @@
 <script src="{{ asset("js/template/blanko-form-checkpoint.js") }}"></script>
 
 <script>
-    createTabs($('input[name=containers]').val(), true, "{{ Auth::user()->isClient() ? true : false }}");
+    createTabs($('input[name=containers]').val(), "{{ $stepResponsible !== Auth::user()->id ? 'false' : 'true' }}");
     @if($stepResponsible !== Auth::user()->id)
         $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4')
         $('input, select, radio, textarea, checkbox, option').attr('disabled', 'disabled').css('opacity', '0.4')
-        $('.comment-msg').removeAttr('disabled').css('opacity', '1')
+        $('.comment-msg, .is-incorrect').removeAttr('disabled').css('opacity', '0.4')
+        $('.is-incorrect').css('opacity', '0')
     @endif
 </script>
 

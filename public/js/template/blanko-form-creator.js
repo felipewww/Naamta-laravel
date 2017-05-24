@@ -449,6 +449,7 @@ function saveComments(id, username, message, type){
       return commentCallback(result);
     },
     error: function (data) {
+      
     }
   });
 }
