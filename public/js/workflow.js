@@ -27,23 +27,18 @@ workflow = {
         });
     },
 
-    sendApproval: function (status, stepId) {
+    sendApproval: function (status, stepId, form) {
         _this = this;
-
-        var sequence = { _token: window.Laravel.csrfToken, id:stepId, status: status };
+        var sequence = { _token: window.Laravel.csrfToken, id:stepId, status: status, form : form };
         $.ajax({
-            // url: '/workflow/saveApproval',
             url: '/workflow/saveApproval',
             method: 'POST',
             data: sequence,
-            dataType: 'json',
             success: function (data) {
-                if (data.status) {
-                    location.reload();
-                }
-                console.log('Success!');
+                window.location.href = window.location.protocol + "//" + window.location.hostname;
             },
             error: function (data) {
+                console.log(data)
                 console.log('Error!');
             }
         });

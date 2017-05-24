@@ -50,10 +50,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group text-center m-t-20">
-                    <button type="submit" class="btn btn-success center-block waves-effect waves-light">Submit Form</button>
-                </div>
-                <div class="clearfix"></div>
+
             </div>
         </div>
     </div>
@@ -62,15 +59,19 @@
             <div class="white-box">
                 <h3 class="box-title m-b-0">Form Builder</h3>
                 <div id="drag-container"></div>
+                <div class="clearfix"></div>
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col-sm-12">
             <div class="white-box">
+                <button type="submit" class="btn btn-success center-block waves-effect waves-light pull-right">Submit Form</button>
+
             </div>
         </div>
     </div>
+    <div class="clearfix"></div>
 </form>
 <script>
     var username = '{{ Auth::user()->name }}';

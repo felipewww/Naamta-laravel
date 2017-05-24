@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Auth\ActivationService;
 use App\Models\Application;
+use App\Models\Approval;
 use App\Models\ClientFirstForm;
 use App\Models\FormTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Client;
+use App\Models\ApplicationStep;
+
 
 class HomeController extends Controller
 {
@@ -71,9 +74,8 @@ class HomeController extends Controller
     }
 
     public function applicationDashboard(Request $request, $id){
-        $application = Application::find($id);
+        $application = Application::with(['steps'])->find($id);
         if ( $application->status == 'wt_firstform' ) {
-
             $this->pageInfo->title              = Auth::user()->name."'s".' Registration';
             $this->pageInfo->category->title    = 'Registration';
             $this->pageInfo->subCategory->title = 'Form';
@@ -87,10 +89,19 @@ class HomeController extends Controller
 
         }else{
             $stepsWithForm = $application->steps->where("morphs_from", FormTemplate::class )->all();
+            $approvalWithReport = $application->steps->where('morphs_from', Approval::class)->where('approval.has_report', '1')->all();
+            $reports = array();
+            foreach($approvalWithReport as $approval){
+                $step = ApplicationStep::findOrFail($approval->id);
+                if($step->Approval->report!=null){
+                    array_push($reports, array('stepId' => $approval->id, 'report' => $step->Approval->report));
+                }
+            }
             return view('homes.application', [
                 'pageInfo' => $this->pageInfo,
                 'application' => $application,
-                'stepsWithForm' => $stepsWithForm
+                'stepsWithForm' => $stepsWithForm,
+                'approvalWithReport' => $reports
             ]);
         }
     }

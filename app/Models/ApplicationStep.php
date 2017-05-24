@@ -64,7 +64,7 @@ class ApplicationStep extends Model
 
     public function Approval()
     {
-        return $this->hasOne(ApplicationStepApprovals::class);
+        return $this->hasOne(Approval::class, 'id', 'morphs_id');
     }
 
     public function previousStep(){
