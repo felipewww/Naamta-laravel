@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Mail\AuthEmails;
 use App\Models\ApplicationStep;
 use App\Models\ApplicationStepApprovals;
 use App\Models\ApplicationUserTypes;
@@ -12,6 +13,7 @@ use App\Models\UsesEmail;
 use Illuminate\Http\Response;
 //use Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Session;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Http\Request;
@@ -79,6 +81,18 @@ class ApplicationsController extends Controller
 
         $this->usersApplication = UserApplication::where('application_id', $id)->get();
         $application = Application::FindOrFail($id);
+
+        if ($application->status == '1') 
+        {
+            if (app('env') != 'local')
+            {
+                return redirect('/application/'.$application->id.'/dashboard');
+            }
+            else
+            {
+                $this->pageInfo->title = 'ALREADY APPROVED - ONLY LOCAL';
+            }
+        }
         
         $steps = $application->steps()->with(['usesEmails', 'usesEmails.receivedBy', 'usesEmails.template'])->orderBy('ordination')->get();
 
@@ -168,7 +182,6 @@ class ApplicationsController extends Controller
                 array_push($arrTypes, ApplicationUserTypes::where('id', $user_type)->first()->slug);
             }
 
-
             if( array_search('client', $arrTypes) === false ){
                 return false;
             }
@@ -194,6 +207,24 @@ class ApplicationsController extends Controller
                 ]);
             }
 
+            if ( $request->status == '1' )
+            {
+                /*
+                 * If you're in development, set you e-mail in .ENV file to receive the confirmation email
+                 */
+                $user = $application->client->user;
+                if (app('env') == 'local') {
+                    $user->email = env('MAIL_LOCAL_RECEIVER');
+                }
+
+                Mail::to($user)->send(
+                    new AuthEmails('allowApp', [
+                        'client'    => $application->client,
+                        'user'      => $user
+                    ])
+                );
+            }
+
             $request->offsetUnset('users_application');
             $request->offsetUnset('_method');
             $application->update($request->all());
@@ -205,7 +236,7 @@ class ApplicationsController extends Controller
         }
 
         \DB::commit();
-
+//        dd('everything is ok!');
         return Redirect::to('/applications/'.$id.'/edit');
     }
 

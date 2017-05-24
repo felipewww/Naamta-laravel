@@ -59,7 +59,6 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/applications/{id}/saveStepsPosition', 'ApplicationsController@saveStepsPosition');
     Route::post('/applications/{id}/changeStepStatus', 'ApplicationsController@changeStepStatus');
 
-
     Route::get('/applications/{id}/payment/first_form', 'ClientFirstFormController@staffView');
     Route::post('/applications/client/first_form', 'ClientFirstFormController@firstFormSave');
 

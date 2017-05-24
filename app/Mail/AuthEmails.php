@@ -60,4 +60,17 @@ class AuthEmails extends Mailable
             ])
             ->view('emails.Auth.register');
     }
+    
+    public function allowApp()
+    {
+        $this->subject = 'Application approved!';
+        $user       = $this->params['user'];
+        $client     = $this->params['client'];
+        
+        return $this->with([
+            'client'    => $client,
+            'user'      => $user
+        ])
+        ->view(['html' => 'emails.Auth.allow_app']);
+    }
 }

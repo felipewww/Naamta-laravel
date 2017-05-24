@@ -28,5 +28,11 @@ deletar o relacionamento no sql e no mongo e criar o novo. O form parece que ja 
 
 Falta também exibir o ID do item (approval/form) selecionado buscando das tabelas _forms e _approvals de relacionamento.
 
+-[x] não permitir editar app "application/{id}/edit" quando a aplicação ja estiver liberada para o usuário
+-[x] enviar e-mail para o cliente quando a aplicação estiver liberada para preenchimento (e se for recusada?)
+-[ ] Front (Templates de e-mail) Register, Aprovação/reprovação do App, redefinir senha, Steps approve/reprove
+-[x] qualquer um esta podendo submitar FORM do step. nao permitir. (ver isso em workflowController em SAVES methdos... ta facil) LEO fez
+-[ ] Verificar como esta a VIEw de APPROVALS
+
 ##quando subir para producao
 -[ ] Lembrar de configurar o listener de jobs (php artisan queue:listen)

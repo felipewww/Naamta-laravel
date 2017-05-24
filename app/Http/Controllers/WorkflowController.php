@@ -154,7 +154,8 @@ class WorkflowController extends Controller
         return view('workflow.approval')->with(['stepId' => $stepId,'approval' => json_decode($approval), 'pageInfo' => $this->pageInfo]);
     }
 
-    public function saveStepForm(Request $request){
+    public function saveStepForm(Request $request)
+    {
         try{
             $step = ApplicationStep::findOrFail($request->id);
             if($this->_updateFormToMongo(\GuzzleHttp\json_decode($request->form_json)))
