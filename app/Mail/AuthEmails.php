@@ -73,4 +73,20 @@ class AuthEmails extends Mailable
         ])
         ->view(['html' => 'emails.Auth.allow_app']);
     }
+    
+    /*
+     * When application if reset, send this e-mail to client
+     * */
+    public function resetApp()
+    {
+        $this->subject  = 'Application Reset';
+        $user           = $this->params['user'];
+        $client         = $this->params['client'];
+
+        return $this->with([
+            'client'    => $client,
+            'user'      => $user
+        ])
+        ->view(['html' => 'emails.Auth.reset_app']);
+    }
 }

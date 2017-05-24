@@ -30,6 +30,9 @@
             <div class="">
                 <!-- Tabstyle start -->
                 <section>
+                    @if( $application->reset_at )
+                        <div class="alert alert-success">3 years flow</div>
+                    @endif
                     <div class="sttabs">
                         <div>
                             <span class="btn btn-save m-r-20" style="width: 120px; float: right;" onclick="appSteps.save()"><i class="fa fa-check"></i> Save</span>

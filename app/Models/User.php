@@ -6,6 +6,7 @@ use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+//use Illuminate\Contracts\Auth\CanResetPassword;
 
 class User extends Authenticatable
 {
@@ -49,6 +50,8 @@ class User extends Authenticatable
             return true;
         }
         abort(401, 'This action is unauthorized.');
+        
+        return false;
     }
 
     public function hasAnyRole($roles)

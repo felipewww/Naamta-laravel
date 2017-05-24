@@ -36,3 +36,13 @@ Falta também exibir o ID do item (approval/form) selecionado buscando das tabel
 
 ##quando subir para producao
 -[ ] Lembrar de configurar o listener de jobs (php artisan queue:listen)
+-[ ] configurar o CRONTAB para App\Console\Commands\FlowThreeYears
+
+crontab = schtasks no windows
+
+processo 3 anos
+
+-[x] mudar app para wt_emailconfirm
+-[x] mudar steps para '1' (que ja esta configurado, pronto para preencher)
+-[x] alterar created_at para a data atual
+-[x] ====== verificar se o processo de email funciona corretamente

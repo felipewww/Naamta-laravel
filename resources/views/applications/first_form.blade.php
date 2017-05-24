@@ -15,6 +15,12 @@
                 <div class="white-box">
                     <h3 class="box-title m-b-0"><b>Registration form</b></h3>
 
+                    @if( $application->reset_at )
+                        <div class="alert alert-warning">Your application is overdue. Please, validate your account info and resend it.
+                            Soon our staff will contact you.
+                        </div>
+                    @endif
+
                     <form  class="form-horizontal" method="post" action="{{ asset('applications/client/first_form') }}">
                         {{ csrf_field() }}
 

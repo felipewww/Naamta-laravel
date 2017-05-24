@@ -35,6 +35,9 @@
                     @foreach($vars->inactiveApplications as $inactiveApplication)
                     <div class="white-box">
                         <h4 class="m-b-20"><b>{{ $inactiveApplication->client->company }}</b></h4>
+                        @if( $inactiveApplication->reset_at )
+                            <div>3 years flow</div>
+                        @endif
 
                         <ul class="list-inline two-part">
                             <li></li>

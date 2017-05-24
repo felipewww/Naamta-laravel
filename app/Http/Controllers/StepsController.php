@@ -165,9 +165,14 @@ class StepsController extends Controller
 
     protected function _saveJsonClone(Request $request)
     {
+        if ( $this->step->application->reset_at ) {
+            //dd('This application cannot be updated because its a reseted application');
+            return;
+        }
+
         /**
          * If it's a clone, the morphs_from cant be update, so, get morphs_from from the edited step.
-         * Beacause the radio buttons are hidden, and them not sended in the post
+         * Beacause the radio buttons are hidden and them not sent in the post
          * */
         if ($request->_stepFrom == 'clone') {
             $request->offsetSet('morphs_from', $this->step->morphs_from);
@@ -232,6 +237,9 @@ class StepsController extends Controller
 
             case 'clone':
                 $this->step = ApplicationStep::findOrFail($id);
+                if ($this->step->application->reset_at) {
+
+                }
                 $this->_saveJsonClone($request);
                 $redirect = '/applications/'.$this->step->application->id.'/edit';
                 //$redirect = '/applications/step/'.$id;

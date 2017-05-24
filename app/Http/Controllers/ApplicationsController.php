@@ -266,13 +266,19 @@ class ApplicationsController extends Controller
 
     public function saveStepsPosition($appID, Request $request)
     {
+        $app = Application::findOrFail($appID);
+
+        if ($app->reset_at || $app->status == '1') {
+            return json_encode(['status' => false]);
+        }
+
         \DB::beginTransaction();
         $previous_step = null;
         $i = 0;
         while ($i < count($request->ids))
         {
             $stepID = $request->ids[$i];
-            
+
             $step = ApplicationStep::findOrFail($stepID);
             $step->previous_step = $previous_step;
             $step->ordination = $i;
@@ -290,6 +296,12 @@ class ApplicationsController extends Controller
         $step           = ApplicationStep::where('id', $request->id)->first();
         $newStatus      = ($request->currentStatus == '1') ? '0' : '1';
         $step->status   = $newStatus;
+
+        if ( $step->application->status == '1' ) {
+            return json_encode([
+               'reqStatus' => 'disallowed'
+            ]);
+        }
 
         switch ($step->morphs_from)
         {

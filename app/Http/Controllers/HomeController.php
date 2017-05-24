@@ -74,15 +74,20 @@ class HomeController extends Controller
         $application = Application::find($id);
         if ( $application->status == 'wt_firstform' ) {
 
-            $this->pageInfo->title              = Auth::user()->name."'s".' Registration';
+            $user = Auth::user();
+            $this->pageInfo->title              = $user->name."'s".' Registration';
             $this->pageInfo->category->title    = 'Registration';
             $this->pageInfo->subCategory->title = 'Form';
             $this->vars->userType = '$userType';
-
+            $client = $user->client;
+            $form = $client->firstForm;
+//            dd($client);
+//            dd($form);
             return view('applications.first_form',[
                 'application'   => $application,
                 'pageInfo'      => $this->pageInfo,
                 'withAction'    => true,
+                'form'          => $form
             ]);
 
         }else{

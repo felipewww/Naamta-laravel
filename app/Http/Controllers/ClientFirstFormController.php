@@ -42,7 +42,13 @@ class ClientFirstFormController extends Controller
         $request->offsetSet('client_id', $client->id);
         $request->offsetSet('status', '1');
 
-        ClientFirstForm::create($request->all());
+        if ( $application->reset_at ) {
+            $form = $application->client->firstForm;
+            $form->update($request->all());
+
+        }else{
+            ClientFirstForm::create($request->all());
+        }
         \DB::commit();
 
         return redirect()->to('/');

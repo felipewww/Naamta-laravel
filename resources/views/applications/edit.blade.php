@@ -134,8 +134,8 @@
                                 <select class="form-control" name="status">
                                     {{--<option value="1" {{ (isset($email) && $email->status == 1 ? "selected" : "") }} >Active</option>--}}
                                     {{--<option value="0" {{ (isset($email) && $email->status == 0 ? "selected" : "") }} >Inactive</option>--}}
-                                    <option {{ ($hasInactiveSteps) ? 'disabled' : '' }} value="1" {{ ($application->status) ? "selected" : "" }} >Active</option>
-                                    <option value="0" {{ (!$application->status) ? "selected" : ""  }} >Inactive</option>
+                                    <option {{ ($hasInactiveSteps) ? 'disabled' : '' }} value="1" {{ ($application->status == '1') ? "selected" : "" }} >Active</option>
+                                    <option value="0" {{ ($application->status != '1') ? "selected" : ""  }} >Inactive</option>
                                 </select>
                                 @if ($errors->has('status'))
                                     <span class="help-block">

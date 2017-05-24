@@ -24,6 +24,7 @@ class CreateApplicationsTable extends Migration
                     ->references('id')->on('clients')
                     ->onDelete('cascade');
 
+            $table->date('reset_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -65,6 +65,14 @@ var appSteps = {
             dataType: 'json',
             success: function (data) {
 
+                var title, content;
+                if(data.reqStatus == 'disallowed'){
+                    title   = 'Action not allowed';
+                    content = 'You cannot change this step status because the application is already approved and released to client';
+                    Script.xmodal().setTitle(title).setContent(content).setHeader('alert-danger').show();
+                    return false;
+                }
+
                 if (data.approved) {
                     $(e).attr('data-currentstatus', data.newStatus);
                     if (data.newStatus == '1')
@@ -84,8 +92,8 @@ var appSteps = {
                 }
                 else
                 {
-                    var title   = 'Action not allowed';
-                    var content = 'You cannot approve this step because it has no form or screen related. Please, click on edit button and fill correctly settings before active.';
+                    title   = 'Action not allowed';
+                    content = 'You cannot approve this step because it has no form or screen related. Please, click on edit button and fill correctly settings before active.';
                     Script.xmodal().setTitle(title).setContent(content).setHeader('alert-danger').show();
                 }
             },
