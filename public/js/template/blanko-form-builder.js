@@ -177,7 +177,6 @@ function addEvents(elem, id = null, signature = null){
   $(elem).find('.drag-options .value').keyup(function(){
     $(elem).find('.update-value').val($(this).val());
     $(elem).find('.update-value').text($(this).val());
-    $(elem).find('.drag-heading').removeClass('incorrect');
   });
 
   // Update Number Field
@@ -195,7 +194,6 @@ function addEvents(elem, id = null, signature = null){
   if(type == 'date-field'){
     $(elem).find('.drag-options .value').change(function(){
       $(elem).find('.update-value').val($(this).val());
-    $(elem).find('.drag-heading').removeClass('incorrect');
     });
   }
 
@@ -450,10 +448,14 @@ function addEvents(elem, id = null, signature = null){
   $(elem).find('.drag-input .update-value').change(function(){
     var val = $(this).val();
     checkFieldValue(id, val, []);
+    $(elem).find('.drag-heading').removeClass('incorrect');
+    $(elem).find('.is-incorrect').prop('checked', false);
   });
 
   if(type == 'select'){
     $(elem).find('.drag-input .update-value').change(function(){
+      $(elem).find('.drag-heading').removeClass('incorrect');
+      $(elem).find('.is-incorrect').prop('checked', false);
       var optionsArray = new Array();
       var options = $(this).find('option');
       options.each(function(){
@@ -470,6 +472,8 @@ function addEvents(elem, id = null, signature = null){
 
   if(type == 'radio-group'){
     $(elem).find('.drag-input input[type="radio"]').change(function(){
+      $(elem).find('.drag-heading').removeClass('incorrect');
+      $(elem).find('.is-incorrect').prop('checked', false);
       var optionsArray = new Array();
       var options = $(this).closest('.drag-input').find('.radio');
       options.each(function(){
@@ -486,6 +490,8 @@ function addEvents(elem, id = null, signature = null){
 
   if(type == 'checkbox-group'){
     $(elem).find('.drag-input input[type="checkbox"]').change(function(){
+      $(elem).find('.drag-heading').removeClass('incorrect');
+      $(elem).find('.is-incorrect').prop('checked', false);
       var optionsArray = new Array();
       var options = $(this).closest('.drag-input').find('.checkbox');
       options.each(function(){
