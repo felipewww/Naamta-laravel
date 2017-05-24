@@ -63,8 +63,8 @@ class HomeController extends Controller
                 return $this->applicationDashboard($request, $application->id);
             }
         }
+        
         $this->vars->activeApplications = Application::where('status', '1')->get();
-
         $this->vars->inactiveApplications = Application::whereIn('status', ['0', 'wt_payment'])->get();
 
         return view('homes.admin', ['vars' => $this->vars, 'pageInfo' => $this->pageInfo]);

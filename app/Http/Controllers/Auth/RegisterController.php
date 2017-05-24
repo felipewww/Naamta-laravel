@@ -104,7 +104,7 @@ class RegisterController extends Controller
             /*
              * Set as TRUE to test the complete proccess (sending e-mails, waiting approval and etc. within 'local' or 'staging'
              * */
-            $fullProccess = false;
+            $fullProccess = env('REGISTER_FULL_PROCESS', true);
 
             switch (app('env') )
             {
