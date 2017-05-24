@@ -9,62 +9,6 @@ var tempContainers;
 var tempFields;
 var clones = new Array();
 
-/*
-Example
-
-var tabObj1 = {
-  config : {
-    id : 1959595,
-    title: 'Title',
-  },
-  fields : [
-    {
-      id : 1233123,
-      type : 'checkbox-group',
-      isEditable : true,
-      comments : [
-        {
-          username : 'John',
-          msg : 'A Comment'
-        },
-        {
-          username : 'Josephine',
-          msg : 'Another Comment'
-        }
-      ],
-      options : {
-        isRequired : true,
-        label : 'Label',
-        help : 'Help Text',
-        value : '',
-        min : '',
-        max : '',
-        step : '',
-        type : '',
-        options : [
-          {
-            label : 'Option Label 1',
-            value : 'Option Value 1'
-          },
-          {
-            label : 'Option Label 2',
-            value : 'Option Value 2'
-          }
-        ]
-      }
-    }
-  ]
-}
-
-// Array of tabs
-var tabsObj = [tabObj1];
-// Stringify array
-tabsObj = JSON.stringify(tabsObj);
-// Create from stringified array
-createTabs(tabsObj);
-
-*/
-
 // Transform fields in objects
 function toFieldObject(){
   var obj = {
@@ -81,7 +25,8 @@ function toFieldObject(){
     },
     comments : []
   };
-  
+
+  obj.setting.error = $(this).find('.is-incorrect').prop('checked');
   obj.setting.ordenate = parseInt($(this).find('.ordenation').text().replace('(','').replace(')','')) ;
   obj.setting.isRequired = $(this).find('.update-required').hasClass('required');
   obj.setting.label = $(this).find('.update-label').text();
@@ -102,7 +47,7 @@ function toFieldObject(){
     })
   }
 
-  obj.comments = getComments(this, obj._id);
+  obj.comments = getComments(obj._id);
 
 
   var rules = $(this).find('.rules tr:not(:first-of-type)');
@@ -252,12 +197,10 @@ function createTabs(json, clientView = false, isClient){
 
   }
 
-  // [].forEach.call($('.tab .draggable-input'), function(field){
-  //     var dataId = parseInt($(field).attr('data-id'));  
-  //     if(fieldCounter <=  dataId){
-  //       fieldCounter = dataId++;
-  //     }
-  // });
+  
+  if(isClient || !clientView){
+    $('.drag-validate').hide();
+  }
 }
 
 // Creates the fields related to the createTabs function
@@ -279,7 +222,7 @@ function createFields(obj, clientView){
 
   if(obj.comments != null){
     obj.comments.forEach(function(comment){
-      appendComment(comment.username, comment.msg, comment.type, $(clone));
+      appendComment(comment.username, comment.msg, comment.type, $(clone), comment._id);
     })
   }
 
@@ -317,6 +260,8 @@ function configureField(node, options, type){
   //Size of the field
   node.addClass(options.class);
 
+  node.find('.drag-validate').find('input[type="checkbox"]').prop('checked', options.error);
+
   //other attributes
   node.find('.drag-input input').attr({
     'min' : options.min,
@@ -350,44 +295,6 @@ function configureField(node, options, type){
   node.find('input[value="' + options.type+'"]' ).prop('checked', true);
 }
 
-// Creates form from current tabs and fields
-function toHtml(){
-  isEditable = false;
-  json = toJson();
-
-  $('#drag-container').remove();
-  container = $('body').append($('<form>', {
-    id : 'blanko-form'
-  }));
-  container.find('#blanko-form').append($('<div>', {
-    id : "drag-container"
-  }));
-  
-  appendNavigation();
-  appendModel();
-
-  createTabs(json);
-  
-  $('#input-types').remove();
-  $('.tabs-options').remove();
-  $('.modal').remove();
-  $('.drag-options').remove();
-  $('.tab-config').remove();
-  $('.tab-remove').remove();
-
-  // $('form').submit(function( event ) {
-  //   var obj = new Array();
-  //   $(document.forms[0]).find('input, select').each(function(){
-  //     obj.push ( {
-  //       id : $(this).attr('id'),
-  //       value : $(this).val()
-  //     });
-  //   });
-  //   event.preventDefault();
-  // });
-
-  return ;
-}
 //activateRule(action, target, page, field, comparison, value)
 function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
   var cond = "";
@@ -435,6 +342,44 @@ function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
     })
   }
 }
+// Creates form from current tabs and fields
+function toHtml(){
+  isEditable = false;
+  json = toJson();
+
+  $('#drag-container').remove();
+  container = $('body').append($('<form>', {
+    id : 'blanko-form'
+  }));
+  container.find('#blanko-form').append($('<div>', {
+    id : "drag-container"
+  }));
+  
+  appendNavigation();
+  appendModel();
+
+  createTabs(json);
+  
+  $('#input-types').remove();
+  $('.tabs-options').remove();
+  $('.modal').remove();
+  $('.drag-options').remove();
+  $('.tab-config').remove();
+  $('.tab-remove').remove();
+
+  // $('form').submit(function( event ) {
+  //   var obj = new Array();
+  //   $(document.forms[0]).find('input, select').each(function(){
+  //     obj.push ( {
+  //       id : $(this).attr('id'),
+  //       value : $(this).val()
+  //     });
+  //   });
+  //   event.preventDefault();
+  // });
+
+  return ;
+}
 
 function checkFieldValue(id, value, options){
   var obj = {
@@ -466,12 +411,14 @@ function checkFieldValue(id, value, options){
   return obj;
 }
 
-function getComments(elem, id){
+function getComments(id){
+  var elem = $('.draggable-input[data-id="'+id+'"]');
   var result = new Array();
   var comments = $(elem).find('.comments li');
 
   comments.each(function(){
     var comment = {
+        _id : $(this).attr('comment-id'),
         fieldId : id,
         username : $(this).find('span.username').text(),
         msg : $(this).find('span.message').text(),

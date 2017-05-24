@@ -24,5 +24,9 @@ class RoleTableSeeder extends Seeder
         $role_manager->name = 'client';
         $role_manager->description = 'A Client User';
         $role_manager->save();
+        $role_none = new Role();
+        $role_none->name = 'none';
+        $role_none->description = 'A not categorized User';
+        $role_none->save();
     }
 }

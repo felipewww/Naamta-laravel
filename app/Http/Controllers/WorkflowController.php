@@ -134,7 +134,7 @@ class WorkflowController extends Controller
                 $itemId = (isset($formId) ? $step->forms()->findOrFail($formId)->mform_id : $step->forms()->first()->mform_id);
                 $form = Form::with(array('containers', 'containers.config', 'containers.fields', 'containers.fields.comments',
                     'containers.fields.setting', 'containers.fields.setting.rule', 'containers.fields.setting.rule.conditions') )->findOrFail($itemId);
-                return $this->applicationForm($step->id, json_encode($form->containers));
+                return $this->applicationForm($step->id, $step->responsible, json_encode($form->containers));
                 break;
             case Approval::class:
                 return $this->applicationApproval($step->id, $step->morphs_json);
@@ -146,11 +146,11 @@ class WorkflowController extends Controller
         }
     }
 
-    private function applicationForm($stepId, $form){
+    private function applicationForm($stepId, $stepResponsible, $form){
         $this->pageInfo->title              = 'Workflow';
         $this->pageInfo->category->title    = 'Form';
         $this->pageInfo->subCategory->title = 'View';
-        return view('workflow.form')->with(['stepId' => $stepId, 'containers' => $form, 'pageInfo' => $this->pageInfo]);
+        return view('workflow.form')->with(['stepId' => $stepId, 'stepResponsible' => $stepResponsible,  'containers' => $form, 'pageInfo' => $this->pageInfo]);
     }
 
     public function applicationApproval($stepId, $approval){

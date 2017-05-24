@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Roles;
+use Illuminate\Support\Facades\Hash;
 
 class SystemUsersController extends Controller
 {
@@ -24,7 +25,7 @@ class SystemUsersController extends Controller
         
         $this->roles = Roles::whereIn('name', ['admin','staff'])->get();
         $this->users = User::whereHas('roles', function($query) {
-            $query->whereIn('name', ['admin', 'staff']);
+            $query->whereNotIn('name', ['client']);
         })->get();   
     }
 
@@ -125,7 +126,29 @@ class SystemUsersController extends Controller
         
         return redirect('users');
     }
-    
+
+    public function syncUsers(){
+        $url = 'http://localhost.naamta.dev/users.json';
+        if($this->get_http_response_code($url) == "200"){
+            $str = \GuzzleHttp\json_decode(file_get_contents($url),true);
+            $users = $str["users"];
+            $role_none = Role::where('name', 'none')->first();
+
+            foreach ($users as $user) {
+                if(User::where("email", $user["email"])->count()===0){
+                    $staff = new User();
+                    $staff->name = $user["name"];
+                    $staff->email = $user["email"];
+                    $staff->status = 0;
+                    $staff->see_apps = 0;
+                    $staff->password = bcrypt(Hash::make(str_random(8)));
+                    $staff->verified = true;
+                    $staff->save();
+                    $staff->roles()->attach($role_none);
+                }
+            }
+        }
+    }
     public function destroy(Request $request, $userId){
           
         // delete

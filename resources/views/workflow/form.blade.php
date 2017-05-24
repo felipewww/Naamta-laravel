@@ -28,7 +28,7 @@
             <div id="drag-container"></div>
         </div>
         <div class="white-box">
-            <button onclick="workflow.sendForm();" class="btn btn-primary pull-right">Submit Form</button>
+            <button onclick="workflow.sendForm();" class="btn btn-primary pull-right btn-submit">Submit Form</button>
             <div class="clearfix"></div>
         </div>
     </div>
@@ -45,6 +45,11 @@
 
 <script>
     createTabs($('input[name=containers]').val(), true, "{{ Auth::user()->isClient() ? true : false }}");
+    @if($stepResponsible !== Auth::user()->id)
+        $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4')
+        $('input, select, radio, textarea, checkbox, option').attr('disabled', 'disabled').css('opacity', '0.4')
+        $('.comment-msg').removeAttr('disabled').css('opacity', '1')
+    @endif
 </script>
 
 @endsection
