@@ -24,6 +24,9 @@
     background-color: #333;
     padding: 10px 15px;
 }   
+#drag-container .drag-heading.incorrect{
+    background-color: #d43f3a;
+}
 #drag-container .drag-heading h4{
     color: white;
     display: inline;
@@ -263,7 +266,7 @@
 }
 
 .ordenation{
-    color: #bfbfbf;
+    color: #dedede;
 }
 #drag-container button[type="submit"]{
   background: #67953f;
@@ -318,6 +321,9 @@ h4[class*="open-"].active{
     font-weight: bold;
 }
 
+.checkbox label::before, .radio label::before{
+    border: 1px solid rgba(120, 130, 140, 0.4);
+}
 
 @media screen and (max-width: 992px){
     #drag-container{
