@@ -16,6 +16,7 @@ use \App\MModels\Condition;
 use \App\MModels\Comment;
 use \App\MModels\Setting;
 use \App\MModels\Rule;
+use Illuminate\Support\Facades\Storage;
 use Mockery\CountValidator\Exception;
 
 class Controller extends BaseController
@@ -29,6 +30,25 @@ class Controller extends BaseController
     public function __construct()
     {
         $this->pageInfo = $this->__pageinfo();
+    }
+
+    public function storeFiles($folder, $files, $data = [])
+    {
+        $storage = Storage::disk('public');
+        
+        $exists = $storage->exists($folder);
+
+        if ( !$exists ) {
+            $storage->makeDirectory($folder);
+        }
+
+        foreach ($files as $inputName => $file)
+        {
+            $path = $storage->put($folder, $file);
+            $data[$inputName] = $path;
+        }
+
+        return $data;
     }
 
     /*

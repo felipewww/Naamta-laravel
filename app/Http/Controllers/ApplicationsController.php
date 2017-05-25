@@ -363,14 +363,19 @@ class ApplicationsController extends Controller
 
             $newAppType = ApplicationUserTypes::create($cloneType->getAttributes());
             $uTypesClones[$defaultID] = $newAppType->id;
+
+            if ($cloneType->slug == 'client')
+            {
+                $clientTypeID = $newAppType->id;
+            }
         }
 
-        $clientType = ApplicationUserTypes::create([
-            'slug' => 'client',
-            'title' => 'Client',
-            'status' => 1,
-            'application_id' => $application->id,
-        ]);
+//        $clientType = ApplicationUserTypes::create([
+//            'slug' => 'client',
+//            'title' => 'Client',
+//            'status' => 1,
+//            'application_id' => $application->id,
+//        ]);
 
         /*
          * Create application user where his type is the last type found
@@ -378,7 +383,7 @@ class ApplicationsController extends Controller
         $appUsers = UserApplication::create([
             'application_id' => $application->id,
             'user_id' => $user->id,
-            'user_type' => $clientType->id,
+            'user_type' => $clientTypeID,
         ]);
 
         /*

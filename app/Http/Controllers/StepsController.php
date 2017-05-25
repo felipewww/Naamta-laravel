@@ -389,7 +389,7 @@ class StepsController extends Controller
 
         $forms      = FormTemplate::withTrashed()->where('status', 1)->get();
         $approvals    = Approval::all();
-//dd($step);
+
         switch ($step->morphs_from)
         {
             case FormTemplate::class:
