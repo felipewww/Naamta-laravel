@@ -179,6 +179,13 @@ class Controller extends BaseController
                         $field->setting->options = $v->setting->options;
                         $field->setting->save();
                     }
+                    if(isset($v->setting->error)){
+                        $field->setting->error = $v->setting->error;
+                        $field->setting->save();
+                    }else{
+                        $field->setting->error = false;
+                        $field->setting->save();
+                    }
 
                     if(isset($v->comments) && count($v->comments) > 0){
                         foreach ($v->comments as $comment) {
@@ -208,7 +215,13 @@ class Controller extends BaseController
                 $field->setting->options = $v->setting->options;
                 $field->setting->save();
             }
-
+            if(isset($v->setting->error)){
+                $field->setting->error = $v->setting->error;
+                $field->setting->save();
+            }else{
+                $field->setting->error = false;
+                $field->setting->save();
+            }
             if(isset($v->comments) && count($v->comments) > 0){
                 foreach ($v->comments as $comment) {
                     if(!isset($comment->_id)){
