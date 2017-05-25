@@ -6,6 +6,7 @@ use App\Models\Application;
 use App\Models\ClientFirstForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ClientFirstFormController extends Controller
 {
@@ -13,6 +14,7 @@ class ClientFirstFormController extends Controller
     {
         $application = Application::findOrFail($id);
         $form = $application->client->firstForm;
+        $required = '';
 
         return view('applications.first_form',
             [
@@ -20,14 +22,17 @@ class ClientFirstFormController extends Controller
                 'pageInfo'          => $this->pageInfo,
                 'withAction'        => false,
                 'form'              => $form,
+                'required'          => $required
             ]
         );
     }
 
     public function firstFormSave(Request $request)
     {
+        $user = Auth::user();
+
         //todo - verify if this usar has a relation with the application as a client
-        if(!Auth::user()->hasRole('client')){
+        if(!$user->hasRole('client')){
             throw new \Error('Forbidden');
         }
 
@@ -47,7 +52,28 @@ class ClientFirstFormController extends Controller
             $form->update($request->all());
 
         }else{
-            ClientFirstForm::create($request->all());
+            $data = $request->all();
+            $data = $this->storeFiles($user->email, $request->allFiles(), $data);
+
+            if ( app('env') == 'local' )
+            {
+                $fakeFiles = [
+                    'taxpayer_id',
+                    'medical_drug_license',
+                    'customer_reference_letter_1',
+                    'customer_reference_letter_2',
+                    'signed_acknowledgment_doc'
+                ];
+
+                foreach ($fakeFiles as $inputName)
+                {
+                    if (!in_array($inputName, $data)){
+                        $data[$inputName] = 'File not uploaded - LOCALTESTS';
+                    }
+                }
+            }
+
+            ClientFirstForm::create($data);
         }
         \DB::commit();
 

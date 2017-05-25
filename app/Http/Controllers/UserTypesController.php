@@ -177,9 +177,19 @@ class UserTypesController extends Controller
      */
     public function destroy(Request $request, $id){
         try{
-            UserType::where('id', $id)->delete();
-            \Session::flash('message', 'User Type deleted!');
-            
+            $userType = UserType::where('id', $id)->first();
+
+            if ( $userType->slug == 'client' )
+            {
+                \Session::flash('message', 'User type "client" is not able to delete');
+            }
+            else
+            {
+                $userType->delete();
+                \Session::flash('message', 'User Type deleted!');
+            }
+
+
         }catch (Exception $e){
             \Session::flash('message', 'User Type delete failed!');
         }
