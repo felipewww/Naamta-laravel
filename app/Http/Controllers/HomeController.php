@@ -122,7 +122,7 @@ class HomeController extends Controller
             /*
              * End verify responsible
              * */
-            $stepsWithForm = $application->steps->where("morphs_from", FormTemplate::class )->all();
+            $stepsWithForm =  $application->steps->where("morphs_from", FormTemplate::class )->all(); //$this->_getStepsForm($application->steps, $currentStep);
             $approvalWithReport = $application->steps->where('morphs_from', Approval::class)->where('approval.has_report', '1')->all();
             $reports = array();
 
@@ -145,7 +145,19 @@ class HomeController extends Controller
             ]);
         }
     }
+    private function _getStepsForm($steps, $currentStep){
 
+        if($steps->where("morphs_from", FormTemplate::class )->all() > 0)
+        {
+            $stepsForm = array();
+            foreach ($steps->where("morphs_from", FormTemplate::class )->orderBy("ordination", "asc")->all() as $step) {
+                array_push($stepsForm, $step);
+            }
+        }
+        if( $step->previousStep() !== null){
+            return $this->_getLastFormErrorsField($step->previousStep());
+        }
+    }
     private function _getLastFormErrorsField($step){
         if($step->morphs_from === FormTemplate::class)
         {

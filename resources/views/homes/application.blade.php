@@ -98,11 +98,14 @@
                             </thead>
                             <tbody>
                                 @foreach($stepsWithForm as $k => $formStep)
+                                    {{$formStep->status}}
                                     <tr>
                                         <td>Form {{ ($k + 1) }}</td>
-                                        <td>Approved</td>
+                                        <td>{{$formStep->status !== "0" && $formStep->status !== "1" ? $formStep->status : "waiting" }}</td>
                                         <td>
-                                            <a href="/workflow/step/{{$formStep->id}}/show" class="btn btn-warning btn-circle"><i class="fa fa-pencil"></i></a>
+                                            @if($formStep->status !== "0" &&  $formStep->status !== "1")
+                                                <a href="/workflow/step/{{$formStep->id}}/show" class="btn btn-warning btn-circle"><i class="fa fa-pencil"></i></a>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
