@@ -55,53 +55,33 @@
             </div>
             <div class="col-sm-12 col-md-4">
                 <div class="white-box">
-                    <h3 class="box-title m-b-0"><b>Active Form :</b> Form 3</h3>
+                    <h3 class="box-title m-b-0"><b>Review</b></h3>
                     <h4>Items to be reviewed</h4>
-                    {{--<div class="table-responsive">
-                        <table id="activeform" class="table table-striped">
-                            <thead>
+                    <table id="activeform" class="table table-striped">
+                        <thead>
                             <tr>
                                 <th>Item</th>
                                 <th>Action</th>
                             </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td>
-                                    <h5 class="m-t-0"><b>Question</b></h5>
-                                    Lorem Ipsum Dolor
-                                    <h5><b>Answer</b></h5>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                                </td>
-                                <td>
-                                    <button class="btn btn-success btn-circle"><i class="fa fa-pencil"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h5 class="m-t-0"><b>Question</b></h5>
-                                    Lorem Ipsum Dolor
-                                    <h5><b>Answer</b></h5>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                                </td>
-                                <td>
-                                    <button class="btn btn-success btn-circle"><i class="fa fa-pencil"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h5 class="m-t-0"><b>Question</b></h5>
-                                    Lorem Ipsum Dolor
-                                    <h5><b>Answer</b></h5>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                                </td>
-                                <td>
-                                    <button class="btn btn-success btn-circle"><i class="fa fa-pencil"></i></button>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>--}}
+                        </thead>
+                        <tbody>
+                            @foreach($errorsFormsFields as $form)
+                                @foreach($form["containers"] as $field)
+                                    <tr>
+                                        <td>
+                                            <h5 class="m-t-0">
+                                                <b>{{$field->setting->label}}</b>
+                                            </h5>
+                                            <p>{{$field->setting->value}}</p>
+                                        </td>
+                                        <td>
+                                            <a href="/workflow/step/{{$form["formId"]}}/show" class="btn btn-success btn-circle"><i class="fa fa-pencil"></i></a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div class="col-sm-12 col-md-4">
@@ -118,11 +98,14 @@
                             </thead>
                             <tbody>
                                 @foreach($stepsWithForm as $k => $formStep)
+                                    {{$formStep->status}}
                                     <tr>
                                         <td>Form {{ ($k + 1) }}</td>
-                                        <td>Approved</td>
+                                        <td>{{$formStep->status !== "0" && $formStep->status !== "1" ? $formStep->status : "waiting" }}</td>
                                         <td>
-                                            <a href="/workflow/step/{{$formStep->id}}/show" class="btn btn-warning btn-circle"><i class="fa fa-pencil"></i></a>
+                                            @if($formStep->status !== "0" &&  $formStep->status !== "1")
+                                                <a href="/workflow/step/{{$formStep->id}}/show" class="btn btn-warning btn-circle"><i class="fa fa-pencil"></i></a>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

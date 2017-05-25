@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Client;
 use App\Models\ApplicationStep;
+use App\MModels\Form;
+use App\MModels\Field;
 
 
 class HomeController extends Controller
@@ -161,10 +163,10 @@ class HomeController extends Controller
             /*
              * End verify responsible
              * */
-
-            $stepsWithForm = $application->steps->where("morphs_from", FormTemplate::class )->all();
+            $stepsWithForm =  $application->steps->where("morphs_from", FormTemplate::class )->all(); //$this->_getStepsForm($application->steps, $currentStep);
             $approvalWithReport = $application->steps->where('morphs_from', Approval::class)->where('approval.has_report', '1')->all();
             $reports = array();
+
             foreach($approvalWithReport as $approval){
                 $step = ApplicationStep::findOrFail($approval->id);
                 if($step->Approval->report!=null){
@@ -172,14 +174,60 @@ class HomeController extends Controller
                 }
             }
 
+            $errorsFormsFields = $this->_getLastFormErrorsField($currentStep);
             return view('homes.application', [
                 'pageInfo'              => $this->pageInfo,
                 'application'           => $application,
                 'stepsWithForm'         => $stepsWithForm,
                 'approvalWithReport'    => $reports,
                 'currentStep'           => $currentStep,
-                'isResponsible'         => $isResponsible
+                'isResponsible'         => $isResponsible,
+                'errorsFormsFields'     => $errorsFormsFields
             ]);
+        }
+    }
+    private function _getStepsForm($steps, $currentStep){
+
+        if($steps->where("morphs_from", FormTemplate::class )->all() > 0)
+        {
+            $stepsForm = array();
+            foreach ($steps->where("morphs_from", FormTemplate::class )->orderBy("ordination", "asc")->all() as $step) {
+                array_push($stepsForm, $step);
+            }
+        }
+        if( $step->previousStep() !== null){
+            return $this->_getLastFormErrorsField($step->previousStep());
+        }
+    }
+    private function _getLastFormErrorsField($step){
+        if($step->morphs_from === FormTemplate::class)
+        {
+            $errors = array();
+            foreach($step->forms as $form){
+                $f = Form::with(array('containers', 'containers.config', 'containers.fields', 'containers.fields.comments',
+                    'containers.fields.setting', 'containers.fields.setting.rule', 'containers.fields.setting.rule.conditions') )->findOrFail($form->mform_id);
+                array_push($errors, array("formId" => $form->form_templates_id, "containers" => $this->_getErrorsField($f)));
+            }
+            return $errors;
+        }
+        if( $step->previousStep() !== null){
+            return $this->_getLastFormErrorsField($step->previousStep());
+        }
+    }
+
+    private function _getErrorsField($form){
+        $errors = array();
+        try{
+            foreach ($form->containers as $i => $c){
+                foreach($c->fields as $k => $v){
+                    if(isset($v->setting->error) && $v->setting->error === true){
+                        array_push($errors, Field::find($v->_id));
+                    }
+                }
+            }
+            return $errors;
+        }catch (Exception $e){
+            return null;
         }
     }
 }
