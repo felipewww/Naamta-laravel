@@ -28,7 +28,8 @@ class Application extends Model
 
     public function users()
     {
-        return $this->hasMany('App\Models\User');
+        return $this->belongsTo(UserApplication::class, 'id', 'application_id');
+        //return $this->hasMany('App\Models\User');
     }
 
     public function client()

@@ -389,22 +389,28 @@ class StepsController extends Controller
 
         $forms      = FormTemplate::withTrashed()->where('status', 1)->get();
         $approvals    = Approval::all();
-
+//dd($step);
         switch ($step->morphs_from)
         {
             case FormTemplate::class:
 
-                $selecteds = [];
-                foreach ($step->SQLForms as $form)
+                /*
+                 * Default step has no forms related
+                 */
+                if ( $step instanceof ApplicationStep)
                 {
-                    array_push($selecteds, $form->form_templates_id);
-                }
+                    $selecteds = [];
+                    foreach ($step->SQLForms as $form)
+                    {
+                        array_push($selecteds, $form->form_templates_id);
+                    }
 
-                $vars->seeItemLink = '/forms/'.$step->morphs_id;
-                $vars->morphItem = FormTemplate::withTrashed()->where('id', $step->morphs_id)->first();
-                $vars->itemName = 'Form';
-                //$this->_setSelectedItem($forms, $step->morphs_id);
-                $this->_setMultipleSelectItem($forms, $selecteds);
+                    $vars->seeItemLink = '/forms/'.$step->morphs_id;
+                    $vars->morphItem = FormTemplate::withTrashed()->where('id', $step->morphs_id)->first();
+                    $vars->itemName = 'Form';
+                    //$this->_setSelectedItem($forms, $step->morphs_id);
+                    $this->_setMultipleSelectItem($forms, $selecteds);
+                }
                 break;
 
             case Approval::class:

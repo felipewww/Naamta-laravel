@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Auth\ActivationService;
 use App\Models\Application;
+use App\Models\Approval;
 use App\Models\ClientFirstForm;
 use App\Models\FormTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Client;
+use App\Models\ApplicationStep;
+
 
 class HomeController extends Controller
 {
@@ -70,32 +73,71 @@ class HomeController extends Controller
         return view('homes.admin', ['vars' => $this->vars, 'pageInfo' => $this->pageInfo]);
     }
 
-    public function applicationDashboard(Request $request, $id){
-        $application = Application::find($id);
-        if ( $application->status == 'wt_firstform' ) {
+    public function applicationDashboard(Request $request, $id)
+    {
+        $application = Application::with(['steps'])->find($id);
+        $user = Auth::user();
 
-            $user = Auth::user();
+        if ( $application->status == 'wt_firstform' ) {
             $this->pageInfo->title              = $user->name."'s".' Registration';
+            $this->pageInfo->title              = Auth::user()->name."'s".' Registration';
             $this->pageInfo->category->title    = 'Registration';
             $this->pageInfo->subCategory->title = 'Form';
             $this->vars->userType = '$userType';
             $client = $user->client;
             $form = $client->firstForm;
-//            dd($client);
-//            dd($form);
+
             return view('applications.first_form',[
                 'application'   => $application,
                 'pageInfo'      => $this->pageInfo,
                 'withAction'    => true,
-                'form'          => $form
+                'form'          => $form,
             ]);
 
-        }else{
+        }
+        else
+        {
+            /*
+             * Verify if current user has some responsibility about this step
+             * */
+            $currentStep = $application->steps->where("status", "current")->first();
+
+            if($currentStep===null){
+                $currentStep = $application->steps->first();
+            }
+
+            $currentUserType = $application->users()->where('user_id', $user->id)->get();
+
+            if ($currentUserType->count() == 1)
+            {
+                $currentUserType = $currentUserType->first();
+                $isResponsible = ($currentStep->responsible == $currentUserType->user_type);
+            }
+            else
+            {
+                $isResponsible = $currentUserType->where('user_type', $currentStep->responsible)->first();
+            }
+            /*
+             * End verify responsible
+             * */
+
             $stepsWithForm = $application->steps->where("morphs_from", FormTemplate::class )->all();
+            $approvalWithReport = $application->steps->where('morphs_from', Approval::class)->where('approval.has_report', '1')->all();
+            $reports = array();
+            foreach($approvalWithReport as $approval){
+                $step = ApplicationStep::findOrFail($approval->id);
+                if($step->Approval->report!=null){
+                    array_push($reports, array('stepId' => $approval->id, 'report' => $step->Approval->report));
+                }
+            }
+
             return view('homes.application', [
-                'pageInfo' => $this->pageInfo,
-                'application' => $application,
-                'stepsWithForm' => $stepsWithForm
+                'pageInfo'              => $this->pageInfo,
+                'application'           => $application,
+                'stepsWithForm'         => $stepsWithForm,
+                'approvalWithReport'    => $reports,
+                'currentStep'           => $currentStep,
+                'isResponsible'         => $isResponsible
             ]);
         }
     }

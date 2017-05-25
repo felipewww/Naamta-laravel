@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\ApplicationStep;
 use App\Models\FormTemplate;
 use App\Models\Approval;
+use App\Models\Report;
 
 class WorkflowController extends Controller
 {
@@ -27,23 +28,46 @@ class WorkflowController extends Controller
     {
         parent::__construct();
         $this->middleware(function ($request, $next) {
+//<<<<<<< HEAD
             $user = Auth::user();
             $user->authorizeRoles(['admin', 'staff', 'client']);;
 
-            $this->step = ApplicationStep::findOrFail($request->id);
-            $this->application = $this->step->application;
-
-            if( $user->hasRole('client') && $this->application->status != '1' ){
-                return redirect('/');
+            if($request->id!==null) {
+                $this->step = ApplicationStep::findOrFail($request->id);
+                $this->application = $this->step->application;
+                $userVerify = UserApplication::where('application_id', $this->step->application->id)
+                    ->where('user_id', $user->id)
+                    ->get();
+                if ($userVerify->isEmpty()) {
+                    return redirect('/');
+                }
+                
+                if( $user->hasRole('client') && $this->application->status != '1' ){
+                    return redirect('/');
+                }
             }
+            //$this->step = ApplicationStep::findOrFail($request->id);
+//            $this->application = $this->step->application;
 
-            $userVerify = UserApplication::where('application_id', $this->step->application->id)
-                ->where('user_id', Auth::user()->id)
-                ->get();
+//            $userVerify = UserApplication::where('application_id', $this->step->application->id)
+//                ->where('user_id', Auth::user()->id)
+//                ->get();
 
-            if ( $userVerify->isEmpty() ){
-                return redirect('/');
-            }
+//            if ( $userVerify->isEmpty() ){
+//                return redirect('/');
+//=======
+//            \Auth::user()->authorizeRoles(['admin', 'staff', 'client']);
+//            if($request->id!==null){
+//                $this->step = ApplicationStep::findOrFail($request->id);
+//                $this->application = $this->step->application;
+//                $userVerify = UserApplication::where('application_id', $this->step->application->id)
+//                    ->where('user_id', Auth::user()->id)
+//                    ->get();
+//                if ( $userVerify->isEmpty() ){
+//                    return redirect('/');
+//                }
+//>>>>>>> e2184d7a948922a411406f061c38468012616977
+//            }
 
             return $next($request);
         });
@@ -114,15 +138,13 @@ class WorkflowController extends Controller
         {
             case FormTemplate::class:
                 return $this->saveStepForm($request);
-                break;
-
+            break;
             case Approval::class:
                 return $this->saveApproval($request);
-                break;
-
+            break;
             default:
                 return json_encode(['status' => false]);
-                break;
+            break;
         }
     }
 
@@ -137,8 +159,7 @@ class WorkflowController extends Controller
                 return $this->applicationForm($step->id, $step->responsible, json_encode($form->containers));
                 break;
             case Approval::class:
-                return $this->applicationApproval($step->id, $step->morphs_json);
-//                return $this->applicationApproval($step->id, $step->morphs_json);
+                return $this->applicationApproval($step->id, $step->responsible, $step->Approval);
                 break;
             default:
                 throw new \Error('Morph item not found in both table, even on trash. Contact the system administrator');
@@ -153,11 +174,11 @@ class WorkflowController extends Controller
         return view('workflow.form')->with(['stepId' => $stepId, 'stepResponsible' => $stepResponsible,  'containers' => $form, 'pageInfo' => $this->pageInfo]);
     }
 
-    public function applicationApproval($stepId, $approval){
+    public function applicationApproval($stepId, $stepResponsible, $approval){
         $this->pageInfo->title              = 'Workflow';
         $this->pageInfo->category->title    = 'Approval';
         $this->pageInfo->subCategory->title = 'View';
-        return view('workflow.approval')->with(['stepId' => $stepId,'approval' => json_decode($approval), 'pageInfo' => $this->pageInfo]);
+        return view('workflow.approval')->with(['stepId' => $stepId, 'stepResponsible' => $stepResponsible, 'approval' => $approval, 'pageInfo' => $this->pageInfo]);
     }
 
     public function saveStepForm(Request $request)
@@ -184,6 +205,27 @@ class WorkflowController extends Controller
 
             $step = ApplicationStep::findOrFail($request->id);
 //            $step->morphs_json = $request->form_json;
+
+            if($step->Approval->has_report===1){
+                $report = Report::where('approval_id', $step->Approval->id)->first();
+                if($report != null){
+                    $report  = Report::where("id", $report->id)->update(
+                        [
+                            'form' => \GuzzleHttp\json_encode($request->form),
+                            'title' => $step->title . " (Report)"
+                        ]
+                    );
+                }else{
+                    $report  = Report::create(
+                        [
+                            'approval_id' => $step->Approval->id,
+                            'form' => \GuzzleHttp\json_encode($request->form),
+                            'title' => $step->title . " (Report)"
+                        ]
+                    );
+                }
+               // $step->Approval->report = $report;
+            }
             $step->status = $request->status;
             $step->save();
 

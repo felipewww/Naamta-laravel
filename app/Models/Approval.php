@@ -21,8 +21,7 @@ class Approval extends Model
     public function report()
     {
         if($this->has_report)
-            return $this->hasOne('App\Models\Approval');
-
+            return $this->hasOne('App\Models\Report', 'approval_id', 'id');
         return null;
     }
 

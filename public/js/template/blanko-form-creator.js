@@ -197,7 +197,6 @@ function createTabs(json, clientView = false, isClient){
 
   }
 
-  
   if(isClient || !clientView){
     $('.drag-validate').hide();
   }
@@ -381,7 +380,7 @@ function toHtml(){
   return ;
 }
 
-function checkFieldValue(id, value, options){
+function checkFieldValue(id, value, options, isIncorrect){
   var obj = {
     _id : id,
     setting : {}
@@ -389,9 +388,15 @@ function checkFieldValue(id, value, options){
 
   if(value != null){
     obj.setting.value = value;
-  }else{
+  }
+  if(options != null){
     obj.setting.options = options;
   }
+  if(isIncorrect != null){
+    obj.setting.error = isIncorrect;
+  }
+
+  console.log(obj)
 
   var sequence = { _token: window.Laravel.csrfToken, field: JSON.stringify(obj) };
   $.ajax({
@@ -449,6 +454,7 @@ function saveComments(id, username, message, type){
       return commentCallback(result);
     },
     error: function (data) {
+      
     }
   });
 }

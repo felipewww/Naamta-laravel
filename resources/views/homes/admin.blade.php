@@ -13,7 +13,7 @@
                         @foreach($vars->activeApplications as $activeApplication)
                         <div class="col-md-6">
                             <div class="white-box">
-                                <h3 class="box-title">Application : Client 1</h3>
+                                <h3 class="box-title">{{ $activeApplication->client->company }}</h3>
 
                                 <h5><b>Current Step:</b> Step 2</h5>
                                 <h5><b>Next Action Due Date:</b> March, 17, 2017</h5>

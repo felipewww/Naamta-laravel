@@ -387,6 +387,7 @@ class ApplicationsController extends Controller
         $arr = [];
         $defaultSteps = Step::where('status', 1)->orderBy('ordination')->get();
         $default_ids = [];
+        
         foreach ($defaultSteps as $step)
         {
             $newRefID = null;
