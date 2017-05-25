@@ -14,6 +14,7 @@ class ClientFirstFormController extends Controller
     {
         $application = Application::findOrFail($id);
         $form = $application->client->firstForm;
+        $required = '';
 
         return view('applications.first_form',
             [
@@ -21,6 +22,7 @@ class ClientFirstFormController extends Controller
                 'pageInfo'          => $this->pageInfo,
                 'withAction'        => false,
                 'form'              => $form,
+                'required'          => $required
             ]
         );
     }
