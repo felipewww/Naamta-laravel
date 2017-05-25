@@ -171,7 +171,22 @@ class WorkflowController extends Controller
         $this->pageInfo->title              = 'Workflow';
         $this->pageInfo->category->title    = 'Form';
         $this->pageInfo->subCategory->title = 'View';
-        return view('workflow.form')->with(['stepId' => $stepId, 'stepResponsible' => $stepResponsible,  'containers' => $form, 'pageInfo' => $this->pageInfo]);
+
+        $currentStep = ApplicationStep::where("id", $stepId)->first();
+
+        $currentUserType = $currentStep->application->users()->where('user_id', Auth::user()->id)->get();
+
+        if ($currentUserType->count() == 1)
+        {
+            $currentUserType = $currentUserType->first();
+            $isResponsible = ($currentStep->responsible == $currentUserType->user_type);
+        }
+        else
+        {
+            $isResponsible = $currentUserType->where('user_type', $currentStep->responsible)->first();
+        }
+
+        return view('workflow.form')->with(['stepId' => $stepId, 'isResponsible' => $isResponsible,  'containers' => $form, 'pageInfo' => $this->pageInfo]);
     }
 
     public function applicationApproval($stepId, $stepResponsible, $approval){
