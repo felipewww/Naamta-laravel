@@ -16,7 +16,7 @@ class StepsSeeder extends Seeder
             [
                 'id'                => 1,
                 'morphs_from'       => \App\Models\FormTemplate::class,
-                'responsible'       => 1,
+                'responsible'       => 4,
                 'status'            => 1,
                 'title'             => 'Step A',
                 'previous_step'     => null,
@@ -37,7 +37,7 @@ class StepsSeeder extends Seeder
             [
                 'id'                => 3,
                 'morphs_from'       => \App\Models\FormTemplate::class,
-                'responsible'       => 1,
+                'responsible'       => 4,
                 'status'            => 1,
                 'title'             => 'Step C',
                 'previous_step'     => 2,
@@ -58,7 +58,7 @@ class StepsSeeder extends Seeder
             [
                 'id'                => 5,
                 'morphs_from'       => \App\Models\FormTemplate::class,
-                'responsible'       => 1,
+                'responsible'       => 4,
                 'status'            => 1,
                 'title'             => 'Step E',
                 'previous_step'     => 4,
@@ -68,7 +68,7 @@ class StepsSeeder extends Seeder
             [
                 'id'                => 6,
                 'morphs_from'       => \App\Models\Approval::class,
-                'responsible'       => 1,
+                'responsible'       => 4,
                 'status'            => 1,
                 'title'             => 'Step F [screen]',
                 'previous_step'     => 5,

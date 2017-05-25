@@ -40,6 +40,14 @@ class UserTypeSeeder extends Seeder
                     'created_at' => Carbon::now(-5),
                     'updated_at' => Carbon::now(),
                 ],
+                [
+                    'id'        => 4,
+                    'slug'      => 'client',
+                    'title'     => 'Client',
+                    'status'    => 1,
+                    'created_at' => Carbon::now(-5),
+                    'updated_at' => Carbon::now(),
+                ],
             )
         );
     }

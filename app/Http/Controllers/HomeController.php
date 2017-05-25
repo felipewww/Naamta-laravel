@@ -7,6 +7,7 @@ use App\Models\Application;
 use App\Models\Approval;
 use App\Models\ClientFirstForm;
 use App\Models\FormTemplate;
+use Faker\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Client;
@@ -87,11 +88,51 @@ class HomeController extends Controller
             $client = $user->client;
             $form = $client->firstForm;
 
+            $faker = Factory::create();
+            $required = 'required="required"';
+            if ( app('env') == 'local' && !$form )
+            {
+                $required = '';
+
+                $form = new ClientFirstForm([
+                    'client_id' => $client->id,
+                    'status' => '0',
+                    'services_accredited' => 'medical_transport',
+                    'taxpayer_id' => '/uploads/taxpayer_id.pdf',
+                    'address_street' => $faker->address,
+                    'address_mailing' => $faker->address,
+                    'phone_number' => $faker->phoneNumber,
+                    'business_type' => 'corporation',
+                    'website' => $faker->url,
+                    'ownerships' => 'government agency, hospital, "dba", charter services, medical transport services, corporations, subsidiaries.',
+                    'contact_name' => $faker->name,
+                    'contact_email' => $faker->email,
+                    'contact_phone' => $faker->phoneNumber,
+                    'compliance_name' => $faker->company,
+                    'compliance_email' => $faker->companyEmail,
+                    'compliance_phone' => $faker->phoneNumber,
+                    'application_access' => $faker->companyEmail.','.$faker->companyEmail.','.$faker->companyEmail ,
+                    'since' => date('Y-m-d G:i:s',$faker->dateTime->getTimestamp()),
+                    'transports_per_year' => $faker->randomNumber(3),
+                    'base_locations' => $faker->address,
+                    'communications_center' => $faker->address,
+                    'description' => $faker->paragraph(5),
+                    'patient_population' => 'adult',
+                    'medical_director_name' => $faker->name,
+                    'medical_based' => $faker->paragraph,
+                    'medical_drug_license' => '/uploads/drug_license_file.pdf',
+                    'customer_reference_letter_1' => '/uploads/file_customer_reference_letter.pdf',
+                    'customer_reference_letter_2' => '/uploads/file_customer_reference_letter.pdf',
+                    'signed_acknowledgment_doc' => '/uploads/file_signed_acknowledgment_doc.pdf',
+                ]);
+            }
+
             return view('applications.first_form',[
                 'application'   => $application,
                 'pageInfo'      => $this->pageInfo,
                 'withAction'    => true,
                 'form'          => $form,
+                'required'      => $required
             ]);
 
         }
