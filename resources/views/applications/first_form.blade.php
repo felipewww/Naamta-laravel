@@ -21,7 +21,7 @@
                         </div>
                     @endif
 
-                    <form  class="form-horizontal" method="post" action="{{ asset('applications/client/first_form') }}">
+                    <form  class="form-horizontal" enctype="multipart/form-data" method="post" action="{{ asset('applications/client/first_form') }}">
                         {{ csrf_field() }}
 
                         {{--<div class="form-group">--}}
@@ -45,8 +45,8 @@
                             <div class="form-group">
                                 <label class="col-md-12">taxpayer_id</label>
                                 <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="taxpayer_id" placeholder="" value="{{$form->taxpayer_id}}">
-                                    {{--<input {{$status}} {{$required}} type="file" class="form-control" name="taxpayer_id" placeholder="" value="{{$form->taxpayer_id}}">--}}
+                                    {{--<input {{$status}} {{$required}} type="text" class="form-control" name="taxpayer_id" placeholder="" value="{{$form->taxpayer_id}}">--}}
+                                    <input {{$status}} {{$required}} type="file" class="form-control" name="taxpayer_id" placeholder="" value="{{$form->taxpayer_id}}">
                                 </div>
                             </div>
 
@@ -219,8 +219,8 @@
                             <div class="form-group">
                                 <label class="col-md-12">medical_drug_license</label>
                                 <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="medical_drug_license" placeholder="" value="{{$form->medical_drug_license}}">
-                                    {{--<input {{$status}} {{$required}} type="file" class="form-control" name="medical_drug_license" placeholder="" value="{{$form->medical_drug_license}}">--}}
+{{--                                    <input {{$status}} {{$required}} type="text" class="form-control" name="medical_drug_license" placeholder="" value="{{$form->medical_drug_license}}">--}}
+                                    <input {{$status}} {{$required}} type="file" class="form-control" name="medical_drug_license" placeholder="" value="{{$form->medical_drug_license}}">
                                 </div>
                             </div>
                         </div>
@@ -229,24 +229,24 @@
                             <div class="form-group">
                                 <label class="col-md-12">customer_reference_letter_1</label>
                                 <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="customer_reference_letter_1" placeholder="" value="{{$form->customer_reference_letter_1}}">
-                                    {{--<input {{$status}} {{$required}} type="file" class="form-control" name="customer_reference_letter_1" placeholder="" value="{{$form->customer_reference_letter_1}}">--}}
+                                    {{--<input {{$status}} {{$required}} type="text" class="form-control" name="customer_reference_letter_1" placeholder="" value="{{$form->customer_reference_letter_1}}">--}}
+                                    <input {{$status}} {{$required}} type="file" class="form-control" name="customer_reference_letter_1" placeholder="" value="{{$form->customer_reference_letter_1}}">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="col-md-12">customer_reference_letter_2</label>
                                 <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="customer_reference_letter_2" placeholder="" value="{{$form->customer_reference_letter_2}}">
-                                    {{--<input {{$status}} {{$required}} type="file" class="form-control" name="customer_reference_letter_2" placeholder="" value="{{$form->customer_reference_letter_2}}">--}}
+                                    {{--<input {{$status}} {{$required}} type="text" class="form-control" name="customer_reference_letter_2" placeholder="" value="{{$form->customer_reference_letter_2}}">--}}
+                                    <input {{$status}} {{$required}} type="file" class="form-control" name="customer_reference_letter_2" placeholder="" value="{{$form->customer_reference_letter_2}}">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="col-md-12">signed_acknowledgment_doc</label>
                                 <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="signed_acknowledgment_doc" placeholder="" value="{{$form->signed_acknowledgment_doc}}">
-                                    {{--<input {{$status}} {{$required}} type="file" class="form-control" name="signed_acknowledgment_doc" placeholder="" value="{{$form->signed_acknowledgment_doc}}">--}}
+                                    {{--<input {{$status}} {{$required}} type="text" class="form-control" name="signed_acknowledgment_doc" placeholder="" value="{{$form->signed_acknowledgment_doc}}">--}}
+                                    <input {{$status}} {{$required}} type="file" class="form-control" name="signed_acknowledgment_doc" placeholder="" value="{{$form->signed_acknowledgment_doc}}">
                                 </div>
                             </div>
                         </div>
