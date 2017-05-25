@@ -144,6 +144,7 @@
         </div>
         <!-- /#page-wrapper -->
     </div>
+
     @include('partials.modal_delete')
     @include('partials._modal_default')
     {{--<script>--}}

@@ -396,9 +396,8 @@ function checkFieldValue(id, value, options, isIncorrect){
     obj.setting.error = isIncorrect;
   }
 
-  console.log(obj)
-
   var sequence = { _token: window.Laravel.csrfToken, field: JSON.stringify(obj) };
+
   $.ajax({
     url: '/workflow/updateFormField',
     dataType: "json",
