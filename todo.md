@@ -46,7 +46,7 @@ processo 3 anos
 
 -[x] exibir o arquivo uploaded no form para o staff ver (filesystem, retrieve files1)
 -[x] Exibir informações corretas na dashboard do admin1
--[ ] tentar fazer o fluxo de DENY application
+-[x] tentar fazer o fluxo de DENY application
 -[ ] configurar mongo na digital
 -[ ] step recorrente
 

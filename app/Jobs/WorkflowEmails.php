@@ -37,11 +37,6 @@ class WorkflowEmails implements ShouldQueue
      */
     public function handle()
     {
-        if (app('env') == 'local')
-        {
-            $this->theuser->email = env('MAIL_LOCAL_RECEIVER');
-        }
-
         Mail::to($this->theuser)->send(
             new \App\Mail\WorkflowEmails($this->status, [
                 'title' => $this->mailData['title'],

@@ -148,6 +148,20 @@ class ApplicationsController extends Controller
                 break;
 
             case 'deny';
+                $application->status = 'denied';
+                $application->save();
+                $user = $application->client->user;
+
+                Mail::to($application->client->user)->send(
+                    new AuthEmails('denyApp', [
+                        'client'    => $application->client,
+                        'user'      => $user
+                    ])
+                );
+                $view = '/';
+                break;
+
+            case 'delete':
                 $application->client->user->forceDelete();
                 $application->forceDelete();
                 $view = '/';
@@ -209,14 +223,7 @@ class ApplicationsController extends Controller
 
             if ( $request->status == '1' )
             {
-                /*
-                 * If you're in development, set you e-mail in .ENV file to receive the confirmation email
-                 */
                 $user = $application->client->user;
-                if (app('env') == 'local') {
-                    $user->email = env('MAIL_LOCAL_RECEIVER');
-                }
-
                 Mail::to($user)->send(
                     new AuthEmails('allowApp', [
                         'client'    => $application->client,

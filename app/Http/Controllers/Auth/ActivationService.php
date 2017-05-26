@@ -27,15 +27,6 @@ class ActivationService
 
     public function sendMail($token, User $user)
     {
-        env('MAIL_FROM_NAME', 'Naamta Register');
-
-        /*
-         * If you're in development, set you e-mail in .ENV file to receive the confirmation email
-         */
-        if (app('env') == 'local') {
-            $user->email = env('MAIL_LOCAL_RECEIVER');
-        }
-
         Mail::to($user)->send(
             new AuthEmails('register', [
                 'token' => $token,

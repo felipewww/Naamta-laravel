@@ -71,7 +71,6 @@ class HomeController extends Controller
         }
         
         $this->vars->activeApplications = Application::where('status', '1')->get();
-        $this->vars->inactiveApplications = Application::whereIn('status', ['0', 'wt_payment'])->get();
 
         foreach ($this->vars->activeApplications as &$app)
         {
@@ -81,14 +80,31 @@ class HomeController extends Controller
                 $lastDateSubmit = 'None';
             }else{
                 $previous = ApplicationStep::find($currStep->previous_step);
-//                dd($previous->updated_at->toDateTimeString());
                 $lastDateSubmit = $previous->updated_at->toDateTimeString();
             }
             $app->offsetSet('currStep', $currStep);
             $app->offsetSet('lastDateSubmit', $lastDateSubmit);
         }
 
-//        dd($this->vars->activeApplications);
+        /*Não da para exibir os firstforms pq o cliente pode ter o nao preenchido e exibe o botão de approve e deny, antes de ter preenchido*/
+        $this->vars->inactiveApplications = Application::whereIn('status', ['0', 'wt_payment','denied'])->get();
+        foreach ($this->vars->inactiveApplications as &$inApp)
+        {
+            switch ($inApp->status)
+            {
+                case '0':
+                    $inApp->statusText = 'Waiting staff setup';
+                    break;
+
+                case 'wt_payment':
+                    $inApp->statusText = 'Waiting First Form verification';
+                    break;
+
+                case 'denied':
+                    $inApp->statusText = 'Denied, waiting resend';
+                    break;
+            }
+        }
 
         return view('homes.admin', ['vars' => $this->vars, 'pageInfo' => $this->pageInfo]);
     }
@@ -98,7 +114,7 @@ class HomeController extends Controller
         $application = Application::with(['steps'])->find($id);
         $user = Auth::user();
 
-        if ( $application->status == 'wt_firstform' ) {
+        if ( $application->status == 'wt_firstform' || $application->status == 'denied' ) {
             $this->pageInfo->title              = $user->name."'s".' Registration';
             $this->pageInfo->title              = Auth::user()->name."'s".' Registration';
             $this->pageInfo->category->title    = 'Registration';

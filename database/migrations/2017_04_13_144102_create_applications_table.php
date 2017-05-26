@@ -18,7 +18,7 @@ class CreateApplicationsTable extends Migration
             $table->integer('client_id')->unsigned()->nullable();
             $table->text('description');
             $table->enum('type', ['new','cloned'])->default('new');
-            $table->enum('status', [0,1,'wt_payment', 'wt_firstform', 'wt_emailconfirm'])->default(0);
+            $table->enum('status', [0,1,'denied', 'wt_payment', 'wt_firstform', 'wt_emailconfirm'])->default(0);
 
             $table->foreign('client_id')
                     ->references('id')->on('clients')

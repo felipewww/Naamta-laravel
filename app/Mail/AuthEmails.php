@@ -73,6 +73,19 @@ class AuthEmails extends Mailable
         ])
         ->view(['html' => 'emails.Auth.allow_app']);
     }
+
+    public function denyApp()
+    {
+        $this->subject  = 'Application Rejected';
+        $user           = $this->params['user'];
+        $client         = $this->params['client'];
+
+        return $this->with([
+            'client'    => $client,
+            'user'      => $user
+            ])
+            ->view(['html' => 'emails.Auth.deny_app']);
+    }
     
     /*
      * When application if reset, send this e-mail to client

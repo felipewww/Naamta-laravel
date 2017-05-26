@@ -60,13 +60,15 @@ class ClientFirstFormController extends Controller
         $request->offsetSet('client_id', $client->id);
         $request->offsetSet('status', '1');
 
-        if ( $application->reset_at ) {
+        $data = $request->all();
+        $data = $this->storeFiles($user->email, $request->allFiles(), $data);
+
+
+        if ( $application->reset_at || $application->client->firstForm) {
             $form = $application->client->firstForm;
-            $form->update($request->all());
+            $form->update($data);
 
         }else{
-            $data = $request->all();
-            $data = $this->storeFiles($user->email, $request->allFiles(), $data);
 
             if ( app('env') == 'local' )
             {

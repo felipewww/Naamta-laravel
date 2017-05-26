@@ -60,6 +60,11 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Blanko mail tests2'),
     ],
 
+    'to' => [
+        'address' => env('MAIL_LOCAL_RECEIVER', 'admin@blanko.be'),
+        'name' => 'Example Mail'
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | E-Mail Encryption Protocol

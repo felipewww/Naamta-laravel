@@ -35,16 +35,21 @@
                     @foreach($vars->inactiveApplications as $inactiveApplication)
                     <div class="white-box">
                         <h4 class="m-b-20"><b>Company: {{ $inactiveApplication->client->company }}</b></h4>
-                        <h5><b>Responsible:</b> {{ $inactiveApplication->client->user->name }}, {{ $activeApplication->client->user->email }} </h5>
+                        <h5><b>Responsible:</b> {{ $inactiveApplication->client->user->name }}, {{ $inactiveApplication->client->user->email }} </h5>
+                        <h5><b>Status:</b> {{ $inactiveApplication->statusText }} </h5>
+                        <h5><b>Last Update:</b> {{ $inactiveApplication->updated_at->toDateTimeString() }} </h5>
                         @if( $inactiveApplication->reset_at )
                             <div>3 years flow</div>
                         @endif
 
                         <ul class="list-inline two-part">
                             <li></li>
+
+                            @if( $inactiveApplication->status != 'denied' )
                             <li class="text-right">
                                 <a href="/applications/{{ $inactiveApplication->id }}/edit" class="btn btn-success m-t-10">Details</a>
                             </li>
+                            @endif
                         </ul>
                     </div>
                     @endforeach
