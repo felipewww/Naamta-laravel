@@ -6,6 +6,10 @@
     if(!isset($form)){
         $form = new \App\Models\ClientFirstForm();
     }
+
+    if ( !isset($showFiles) ) { $showFiles = false; }
+//dd($showfiles);
+
 ?>
 
 @section('content')
@@ -45,8 +49,11 @@
                             <div class="form-group">
                                 <label class="col-md-12">taxpayer_id</label>
                                 <div class="col-md-12">
-                                    {{--<input {{$status}} {{$required}} type="text" class="form-control" name="taxpayer_id" placeholder="" value="{{$form->taxpayer_id}}">--}}
-                                    <input {{$status}} {{$required}} type="file" class="form-control" name="taxpayer_id" placeholder="" value="{{$form->taxpayer_id}}">
+                                    @if( !$showFiles )
+                                        <input {{$status}} {{$required}} type="file" class="form-control" name="taxpayer_id" placeholder="" value="{{$form->taxpayer_id}}">
+                                    @else
+                                        <a class="col-sm-2 btn btn-primary center-block" href="/storage/{{ $form->taxpayer_id }}">View file</a>
+                                    @endif
                                 </div>
                             </div>
 
@@ -219,8 +226,11 @@
                             <div class="form-group">
                                 <label class="col-md-12">medical_drug_license</label>
                                 <div class="col-md-12">
-{{--                                    <input {{$status}} {{$required}} type="text" class="form-control" name="medical_drug_license" placeholder="" value="{{$form->medical_drug_license}}">--}}
-                                    <input {{$status}} {{$required}} type="file" class="form-control" name="medical_drug_license" placeholder="" value="{{$form->medical_drug_license}}">
+                                    @if( !$showFiles )
+                                        <input {{$status}} {{$required}} type="file" class="form-control" name="medical_drug_license" placeholder="" value="{{$form->medical_drug_license}}">
+                                    @else
+                                        <a class="col-sm-2 btn btn-primary center-block" href="/storage/{{ $form->medical_drug_license }}">View file</a>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -229,24 +239,33 @@
                             <div class="form-group">
                                 <label class="col-md-12">customer_reference_letter_1</label>
                                 <div class="col-md-12">
-                                    {{--<input {{$status}} {{$required}} type="text" class="form-control" name="customer_reference_letter_1" placeholder="" value="{{$form->customer_reference_letter_1}}">--}}
-                                    <input {{$status}} {{$required}} type="file" class="form-control" name="customer_reference_letter_1" placeholder="" value="{{$form->customer_reference_letter_1}}">
+                                    @if( !$showFiles )
+                                        <input {{$status}} {{$required}} type="file" class="form-control" name="customer_reference_letter_1" placeholder="" value="{{$form->customer_reference_letter_1}}">
+                                    @else
+                                        <a class="col-sm-2 btn btn-primary center-block" href="/storage/{{ $form->customer_reference_letter_1 }}">View file</a>
+                                    @endif
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="col-md-12">customer_reference_letter_2</label>
                                 <div class="col-md-12">
-                                    {{--<input {{$status}} {{$required}} type="text" class="form-control" name="customer_reference_letter_2" placeholder="" value="{{$form->customer_reference_letter_2}}">--}}
-                                    <input {{$status}} {{$required}} type="file" class="form-control" name="customer_reference_letter_2" placeholder="" value="{{$form->customer_reference_letter_2}}">
+                                    @if( !$showFiles )
+                                        <input {{$status}} {{$required}} type="file" class="form-control" name="customer_reference_letter_2" placeholder="" value="{{$form->customer_reference_letter_2}}">
+                                    @else
+                                        <a class="col-sm-2 btn btn-primary center-block" href="/storage/{{ $form->customer_reference_letter_2 }}">View file</a>
+                                    @endif
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="col-md-12">signed_acknowledgment_doc</label>
                                 <div class="col-md-12">
-                                    {{--<input {{$status}} {{$required}} type="text" class="form-control" name="signed_acknowledgment_doc" placeholder="" value="{{$form->signed_acknowledgment_doc}}">--}}
-                                    <input {{$status}} {{$required}} type="file" class="form-control" name="signed_acknowledgment_doc" placeholder="" value="{{$form->signed_acknowledgment_doc}}">
+                                    @if( !$showFiles )
+                                        <input {{$status}} {{$required}} type="file" class="form-control" name="signed_acknowledgment_doc" placeholder="" value="{{$form->signed_acknowledgment_doc}}">
+                                    @else
+                                        <a class="col-sm-2 btn btn-primary center-block" href="/storage/{{ $form->signed_acknowledgment_doc }}">View file</a>
+                                    @endif
                                 </div>
                             </div>
                         </div>

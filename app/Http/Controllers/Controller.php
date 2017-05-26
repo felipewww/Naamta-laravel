@@ -25,7 +25,6 @@ class Controller extends BaseController
     use PageInfo {
         PageInfo::__construct as public __pageinfo;
     }
-    //public $pageInfo;
 
     public function __construct()
     {
@@ -49,6 +48,14 @@ class Controller extends BaseController
         }
 
         return $data;
+    }
+
+    public function urlStoredFile($path)
+    {
+        $storage = Storage::disk('public');
+        $url = $storage->url($path);
+        
+        return $url;
     }
 
     /*

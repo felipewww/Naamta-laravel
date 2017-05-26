@@ -10,8 +10,20 @@ use Illuminate\Support\Facades\Storage;
 
 class ClientFirstFormController extends Controller
 {
+    public $fileFields = [
+        'taxpayer_id',
+        'medical_drug_license',
+        'customer_reference_letter_1',
+        'customer_reference_letter_2',
+        'signed_acknowledgment_doc'
+    ];
+
     public function staffView(Request $request, $id)
     {
+        $user = Auth::user();
+
+        if(!$user->hasRole(['admin','staff'])) { return redirect('/'); }
+
         $application = Application::findOrFail($id);
         $form = $application->client->firstForm;
         $required = '';
@@ -22,7 +34,8 @@ class ClientFirstFormController extends Controller
                 'pageInfo'          => $this->pageInfo,
                 'withAction'        => false,
                 'form'              => $form,
-                'required'          => $required
+                'required'          => $required,
+                'showFiles'         => true
             ]
         );
     }
@@ -57,17 +70,10 @@ class ClientFirstFormController extends Controller
 
             if ( app('env') == 'local' )
             {
-                $fakeFiles = [
-                    'taxpayer_id',
-                    'medical_drug_license',
-                    'customer_reference_letter_1',
-                    'customer_reference_letter_2',
-                    'signed_acknowledgment_doc'
-                ];
-
-                foreach ($fakeFiles as $inputName)
+                foreach ($this->fileFields as $inputName)
                 {
-                    if (!in_array($inputName, $data)){
+                    if (!array_key_exists($inputName, $data))
+                    {
                         $data[$inputName] = 'File not uploaded - LOCALTESTS';
                     }
                 }

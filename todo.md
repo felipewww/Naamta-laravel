@@ -34,10 +34,6 @@ Falta também exibir o ID do item (approval/form) selecionado buscando das tabel
 -[x] qualquer um esta podendo submitar FORM do step. nao permitir. (ver isso em workflowController em SAVES methdos... ta facil) LEO fez
 -[ ] Verificar como esta a VIEw de APPROVALS
 
-##quando subir para producao
--[ ] Lembrar de configurar o listener de jobs (php artisan queue:listen)
--[ ] configurar o CRONTAB para App\Console\Commands\FlowThreeYears
-
 crontab = schtasks no windows
 
 processo 3 anos
@@ -46,3 +42,14 @@ processo 3 anos
 -[x] mudar steps para '1' (que ja esta configurado, pronto para preencher)
 -[x] alterar created_at para a data atual
 -[x] ====== verificar se o processo de email funciona corretamente
+
+
+-[x] exibir o arquivo uploaded no form para o staff ver (filesystem, retrieve files1)
+-[ ] Exibir informações corretas na dashboard do admin1
+-[ ] tentar fazer o fluxo de DENY application
+-[ ] configurar mongo na digital
+-[ ] step recorrente
+
+##quando subir para producao
+-[ ] Lembrar de configurar o listener de jobs (php artisan queue:listen)
+-[ ] configurar o CRONTAB para App\Console\Commands\FlowThreeYears

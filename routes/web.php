@@ -23,6 +23,10 @@ Route::get('/test', function (Request $request) {
 
 Route::group(['middleware' => 'auth'], function(){
 
+    Route::get('/storage/{path}/{file}', function(\Illuminate\Http\Request $request, $path, $file){
+        return response()->download(storage_path('app/public/'.$path.'/'.$file));
+    });
+
     Route::get('/', 'HomeController@index');
     Route::get('/home', 'HomeController@index');
 
