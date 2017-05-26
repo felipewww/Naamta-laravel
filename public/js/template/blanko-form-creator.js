@@ -381,6 +381,9 @@ function toHtml(){
 }
 
 function checkFieldValue(id, value, options, isIncorrect){
+
+  var elem = $('.draggable-input[data-id="'+id+'"]');
+
   var obj = {
     _id : id,
     setting : {}
@@ -395,7 +398,26 @@ function checkFieldValue(id, value, options, isIncorrect){
   if(isIncorrect != null){
     obj.setting.error = isIncorrect;
   }
+  if(elem.find("input[type=file]")){
+    var fData = new FormData();
+    fData.append("folder", appFolder);
+    fData.append("_token", window.Laravel.csrfToken);
+    fData.append("upload", elem.find("input[type=file]").prop('files')[0]);
+    $.ajax({
+      url: "/upload-files", // Url to which the request is send
+      type: "POST",             // Type of request to be send, called as method
+      data: fData, // Data sent to server, a set of key/value pairs (i.e. form fields and values)
+      contentType: false,       // The content type used when sending data to the server.
+      cache: false,             // To unable request pages to be cached
+      processData:false,  // To send DOMDocument or non processed data file it is set to false
+      async: false,
+      success: function(data)   // A function to be called if request succeeds
+      {
+        obj.setting.value = data.upload;
+      }
+    });
 
+  }
   var sequence = { _token: window.Laravel.csrfToken, field: JSON.stringify(obj) };
 
   $.ajax({

@@ -19,6 +19,7 @@
 @endsection
 
 @section('content')
+
 <div class="row">
     <input type="hidden" name="containers" value="{{$containers}}">
     <input type="hidden" name="stepId" value="{{$stepId}}">
@@ -34,7 +35,8 @@
     </div>
 </div>
 <script>
-    var username = '{{ Auth::user()->name }}';
+    var username  = '{{ Auth::user()->name }}';
+    var appFolder = '{{ Auth::user()->email }}';
 </script>
 <script src="{{ asset("js/template/signature_pad.js") }}"></script>
 <!-- Reference https://github.com/szimek/signature_pad -->
@@ -44,8 +46,8 @@
 <script src="{{ asset("js/template/blanko-form-checkpoint.js") }}"></script>
 
 <script>
-    createTabs($('input[name=containers]').val(), "{{ $stepResponsible !== Auth::user()->id ? 'false' : 'true' }}");
-    @if($stepResponsible !== Auth::user()->id)
+    createTabs($('input[name=containers]').val(), true, "{{$isResponsible}}");
+    @if(!$isResponsible)
         $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4')
         $('input, select, radio, textarea, checkbox, option').attr('disabled', 'disabled').css('opacity', '0.4')
         $('.comment-msg, .is-incorrect').removeAttr('disabled').css('opacity', '0')

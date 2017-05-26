@@ -98,7 +98,6 @@
                             </thead>
                             <tbody>
                                 @foreach($stepsWithForm as $k => $formStep)
-                                    {{$formStep->status}}
                                     <tr>
                                         <td>Form {{ ($k + 1) }}</td>
                                         <td>{{$formStep->status !== "0" && $formStep->status !== "1" ? $formStep->status : "waiting" }}</td>

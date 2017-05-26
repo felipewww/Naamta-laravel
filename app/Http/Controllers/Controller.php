@@ -16,6 +16,7 @@ use \App\MModels\Condition;
 use \App\MModels\Comment;
 use \App\MModels\Setting;
 use \App\MModels\Rule;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Mockery\CountValidator\Exception;
 
@@ -44,6 +45,7 @@ class Controller extends BaseController
         foreach ($files as $inputName => $file)
         {
             $path = $storage->put($folder, $file);
+
             $data[$inputName] = $path;
         }
 
@@ -56,6 +58,11 @@ class Controller extends BaseController
         $url = $storage->url($path);
         
         return $url;
+    }
+
+    function uploadFiles(Request $request) {
+        $folder = $request->folder;
+        return $this->storeFiles($folder, $request->allFiles(), []);
     }
 
     /*

@@ -32,12 +32,28 @@ class UserTableSeeder extends Seeder
         $staff->save();
         $staff->roles()->attach($role_staff);
 
-        $client = new User();
-        $client->name = 'Client';
-        $client->email = 'client@blanko.be';
-        $client->password = bcrypt('123456');
-        $client->verified = true;
-        $client->save();
-        $client->roles()->attach($role_client);
+        $staff2 = new User();
+        $staff2->name = 'Staff 2';
+        $staff2->email = 'staff2@blanko.be';
+        $staff2->password = bcrypt('123456');
+        $staff2->verified = true;
+        $staff2->save();
+        $staff2->roles()->attach($role_staff);
+
+        $staff3 = new User();
+        $staff3->name = 'Staff 3';
+        $staff3->email = 'staff3@blanko.be';
+        $staff3->password = bcrypt('123456');
+        $staff3->verified = true;
+        $staff3->save();
+        $staff3->roles()->attach($role_staff);
+
+        $staff4 = new User();
+        $staff4->name = 'Staff 4';
+        $staff4->email = 'staff4@blanko.be';
+        $staff4->password = bcrypt('123456');
+        $staff4->verified = true;
+        $staff4->save();
+        $staff4->roles()->attach($role_staff);
     }
 }
