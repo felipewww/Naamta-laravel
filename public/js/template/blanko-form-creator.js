@@ -31,7 +31,7 @@ function toFieldObject(){
   obj.setting.isRequired = $(this).find('.update-required').hasClass('required');
   obj.setting.label = $(this).find('.update-label').text();
   obj.setting.help = $(this).find('.help .text').text();
-  if(type != 'file-upload'){
+  if(obj.type != 'file-upload'){
     obj.setting.value = $(this).find('.update-value').val();
   }
   obj.setting.checked = $(this).find('.update-value').prop('checked');
