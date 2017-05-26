@@ -73,6 +73,23 @@ class HomeController extends Controller
         $this->vars->activeApplications = Application::where('status', '1')->get();
         $this->vars->inactiveApplications = Application::whereIn('status', ['0', 'wt_payment'])->get();
 
+        foreach ($this->vars->activeApplications as &$app)
+        {
+            $currStep = $app->steps()->where('status', 'current')->first();
+            if (!$currStep) {
+                $currStep = $app->steps()->where('status', '1')->first();
+                $lastDateSubmit = 'None';
+            }else{
+                $previous = ApplicationStep::find($currStep->previous_step);
+//                dd($previous->updated_at->toDateTimeString());
+                $lastDateSubmit = $previous->updated_at->toDateTimeString();
+            }
+            $app->offsetSet('currStep', $currStep);
+            $app->offsetSet('lastDateSubmit', $lastDateSubmit);
+        }
+
+//        dd($this->vars->activeApplications);
+
         return view('homes.admin', ['vars' => $this->vars, 'pageInfo' => $this->pageInfo]);
     }
 

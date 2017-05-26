@@ -13,12 +13,12 @@
                         @foreach($vars->activeApplications as $activeApplication)
                         <div class="col-md-6">
                             <div class="white-box">
-                                <h3 class="box-title">{{ $activeApplication->client->company }}</h3>
+                                <h3 class="box-title">Company: {{ $activeApplication->client->company }}</h3>
 
-                                <h5><b>Current Step:</b> Step 2</h5>
-                                <h5><b>Next Action Due Date:</b> March, 17, 2017</h5>
-                                <h5><b>Last Step Submitted:</b> Today at 10:02 a.m.</h5>
-                                <h5><b>Responsible:</b> Staff 1</h5>
+                                <h5><b>Current Step:</b>{{ $activeApplication->currStep->title }}</h5>
+                                {{--<h5><b>Next Action Due Date:</b> March, 17, 2017</h5>--}}
+                                <h5><b>Last Step Submitted:</b> {{ $activeApplication->lastDateSubmit }} </h5>
+                                <h5><b>Responsible:</b> {{ $activeApplication->client->user->name }}, {{ $activeApplication->client->user->email }} </h5>
                                 <ul class="list-inline two-part">
                                     <li></li>
                                     <li class="text-right">
@@ -34,7 +34,8 @@
                     <h3 class="box-title">New Registrations</h3>
                     @foreach($vars->inactiveApplications as $inactiveApplication)
                     <div class="white-box">
-                        <h4 class="m-b-20"><b>{{ $inactiveApplication->client->company }}</b></h4>
+                        <h4 class="m-b-20"><b>Company: {{ $inactiveApplication->client->company }}</b></h4>
+                        <h5><b>Responsible:</b> {{ $inactiveApplication->client->user->name }}, {{ $activeApplication->client->user->email }} </h5>
                         @if( $inactiveApplication->reset_at )
                             <div>3 years flow</div>
                         @endif
