@@ -31,7 +31,9 @@ function toFieldObject(){
   obj.setting.isRequired = $(this).find('.update-required').hasClass('required');
   obj.setting.label = $(this).find('.update-label').text();
   obj.setting.help = $(this).find('.help .text').text();
-  obj.setting.value = $(this).find('.update-value').val();
+  if(type != 'file-upload'){
+    obj.setting.value = $(this).find('.update-value').val();
+  }
   obj.setting.checked = $(this).find('.update-value').prop('checked');
   obj.setting.min = $(this).find('.update-min').attr('min');
   obj.setting.max = $(this).find('.update-max').attr('max');
@@ -149,6 +151,7 @@ function toJson(){
 // Creates tabs from json
 // Uses createFields
 function createTabs(json, clientView = false, isClient){
+  console.log(json);
   $('#drag-container').toggleClass('client-view', clientView);
   $('.tab-control').remove();
   var objs = JSON.parse(json);
@@ -269,6 +272,11 @@ function configureField(node, options, type){
     'step' : options.step,
   });
 
+
+  if( type == 'file-upload' ){
+    node.find('.file-holder a').attr('href', options.value);
+  }
+
   if( type == 'checkbox' ){
     node.find('.drag-input input').prop('checked', options.checked)
   }
@@ -292,6 +300,8 @@ function configureField(node, options, type){
   node.find('.max-value').val(options.max);
   node.find('.step-value').val(options.step);
   node.find('input[value="' + options.type+'"]' ).prop('checked', true);
+
+
 }
 
 //activateRule(action, target, page, field, comparison, value)

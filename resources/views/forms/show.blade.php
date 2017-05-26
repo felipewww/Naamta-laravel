@@ -38,6 +38,7 @@
 <script src="{{ asset("js/template/blanko-form-checkpoint.js") }}"></script>
 
 <script>
+var appFolder = "teste";
     createTabs('<?=$containers?>', true, "{{ Auth::user()->isClient() ? true : false }}");
 </script>
 @endsection
