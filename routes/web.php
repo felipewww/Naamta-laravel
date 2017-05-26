@@ -87,6 +87,8 @@ Route::group(['middleware' => 'auth'], function(){
 
     Route::get('/usersync',  'SystemUsersController@syncUsers');
 
+    Route::post('/upload-files', 'Controller@uploadFiles');
+
     Route::post('/forms/comment', function (Request $request) {
         try{
             \App\Models\Comment::create([

@@ -35,7 +35,8 @@
     </div>
 </div>
 <script>
-    var username = '{{ Auth::user()->name }}';
+    var username  = '{{ Auth::user()->name }}';
+    var appFolder = '{{ Auth::user()->email }}';
 </script>
 <script src="{{ asset("js/template/signature_pad.js") }}"></script>
 <!-- Reference https://github.com/szimek/signature_pad -->
