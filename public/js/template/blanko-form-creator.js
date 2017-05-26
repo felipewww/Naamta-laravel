@@ -274,7 +274,7 @@ function configureField(node, options, type){
 
 
   if( type == 'file-upload' ){
-    node.find('.file-holder a').attr('href', options.value);
+    node.find('.file-holder a').attr('href', '/storage/' + options.value);
   }
 
   if( type == 'checkbox' ){
