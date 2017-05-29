@@ -50,8 +50,18 @@ processo 3 anos
 -[ ] configurar mongo na digital
 -[ ] step recorrente
 -[ ] Shortcodes, criar e configurar
--[ ] Templates de email
+-[x] Templates de email
 -[ ] templates de tela de "before validate email"
+
+##Step recorrente
+- Os steps recorrentes serão aplicados para todos os clientes ou pode ter algum cliente que não participa de determinada recorrencia?
+- Existe um tempo maximo que o cliente é obrigado a preencher? Por exemplo, passarma 4 meses.. ele tem 15 dias para preencher.
+- Se existir um tempo obrgatorio. O que acontece se não preencher? Bloqueia a aplicação?
+- E se algum documento for enviado e estiver com erros. O que acontece? Bloqueia a aplicação?
+- O que realmente será solicitado em:
+ -> File upload: apenas um arquivo?
+ -> Validation: ???
+ -> Files from employee roster: Apenas file upload?
 
 ##quando subir para producao
 -[ ] Lembrar de configurar o listener de jobs (php artisan queue:listen)
