@@ -56,12 +56,16 @@ return [
 
         'mongodb' => [
             'driver'   => 'mongodb',
-            'host'     => env('DB_MHOST', 'localhost'),
-            'port'     => env('DB_MPORT', 27017),
+            'host'     => env('DB_MHOST', 'ds151451.mlab.com'),
+            'port'     => env('DB_MPORT', '51451'),
             'database' => env('DB_MDATABASE', 'naamta'),
+            'username' => env('DB_MUSERNAME', 'rootblanko'),
+            'password' => env('DB_MPASSWORD', 'S3nh4P4dr40'),
+            'options'  => [
+                'database' => 'naamta' // sets the authentication database required by mongo 3
+            ]
         ],
     ],
-
     /*
     |--------------------------------------------------------------------------
     | Migration Repository Table
