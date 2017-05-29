@@ -28,7 +28,6 @@ class WorkflowController extends Controller
     {
         parent::__construct();
         $this->middleware(function ($request, $next) {
-//<<<<<<< HEAD
             $user = Auth::user();
             $user->authorizeRoles(['admin', 'staff', 'client']);;
 
@@ -46,29 +45,6 @@ class WorkflowController extends Controller
                     return redirect('/');
                 }
             }
-            //$this->step = ApplicationStep::findOrFail($request->id);
-//            $this->application = $this->step->application;
-
-//            $userVerify = UserApplication::where('application_id', $this->step->application->id)
-//                ->where('user_id', Auth::user()->id)
-//                ->get();
-
-//            if ( $userVerify->isEmpty() ){
-//                return redirect('/');
-//=======
-//            \Auth::user()->authorizeRoles(['admin', 'staff', 'client']);
-//            if($request->id!==null){
-//                $this->step = ApplicationStep::findOrFail($request->id);
-//                $this->application = $this->step->application;
-//                $userVerify = UserApplication::where('application_id', $this->step->application->id)
-//                    ->where('user_id', Auth::user()->id)
-//                    ->get();
-//                if ( $userVerify->isEmpty() ){
-//                    return redirect('/');
-//                }
-//>>>>>>> e2184d7a948922a411406f061c38468012616977
-//            }
-
             return $next($request);
         });
     }
@@ -219,7 +195,6 @@ class WorkflowController extends Controller
         try{
 
             $step = ApplicationStep::findOrFail($request->id);
-//            $step->morphs_json = $request->form_json;
 
             if($step->Approval->has_report===1){
                 $report = Report::where('approval_id', $step->Approval->id)->first();
@@ -239,7 +214,6 @@ class WorkflowController extends Controller
                         ]
                     );
                 }
-               // $step->Approval->report = $report;
             }
             $step->status = $request->status;
             $step->save();

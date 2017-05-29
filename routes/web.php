@@ -23,6 +23,11 @@ Route::get('/test', function (Request $request) {
 
 Route::group(['middleware' => 'auth'], function(){
 
+    Route::get('/seemail/{email}', function(\Illuminate\Http\Request $request, $email){
+//        return SeeEmail::see($email);
+        return App\Mail\SeeEmail::see($email);
+    });
+
     Route::get('/storage/{path}/{file}', function(\Illuminate\Http\Request $request, $path, $file){
         return response()->download(storage_path('app/public/'.$path.'/'.$file));
     });

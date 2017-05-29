@@ -1,14 +1,15 @@
-<html>
-    <body>
-    Welcome to Naamta!
-    <br>
-        Please, confirm your register <a href="{{ asset('/register/confirmation/'.$token) }}">clicking here</a>.
-    <br>
-    If you cannot click, copy the link below and paste in your browser.
-    <a href="#">{{ asset('/register/confirmation/'.$token) }}</a>
+@extends('emails.sendmail_template')
 
-    Thanks,
+@section('title')
+    Register Confirmation
+@endsection
+
+@section('content')
+    Hello <span style="font-weight: bold; font-style: italic; ">{{ $user->name }}</span>,
     <br>
-    Naamta Developers.
-    </body>
-</html>
+    <br>
+    We received a register request from your e-mail.
+    <br>
+    <br>
+    Please, confirm your register <a href="{{ asset('/register/confirmation/'.$token) }}">clicking here</a>. If you don't recognize this action, please ignore this e-mail.
+@endsection

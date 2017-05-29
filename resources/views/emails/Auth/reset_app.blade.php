@@ -1,15 +1,13 @@
-<html>
-    <body>
+@extends('emails.sendmail_template')
+
+@section('title')
+    Application out of date
+@endsection
+
+@section('content')
     Hello {{ $user->name }},
     <br>
     <br>
-    Your company's application <strong>({{ $client->company }})</strong> was reset and requires some confirmations.
-    <br>
-    Please, sign in naamta.ca/login and fill the form.
-    <br>
-    <br>
-    Best regards,
-    <br>
-    Naamta Developers.
-    </body>
-</html>
+    Your company's application <strong>({{ $client->company }})</strong>is out of date and requires some confirmations,
+    please, access panel and validate it.
+@endsection

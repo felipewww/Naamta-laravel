@@ -1,15 +1,15 @@
-<html>
-    <body>
+@extends('emails.sendmail_template')
+
+@section('title')
+    Application approved!
+@endsection
+
+@section('content')
     Hello {{ $user->name }},
     <br>
     <br>
-    Your company's application <strong>({{ $client->company }})</strong> was approved and is able to access, see forms, steps and etc.
-    <br>
-    Sign in naamta.ca/login
+    Your company's application <strong>{{ $client->company }}</strong> was approved. Now, you can access, see forms, steps and etc.
     <br>
     <br>
-    Best regards,
-    <br>
-    Naamta Developers.
-    </body>
-</html>
+    Sign in <a href="{{ asset('/login') }}">here!</a>
+@endsection

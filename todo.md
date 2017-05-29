@@ -49,6 +49,9 @@ processo 3 anos
 -[x] tentar fazer o fluxo de DENY application
 -[ ] configurar mongo na digital
 -[ ] step recorrente
+-[ ] Shortcodes, criar e configurar
+-[ ] Templates de email
+-[ ] templates de tela de "before validate email"
 
 ##quando subir para producao
 -[ ] Lembrar de configurar o listener de jobs (php artisan queue:listen)
