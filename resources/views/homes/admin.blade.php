@@ -44,7 +44,6 @@
 
                         <ul class="list-inline two-part">
                             <li></li>
-
                             @if( $inactiveApplication->status != 'denied' )
                             <li class="text-right">
                                 <a href="/applications/{{ $inactiveApplication->id }}/edit" class="btn btn-success m-t-10">Details</a>
@@ -58,7 +57,6 @@
             <!-- .row -->
         </div>
         <!-- /.container-fluid -->
-
     {{--</div>--}}
     <!-- /#page-wrapper -->
 @endsection
