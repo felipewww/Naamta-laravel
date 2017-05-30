@@ -28,8 +28,8 @@
                     @if($isResponsible)
                         @if($currentStep->morphs_from === "App\Models\Approval")
                             @if($currentStep->approval->has_report === 0)
-                                <button onclick="workflow.sendApproval('reproved', {{$currentStep->id}});" class="btn btn-danger pull-left">Reprove</button>
-                                <button onclick="workflow.sendApproval('approved', {{$currentStep->id}});" class="btn btn-primary pull-right">Approve</button>
+                                <button onclick="workflow.sendApproval('reproved', '{{$currentStep->id}}', null);" class="btn btn-danger pull-left">Reprove</button>
+                                <button onclick="workflow.sendApproval('approved', '{{$currentStep->id}}', null);" class="btn btn-primary pull-right">Approve</button>
                             @else
                                 <a href="/workflow/step/{{$currentStep->id}}/show" class="btn btn-success pull-right">Approve with report</a>
                             @endif
@@ -149,8 +149,9 @@
         <!-- /.row -->
     </div>
     <!-- /.container-fluid -->
+    <script src="{{ asset("js/workflow.js") }}"></script>
+
 @endsection
 
 @section('scripts')
-    <script src="{{ asset("js/workflow.js") }}"></script>
 @endsection
