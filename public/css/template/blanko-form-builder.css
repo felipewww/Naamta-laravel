@@ -57,22 +57,15 @@
 #drag-container .help {
     display: inline;
     position: relative;
+    cursor: pointer;
 }
 #drag-container .help .icon{
     margin-left: 5px;
     display: inline;
 }
-#drag-container .help .text{
-    display: none;
-    white-space: nowrap;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    left: 20px;
-    font-size: 12px;
-    background-color: #686868;
-    color: white;
-    padding: 5px;
+#drag-container .help + .text{
+    font-size: 1em;
+    padding: 10px;
 }
 
 #drag-container .drag-input{
@@ -202,13 +195,44 @@
 
 .comments{
     padding: 0 10px !important;
+    max-height: 300px;
+    overflow-y: auto;
 }
 .comments .username{
     color: #333;
     font-weight: 400;
 }
-.comments .username:after{
-    content: ": ";
+.comments .message{
+    background-color: #4973a9;
+    display: inline-block;
+    border-radius: 10px;
+    position: relative;
+    padding: 7px;
+    color: #fff;
+    margin-bottom: 5px;
+    min-width: 50px;
+}
+.internal-comments .message{
+    background-color: #e4e7ea;
+    color: #333;
+}
+.comments .message:before{
+    content: "";
+    position: absolute;
+    top: -8px;
+    left: 15px;
+    width: 0;
+    height: 0; 
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid #4973a9;
+}
+.user-message .message:before{
+    left: unset;
+    right: 15px;
+}
+.internal-comments .message:before{
+    border-bottom: 8px solid #e4e7ea;
 }
 
 #drag-container.client-view .draggable-input{
@@ -237,14 +261,18 @@
 }
 #drag-container.client-view .drag-comments{
     padding: 5px !important;
-    background: #fafafa;
     margin: 10px;
     color: #999;
 }
 
 #drag-container.client-view .drag-comments ul li{
     font-size: 0.85em;
+    animation: fadeIn 0.5s;
 }
+ .drag-comments ul li.user-message{
+    text-align: right;
+ }
+
 #drag-container.client-view .drag-comments h4{
     font-size: 1em;
     margin: 0;
@@ -319,6 +347,7 @@ h4[class*="open-"]{
 h4[class*="open-"].active{
     display: inline-block;
     font-weight: bold;
+    background-color: #d43f3a;
 }
 
 .checkbox label::before, .radio label::before{
@@ -340,3 +369,11 @@ h4[class*="open-"].active{
     }
 }
 
+@keyframes fadeIn 0.1s{
+    from{
+        opacity: 0;
+    }
+    to{
+        opacity: 1;
+    }
+}
