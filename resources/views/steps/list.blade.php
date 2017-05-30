@@ -21,17 +21,14 @@
             <div class="">
                 <!-- Tabstyle start -->
                 <section>
-                    <div class="sttabs">
+                    <div class="">
                         <a href="/steps/create" class="btn btn-info" style="width: 120px; float: right;"><i class="fa fa-plus"></i> Add Step</a>
                         <span onclick="sysSteps.save()" class="btn btn-save m-r-20" style="width: 120px; float: right;"><i class="fa fa-check"></i> Save</span>
                         <nav>
-                            <ul class="col-md-3">
-                                <li><span href="#active"><span><h3>Active Steps</h3></span></span></li>
-                                <li><span href="#inactive"><span><h3>Inactive Steps</h3></span></span></li>
-                            </ul>
                         </nav>
                         <div class="clearfix"></div>
-                        <div class="content-wrap steps">
+                        <div class=" steps">
+                            <h3 class="p-l-20">Active Steps</h3>
                             <section id="active">
                                 <!-- .row -->
                                 <div class="row">
@@ -94,6 +91,7 @@
                                 </div>
                                 <!-- /.row -->
                             </section>
+                            <h3 class="p-l-20">Inactive Steps</h3>
                             <section id="inactive">
                                 <div class="row">
                                     <div id="not-sortables" class="col-md-12">

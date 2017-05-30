@@ -453,3 +453,8 @@ table.dataTable tbody tr.selected, table.dataTable tbody th.selected, table.data
 .fill-btn{
   width: 100%;
 }
+
+#inactive .white-box{
+  background-color: #ededed;
+  border: 1px solid #dedede;
+}
