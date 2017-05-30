@@ -195,7 +195,7 @@ class WorkflowController extends Controller
         try{
 
             $step = ApplicationStep::findOrFail($request->id);
-
+            
             if($step->Approval->has_report===1){
                 $report = Report::where('approval_id', $step->Approval->id)->first();
                 if($report != null){

@@ -35,9 +35,6 @@
         "post-root-package-install": [
             "php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
-        "post-create-project-cmd": [
-            "php artisan key:generate"
-        ],
         "post-update-cmd": [
             "php artisan clear-compiled",
             "php artisan optimize"
