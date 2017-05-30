@@ -30,7 +30,7 @@ function toFieldObject(){
   obj.setting.ordenate = parseInt($(this).find('.ordenation').text().replace('(','').replace(')','')) ;
   obj.setting.isRequired = $(this).find('.update-required').hasClass('required');
   obj.setting.label = $(this).find('.update-label').text();
-  obj.setting.help = $(this).find('.help .text').text();
+  obj.setting.help = $(this).find('.help + .text').text();
   if(obj.type != 'file-upload'){
     obj.setting.value = $(this).find('.update-value').val();
   }
@@ -256,8 +256,8 @@ function configureField(node, options, type){
 
   node.find('.update-label').text(options.label);
   node.find('.update-label').val(options.label);
-  node.find('.help .text').text(options.help);
-  if(node.find('.help .text').text() == '') node.find('.help .icon').hide();
+  node.find('.help + .text').text(options.help);
+  if(node.find('.help + .text').text() == '') node.find('.help .icon').hide();
 
   //Size of the field
   node.addClass(options.class);
