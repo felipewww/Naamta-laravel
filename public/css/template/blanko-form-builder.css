@@ -347,7 +347,6 @@ h4[class*="open-"]{
 h4[class*="open-"].active{
     display: inline-block;
     font-weight: bold;
-    background-color: #d43f3a;
 }
 
 .checkbox label::before, .radio label::before{
