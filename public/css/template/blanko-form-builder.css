@@ -2,7 +2,8 @@
     display: none;
 }
 #drag-container .modal{
-    position: fixed;    
+    position: fixed;
+    height: 450px;
 }
 #drag-container .draggable-input{
     border: 1px solid #e8e8e8;
@@ -123,9 +124,12 @@
     cursor: pointer;
     display: inline-block;
     padding: 10px;
-    background-color: #fff;
+    background-color: #e4e7ea;
     transition: 0.3s;
     margin-top: 10px;
+}
+#drag-container nav li a{
+    color: #000;
 }
 #drag-container nav li.active{
     background-color: #f59623;

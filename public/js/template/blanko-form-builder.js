@@ -556,7 +556,7 @@ function appendList(){
 
 // Appends tabs navigation
 function appendNavigation(){
-  var html = '<div class="form-holder"><div class="tabs-options pull-left"><a class="btn btn-custom2 m-r-20" id="addTab">Add Page</a><a class="btn btn-save m-r-20" id="save">Save History</a><a class="btn btn-default" id="open-history">History</a></div><div class="filter pull-right">Filter by: <a class="btn btn-danger m-l-10 m-r-20 order-fields" data-order="Fail">Fail </a><a class="btn btn-save m-r-20 order-fields" data-order="Pass">Pass </a><a class="btn btn-custom2 m-r-20 order-fields" data-order="Audit">Audit </a></div><nav style="clear: both"><ul></ul></nav><div class="tabs-holder"></div></div>';
+  var html = '<div class="form-holder"><div class="tabs-options pull-left"><a class="btn btn-custom2 m-r-20" id="addTab">Add Page</a><a class="btn btn-save m-r-20" id="save">Save History</a><a class="btn btn-default" id="open-history">History</a></div><div class="filter pull-right">Filter by: <a class="btn btn-danger m-l-10 m-r-20 order-fields" data-order="Fail">Fail </a><a class="btn btn-save m-r-20 order-fields" data-order="Pass">Pass </a><a class="btn btn-custom2 m-r-20 order-fields" data-order="Audit">Audit </a><a class="btn btn-custom3 m-r-20 order-fields" data-order="normal">Reordenate </a></div><nav style="clear: both"><ul></ul></nav><div class="tabs-holder"></div></div>';
   $('#drag-container').append(html);  
   
   $('#addTab').click(function(e){
@@ -571,11 +571,15 @@ function appendNavigation(){
 
   $('.order-fields').click(function(){
     var orderType = $(this).attr('data-order');
-    $('.draggable-input').each(function(){
-      if($(this).find('[value="'+ orderType +'"]').prop('checked') == true ){
-        $(this).prependTo($(this).closest('.tab'));
-      }
-    });
+    if(orderType != "normal"){
+      $('.draggable-input').each(function(){
+        if($(this).find('[value="'+ orderType +'"]').prop('checked') == true ){
+          $(this).prependTo($(this).closest('.tab'));
+        }
+      });
+    }else{
+      createTabs(toJson(), isClientView, isUserClient);
+    }
   })
 
   //Append History

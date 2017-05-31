@@ -147,6 +147,19 @@ body {
   color: #ffffff;
   border: 1px solid #4973a9;
 }
+
+/*Button 2*/
+.btn-custom2 {
+  background: ##333;
+  border: 1px solid ##333;
+  color: #ffffff;
+}
+.btn-custom2:hover,.btn-custom2:focus,.btn-custom2:active {
+  background: ##333;
+  opacity: 0.8;
+  color: #ffffff;
+  border: 1px solid ##333;
+}
 /*Button save*/
 .btn-save {
   background: #67953f;
