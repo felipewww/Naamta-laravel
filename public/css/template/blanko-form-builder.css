@@ -24,8 +24,14 @@
     background-color: #333;
     padding: 10px 15px;
 }   
-#drag-container .drag-heading.incorrect{
+#drag-container .drag-heading.Pass{
+    background-color: #67953f;
+}
+#drag-container .drag-heading.Fail{
     background-color: #d43f3a;
+}
+#drag-container .drag-heading.Audit{
+    background-color: #4973a9;
 }
 #drag-container .drag-heading h4{
     color: white;

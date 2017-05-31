@@ -27,7 +27,7 @@ function toFieldObject(){
     comments : []
   };
 
-  obj.setting.error = $(this).find('.is-incorrect').prop('checked');
+  obj.setting.error = $('[name="incorrect__'+ obj._id +'"]:checked').val();
   obj.setting.ordenate = parseInt($(this).find('.ordenation').text().replace('(','').replace(')','')) ;
   obj.setting.isRequired = $(this).find('.update-required').hasClass('required');
   obj.setting.label = $(this).find('.update-label').text();
@@ -265,7 +265,7 @@ function configureField(node, options, type){
   //Size of the field
   node.addClass(options.class);
 
-  node.find('.drag-validate').find('input[type="checkbox"]').prop('checked', options.error);
+  node.find('.drag-validate input[value="'+ options.error +'"]').prop('checked', true);
 
   //other attributes
   node.find('.drag-input input').attr({
@@ -411,7 +411,8 @@ function checkFieldValue(id, value, options, isIncorrect){
   if(isIncorrect != null){
     obj.setting.error = isIncorrect;
   }
-  if(elem.find("input[type=file]")){
+
+  if(elem.find("input[type=file]").length > 0){
     var fData = new FormData();
     fData.append("folder", appFolder);
     fData.append("_token", window.Laravel.csrfToken);
@@ -429,8 +430,8 @@ function checkFieldValue(id, value, options, isIncorrect){
         obj.setting.value = data.upload;
       }
     });
-
   }
+
   var sequence = { _token: window.Laravel.csrfToken, field: JSON.stringify(obj) };
 
   $.ajax({
