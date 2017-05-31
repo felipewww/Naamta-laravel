@@ -212,6 +212,9 @@
     margin-bottom: 5px;
     min-width: 50px;
 }
+.user-message .message{
+    background-color: #f59623;
+}
 .internal-comments .message{
     background-color: #e4e7ea;
     color: #333;
@@ -229,6 +232,7 @@
 }
 .user-message .message:before{
     left: unset;
+    border-bottom: 8px solid #f59623;
     right: 15px;
 }
 .internal-comments .message:before{

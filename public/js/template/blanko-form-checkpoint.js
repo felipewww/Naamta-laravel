@@ -3,7 +3,7 @@ var checkpoints = new Array();
 var clicked;
 var current = 0;
 var lastReview = new Date();
-localStorage.getItem('checkpoints')
+localStorage.getItem('checkpoints');
 
 if(localStorage.getItem('checkpoints') != null){
 	checkpoints = JSON.parse(localStorage.getItem('checkpoints'));
@@ -26,7 +26,8 @@ setInterval(saveCheckpoint, 240000);
 
 function loadPonctualCheckpoint(id){
 	$('#drag-container .tab-control').remove();
-	createTabs(temporaryCheckpoints[id]);
+	console.log('cv = ' + isClientView);
+	createTabs(temporaryCheckpoints[id], isClientView, isUserClient);
 }
 
 function saveCheckpoint(){

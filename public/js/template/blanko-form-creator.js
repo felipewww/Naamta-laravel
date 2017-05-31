@@ -2,7 +2,8 @@ var thiss;
 var isEditable = true;
 var fieldCounter = 0; // FIELD ID
 var tabCounter = 0; //TAB ID
-
+var isClientView;
+var isUserClient;
 
 // Temporary variables
 var tempContainers;
@@ -152,6 +153,8 @@ function toJson(){
 // Uses createFields
 function createTabs(json, clientView = false, isClient){
   console.log(json);
+  isUserClient = isClient;
+  isClientView = clientView;
   $('#drag-container').toggleClass('client-view', clientView);
   $('.tab-control').remove();
   var objs = JSON.parse(json);
@@ -180,7 +183,7 @@ function createTabs(json, clientView = false, isClient){
 
   if(clientView){
     $('.draggable-input').removeClass('panel');
-    $('.tabs-options').remove();
+    $('.tabs-options #addTab').hide();
     $('.drag-heading li:not(:first-of-type)').remove();
     $('#list-container').remove();
     $('.drag-options').hide();
