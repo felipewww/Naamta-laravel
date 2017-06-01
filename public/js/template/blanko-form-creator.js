@@ -5,6 +5,8 @@ var tabCounter = 0; //TAB ID
 var isClientView;
 var isUserClient;
 
+var filesArray = new Array();
+
 // Temporary variables
 var tempContainers;
 var tempFields;
@@ -184,23 +186,24 @@ function createTabs(json, clientView = false, isClient){
   if(clientView){
     $('.draggable-input').removeClass('panel');
     $('.tabs-options #addTab').hide();
-    $('.drag-heading li:not(:first-of-type)').remove();
-    $('#list-container').remove();
+    $('.drag-heading li:not(:first-of-type)').hide();
+    $('#list-container').hide();
     $('.drag-options').hide();
-    $('.tab .modal').remove()
-    $('nav .tab-control .fa').remove();
+    $('.tab .modal').hide()
+    $('nav .tab-control .fa').hide();
     $('.help .comment-icon').html($('<i>', {
       class : 'fa fa-comments toggle-comments',
       click : function(){
         $(this).closest('.draggable-input').find('.drag-comments').toggleClass('hidden');
       }
     }));
+  }else{
+    $('.filter').hide();
   }
 
   if(isClient){
-    $('.internal-comments').remove();
-    $('.open-internal').remove();
-
+    $('.internal-comments').hide();
+    $('.open-internal').hide();
   }
 
   if(isClient || !clientView){
@@ -217,9 +220,14 @@ function createFields(obj, clientView){
   $('.tab-control .tab-remove').toggle(obj.isEditable);
   clone.find('.drag-heading').toggle(obj.isEditable);
   clone.find('.drag-options').toggle(obj.isEditable);
-  configureField(clone, obj.setting, obj.type);
+  configureField(clone, obj.setting, obj.type, obj._id);
   obj.setting.signature;
   clones.splice(obj.setting.ordenate, 0, clone);
+
+
+  if(obj.type == 'file-upload'){
+    filesArray[obj._id] = obj.setting.value;
+  }
 
   obj.setting.options.forEach(function(option){
     addOption(obj.type, clone, option.label, option.value, option.prop, obj._id);
@@ -252,7 +260,7 @@ function createFields(obj, clientView){
 
 // Field values according to json from createTabs
 // Relates to createFields
-function configureField(node, options, type){
+function configureField(node, options, type, id){
 
   /*Visual*/
   node.addClass('order_' + options.ordenate);
@@ -277,7 +285,29 @@ function configureField(node, options, type){
 
 
   if( type == 'file-upload' ){
-    node.find('.file-holder a').attr('href', '/storage/' + options.value);
+    [].forEach.call(options.value, function(file){
+      var fileIcon;
+      if(file.type == "image/jpeg" || file.type == "image/png" || file.type == "image/svg+xml"){
+        fileIcon = 'fa-file-image-o';
+      }else if(file.type == "application/pdf"){
+        fileIcon = 'fa-file-pdf-o';
+      }else{
+        fileIcon = 'fa-file-o';
+      }
+      file = file;
+      var link = $('<h5 title="'+ file.name +'"><a href="/storage/' + file.path + '"><i class="fa '+ fileIcon +' m-r-10"></i><div>'+ file.name+'</div></a><div class="pull-right"><i class="fa fa-times remove-file"></i></div></h5>');
+      link.find('.remove-file').click(function(){
+        $(this).closest('h5').remove();
+        [].forEach.call(filesArray[id], function(item, index){
+          if(item.name == file.name){
+            filesArray[id].splice(index, 1);
+            checkFieldValue(id, filesArray[id])
+          }
+        });
+      });
+      node.find('.file-holder').append(link);
+    })
+    
   }
 
   if( type == 'checkbox' ){
@@ -303,8 +333,6 @@ function configureField(node, options, type){
   node.find('.max-value').val(options.max);
   node.find('.step-value').val(options.step);
   node.find('input[value="' + options.type+'"]' ).prop('checked', true);
-
-
 }
 
 //activateRule(action, target, page, field, comparison, value)
@@ -393,13 +421,14 @@ function toHtml(){
   return ;
 }
 
-function checkFieldValue(id, value, options, isIncorrect){
+function checkFieldValue(id, value, options, isIncorrect, file){
 
   var elem = $('.draggable-input[data-id="'+id+'"]');
 
   var obj = {
     _id : id,
-    setting : {}
+    setting : {
+    }
   };
 
   if(value != null){
@@ -412,6 +441,18 @@ function checkFieldValue(id, value, options, isIncorrect){
     obj.setting.error = isIncorrect;
   }
 
+  if(file != null){
+    if(filesArray[id] == null){
+      filesArray[id] = new Array();
+    }
+      filesArray[id].push(file);
+      obj.setting.value = filesArray[id];
+    //Como está
+    //obj.setting.value = file; //substitui pelo ultimo arquivo
+    // Como tem que ser
+  }
+
+/*
   if(elem.find("input[type=file]").length > 0){
     var fData = new FormData();
     fData.append("folder", appFolder);
@@ -431,6 +472,7 @@ function checkFieldValue(id, value, options, isIncorrect){
       }
     });
   }
+*/
 
   var sequence = { _token: window.Laravel.csrfToken, field: JSON.stringify(obj) };
 
