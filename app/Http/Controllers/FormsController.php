@@ -139,6 +139,7 @@ class FormsController extends Controller
     {
         \DB::beginTransaction();
         try{
+//            dd($request->all());
             $form = FormTemplate::create([
                 'name'      => $request->name,
                 'status'    => (int)$request->status
@@ -216,7 +217,7 @@ class FormsController extends Controller
      *
      * @return containers with id
      */
-    private function _saveContainers($_requestContainers, $formId){
+    public function _saveContainers($_requestContainers, $formId){
         $containers = array();
         $fields = array();
         $_oldContainers = Container::where('form_template_id', $formId)->get()->toArray();
@@ -230,7 +231,7 @@ class FormsController extends Controller
             }
 
             $container = Container::firstOrNew(array('id' => $_arrC->config->tabId));
-
+dd('ct::', $container);
             $container->name = $_arrC->config->title;
             $container->form_template_id = $formId;
             $container->config = "";
