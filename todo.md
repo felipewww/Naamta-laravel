@@ -52,6 +52,7 @@ processo 3 anos
 -[ ] Shortcodes, criar e configurar
 -[x] Templates de email
 -[ ] templates de tela de "before validate email"
+-[ ] Dropzone, verificar
 
 ##Step recorrente
 - Os steps recorrentes serão aplicados para todos os clientes ou pode ter algum cliente que não participa de determinada recorrencia?
