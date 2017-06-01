@@ -54,7 +54,6 @@ function toFieldObject(){
 
   obj.comments = getComments(obj._id);
 
-
   var rules = $(this).find('.rules tr:not(:first-of-type)');
 
   rules.each(function(){
@@ -285,28 +284,32 @@ function configureField(node, options, type, id){
 
 
   if( type == 'file-upload' ){
-    [].forEach.call(options.value, function(file){
-      var fileIcon;
-      if(file.type == "image/jpeg" || file.type == "image/png" || file.type == "image/svg+xml"){
-        fileIcon = 'fa-file-image-o';
-      }else if(file.type == "application/pdf"){
-        fileIcon = 'fa-file-pdf-o';
-      }else{
-        fileIcon = 'fa-file-o';
-      }
-      file = file;
-      var link = $('<h5 title="'+ file.name +'"><a href="/storage/' + file.path + '"><i class="fa '+ fileIcon +' m-r-10"></i><div>'+ file.name+'</div></a><div class="pull-right"><i class="fa fa-times remove-file"></i></div></h5>');
-      link.find('.remove-file').click(function(){
-        $(this).closest('h5').remove();
-        [].forEach.call(filesArray[id], function(item, index){
-          if(item.name == file.name){
-            filesArray[id].splice(index, 1);
-            checkFieldValue(id, filesArray[id])
-          }
+    if(options.value != null){
+      [].forEach.call(options.value, function(file){
+        var fileIcon;
+        if(file.type == "image/jpeg" || file.type == "image/png" || file.type == "image/svg+xml"){
+          fileIcon = 'fa-file-image-o';
+        }else if(file.type == "application/pdf"){
+          fileIcon = 'fa-file-pdf-o';
+        }else{
+          fileIcon = 'fa-file-o';
+        }
+        file = file;
+        var link = $('<h5 title="'+ file.name +'"><a href="/storage/' + file.path + '"><i class="fa '+ fileIcon +' m-r-10"></i><div>'+ file.name+'</div></a><div class="pull-right"><i class="fa fa-times remove-file"></i></div></h5>');
+        link.find('.remove-file').click(function(){
+          $(this).closest('h5').remove();
+          [].forEach.call(filesArray[id], function(item, index){
+            if(item.name == file.name){
+              filesArray[id].splice(index, 1);
+              checkFieldValue(id, filesArray[id])
+            }
+          });
         });
+        node.find('.file-holder').append(link);
       });
-      node.find('.file-holder').append(link);
-    })
+    }else{
+      node.find('.file-holder').append('No files attached.');
+    }
     
   }
 
