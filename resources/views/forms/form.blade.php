@@ -65,7 +65,7 @@
     </div>
     <div class="row">
         <div class="white-box">
-            <button type="submit" class="btn btn-success center-block waves-effect waves-light pull-right">Submit Form</button>
+            <button type="submit" class="btn btn-success center-block waves-effect waves-light pull-right" id="submit-form"><i class="fa fa-check m-r-20"></i>Submit Form</button>
             <div class="clearfix"></div>
         </div>
     </div>

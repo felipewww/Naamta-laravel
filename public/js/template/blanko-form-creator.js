@@ -196,10 +196,12 @@ function createTabs(json, clientView = false, isClient){
         $(this).closest('.draggable-input').find('.drag-comments').toggleClass('hidden');
       }
     }));
+    $('#save-changes').show();
   }else{
     $('.filter').hide();
+    $('#save-changes').hide();
   }
-
+  
   if(isClient){
     $('.internal-comments').hide();
     $('.open-internal').hide();
