@@ -366,11 +366,69 @@ h4[class*="open-"].active{
 .checkbox label::before, .radio label::before{
     border: 1px solid rgba(120, 130, 140, 0.4);
 }
+.file-holder{
+    margin-bottom: 40px;
+}
+.file-holder h5 a{
+    color: #333;
+}
+.file-holder h5 a div{
+    text-decoration: underline;
+    max-width: 80%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: inline-block;
 
-.file-holder h5{
-    font-weight: bold;
+}
+.file-holder h5:hover a div{
+    text-decoration: none;
+}
+.remove-file{
+    cursor: pointer;
+}
+
+.dropzone:hover{
+    cursor: pointer;
+    transition: 0.3s;
+    background-color: #efefef;
+}
+.dz-image-preview{
+    width: 50%;
+    float: left;
+    overflow: hidden;
+    padding: 10px; 
+}
+.dz-filename{
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dz-error-message,
+.remove-file,
+.dz-remove{
+    color: #d43f3a;
     text-decoration: underline;
 }
+
+.remove-file:hover,
+.dz-remove:hover{
+    color: #d43f3a;
+    text-decoration: none;
+}
+
+h5.bold{
+    font-weight: 900;
+}
+
+#save-changes, #submit-form{
+    position: fixed;
+    right: 20px;
+    bottom: 10px;
+    z-index: 999;
+    padding: 20px;
+}
+
 
 @media screen and (max-width: 992px){
     #drag-container{
@@ -379,6 +437,12 @@ h4[class*="open-"].active{
     #drag-container.client-view .draggable-input{
         width: 100%;
         padding: 5px;
+    }
+    .dz-image-preview{
+        width: 100%;
+        float: none;
+        overflow: hidden;
+        padding: 10px; 
     }
 }
 
