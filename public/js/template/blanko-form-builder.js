@@ -460,7 +460,6 @@ function addEvents(elem, id = null, signature = null){
 
   // On Change Value
   $(elem).find('.drag-input .update-value').change(function(){
-    $('#save-changes').removeClass('btn-default').addClass('btn-save').html('<i class="fa fa-check m-r-20"></i> Save Changes');
     var val = $(this).val();
     checkFieldValue(id, val, []);
     $(elem).find('.drag-heading.Fail').removeClass('Fail');
@@ -469,7 +468,6 @@ function addEvents(elem, id = null, signature = null){
 
   if(type == 'select'){
     $(elem).find('.drag-input .update-value').change(function(){
-      $('#save-changes').removeClass('btn-default').addClass('btn-save').html('<i class="fa fa-check m-r-20"></i> Save Changes');
       $(elem).find('.drag-heading.Fail').removeClass('Fail');
       $(elem).find('.drag-validate input[value="Fail"]').prop('checked', false);
       var optionsArray = new Array();
@@ -488,7 +486,6 @@ function addEvents(elem, id = null, signature = null){
 
   if(type == 'radio-group'){
     $(elem).find('.drag-input input[type="radio"]').change(function(){
-      $('#save-changes').removeClass('btn-default').addClass('btn-save').html('<i class="fa fa-check m-r-20"></i> Save Changes');
       $(elem).find('.drag-heading.Fail').removeClass('Fail');
       $(elem).find('.drag-validate input[value="Fail"]').prop('checked', false);
       var optionsArray = new Array();
@@ -507,7 +504,6 @@ function addEvents(elem, id = null, signature = null){
 
   if(type == 'checkbox-group'){
     $(elem).find('.drag-input input[type="checkbox"]').change(function(){
-      $('#save-changes').removeClass('btn-default').addClass('btn-save').html('<i class="fa fa-check m-r-20"></i> Save Changes');
       $(elem).find('.drag-heading.Fail').removeClass('Fail');
       $(elem).find('.drag-validate input[value="Fail"]').prop('checked', false);
       var optionsArray = new Array();
@@ -532,7 +528,6 @@ function addEvents(elem, id = null, signature = null){
       acceptedFiles : "image/*,application/pdf,.psd, .docx, .mp4, .mp3",
       init: function() {
         this.on('success', function(file, response) {
-          $('#save-changes').removeClass('btn-default').addClass('btn-save').html('<i class="fa fa-check m-r-20"></i> Save Changes');
           $('.dz-success-mark').remove();
           $('.dz-error-mark').remove();
           var fileObj = {
@@ -551,7 +546,6 @@ function addEvents(elem, id = null, signature = null){
             $('#file-holder').html('<img src="'+dataUrl+'" width="200" height="200" alt="<?php echo $empNameFull; ?>">');
         });
         this.on("removedfile", function(file, dataUrl) {
-          $('#save-changes').removeClass('btn-default').addClass('btn-save').html('<i class="fa fa-check m-r-20"></i> Save Changes');
           [].forEach.call(filesArray[id], function(item, index){
             if(item.name == file.name){
               filesArray[id].splice(index, 1);
