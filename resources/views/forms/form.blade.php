@@ -23,13 +23,14 @@
 @section('content')
 <form  class="" role="form" method="POST" action="{{$route}}">
     {{ csrf_field() }}
+                <input type="hidden" name="_method" value="{{ $method }}">
+                <input type="hidden" name="containers" value="{{ isset($containers) ? $containers : old('containers') }}" required>
     <div class="row">
         <div class="col-sm-12">
+            @if ($form->id != 1) {{-- show only if isn't a first form (register form) --}}
             <div class="white-box">
                 <h3 class="box-title m-b-20">New Form Type</h3>
 
-                <input type="hidden" name="_method" value="{{ $method }}">
-                <input type="hidden" name="containers" value="{{ isset($containers) ? $containers : old('containers') }}" required>
                 <div class="form-group col-sm-6">
                     <label class="col-md-12">Title</label>
                     <div class="col-md-12">
@@ -52,12 +53,13 @@
                 </div>
                 <div class="clearfix"></div>
             </div>
+            @endif
         </div>
     </div>
     <div class="row">
         <div class="col-sm-12">
             <div class="white-box">
-                <h3 class="box-title m-b-0">Form Builder</h3>
+                <h3 class="box-title m-b-0">Registration Form</h3>
                 <div id="drag-container"></div>
                 <div class="clearfix"></div>
             </div>

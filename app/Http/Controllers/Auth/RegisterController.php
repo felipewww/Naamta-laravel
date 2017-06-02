@@ -80,7 +80,6 @@ class RegisterController extends Controller
                 'verified'  => false,
                 'password'  => bcrypt($data['password'])
             ]);
-            
 
             $user
                 ->roles()

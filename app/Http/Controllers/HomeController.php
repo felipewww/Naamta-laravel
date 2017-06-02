@@ -71,7 +71,6 @@ class HomeController extends Controller
         }
         
         $this->vars->activeApplications = Application::where('status', '1')->get();
-
         foreach ($this->vars->activeApplications as &$app)
         {
             $currStep = $app->steps()->where('status', 'current')->first();
@@ -86,8 +85,10 @@ class HomeController extends Controller
             $app->offsetSet('lastDateSubmit', $lastDateSubmit);
         }
 
-        /*Não da para exibir os firstforms pq o cliente pode ter o nao preenchido e exibe o botão de approve e deny, antes de ter preenchido*/
-        $this->vars->inactiveApplications = Application::whereIn('status', ['0', 'wt_payment','denied'])->get();
+        /*
+         * Não da para exibir os firstforms pq o cliente pode ter ou nao preenchido e exibe o botão de approve e deny, antes de ter preenchido
+         */
+        $this->vars->inactiveApplications = Application::whereIn('status', ['0','wt_payment','denied', 'wt_firstform_validation'])->get();
         foreach ($this->vars->inactiveApplications as &$inApp)
         {
             switch ($inApp->status)
@@ -103,6 +104,8 @@ class HomeController extends Controller
                 case 'denied':
                     $inApp->statusText = 'Denied, waiting resend';
                     break;
+//                case 'wt_firstform_validation':
+//                    break;
             }
         }
 
@@ -115,61 +118,40 @@ class HomeController extends Controller
         $user = Auth::user();
 
         if ( $application->status == 'wt_firstform' || $application->status == 'denied' ) {
-            $this->pageInfo->title              = $user->name."'s".' Registration';
-            $this->pageInfo->title              = Auth::user()->name."'s".' Registration';
+            $this->pageInfo->title              = $user->client->company."'s".' Registration';
+//            $this->pageInfo->title              = $user->name."'s".' Registration';
             $this->pageInfo->category->title    = 'Registration';
             $this->pageInfo->subCategory->title = 'Form';
-            $this->vars->userType = '$userType';
-            $client = $user->client;
-            $form = $client->firstForm;
+//            $this->vars->userType = '$userType';
 
-            $faker = Factory::create();
-            $required = 'required="required"';
-            if ( app('env') == 'local' && !$form )
-            {
-                $required = '';
+            $user = Auth::user();
+            $form = \App\MModels\Form::with([
+                'containers',
+                'containers.config',
+                'containers.fields',
+                'containers.fields.comments',
+                'containers.fields.setting',
+                'containers.fields.setting.rule',
+                'containers.fields.setting.rule.conditions'])
+                ->findOrFail($user->client->mform_register_id);
 
-                $form = new ClientFirstForm([
-                    'client_id' => $client->id,
-                    'status' => '0',
-                    'services_accredited' => 'medical_transport',
-                    'taxpayer_id' => '/uploads/taxpayer_id.pdf',
-                    'address_street' => $faker->address,
-                    'address_mailing' => $faker->address,
-                    'phone_number' => $faker->phoneNumber,
-                    'business_type' => 'corporation',
-                    'website' => $faker->url,
-                    'ownerships' => 'government agency, hospital, "dba", charter services, medical transport services, corporations, subsidiaries.',
-                    'contact_name' => $faker->name,
-                    'contact_email' => $faker->email,
-                    'contact_phone' => $faker->phoneNumber,
-                    'compliance_name' => $faker->company,
-                    'compliance_email' => $faker->companyEmail,
-                    'compliance_phone' => $faker->phoneNumber,
-                    'application_access' => $faker->companyEmail.','.$faker->companyEmail.','.$faker->companyEmail ,
-                    'since' => date('Y-m-d G:i:s',$faker->dateTime->getTimestamp()),
-                    'transports_per_year' => $faker->randomNumber(3),
-                    'base_locations' => $faker->address,
-                    'communications_center' => $faker->address,
-                    'description' => $faker->paragraph(5),
-                    'patient_population' => 'adult',
-                    'medical_director_name' => $faker->name,
-                    'medical_based' => $faker->paragraph,
-                    'medical_drug_license' => '/uploads/drug_license_file.pdf',
-                    'customer_reference_letter_1' => '/uploads/file_customer_reference_letter.pdf',
-                    'customer_reference_letter_2' => '/uploads/file_customer_reference_letter.pdf',
-                    'signed_acknowledgment_doc' => '/uploads/file_signed_acknowledgment_doc.pdf',
-                ]);
-            }
-
-            return view('applications.first_form',[
-                'application'   => $application,
-                'pageInfo'      => $this->pageInfo,
-                'withAction'    => true,
-                'form'          => $form,
-                'required'      => $required
+            return view('applications.first_form')->with([
+                'isResponsible' => true,
+                'containers' => $form->containers,
+                'pageInfo' => $this->pageInfo
             ]);
 
+        }
+        else if( $application->status == 'wt_firstform_validation' )
+        {
+            $this->pageInfo->title              = $user->client->company."'s".' Registration';
+            $this->pageInfo->category->title    = 'Waiting validation';
+            $this->pageInfo->subCategory->title = 'Form';
+//            $this->vars->userType = '$userType';
+
+            return view('applications.wait_firstform_verify')->with([
+                'pageInfo' => $this->pageInfo
+            ]);
         }
         else
         {

@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\MModels\FirstForm;
+use App\MModels\Form;
 use App\Models\Application;
 use App\Models\ClientFirstForm;
+use App\Models\FormTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -25,66 +28,48 @@ class ClientFirstFormController extends Controller
         if(!$user->hasRole(['admin','staff'])) { return redirect('/'); }
 
         $application = Application::findOrFail($id);
-        $form = $application->client->firstForm;
-        $required = '';
+        $form = Form::with([
+            'containers',
+            'containers.config',
+            'containers.fields',
+            'containers.fields.comments',
+            'containers.fields.setting',
+            'containers.fields.setting.rule',
+            'containers.fields.setting.rule.conditions'])
+            ->findOrFail($application->client->mform_register_id);
 
         return view('applications.first_form',
             [
                 'application'       => $application,
                 'pageInfo'          => $this->pageInfo,
-                'withAction'        => false,
-                'form'              => $form,
-                'required'          => $required,
-                'showFiles'         => true
+                'containers'        => $form->containers,
+                'isResponsible'     => false,
+                'appID'             => $id
             ]
         );
     }
 
-    public function firstFormSave(Request $request)
+    public function _firstFormSave(Request $request)
     {
-        $user = Auth::user();
-
-        //todo - verify if this usar has a relation with the application as a client
-        if(!$user->hasRole('client')){
-            throw new \Error('Forbidden');
-        }
-
-        \DB::beginTransaction();
-        $client         = Auth::user()->client;
-
-        $application    = $client->application;
-
-        $application->status = 'wt_payment';
-        $application->save();
-
-        $request->offsetSet('client_id', $client->id);
-        $request->offsetSet('status', '1');
-
-        $data = $request->all();
-        $data = $this->storeFiles($user->email, $request->allFiles(), $data);
-
-
-        if ( $application->reset_at || $application->client->firstForm) {
-            $form = $application->client->firstForm;
-            $form->update($data);
-
-        }else{
-
-            if ( app('env') == 'local' )
-            {
-                foreach ($this->fileFields as $inputName)
-                {
-                    if (!array_key_exists($inputName, $data))
-                    {
-                        $data[$inputName] = 'File not uploaded - LOCALTESTS';
-                    }
-                }
+        try{
+            \DB::beginTransaction();
+            $user = Auth::user();
+            //todo - verify if this usar has a relation with the application as a client
+            if(!$user->hasRole('client')){
+                throw new \Error('Forbidden');
             }
 
-            ClientFirstForm::create($data);
-        }
-        \DB::commit();
+            $converted = \GuzzleHttp\json_decode($request->form_json);
+            $this->_updateFormToMongo($converted);
 
-        return redirect()->to('/');
+            $application = $user->client->application;
+            $application->status = 'wt_payment'; //waiting payment, here, means waiting validation first form besides payment.
+            $application->save();
+
+            \DB::commit();
+            return json_encode(['status' => true, 'message' => 'Form saved']);
+        }catch (Exception $e){
+            return json_encode(['status' => 'error', 'message' => 'Error']);
+        }
     }
 }

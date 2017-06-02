@@ -14,7 +14,7 @@ class Client extends Model
      * @var array
      */
     protected $fillable = [
-       'id', 'company', 'user_id'
+       'id', 'company', 'user_id', 'mform_register_id'
     ];
 
     /**
@@ -34,9 +34,9 @@ class Client extends Model
         return $this->hasOne('App\Models\Application', 'client_id', 'id');
     }
 
-    public function firstForm()
-    {
-        return $this->hasOne(ClientFirstForm::class);
-//        return $this->belongsTo(ClientFirstForm::class);
-    }
+//    public function firstForm()
+//    {
+//        return $this->hasOne(ClientFirstForm::class);
+////        return $this->belongsTo(ClientFirstForm::class);
+//    }
 }
