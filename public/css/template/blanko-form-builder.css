@@ -439,6 +439,15 @@ h5.bold{
     font-weight: 900;
 }
 
+#save-changes, #submit-form{
+    position: fixed;
+    right: 20px;
+    bottom: 10px;
+    z-index: 999;
+    padding: 20px;
+}
+
+
 @media screen and (max-width: 992px){
     #drag-container{
         padding: 0;

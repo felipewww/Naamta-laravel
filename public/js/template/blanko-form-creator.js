@@ -196,10 +196,12 @@ function createTabs(json, clientView = false, isClient){
         $(this).closest('.draggable-input').find('.drag-comments').toggleClass('hidden');
       }
     }));
+    $('#save-changes').show();
   }else{
     $('.filter').hide();
+    $('#save-changes').hide();
   }
-
+  
   if(isClient){
     $('.internal-comments').hide();
     $('.open-internal').hide();
@@ -426,7 +428,7 @@ function toHtml(){
 }
 
 function checkFieldValue(id, value, options, isIncorrect, file){
-
+  $('#save-changes').removeClass('btn-default').addClass('btn-save').html('<i class="fa fa-check m-r-20"></i> Save Changes');
   var elem = $('.draggable-input[data-id="'+id+'"]');
 
   var obj = {
