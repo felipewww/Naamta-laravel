@@ -70,14 +70,20 @@ class HomeController extends Controller
             }
         }
         
+        $this->vars->completedApplications = Application::where('status', 'completed')->get();
+
         $this->vars->activeApplications = Application::where('status', '1')->get();
         foreach ($this->vars->activeApplications as &$app)
         {
             $currStep = $app->steps()->where('status', 'current')->first();
-            if (!$currStep || $currStep->previos_step == null) {
+
+            if ( !$currStep )
+            {
                 $currStep = $app->steps()->where('status', '1')->first();
                 $lastDateSubmit = 'None';
-            }else{
+            }
+            else
+            {
                 $previous = ApplicationStep::find($currStep->previous_step);
                 $lastDateSubmit = $previous->updated_at->toDateTimeString();
             }

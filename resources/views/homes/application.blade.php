@@ -39,7 +39,7 @@
                                 </div>
                             {{--<a href="/workflow/step/{{$currentStep->id}}/show" class="btn btn-success pull-right">View Form</a>--}}
                             @endforeach
-                                <a href="javascript:;" onclick="workflow.gotoNextStep({{$currentStep->id}})" class="btn btn-danger" type="submit">Next Step</a>
+                                <a href="javascript:;" onclick="workflow.gotoNextStep({{$currentStep->id}})" class="btn btn-danger">Submit all forms</a>
                         @endif
                     @endif
                     <div class="clearfix"></div>
@@ -82,7 +82,7 @@
                                             <p>{{$field->setting->value}}</p>
                                         </td>
                                         <td>
-                                            <a href="/workflow/step/{{$form["formId"]}}/show" class="btn btn-success btn-circle"><i class="fa fa-pencil"></i></a>
+                                            <a href="/workflow/step/{{$currentStep->id}}/{{$field->container->forms->_id}}/show" class="btn btn-success btn-circle"><i class="fa fa-pencil"></i></a>
                                         </td>
                                     </tr>
                                 @endforeach

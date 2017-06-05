@@ -57,7 +57,7 @@ class WorkflowController extends Controller
     public function stepActions(Request $request)
     {
         if ( $this->step->responsible != Auth::user()->id ) {
-            //dd('voce nao tem permissao de ação neste step');
+            //dd('você não tem permissão de ação neste step');
             return redirect('/');
         }
 
@@ -98,9 +98,6 @@ class WorkflowController extends Controller
                     'text' => $contentComplement.$emailTemplate->text
                 ];
 
-                /*
-                 * Não delete este comentário!
-                 */
                 $c = new Carbon();
                 $delay = $c->now()->addMinutes(1);
                 $job = (new \App\Jobs\WorkflowEmails($request, $mailData, $user))->delay($delay);
@@ -167,7 +164,23 @@ class WorkflowController extends Controller
         $this->pageInfo->title              = 'Workflow';
         $this->pageInfo->category->title    = 'Approval';
         $this->pageInfo->subCategory->title = 'View';
-        return view('workflow.approval')->with(['stepId' => $stepId, 'stepResponsible' => $stepResponsible, 'approval' => $approval, 'pageInfo' => $this->pageInfo]);
+
+        $loggedUser = Auth::user();
+
+        //Verify if current user is responsible by usertype
+        $isResponsible = UserApplication::
+            where('user_id', $loggedUser->id)
+            ->where('user_type', $stepResponsible)
+            ->where('application_id', $this->step->application->id)
+            ->first();
+
+        return view('workflow.approval')->with(
+            [
+                'stepId' => $stepId,
+                'isResponsible' => $isResponsible,
+                'approval' => $approval,
+                'pageInfo' => $this->pageInfo
+            ]);
     }
 
     public function saveStepForm(Request $request)
@@ -187,18 +200,17 @@ class WorkflowController extends Controller
         $step->status = "approved";
         $step->save();
 
-        $nexStep = ApplicationStep::findOrFail( $step->nextStep()->id );
-        $nexStep->status = "current";
-        $nexStep->save();
+        $this->nextStepOrCompleteApplication($step);
 
         return json_encode(['status' => 'success', 'message' => 'Form saved']);
     }
 
-    public function saveApproval(Request $request){
+    public function saveApproval(Request $request)
+    {
         try{
-
+            \DB::beginTransaction();
             $step = ApplicationStep::findOrFail($request->id);
-            
+
             if($step->Approval->has_report===1){
                 $report = Report::where('approval_id', $step->Approval->id)->first();
                 if($report != null){
@@ -223,20 +235,35 @@ class WorkflowController extends Controller
 
             switch ($request->status){
                 case 'reproved':
-                    $nexStep = ApplicationStep::findOrFail( $step->previousStep()->id);
-                    $nexStep->status = "current";
-                    $nexStep->save();
+                    $previousStep = ApplicationStep::findOrFail( $step->previousStep()->id);
+                    $previousStep->status = "current";
+                    $previousStep->save();
                     break;
                 default:
-                    $nexStep = ApplicationStep::findOrFail( $step->nextStep()->id);
-                    $nexStep->status = "current";
-                    $nexStep->save();
+                    $this->nextStepOrCompleteApplication($step);
                     break;
             }
 
+            \DB::commit();
             return json_encode(['status' => 'success', 'message' => 'Form saved']);
         }catch (Exception $e){
             return json_encode(['status' => 'error', 'message' => 'Error']);
+        }
+    }
+
+    public function nextStepOrCompleteApplication(ApplicationStep $step)
+    {
+        $nextStep = $step->nextStep();
+        if ($nextStep)
+        {
+            $nextStep->status = "current";
+            $nextStep->save();
+        }
+        else
+        {
+            $app = $step->application;
+            $app->status = 'completed';
+            $app->save();
         }
     }
 

@@ -30,7 +30,7 @@
                 </div>
             </div>
         </div>
-        @if($stepResponsible === Auth::user()->id)
+        @if($isResponsible)
             <div class="row">
                 <div class="col-sm-12">
                     <div class="white-box">
@@ -64,7 +64,7 @@
         <script src="{{ asset("js/template/blanko-form-checkpoint.js") }}"></script>
         <script>
             var username = '{{ Auth::user()->name }}';
-            createTabs($('input[name=report]').val(), {{ $stepResponsible === Auth::user()->id ? 'false' : 'true' }});
+            createTabs($('input[name=report]').val(), {{ $isResponsible ? 'false' : 'true' }});
         </script>
         <script>
 
@@ -80,7 +80,7 @@
                 var form = toJson();
                 workflow.sendApproval('reproved', '{{$stepId}}', form)
             })
-            @if($stepResponsible !== Auth::user()->id)
+            @if($isResponsible)
                 $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4')
                 $('input, select, radio, textarea, checkbox, option').attr('disabled', 'disabled').css('opacity', '0.4')
                 $('.comment-msg').removeAttr('disabled').css('opacity', '1')

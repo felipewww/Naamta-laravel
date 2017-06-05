@@ -16,7 +16,6 @@
                                 <h3 class="box-title">Company: {{ $activeApplication->client->company }}</h3>
 
                                 <h5><b>Current Step:</b>{{ $activeApplication->currStep->title }}</h5>
-                                {{--<h5><b>Next Action Due Date:</b> March, 17, 2017</h5>--}}
                                 <h5><b>Last Step Submitted:</b> {{ $activeApplication->lastDateSubmit }} </h5>
                                 <h5><b>Responsible:</b> {{ $activeApplication->client->user->name }}, {{ $activeApplication->client->user->email }} </h5>
                                 <ul class="list-inline two-part">
@@ -29,7 +28,26 @@
                         </div>
                         @endforeach
                     </div>
+                    <h3 class="box-title">Completed Applications</h3>
+                    <div class="row">
+                        @foreach($vars->completedApplications as $completedApplication)
+                            <div class="col-md-6">
+                                <div class="white-box">
+                                    <h3 class="box-title">Company: {{ $completedApplication->client->company }}</h3>
+                                    <h5><b>Last Step Submitted:</b> {{ $completedApplication->updated_at }} </h5>
+                                    <h5><b>Responsible:</b> {{ $completedApplication->client->user->name }}, {{ $completedApplication->client->user->email }} </h5>
+                                    <ul class="list-inline two-part">
+                                        <li></li>
+                                        <li class="text-right">
+                                            <a href="/application/{{$completedApplication->id}}/dashboard" class="btn btn-success">Details</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
+
                 <div class="col-md-3 p-l-20">
                     <h3 class="box-title">New Registrations</h3>
                     @foreach($vars->inactiveApplications as $inactiveApplication)
