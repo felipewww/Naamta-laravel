@@ -93,6 +93,7 @@
                     @if(Auth::user()!=null && Auth::user()->isAdmin())
                         <li class="nav-small-cap">USERS</li>
                         <li> <a href="{{ url('') }}"> Dashboard</a></li>
+                        <li> <a href="{{ url('/firstFormEdit') }}"> Edit Register Form</a></li>
                         <li> <a href="{{ url('users') }}">Users List</a> </li>
                         <li> <a href="{{ url('usertypes') }}">User Types</a></li>
                     @endif

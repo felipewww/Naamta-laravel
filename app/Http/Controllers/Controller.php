@@ -68,9 +68,9 @@ class Controller extends BaseController
     /*
      * Convert a form to json.
      *
-     * @return response of saved itens
+     * @return response of saved items
      */
-    protected function _convertFormToJson($form, $clone = false){
+    public function _convertFormToJson($form, $clone = false){
         $_return = array();
         foreach ($form->containers as $i => $c){
             $_return[$i]["config"] = [
@@ -105,8 +105,10 @@ class Controller extends BaseController
         return $mApproval->_id;
     }
     
-    protected function _storeFormToMongo($form){
+    public function _storeFormToMongo($form){
+
         $mForm = Form::create(['name' => $form->name, 'status' => $form->status]);
+
         foreach ($form->containers as $i => $c){
             $container = new Container([]);
             $mForm->containers()->save($container);

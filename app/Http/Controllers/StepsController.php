@@ -188,8 +188,10 @@ class StepsController extends Controller
                 foreach ($this->step->Forms as $relForm)
                 {
                     $mForm = \App\MModels\Form::where('_id', $relForm->mform_id)->first();
-                    $mForm->delete();
-                    $relForm->delete();
+                    if ( $mForm != null ) {
+                        $mForm->delete();
+                        $relForm->delete();
+                    }
                 }
 
                 /*

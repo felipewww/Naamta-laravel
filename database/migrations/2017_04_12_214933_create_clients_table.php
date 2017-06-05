@@ -17,7 +17,8 @@ class CreateClientsTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->string('company');
-            
+            $table->string('mform_register_id')->nullable();
+
             $table->foreign('user_id')
                     ->references('id')->on('users')
                     ->onDelete('cascade');

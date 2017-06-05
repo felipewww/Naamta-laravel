@@ -18,13 +18,25 @@ Route::get('register/confirmation/resend/{token}/{id}', 'Auth\RegisterController
 
 Auth::routes();
 Route::get('/test', function (Request $request) {
-    
+    \Illuminate\Support\Facades\DB::beginTransaction();
+    $formController     = new \App\Http\Controllers\FormsController();
+    $formModel          = new \App\Models\FormTemplate();
+
+    $form = $formModel->create([
+        'name'      => 'FirstForm',
+        'status'    => 1
+    ]);
+
+    $json = '[{"config":{"_id":"0","title":"New Page","tabId":""},"fields":[{"_id":"","type":"header","isEditable":true,"setting":{"options":[],"rule":{"ruleAction":"show","ruleTarget":"all","conditions":[]},"ordenate":1,"isRequired":false,"label":"Header","help":"","class":""},"comments":[]},{"_id":"","type":"text-field","isEditable":true,"setting":{"options":[],"rule":{"ruleAction":"hide","ruleTarget":"all","conditions":[]},"error":false,"ordenate":2,"isRequired":false,"label":"Text Field ","help":"Help Text Goes Here","value":"","checked":false,"class":""},"comments":[]},{"_id":"","type":"email-field","isEditable":true,"setting":{"options":[],"rule":{"ruleAction":"hide","ruleTarget":"all","conditions":[]},"error":false,"ordenate":3,"isRequired":false,"label":"E-mail Field ","help":"Help Text Goes Here","value":"","checked":false,"class":""},"comments":[]}]}]';
+    $json = json_decode($json);
+
+    $formController->_saveContainers($json, $form->id);
+    \Illuminate\Support\Facades\DB::commit();
 });
 
 Route::group(['middleware' => 'auth'], function(){
 
     Route::get('/seemail/{email}', function(\Illuminate\Http\Request $request, $email){
-//        return SeeEmail::see($email);
         return App\Mail\SeeEmail::see($email);
     });
 
@@ -68,8 +80,10 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/applications/{id}/saveStepsPosition', 'ApplicationsController@saveStepsPosition');
     Route::post('/applications/{id}/changeStepStatus', 'ApplicationsController@changeStepStatus');
 
+    Route::get('/firstFormEdit', 'FormsController@firstFormEdit');
+
     Route::get('/applications/{id}/payment/first_form', 'ClientFirstFormController@staffView');
-    Route::post('/applications/client/first_form', 'ClientFirstFormController@firstFormSave');
+    Route::post('/applications/client/first_form', 'ClientFirstFormController@_firstFormSave');
 
     Route::get('/applications/{id}/payment/{action}', 'ApplicationsController@validatePayment');
 

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\ApplicationsController;
+use App\Http\Controllers\Controller;
 use App\Mail\AuthEmails;
 use App\Models\Application;
+use App\Models\FormTemplate;
 use App\Models\User;
 use App\Models\UserActivation;
 use Carbon\Carbon;
@@ -45,6 +47,14 @@ class ActivationService
         $user->verified = true;
 
         $application = $user->client->application;
+
+
+        //create FirstForm (registration) here
+        $client = $user->client;
+        $form = FormTemplate::withTrashed()->where('name', 'DefaultForm_RegistrationFirstForm')->first();
+        $controller = new Controller();
+        $client->mform_register_id = $controller->_storeFormToMongo($form); //$this->_storeFormToMongo($form);
+        $client->save();
 
         $application->status = 'wt_firstform';
         $application->save();

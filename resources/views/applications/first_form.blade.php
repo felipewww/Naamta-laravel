@@ -1,287 +1,53 @@
 @extends('layouts.app')
 
-<?php
-    $status = ( $withAction ) ? '' : 'disabled="disabled"';
-
-    if(!isset($form)){
-        $form = new \App\Models\ClientFirstForm();
-    }
-
-    if ( !isset($showFiles) ) { $showFiles = false; }
-//dd($showfiles);
-
-?>
+@section('styles')
+    <link href="{{ asset("css/template/blanko-form-builder.css") }}" rel="stylesheet">
+@endsection
 
 @section('content')
-    <div class="container-fluid">
-        <div class="row">
-            <div class="">
-                <div class="white-box">
-                    <h3 class="box-title m-b-0"><b>Registration form</b></h3>
 
-                    @if( $application->reset_at )
-                        <div class="alert alert-warning">Your application is overdue. Please, validate your account info and resend it.
-                            Soon our staff will contact you.
-                        </div>
-                    @endif
-
-                    <form  class="form-horizontal" enctype="multipart/form-data" method="post" action="{{ asset('applications/client/first_form') }}">
-                        {{ csrf_field() }}
-
-                        {{--<div class="form-group">--}}
-                            {{--<label class="col-md-12">FIELD_NAME</label>--}}
-                            {{--<div class="col-md-12">--}}
-                                {{--<input {{$status}} {{$required}} type="text" class="form-control" name="FIELD_NAME" placeholder="" value="{{$form->FIELD_NAME}}">--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-
-                        <div class="BASIC">
-                            <div class="form-group">
-                                <label class="col-md-12">services_accredited</label>
-                                <div class="col-md-12">
-                                    <select {{$status}} {{$required}} name="services_accredited">
-                                        <option value="medical_transport">Medical Transport</option>
-                                        <option value="medical_escort">Medical Escort</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-12">taxpayer_id</label>
-                                <div class="col-md-12">
-                                    @if( !$showFiles )
-                                        <input {{$status}} {{$required}} type="file" class="form-control" name="taxpayer_id" placeholder="" value="{{$form->taxpayer_id}}">
-                                    @else
-                                        <a class="col-sm-2 btn btn-primary center-block" href="/storage/{{ $form->taxpayer_id }}">View file</a>
-                                    @endif
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-12">address_street</label>
-                                <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="address_street" placeholder="" value="{{$form->address_street}}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-12">address_mailing</label>
-                                <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="address_mailing" placeholder="" value="{{$form->address_mailing}}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-12">phone_number</label>
-                                <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="phone_number" placeholder="" value="{{$form->phone_number}}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-12">business_type</label>
-                                <div class="col-md-12">
-                                    <select>
-                                        <option value="sole_proprietorship">Sole Proprietorship</option>
-                                        <option value="partnership">Partnership</option>
-                                        <option value="non_profit">Non-profit</option>
-                                        <option value="corporation">Corporation (INC)</option>
-                                        <option value="government_entity">Government Entity</option>
-                                        <option value="llc">LLC</option>
-                                        <option value="other">Other</option>
-                                    </select>
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="business_type" placeholder="" value="{{$form->business_type}}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-12">website</label>
-                                <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="website" placeholder="" value="{{$form->website}}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-12">ownerships</label>
-                                <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="ownerships" placeholder="" value="{{$form->ownerships}}">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="CONTACT_INFO">
-                            <div class="form-group">
-                                <label class="col-md-12">contact_name</label>
-                                <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="contact_name" placeholder="" value="{{$form->contact_name}}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-12">contact_email</label>
-                                <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="contact_email" placeholder="" value="{{$form->contact_email}}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-12">contact_phone</label>
-                                <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="contact_phone" placeholder="" value="{{$form->contact_phone}}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-12">compliance_name</label>
-                                <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="compliance_name" placeholder="" value="{{$form->compliance_name}}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-12">compliance_email</label>
-                                <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="compliance_email" placeholder="" value="{{$form->compliance_email}}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-12">compliance_phone</label>
-                                <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="compliance_phone" placeholder="" value="{{$form->compliance_phone}}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-12">application_access</label>
-                                <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="application_access" placeholder="" value="{{$form->application_access}}">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="BUSINESS_INFO">
-                            <div class="form-group">
-                                <label class="col-md-12">since (minimum six months)</label>
-                                <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="since" placeholder="" value="{{$form->since}}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-12">transports_per_year</label>
-                                <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="transports_per_year" placeholder="" value="{{$form->transports_per_year}}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-12">base_locations</label>
-                                <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="base_locations" placeholder="" value="{{$form->base_locations}}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-12">communications_center</label>
-                                <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="communications_center" placeholder="" value="{{$form->communications_center}}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-12">description</label>
-                                <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="description" placeholder="" value="{{$form->description}}">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="MEDICAL_INFO">
-                            <div class="form-group">
-                                <label class="col-md-12">patient_population</label>
-                                <div class="col-md-12">
-                                    <select {{$status}} {{$required}} name="{{$form->patient_population}}">
-                                        <option value="adult">adult</option>
-                                        <option value="pediatric">pediatric</option>
-                                        <option value="neonatal">neonatal</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-12">medical_director_name</label>
-                                <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="medical_director_name" placeholder="" value="{{$form->medical_director_name}}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-12">medical_based</label>
-                                <div class="col-md-12">
-                                    <input {{$status}} {{$required}} type="text" class="form-control" name="medical_based" placeholder="" value="{{$form->medical_based}}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-12">medical_drug_license</label>
-                                <div class="col-md-12">
-                                    @if( !$showFiles )
-                                        <input {{$status}} {{$required}} type="file" class="form-control" name="medical_drug_license" placeholder="" value="{{$form->medical_drug_license}}">
-                                    @else
-                                        <a class="col-sm-2 btn btn-primary center-block" href="/storage/{{ $form->medical_drug_license }}">View file</a>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="CRITERIA">
-                            <div class="form-group">
-                                <label class="col-md-12">customer_reference_letter_1</label>
-                                <div class="col-md-12">
-                                    @if( !$showFiles )
-                                        <input {{$status}} {{$required}} type="file" class="form-control" name="customer_reference_letter_1" placeholder="" value="{{$form->customer_reference_letter_1}}">
-                                    @else
-                                        <a class="col-sm-2 btn btn-primary center-block" href="/storage/{{ $form->customer_reference_letter_1 }}">View file</a>
-                                    @endif
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-12">customer_reference_letter_2</label>
-                                <div class="col-md-12">
-                                    @if( !$showFiles )
-                                        <input {{$status}} {{$required}} type="file" class="form-control" name="customer_reference_letter_2" placeholder="" value="{{$form->customer_reference_letter_2}}">
-                                    @else
-                                        <a class="col-sm-2 btn btn-primary center-block" href="/storage/{{ $form->customer_reference_letter_2 }}">View file</a>
-                                    @endif
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-12">signed_acknowledgment_doc</label>
-                                <div class="col-md-12">
-                                    @if( !$showFiles )
-                                        <input {{$status}} {{$required}} type="file" class="form-control" name="signed_acknowledgment_doc" placeholder="" value="{{$form->signed_acknowledgment_doc}}">
-                                    @else
-                                        <a class="col-sm-2 btn btn-primary center-block" href="/storage/{{ $form->signed_acknowledgment_doc }}">View file</a>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-
-                        @if($withAction)
-                        <div class="form-group">
-                            <div class="col-md-6 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary">
-                                    Submit
-                                </button>
-                            </div>
-                        </div>
-                        @endif
-                    </form>
-                </div>
-            </div>
+<div class="row">
+    <input type="hidden" name="containers" value="{{$containers}}">
+    <div class="col-sm-12">
+        <div class="white-box">
+            <h3 class="box-title m-b-20">Form Preview</h3>
+            <div id="drag-container"></div>
+        </div>
+        <div class="white-box">
+            @if( $isResponsible )
+            <button onclick="workflow.firstForm();" class="btn btn-primary pull-right btn-submit">Submit Form</button>
+            @else
+            <a href="/applications/{{$appID}}/edit" class="btn btn-primary pull-right">Return to app info</a>
+            @endif
+            <div class="clearfix"></div>
         </div>
     </div>
+</div>
+<script>
+    var username  = '{{ Auth::user()->name }}';
+    var appFolder = '{{ Auth::user()->email }}';
+</script>
+<script src="{{ asset("js/template/signature_pad.js") }}"></script>
+<!-- Reference https://github.com/szimek/signature_pad -->
+
+<script src="{{ asset("js/template/blanko-form-builder.js") }}"></script>
+<script src="{{ asset("js/template/blanko-form-creator.js") }}"></script>
+<script src="{{ asset("js/template/blanko-form-checkpoint.js") }}"></script>
+
+<script>
+    createTabs($('input[name=containers]').val(), true, "{{$isResponsible}}");
+    @if(!$isResponsible)
+        $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4')
+        $('input, select, radio, textarea, checkbox, option').attr('disabled', 'disabled').css('opacity', '0.4')
+        $('.comment-msg, .is-incorrect').removeAttr('disabled').css('opacity', '0')
+        $('.is-incorrect').css('display', '0')
+    @else
+        $('.drag-validate').css('display', 'none');
+    @endif
+</script>
+
+@endsection
+
+@section('scripts')
+    <script src="{{ asset("js/workflow.js") }}"></script>
 @endsection

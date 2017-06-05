@@ -8,6 +8,7 @@ use App\Library\DataTablesExtensions;
 use App\Http\Controllers\Controller;
 
 use App\MModels\Form;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
 use Validator;
 use Session;
@@ -139,6 +140,7 @@ class FormsController extends Controller
     {
         \DB::beginTransaction();
         try{
+//            dd($request->all());
             $form = FormTemplate::create([
                 'name'      => $request->name,
                 'status'    => (int)$request->status
@@ -169,6 +171,21 @@ class FormsController extends Controller
         return view('forms.show')->with(['form' => $form, 'containers' => $this->_convertFormToJson($form), 'pageInfo' => $this->pageInfo]);
     }
 
+    public function firstFormEdit(){
+
+        if (!Auth::user()->hasRole('admin')) {
+            return \redirect('/');
+        }
+
+        $this->pageInfo->title              = 'First Form Edit';
+        $this->pageInfo->category->title    = 'Register';
+        $this->pageInfo->subCategory->title = 'Form';
+
+        $form = FormTemplate::withTrashed()->with( array( 'containers', 'containers.fields', 'containers.fields.comments') )->findOrFail(1);
+
+        return view('forms.form')->with(['form' => $form, 'containers' => $this->_convertFormToJson($form), 'pageInfo' => $this->pageInfo]);
+    }
+
     public function edit(Request $request, $id){
         $this->pageInfo->title              = 'Form Templates';
         $this->pageInfo->category->title    = 'Workflow';
@@ -186,9 +203,6 @@ class FormsController extends Controller
                 'name'      => $request->name,
                 'status'    => (int)$request->status
             ]);
-
-            $containers = $this->_saveContainers(json_decode($request->containers), $id);
-            //$fields = $this->_saveFields($containers);
 
             \Session::flash('success_msg','Form Edited: ' . $request->name);
         } catch(Exception $e){
@@ -214,9 +228,9 @@ class FormsController extends Controller
      /**
      * Store a newly created containers.
      *
-     * @return containers with id
+     * @return array with id
      */
-    private function _saveContainers($_requestContainers, $formId){
+    public function _saveContainers($_requestContainers, $formId){
         $containers = array();
         $fields = array();
         $_oldContainers = Container::where('form_template_id', $formId)->get()->toArray();
