@@ -102,29 +102,29 @@ sysSteps = {
         console.log(sequence);
     },
     
-    changeStatus: function (e) {
-        var currentStatus = $(e).attr('data-status');
-        var parent = $(e).closest('.step-sortable');
-
-        this.safeLeave.setStatus(false);
-
-        if ( currentStatus == 1 )
-        {
-            $(e).html('Activate');
-            $(e).removeClass('btn-default');
-            $(e).addClass('btn-success');
-            $(e).attr('data-status', 0);
-            $(this.containerInactives).append(parent);
-        }
-        else if(currentStatus == 0)
-        {
-            $(e).html('Inactivate');
-            $(e).removeClass('btn-success');
-            $(e).addClass('btn-default');
-            $(e).attr('data-status', 1);
-            $(this.container).append(parent);
-        }
-    },
+    // changeStatus: function (e) {
+    //     var currentStatus = $(e).attr('data-status');
+    //     var parent = $(e).closest('.step-sortable');
+    //
+    //     this.safeLeave.setStatus(false);
+    //
+    //     if ( currentStatus == 1 )
+    //     {
+    //         $(e).html('Activate');
+    //         $(e).removeClass('btn-default');
+    //         $(e).addClass('btn-success');
+    //         $(e).attr('data-status', 0);
+    //         $(this.containerInactives).append(parent);
+    //     }
+    //     else if(currentStatus == 0)
+    //     {
+    //         $(e).html('Inactivate');
+    //         $(e).removeClass('btn-success');
+    //         $(e).addClass('btn-default');
+    //         $(e).attr('data-status', 1);
+    //         $(this.container).append(parent);
+    //     }
+    // },
 
     confirmDelete: function (e, stepID)
     {

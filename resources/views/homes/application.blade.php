@@ -21,8 +21,7 @@
                     <h4>Last Step Submitted:</h4>
                     <p class="m-b-40">{{ $currentStep->created_at }}</p>
                     <h4>Next Step:</h4>
-                    <p class="m-b-40">Step : {{($currentStep->nextStep()!=null ? $currentStep->nextStep()->title : "It's the last step")}}</p>
-
+                    <p class="m-b-40">Step : {{ ($currentStep->nextStep() != null) ? $currentStep->nextStep()->title : "It's the last step" }}</p>
                     <h4>Previous Step:</h4>
                     <p class="">Step :  {{($currentStep->previousStep()!=null ? $currentStep->previousStep()->title : "It's the first step")}}</p>
                     @if($isResponsible)
@@ -34,7 +33,13 @@
                                 <a href="/workflow/step/{{$currentStep->id}}/show" class="btn btn-success pull-right">Approve with report</a>
                             @endif
                         @else
-                            <a href="/workflow/step/{{$currentStep->id}}/show" class="btn btn-success pull-right">View Form</a>
+                            @foreach($currentStep->mongoForms as $form)
+                                <div style="display: block; margin-bottom: 10px;">
+                                    <a href="/workflow/step/{{$currentStep->id}}/{{$form->mform_id}}/show" class="btn btn-success">Fill Form: {{ $form->mongoform->name }}</a>
+                                </div>
+                            {{--<a href="/workflow/step/{{$currentStep->id}}/show" class="btn btn-success pull-right">View Form</a>--}}
+                            @endforeach
+                                <a href="javascript:;" onclick="workflow.gotoNextStep({{$currentStep->id}})" class="btn btn-danger" type="submit">Next Step</a>
                         @endif
                     @endif
                     <div class="clearfix"></div>
@@ -67,8 +72,10 @@
                         <tbody>
                             @foreach($errorsFormsFields as $form)
                                 @foreach($form["containers"] as $field)
+                                {{--{{ dd($field->container->forms) }}--}}
                                     <tr>
                                         <td>
+                                            <h6>{{ $field->container->forms->name }}</h6>
                                             <h5 class="m-t-0">
                                                 <b>{{$field->setting->label}}</b>
                                             </h5>
@@ -93,28 +100,25 @@
                                 <tr>
                                     <th>Form</th>
                                     <th>Status</th>
+                                    <th>Last update</th>
                                     <th style="width: 120px">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($stepsWithForm as $k => $formStep)
-                                    <tr>
-                                        <td>Form {{ ($k + 1) }}</td>
-                                        <td>{{$formStep->status !== "0" && $formStep->status !== "1" ? $formStep->status : "waiting" }}</td>
-                                        <td>
-                                            @if($formStep->status !== "0" &&  $formStep->status !== "1")
-                                                <a href="/workflow/step/{{$formStep->id}}/show" class="btn btn-warning btn-circle"><i class="fa fa-pencil"></i></a>
-                                            @endif
-                                        </td>
-                                    </tr>
+                                @foreach($stepsWithForm as $formStep)
+                                    @foreach($formStep->mongoForms as $stepMongoForm)
+                                        <tr>
+                                            <td>{{ $stepMongoForm->mongoform->name }}</td>
+                                            <td>{{ $stepMongoForm->mongoform->status }}</td>
+                                            <td>{{ $stepMongoForm->mongoform->updated_at }}</td>
+                                            <td>
+                                                @if($formStep->status !== "0" &&  $formStep->status !== "1")
+                                                    <a href="/workflow/step/{{$formStep->id}}/{{$stepMongoForm->mform_id}}/show" class="btn btn-warning btn-circle"><i class="fa fa-pencil"></i></a>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                 @endforeach
-                                {{--<tr>
-                                    <td>Form 2</td>
-                                    <td>Approved</td>
-                                    <td>
-                                        <button class="btn btn-warning btn-circle"><i class="fa fa-pencil"></i></button>
-                                    </td>
-                                </tr>--}}
                             </tbody>
                         </table>
                     </div>
@@ -126,6 +130,7 @@
                             <thead>
                                 <tr>
                                     <th>Report</th>
+                                    <th>Last Update</th>
                                     <th style="width: 120px">Action</th>
                                 </tr>
                             </thead>
@@ -134,6 +139,7 @@
                                     @if($approvalStep!=null && $approvalStep["report"]!=null)
                                         <tr>
                                             <td>{{ $approvalStep["report"]->title }}</td>
+                                            <td>{{  $approvalStep["report"]->updated_at }}</td>
                                             <td>
                                                 <a href="/workflow/step/{{$approvalStep["stepId"]}}/show" class="btn btn-warning btn-circle"><i class="fa fa-eye"></i></a>
                                             </td>

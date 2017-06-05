@@ -22,4 +22,9 @@ class Container extends Model
     {
         return $this->hasMany(Field::class);
     }
+
+    public function forms()
+    {
+        return $this->belongsTo(Form::class, 'form_id');
+    }
 }

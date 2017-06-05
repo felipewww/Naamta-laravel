@@ -76,10 +76,7 @@ class ApplicationStep extends Model
     }
 
     public function nextStep(){
-        $next = ApplicationStep::where("ordination", ($this->ordination + 1))->first();
-        if($next->id === $this->title){
-            return null;
-        }
+        $next = ApplicationStep::where('application_id', $this->application_id)->where("ordination", ($this->ordination + 1))->first();
 
         return $next;
     }

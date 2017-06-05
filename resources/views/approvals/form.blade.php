@@ -50,9 +50,18 @@
                             </div>
                         </div>
                         <div class="form-group">
-                                <button type="submit" class="btn btn-primary center-block">
-                                    Submit
-                                </button>
+                            <label for="text" class="col-md-4 control-label">Has Report?</label>
+                            <div class="col-md-6">
+                                <label for="report_yes">Yes</label>
+                                <input type="radio" id="report_yes" name="has_report" value="1">
+                                <label for="report_no">No</label>
+                                <input type="radio" id="report_no" name="has_report" value="0">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary center-block">
+                                Submit
+                            </button>
                         </div>
                     </form>
                 </div>

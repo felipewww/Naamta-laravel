@@ -45,6 +45,22 @@ workflow = {
         });
     },
 
+    gotoNextStep: function (step_id)
+    {
+        $.ajax({
+            url: '/workflow/gotoNextStep',
+            method: 'POST',
+            data: { _token: window.Laravel.csrfToken, step_id: step_id },
+            success: function (data) {
+                console.log('Success!');
+                window.location.href = window.location.protocol + "//" + window.location.hostname;
+            },
+            error: function (data) {
+                console.log('Error!');
+            }
+        });
+    },
+
     sendApproval: function (status, stepId, form) {
         _this = this;
         var sequence = { _token: window.Laravel.csrfToken, id:stepId, status: status, form : form };

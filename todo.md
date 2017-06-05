@@ -67,3 +67,6 @@ processo 3 anos
 ##quando subir para producao
 -[ ] Lembrar de configurar o listener de jobs (php artisan queue:listen)
 -[ ] configurar o CRONTAB para App\Console\Commands\FlowThreeYears
+
+## Sexta - 02/06
+-[ ] Verificar se no foreach homes.applications[:180] $stepwithForms se esta pegando o grupo de formulario do step.

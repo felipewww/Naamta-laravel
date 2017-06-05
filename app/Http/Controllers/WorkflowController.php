@@ -104,7 +104,6 @@ class WorkflowController extends Controller
                 $c = new Carbon();
                 $delay = $c->now()->addMinutes(1);
                 $job = (new \App\Jobs\WorkflowEmails($request, $mailData, $user))->delay($delay);
-//                $job = (new \App\Jobs\WorkflowEmails($request, $mailData, $user));
 
                 dispatch($job);
             }
@@ -129,9 +128,8 @@ class WorkflowController extends Controller
         switch ($step->morphs_from)
         {
             case FormTemplate::class:
-                $itemId = (isset($formId) ? $step->forms()->findOrFail($formId)->mform_id : $step->forms()->first()->mform_id);
                 $form = Form::with(array('containers', 'containers.config', 'containers.fields', 'containers.fields.comments',
-                    'containers.fields.setting', 'containers.fields.setting.rule', 'containers.fields.setting.rule.conditions') )->findOrFail($itemId);
+                    'containers.fields.setting', 'containers.fields.setting.rule', 'containers.fields.setting.rule.conditions') )->findOrFail($formId);
                 return $this->applicationForm($step->id, $step->responsible, json_encode($form->containers));
                 break;
             case Approval::class:
@@ -175,20 +173,25 @@ class WorkflowController extends Controller
     public function saveStepForm(Request $request)
     {
         try{
-            $step = ApplicationStep::findOrFail($request->id);
             if($this->_updateFormToMongo(\GuzzleHttp\json_decode($request->form_json)))
-                $step->status = "approved";
-
-            $step->save();
-
-            $nexStep = ApplicationStep::findOrFail( $step->nextStep()->id);
-            $nexStep->status = "current";
-            $nexStep->save();
 
             return json_encode(['status' => 'success', 'message' => 'Form saved']);
         }catch (Exception $e){
             return json_encode(['status' => 'error', 'message' => 'Error']);
         }
+    }
+
+    public function gotoNextStep(Request $request)
+    {
+        $step = ApplicationStep::findOrFail($request->step_id);
+        $step->status = "approved";
+        $step->save();
+
+        $nexStep = ApplicationStep::findOrFail( $step->nextStep()->id );
+        $nexStep->status = "current";
+        $nexStep->save();
+
+        return json_encode(['status' => 'success', 'message' => 'Form saved']);
     }
 
     public function saveApproval(Request $request){

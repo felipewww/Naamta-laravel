@@ -74,7 +74,7 @@ class HomeController extends Controller
         foreach ($this->vars->activeApplications as &$app)
         {
             $currStep = $app->steps()->where('status', 'current')->first();
-            if (!$currStep) {
+            if (!$currStep || $currStep->previos_step == null) {
                 $currStep = $app->steps()->where('status', '1')->first();
                 $lastDateSubmit = 'None';
             }else{
@@ -104,8 +104,6 @@ class HomeController extends Controller
                 case 'denied':
                     $inApp->statusText = 'Denied, waiting resend';
                     break;
-//                case 'wt_firstform_validation':
-//                    break;
             }
         }
 
@@ -117,12 +115,11 @@ class HomeController extends Controller
         $application = Application::with(['steps'])->find($id);
         $user = Auth::user();
 
-        if ( $application->status == 'wt_firstform' || $application->status == 'denied' ) {
+        if ( $application->status == 'wt_firstform' || $application->status == 'denied' )
+        {
             $this->pageInfo->title              = $user->client->company."'s".' Registration';
-//            $this->pageInfo->title              = $user->name."'s".' Registration';
             $this->pageInfo->category->title    = 'Registration';
             $this->pageInfo->subCategory->title = 'Form';
-//            $this->vars->userType = '$userType';
 
             $user = Auth::user();
             $form = \App\MModels\Form::with([
@@ -147,7 +144,6 @@ class HomeController extends Controller
             $this->pageInfo->title              = $user->client->company."'s".' Registration';
             $this->pageInfo->category->title    = 'Waiting validation';
             $this->pageInfo->subCategory->title = 'Form';
-//            $this->vars->userType = '$userType';
 
             return view('applications.wait_firstform_verify')->with([
                 'pageInfo' => $this->pageInfo
@@ -175,21 +171,43 @@ class HomeController extends Controller
             {
                 $isResponsible = $currentUserType->where('user_type', $currentStep->responsible)->first();
             }
+
             /*
              * End verify responsible
              * */
-            $stepsWithForm =  $application->steps->where("morphs_from", FormTemplate::class )->all(); //$this->_getStepsForm($application->steps, $currentStep);
+
+            //Starting... Get all forms related with all steps, including the current step
+            $stepsWithForm =  $application->steps->where("morphs_from", FormTemplate::class )->all();
+            foreach ($stepsWithForm as &$stepHasForm)
+            {
+                $thisForms = $stepHasForm->Forms()->get();
+                foreach ($thisForms as &$relData)
+                {
+                    $mongoForm = Form::findOrFail($relData->mform_id);
+                    $relData->offsetSet('mongoform', $mongoForm);
+                }
+
+                $stepHasForm->offsetSet('mongoForms', $thisForms);
+            }
+
+
             $approvalWithReport = $application->steps->where('morphs_from', Approval::class)->where('approval.has_report', '1')->all();
             $reports = array();
 
-            foreach($approvalWithReport as $approval){
-                $step = ApplicationStep::findOrFail($approval->id);
-                if($step->Approval->report!=null){
-                    array_push($reports, array('stepId' => $approval->id, 'report' => $step->Approval->report));
+            if ( $currentStep->morphs_from == Approval::class )
+            {
+                foreach($approvalWithReport as $approval)
+                {
+                    $step = ApplicationStep::findOrFail($approval->id);
+                    if($step->Approval->report!=null)
+                    {
+                        array_push($reports, array('stepId' => $approval->id, 'report' => $step->Approval->report));
+                    }
                 }
             }
 
             $errorsFormsFields = $this->_getLastFormErrorsField($currentStep);
+
             return view('homes.application', [
                 'pageInfo'              => $this->pageInfo,
                 'application'           => $application,
@@ -221,8 +239,10 @@ class HomeController extends Controller
             foreach($step->forms as $form){
                 $f = Form::with(array('containers', 'containers.config', 'containers.fields', 'containers.fields.comments',
                     'containers.fields.setting', 'containers.fields.setting.rule', 'containers.fields.setting.rule.conditions') )->findOrFail($form->mform_id);
+
                 array_push($errors, array("formId" => $form->form_templates_id, "containers" => $this->_getErrorsField($f)));
             }
+
             return $errors;
         }
         if( $step->previousStep() !== null){
@@ -232,11 +252,15 @@ class HomeController extends Controller
 
     private function _getErrorsField($form){
         $errors = array();
+        $arr = [];
         try{
             foreach ($form->containers as $i => $c){
                 foreach($c->fields as $k => $v){
-                    if(isset($v->setting->error) && $v->setting->error === true){
-                        array_push($errors, Field::find($v->_id));
+                    if(isset($v->setting->error)){
+                        if ($v->setting->error == 'Fail' || $v->setting->error == 'Audit') {
+                            array_push($arr, $v);
+                            array_push($errors, Field::find($v->_id));
+                        }
                     }
                 }
             }

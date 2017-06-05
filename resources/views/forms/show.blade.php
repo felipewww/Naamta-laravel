@@ -11,7 +11,6 @@
     }else{
         $form = new App\Models\FormTemplate();
     }
-
 @endphp
 
 @section('styles')

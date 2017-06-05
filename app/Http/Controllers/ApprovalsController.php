@@ -140,10 +140,11 @@ class ApprovalsController extends Controller
     
     public function update(Request $request, $id){
         try{
-            Approval::where("id", $id)->update([
-                'title'      => $request->title,
-                'description'    => $request->description
-            ]);
+//            $request->off
+//            dd($request->all());
+            $request->offsetUnset('_method');
+            $request->offsetUnset('_token');
+            Approval::where("id", $id)->update($request->all());
 
             \Session::flash('success_msg','Approval Edited: ' . $request->title);
         } catch(Exception $e){
