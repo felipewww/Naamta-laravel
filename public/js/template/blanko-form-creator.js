@@ -33,7 +33,7 @@ function toFieldObject(){
   obj.setting.ordenate = parseInt($(this).find('.ordenation').text().replace('(','').replace(')','')) ;
   obj.setting.isRequired = $(this).find('.update-required').hasClass('required');
   obj.setting.label = $(this).find('.update-label').text();
-  obj.setting.help = $(this).find('.help + .text').text();
+  obj.setting.help = $(this).find('.help + .text').html();
   if(obj.type != 'file-upload'){
     obj.setting.value = $(this).find('.update-value').val();
   }
@@ -268,8 +268,8 @@ function configureField(node, options, type, id){
 
   node.find('.update-label').text(options.label);
   node.find('.update-label').val(options.label);
-  node.find('.help + .text').text(options.help);
-  if(node.find('.help + .text').text() == '') node.find('.help .icon').hide();
+  node.find('.help + .text').html(options.help);
+  if(node.find('.help + .text').html() == '') node.find('.help .icon').hide();
 
   //Size of the field
   node.addClass(options.class);
@@ -332,7 +332,8 @@ function configureField(node, options, type, id){
   node = node.find('.drag-options');
   node.find('.is-required').prop('checked', options.isRequired);
   node.find('.label-text').val(options.label);
-  node.find('.help-text').val(options.help);
+  node.find('.help-text').text(options.help);
+
   node.find('.value').val(options.value);
   node.find('.min-value').val(options.min);
   node.find('.max-value').val(options.max);
