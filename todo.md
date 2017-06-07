@@ -64,9 +64,23 @@ processo 3 anos
  -> Validation: ???
  -> Files from employee roster: Apenas file upload?
 
-##quando subir para producao
+##Quando subir para producao
 -[ ] Lembrar de configurar o listener de jobs (php artisan queue:listen)
--[ ] configurar o CRONTAB para App\Console\Commands\FlowThreeYears
+-[ ] configurar o CRONTAB para App\Console\Commands\FlowThreeYears, schedule taking, * * * * * php /path-to-your-project/artisan schedule:run >> /dev/null 2>&1
 
-## Sexta - 02/06
--[ ] Verificar se no foreach homes.applications[:180] $stepwithForms se esta pegando o grupo de formulario do step.
+setup anacron
+sudo nano /etc/anacrontab
+@daily          0       naamta.daily    /var/www/naamta-backend/ php artisan app:dailyActions
+
+//view of continuous forms when application isn't accredited yet
+    //It's possible will be removed because on documentation says: "Enable continuos when applicant BECOMES ACCREDITED"...
+    Route::get('/application/{id}/continuousCompliances', 'ApplicationsController@continuousComplianceNotAccredited');
+
+##Sexta - 02/06
+-[x] Verificar se no foreach homes.applications[:180] $stepwithForms se esta pegando o grupo de formulario do step.
+
+##Continuous Compliance
+-[ ] Dúvidas: Todos os forms serão um padrão para todos os clientes? Se não for, vai demorar mais, porque tem que fazer o
+cadastro de forms > clientes > por tempo..
+-[ ] Se for automático (padrão para todos), quando criar um form novo, atribuir para todos os clientes ou apenas para novos?
+-[ ] Se for atribuir para todos. por exemplo, um form recorrente de 4 em 4 meses. Conta a partir da data do registro do form ou da aprovação final da aplicação?

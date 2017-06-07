@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        'App\Console\Commands\FlowThreeYears'
+        'App\Console\Commands\FlowThreeYears',
+        'App\Console\Commands\DailyActions'
     ];
 
     /**
@@ -24,9 +25,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
-        $schedule->command('app:reset')->everyMinute();
+        $schedule->command('app:reset')->daily();
+        $schedule->command('app:dailyActions')->daily();
     }
 
     /**

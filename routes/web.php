@@ -76,7 +76,19 @@ Route::group(['middleware' => 'auth'], function(){
         $home = new \App\Http\Controllers\HomeController();
         return $home->applicationDashboard($request, $id);
     });
+
+    //view of continuous forms when application isn't accredited yet
+    //It's possible will be removed because on documentation says: "Enable continuos when applicant BECOMES ACCREDITED"...
+    Route::get('/application/{id}/continuousCompliances', 'ApplicationsController@continuousComplianceNotAccredited');
+
+    Route::post('/application/{id}/addContinuousCompliance', 'ApplicationsController@addContinuousCompliance');
+    Route::get('/application/{id}/deleteContinuousCompliances/{cid}', 'ApplicationsController@deleteContinuousCompliance');
+
     Route::get('/applications/{id}/settings',  'ApplicationsController@settings');
+
+    Route::get('/applications/{id}/continuous/{relID}',  'ApplicationsController@continuousComplianceForm');
+    Route::post('/applications/{id}/continuous/{relID}',  'ApplicationsController@saveContinuousComplianceForm'); //send ajax form
+
     Route::post('/applications/{id}/saveStepsPosition', 'ApplicationsController@saveStepsPosition');
     Route::post('/applications/{id}/changeStepStatus', 'ApplicationsController@changeStepStatus');
 

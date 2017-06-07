@@ -9,6 +9,24 @@ workflow = {
         _this = this;
     },
 
+    continuousCompliance: function ()
+    {
+        var sequence = { _token: window.Laravel.csrfToken, form_json: toJson() };
+        $.ajax({
+            //url: '/applications/client/first_form',
+            method: 'POST',
+            data: sequence,
+            dataType: 'json',
+            success: function (data) {
+                console.log('Success!');
+                // window.location.href = window.location.protocol + "//" + window.location.hostname;
+            },
+            error: function (data) {
+                console.log('Error!');
+            }
+        });
+    },
+
     firstForm: function ()
     {
         var sequence = { _token: window.Laravel.csrfToken, form_json: toJson() };

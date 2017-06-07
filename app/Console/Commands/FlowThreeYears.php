@@ -70,7 +70,6 @@ class FlowThreeYears extends Command
 
             foreach ($apps as $app)
             {
-
                 $currDate = date('Y-m-d G:i:s', mktime(0,0,0,$currMonth, $currDay, $currYear));
                 $app->status = 'wt_firstform';
                 $app->created_at = date('Y-m-d G:i:s', mktime(0,0,0,$currMonth, $currDay, $currYear));

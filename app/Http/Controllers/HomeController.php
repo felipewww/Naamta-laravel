@@ -6,7 +6,10 @@ use App\Http\Controllers\Auth\ActivationService;
 use App\Models\Application;
 use App\Models\Approval;
 use App\Models\ClientFirstForm;
+use App\Models\ContinuousCompliance;
 use App\Models\FormTemplate;
+use App\Models\SysContinuousCompliance;
+use App\Models\UserApplication;
 use Faker\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -76,7 +79,6 @@ class HomeController extends Controller
         foreach ($this->vars->activeApplications as &$app)
         {
             $currStep = $app->steps()->where('status', 'current')->first();
-
             if ( !$currStep )
             {
                 $currStep = $app->steps()->where('status', '1')->first();
@@ -118,7 +120,7 @@ class HomeController extends Controller
 
     public function applicationDashboard(Request $request, $id)
     {
-        $application = Application::with(['steps'])->find($id);
+        $application = Application::with(['steps'])->find($id)->authorize();
         $user = Auth::user();
 
         if ( $application->status == 'wt_firstform' || $application->status == 'denied' )
@@ -153,6 +155,23 @@ class HomeController extends Controller
 
             return view('applications.wait_firstform_verify')->with([
                 'pageInfo' => $this->pageInfo
+            ]);
+        }
+        else if( $application->status == 'completed' )
+        {
+            $this->pageInfo->title              = $application->client->company."'s".' Accredited Registration';
+            $this->pageInfo->category->title    = 'Client';
+            $this->pageInfo->subCategory->title = 'Dashboard';
+
+            $cComplianceForms = ContinuousCompliance::where('application_id', $application->id)->get();
+            $cCompliancesRegistered = SysContinuousCompliance::where('application_id', $application->id)->orderBy('created_at', 'DESC')->get();
+
+            return view('homes.application_completed', [
+                'pageInfo'                  => $this->pageInfo,
+                'application'               => $application,
+                'cComplianceForms'          => $cComplianceForms,
+                'cCompliancesRegistered'    => $cCompliancesRegistered,
+                'isAdmin'                   => $user->hasRole(['admin','staff'])
             ]);
         }
         else
@@ -213,18 +232,22 @@ class HomeController extends Controller
             }
 
             $errorsFormsFields = $this->_getLastFormErrorsField($currentStep);
+            $cComplianceForms = ContinuousCompliance::where('application_id', $application->id)->get();
 
             return view('homes.application', [
-                'pageInfo'              => $this->pageInfo,
-                'application'           => $application,
-                'stepsWithForm'         => $stepsWithForm,
-                'approvalWithReport'    => $reports,
-                'currentStep'           => $currentStep,
-                'isResponsible'         => $isResponsible,
-                'errorsFormsFields'     => $errorsFormsFields
+                'pageInfo'                  => $this->pageInfo,
+                'application'               => $application,
+                'stepsWithForm'             => $stepsWithForm,
+                'approvalWithReport'        => $reports,
+                'currentStep'               => $currentStep,
+                'isResponsible'             => $isResponsible,
+                'errorsFormsFields'         => $errorsFormsFields,
+                'cComplianceForms'    => $cComplianceForms,
+//                'isAdmin'                   => Auth::user()->hasRole(['admin','staff'])
             ]);
         }
     }
+
     private function _getStepsForm($steps, $currentStep){
 
         if($steps->where("morphs_from", FormTemplate::class )->all() > 0)
@@ -238,6 +261,7 @@ class HomeController extends Controller
             return $this->_getLastFormErrorsField($step->previousStep());
         }
     }
+
     private function _getLastFormErrorsField($step){
         if($step->morphs_from === FormTemplate::class)
         {

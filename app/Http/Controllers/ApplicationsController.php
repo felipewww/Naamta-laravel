@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 use App\Mail\AuthEmails;
+use App\MModels\Form;
 use App\Models\ApplicationStep;
 use App\Models\ApplicationStepApprovals;
 use App\Models\ApplicationUserTypes;
 use App\Models\ApplicationUsesEmail;
 use App\Models\Approval;
+use App\Models\ContinuousCompliance;
 use App\Models\FormTemplate;
 use App\Models\Step;
+use App\Models\SysContinuousCompliance;
 use App\Models\UsesEmail;
 use Illuminate\Http\Response;
 //use Validator;
@@ -45,10 +48,11 @@ class ApplicationsController extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->middleware(function ($request, $next) {
-            $user = \Auth::user()->authorizeRoles(['admin', 'staff']);;
-            return $next($request);
-        });
+//        $this->middleware(function ($request, $next) {
+//            $user = \Auth::user()->authorizeRoles(['admin', 'staff']);
+//            return $next($request);
+//        });
+
         $this->applications     = Application::all();
         $this->userTypes        = UserType::All();
 
@@ -271,6 +275,109 @@ class ApplicationsController extends Controller
         );
     }
 
+    public function continuousComplianceNotAccredited(Request $request, $id)
+    {
+        $user = Auth::user();
+        $application = Application::findOrFail($id);
+
+        $this->pageInfo->title              = $application->client->company."'s".' Accredited Registration';
+        $this->pageInfo->category->title    = 'Client';
+        $this->pageInfo->subCategory->title = 'Dashboard';
+
+        $cComplianceForms = ContinuousCompliance::where('application_id', $application->id)->get();
+        $cCompliancesRegistered = SysContinuousCompliance::where('application_id', $application->id)->orderBy('created_at', 'DESC')->get();
+
+        return view('homes.application_completed', [
+            'pageInfo'                  => $this->pageInfo,
+            'application'               => $application,
+            'cComplianceForms'          => $cComplianceForms,
+            'cCompliancesRegistered'    => $cCompliancesRegistered,
+            'isAdmin'                   => $user->hasRole(['admin','staff'])
+        ]);
+    }
+
+    public function addContinuousCompliance(Request $request, $id)
+    {
+        $request->offsetSet('application_id', $id);
+        $request->offsetUnset('_token');
+
+        SysContinuousCompliance::create($request->all());
+
+        return \redirect('/application/'.$id.'/dashboard');
+//        $home = new \App\Http\Controllers\HomeController();
+//        return $home->applicationDashboard($request, $id);
+    }
+
+    public function deleteContinuousCompliance(Request $request, $app_id, $comp_id)
+    {
+        $reg = SysContinuousCompliance::findOrFail($comp_id);
+        $reg->delete();
+
+        $home = new \App\Http\Controllers\HomeController();
+        return \redirect('/application/'.$app_id.'/dashboard');
+        //return $home->applicationDashboard($request, $app_id);
+    }
+
+    public function saveContinuousComplianceForm(Request $request, $appID, $relid)
+    {
+        $rel = ContinuousCompliance::findOrFail($relid);
+
+        if (!$rel) {
+            throw new \Error('Error. Relation not found. Please, contact system administrator');
+        }
+
+        $rel->status = 'sent';
+        $rel->save();
+    }
+
+    public function continuousComplianceForm(Request $request, $appID, $relid)
+    {
+        $rel = ContinuousCompliance::findOrFail($relid);
+        $formID = $rel->form_template_id;
+
+        if (!$rel) {
+            throw new \Error('Error. Relation not found. Please, contact system administrator');
+        }
+
+        if ($rel->mongoform_id == null) {
+            $mysql_form = FormTemplate::withTrashed()
+                ->with([
+                    'containers',
+                    'containers.fields',
+                    'containers.fields.comments'
+                ])
+                ->findOrFail($formID);
+
+            $newMongoForm = $this->_storeFormToMongo( $mysql_form );
+            $rel->mongoform_id = $newMongoForm;
+            $rel->save();
+        }
+
+        $rel->status = 'filling';
+        $rel->save();
+
+        $form = Form::with([
+            'containers',
+            'containers.config',
+            'containers.fields',
+            'containers.fields.comments',
+            'containers.fields.setting',
+            'containers.fields.setting.rule',
+            'containers.fields.setting.rule.conditions'])
+            ->findOrFail($rel->mongoform_id);
+
+        $app = Application::findOrFail($appID);
+        $isResponsible = true;
+
+
+        return view('applications.continuous_compliance_form',[
+            'pageInfo'      => $this->pageInfo,
+            'application'   => $app,
+            'isResponsible' => $isResponsible,
+            'containers'    => $form->containers
+        ]);
+    }
+
     public function saveStepsPosition($appID, Request $request)
     {
         $app = Application::findOrFail($appID);
@@ -376,13 +483,6 @@ class ApplicationsController extends Controller
                 $clientTypeID = $newAppType->id;
             }
         }
-
-//        $clientType = ApplicationUserTypes::create([
-//            'slug' => 'client',
-//            'title' => 'Client',
-//            'status' => 1,
-//            'application_id' => $application->id,
-//        ]);
 
         /*
          * Create application user where his type is the last type found

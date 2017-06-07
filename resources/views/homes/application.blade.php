@@ -60,19 +60,100 @@
             </div>
             <div class="col-sm-12 col-md-4">
                 <div class="white-box">
-                    <h3 class="box-title m-b-0"><b>Review</b></h3>
-                    <h4>Items to be reviewed</h4>
+                <h3 class="box-title m-b-0"><b>All Forms</b></h3>
+                    <div class="table-responsive">
+                        <table id="allforms" class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Form</th>
+                                <th>Status</th>
+                                <th>Last update</th>
+                                <th style="width: 120px">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($stepsWithForm as $formStep)
+                                @foreach($formStep->mongoForms as $stepMongoForm)
+                                    <tr>
+                                        <td>{{ $stepMongoForm->mongoform->name }}</td>
+                                        <td>{{ $stepMongoForm->mongoform->status }}</td>
+                                        <td>{{ $stepMongoForm->mongoform->updated_at }}</td>
+                                        <td>
+                                            @if($formStep->status !== "0" &&  $formStep->status !== "1")
+                                                <a href="/workflow/step/{{$formStep->id}}/{{$stepMongoForm->mform_id}}/show" class="btn btn-warning btn-circle"><i class="fa fa-pencil"></i></a>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="white-box">
+                    <h3 class="box-title m-b-0"><b>Reports</b></h3>
+                    <div class="table-responsive">
+                        <table id="allforms" class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Report</th>
+                                <th>Last Update</th>
+                                <th style="width: 120px">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($approvalWithReport as $k => $approvalStep)
+                                @if($approvalStep!=null && $approvalStep["report"]!=null)
+                                    <tr>
+                                        <td>{{ $approvalStep["report"]->title }}</td>
+                                        <td>{{  $approvalStep["report"]->updated_at }}</td>
+                                        <td>
+                                            <a href="/workflow/step/{{$approvalStep["stepId"]}}/show" class="btn btn-warning btn-circle"><i class="fa fa-eye"></i></a>
+                                        </td>
+                                    </tr>
+                                @endif
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="white-box">
+                    <h3 class="box-title m-b-0"><b>Continuous Compliance</b></h3>
+                    <a href="/application/{{$application->id}}/continuousCompliances" class="btn btn-success pull-right">+ See more</a>
                     <table id="activeform" class="table table-striped">
                         <thead>
+                        <tr>
+                            <th>item</th>
+                            <th>status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($cComplianceForms as $complianceForm)
+                            <tr>
+                                <td>{{ $complianceForm->form->name }}</td>
+                                <td>{{ $complianceForm->status }}</td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <div class="white-box">
+                    <div class="white-box">
+                        <h3 class="box-title m-b-0"><b>Review</b></h3>
+                        <h4>Items to be reviewed</h4>
+                        <table id="activeform" class="table table-striped">
+                            <thead>
                             <tr>
                                 <th>Item</th>
                                 <th>Action</th>
                             </tr>
-                        </thead>
-                        <tbody>
+                            </thead>
+                            <tbody>
                             @foreach($errorsFormsFields as $form)
                                 @foreach($form["containers"] as $field)
-                                {{--{{ dd($field->container->forms) }}--}}
+                                    {{--{{ dd($field->container->forms) }}--}}
                                     <tr>
                                         <td>
                                             <h6>{{ $field->container->forms->name }}</h6>
@@ -87,65 +168,6 @@
                                     </tr>
                                 @endforeach
                             @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-4">
-                <div class="white-box">
-                    <h3 class="box-title m-b-0"><b>All Forms</b></h3>
-                    <div class="table-responsive">
-                        <table id="allforms" class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Form</th>
-                                    <th>Status</th>
-                                    <th>Last update</th>
-                                    <th style="width: 120px">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($stepsWithForm as $formStep)
-                                    @foreach($formStep->mongoForms as $stepMongoForm)
-                                        <tr>
-                                            <td>{{ $stepMongoForm->mongoform->name }}</td>
-                                            <td>{{ $stepMongoForm->mongoform->status }}</td>
-                                            <td>{{ $stepMongoForm->mongoform->updated_at }}</td>
-                                            <td>
-                                                @if($formStep->status !== "0" &&  $formStep->status !== "1")
-                                                    <a href="/workflow/step/{{$formStep->id}}/{{$stepMongoForm->mform_id}}/show" class="btn btn-warning btn-circle"><i class="fa fa-pencil"></i></a>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="white-box">
-                    <h3 class="box-title m-b-0"><b>Reports</b></h3>
-                    <div class="table-responsive">
-                        <table id="allforms" class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Report</th>
-                                    <th>Last Update</th>
-                                    <th style="width: 120px">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($approvalWithReport as $k => $approvalStep)
-                                    @if($approvalStep!=null && $approvalStep["report"]!=null)
-                                        <tr>
-                                            <td>{{ $approvalStep["report"]->title }}</td>
-                                            <td>{{  $approvalStep["report"]->updated_at }}</td>
-                                            <td>
-                                                <a href="/workflow/step/{{$approvalStep["stepId"]}}/show" class="btn btn-warning btn-circle"><i class="fa fa-eye"></i></a>
-                                            </td>
-                                        </tr>
-                                    @endif
-                                @endforeach
                             </tbody>
                         </table>
                     </div>
