@@ -369,7 +369,6 @@ class ApplicationsController extends Controller
         $app = Application::findOrFail($appID);
         $isResponsible = true;
 
-
         return view('applications.continuous_compliance_form',[
             'pageInfo'      => $this->pageInfo,
             'application'   => $app,

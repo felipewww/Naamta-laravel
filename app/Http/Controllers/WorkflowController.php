@@ -58,7 +58,6 @@ class WorkflowController extends Controller
      */
     public function stepActions(Request $request)
     {
-//        dd('here', $request->all());
         \DB::beginTransaction();
         if ( $this->step->responsible != Auth::user()->id ) {
             //dd('você não tem permissão de ação neste step');
@@ -134,6 +133,13 @@ class WorkflowController extends Controller
         return $res;
     }
 
+    public function showReport(Request $request, $id, $report = null)
+    {
+        $step = ApplicationStep::findOrFail($id);
+        $report = $step->approval->report()->findOrFail($report);
+        return $this->getApprovalView($id, $step->approval, $report, ['editable' => false]);
+    }
+
     public function show(Request $request, $id, $formId = null)
     {
         $step = ApplicationStep::findOrFail($id);
@@ -161,19 +167,25 @@ class WorkflowController extends Controller
 
         $currentStep = ApplicationStep::where("id", $stepId)->first();
 
-        $currentUserType = $currentStep->application->users()->where('user_id', Auth::user()->id)->get();
+//        $currentUserType = $currentStep->application->users()->where('user_id', Auth::user()->id)->get();
+//
+//        if ($currentUserType->count() == 1)
+//        {
+//            $currentUserType = $currentUserType->first();
+//            $isResponsible = ($currentStep->responsible == $currentUserType->user_type);
+//        }
+//        else
+//        {
+//            $isResponsible = $currentUserType->where('user_type', $currentStep->responsible)->first();
+//        }
 
-        if ($currentUserType->count() == 1)
-        {
-            $currentUserType = $currentUserType->first();
-            $isResponsible = ($currentStep->responsible == $currentUserType->user_type);
-        }
-        else
-        {
-            $isResponsible = $currentUserType->where('user_type', $currentStep->responsible)->first();
-        }
-
-        return view('workflow.form')->with(['stepId' => $stepId, 'isResponsible' => $isResponsible,  'containers' => $form, 'pageInfo' => $this->pageInfo]);
+        return view('workflow.form')->with([
+            'stepId' => $stepId,
+            'appID' => $currentStep->application_id,
+            'isResponsible' => $currentStep->loggedUserIsResponsible(),
+            'containers' => $form,
+            'pageInfo' => $this->pageInfo
+        ]);
     }
 
     public function applicationApproval($stepId, $stepResponsible, $approval)
@@ -182,20 +194,24 @@ class WorkflowController extends Controller
         $this->pageInfo->category->title    = 'Approval';
         $this->pageInfo->subCategory->title = 'View';
 
-        $loggedUser = Auth::user();
+        return $this->getApprovalView($stepId, $approval);
+    }
 
-        //Verify if current user is responsible by usertype
-        $isResponsible = UserApplication::
-            where('user_id', $loggedUser->id)
-            ->where('user_type', $stepResponsible)
-            ->where('application_id', $this->step->application->id)
-            ->first();
+    private function getApprovalView($stepId, $approval, $report = null, $params = [])
+    {
+        $currentStep = ApplicationStep::where("id", $stepId)->first();
 
-        return view('workflow.approval')->with(
-            [
+        //Do not allow even admin to edit approval when it isn't editable
+        $editable  =( isset($params['editable']) ) ? $params['editable'] : true;
+        $isResponsible = ($editable) ? $this->step->loggedUserIsResponsible() : false;
+
+        return
+            view('workflow.approval')->with([
                 'stepId' => $stepId,
+                'appID' => $currentStep->application_id,
                 'isResponsible' => $isResponsible,
                 'approval' => $approval,
+                'report' => $report,
                 'pageInfo' => $this->pageInfo
             ]);
     }

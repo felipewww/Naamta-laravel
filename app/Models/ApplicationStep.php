@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class ApplicationStep extends Model
 {
@@ -79,5 +80,13 @@ class ApplicationStep extends Model
         $next = ApplicationStep::where('application_id', $this->application_id)->where("ordination", ($this->ordination + 1))->first();
 
         return $next;
+    }
+
+    public function loggedUserIsResponsible()
+    {
+        $user = Auth::user();
+        $try = UserApplication::where('user_type', $this->responsible)->where('user_id', $user->id)->first();
+
+        return ( $try == null ) ? false : true;
     }
 }

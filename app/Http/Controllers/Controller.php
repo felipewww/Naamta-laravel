@@ -20,6 +20,7 @@ use \App\MModels\Comment;
 use \App\MModels\Setting;
 use \App\MModels\Rule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Mockery\CountValidator\Exception;
 
@@ -246,17 +247,31 @@ class Controller extends BaseController
     protected function _updateFieldToMongo($v){
         try{
             $field = Field::find($v->_id);
+//            dd($field->setting);
+
+//            if ($field->setting->error == "Pass") {
+//                return false;
+//            }
+
             if(isset($v->setting->value)){
-                $field->setting->value = $v->setting->value;
-                $field->setting->save();
+
+                //Admin and staffs not allowed to change values, only client and just when field not passed
+                if (Auth::user()->hasRole(['client']) && $field->setting->error != "Pass") {
+                    $field->setting->value = $v->setting->value;
+                    $field->setting->save();
+                }else{
+                    return false;
+                }
             }
             if(isset($v->setting->options)){
                 $field->setting->options = $v->setting->options;
                 $field->setting->save();
             }
             if(isset($v->setting->error)){
-                $field->setting->error = $v->setting->error;
-                $field->setting->save();
+                if (Auth::user()->hasRole(['admin','staff'])) {
+                    $field->setting->error = $v->setting->error;
+                    $field->setting->save();
+                }
             }else{
                 $field->setting->error = false;
                 $field->setting->save();

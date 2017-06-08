@@ -21,7 +21,7 @@ class Approval extends Model
     public function report()
     {
         if($this->has_report)
-            return $this->hasOne('App\Models\Report', 'approval_id', 'id');
+            return $this->hasMany('App\Models\Report', 'approval_id', 'id');
         return null;
     }
 
@@ -34,6 +34,6 @@ class Approval extends Model
 
     public function Step()
     {
-//        return $this->belongsToMany(Step::class, 'application_step_approvals');
+        return $this->hasOne(ApplicationStep::class, 'morphs_id');
     }
 }

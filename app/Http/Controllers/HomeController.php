@@ -216,38 +216,36 @@ class HomeController extends Controller
             }
 
 
-//            $approvalWithReport = $application->steps->where('morphs_from', Approval::class)->where('approval.has_report', '1')->all();
             $approvalWithReport = $application->steps->where('morphs_from', Approval::class)->where('approval.has_report', '1')->all();
-//            dd($approvalWithReport);
             $reports = array();
 
-//            if ( $currentStep->morphs_from == Approval::class )
-//            {
-                foreach($approvalWithReport as $approval)
+
+            foreach($approvalWithReport as $approval)
+            {
+                $step = ApplicationStep::findOrFail($approval->id);
+                $allReports = $step->Approval->report()->orderBy('created_at','DESC')->get();
+
+                if($allReports != null)
                 {
-                    $step = ApplicationStep::findOrFail($approval->id);
-                    if($step->Approval->report!=null)
+                    foreach ($allReports as $rep)
                     {
-                        array_push($reports, array('stepId' => $approval->id, 'report' => $step->Approval->report));
+                        array_push($reports, array('stepId' => $approval->id, 'report' => $rep));
                     }
                 }
-//            }
+            }
 
-            //$errorsFormsFields = $this->_getLastFormErrorsField($currentStep);
             $errorsFormsFields = $this->_getAllFormsErrorsField($currentStep);
-//                dd($errorsFormsFields);
             $cComplianceForms = ContinuousCompliance::where('application_id', $application->id)->get();
 
             return view('homes.application', [
-                'pageInfo'                  => $this->pageInfo,
-                'application'               => $application,
-                'stepsWithForm'             => $stepsWithForm,
-                'approvalWithReport'        => $reports,
-                'currentStep'               => $currentStep,
-                'isResponsible'             => $isResponsible,
-                'errorsFormsFields'         => $errorsFormsFields,
-                'cComplianceForms'    => $cComplianceForms,
-//                'isAdmin'                   => Auth::user()->hasRole(['admin','staff'])
+                'pageInfo'              => $this->pageInfo,
+                'application'           => $application,
+                'stepsWithForm'         => $stepsWithForm,
+                'approvalWithReport'    => $reports,
+                'currentStep'           => $currentStep,
+                'isResponsible'         => $isResponsible,
+                'errorsFormsFields'     => $errorsFormsFields,
+                'cComplianceForms'      => $cComplianceForms,
             ]);
         }
     }

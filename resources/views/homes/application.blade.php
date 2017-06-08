@@ -102,13 +102,14 @@
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach($approvalWithReport as $k => $approvalStep)
+                            {{--@foreach($approvalWithReport as $k => $approvalStep)--}}
+                            @foreach($approvalWithReport as $approvalStep)
                                 @if($approvalStep!=null && $approvalStep["report"]!=null)
                                     <tr>
                                         <td>{{ $approvalStep["report"]->title }}</td>
                                         <td>{{  $approvalStep["report"]->updated_at }}</td>
                                         <td>
-                                            <a href="/workflow/step/{{$approvalStep["stepId"]}}/show" class="btn btn-warning btn-circle"><i class="fa fa-eye"></i></a>
+                                            <a href="/workflow/step/{{$approvalStep["stepId"]}}/approval/{{$approvalStep['report']->id}}" class="btn btn-warning btn-circle"><i class="fa fa-eye"></i></a>
                                         </td>
                                     </tr>
                                 @endif

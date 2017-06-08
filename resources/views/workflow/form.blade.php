@@ -29,6 +29,7 @@
             <div id="drag-container"></div>
         </div>
         <div class="white-box">
+            <a href="/application/{{$appID}}/dashboard" class="btn btn-primary pull-right">Back</a>
             <button onclick="workflow.sendForm();" class="btn btn-primary pull-right btn-submit">Submit Form</button>
             <div class="clearfix"></div>
         </div>

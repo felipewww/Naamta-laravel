@@ -21,7 +21,7 @@
         </div>
     </div>
     @if($approval->has_report===1)
-        <input type="hidden" name="report" value="{{ isset($approval->report->form) ? \GuzzleHttp\json_decode($approval->report->form) : old('containers') }}">
+        <input type="hidden" name="report" value=" {{ $report ? json_decode($report->form) : old('containers') }}">
         <div class="row">
             <div class="col-sm-12">
                 <div class="white-box">
@@ -30,17 +30,16 @@
                 </div>
             </div>
         </div>
-        @if($isResponsible)
-            @php
-                $forms_errors = json_decode($approval->report->forms_errors)
-            @endphp
-
-            @if( !empty($forms_errors) )
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="white-box">
-                            <h3 class="box-title m-b-0">Forms Errors</h3>
-                            <ul>
+        @php
+            if ( $report )
+                $forms_errors = json_decode($report->forms_errors);
+        @endphp
+        @if( isset($report->forms_errors) && !empty($report->forms_errors) )
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="white-box">
+                        <h3 class="box-title m-b-0">Forms Errors</h3>
+                        <ul>
                             @foreach($forms_errors as $formWithError)
                                 <li>
                                     <h3>{{ $formWithError->name }}</h3>
@@ -55,18 +54,18 @@
                                     @endforeach
                                 </li>
                             @endforeach
-                            </ul>
-                        </div>
+                        </ul>
                     </div>
                 </div>
-            @endif
-
-            @if($approval->status == 'current')
+            </div>
+        @endif
+        @if($isResponsible)
+            @if($approval->Step->status == 'current')
             <div class="row">
                 <div class="col-sm-12">
                     <div class="white-box">
                         <button type="button" class="btn btn-danger center-block waves-effect waves-light pull-left rejectReport">Reject and submit Report</button>
-
+                        <a style="margin-left: 10px;" href="/application/{{$appID}}/dashboard" class="btn btn-save pull-right">Back</a>
                         <button type="button" class="btn btn-success center-block waves-effect waves-light pull-right sendReport">Approve and submit Report</button>
                         <div class="clearfix"></div>
                     </div>
@@ -85,6 +84,13 @@
                 })
             </script>
             @endif
+        @else
+            <div class="col-sm-12">
+                <div class="white-box">
+                    <a href="/application/{{$appID}}/dashboard" class="btn btn-save pull-right">Back</a>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
         @endif
 
 
@@ -99,7 +105,7 @@
             createTabs($('input[name=report]').val(), {{ $isResponsible ? 'false' : 'true' }});
         </script>
         <script>
-            @if($isResponsible)
+            @if(!$isResponsible)
                 $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4')
                 $('input, select, radio, textarea, checkbox, option').attr('disabled', 'disabled').css('opacity', '0.4')
                 $('.comment-msg').removeAttr('disabled').css('opacity', '1')
@@ -110,5 +116,15 @@
 
 @section('scripts')
     <script src="{{ asset("js/workflow.js") }}"></script>
+    <script>
+        $(document).ready(function () {
+            $('#save, #open-history, .form-holder > .filter').hide();
+        });
 
+        @if(!$isResponsible)
+        $(document).ready(function () {
+            $('#list-container, #addTab').hide();
+        });
+        @endif
+    </script>
 @endsection
