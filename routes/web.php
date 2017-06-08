@@ -34,6 +34,10 @@ Route::get('/test', function (Request $request) {
     \Illuminate\Support\Facades\DB::commit();
 });
 
+Route::get('/formtest', function (Request $request) {
+
+});
+
 Route::group(['middleware' => 'auth'], function(){
 
     Route::get('/seemail/{email}', function(\Illuminate\Http\Request $request, $email){
@@ -111,8 +115,11 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/workflow/step/{id}/show/',  'WorkflowController@show');
 
     Route::post('/workflow/gotoNextStep',  'WorkflowController@gotoNextStep');
-    Route::post('/workflow/saveStepForm',  'WorkflowController@saveStepForm');
-    Route::post('/workflow/saveApproval',  'WorkflowController@saveApproval');
+//    Route::post('/workflow/saveStepForm',  'WorkflowController@saveStepForm');
+//    Route::post('/workflow/saveApproval',  'WorkflowController@saveApproval');
+
+    Route::post('/workflow/saveStepForm',  'WorkflowController@stepActions');
+    Route::post('/workflow/saveApproval',  'WorkflowController@stepActions');
 
     Route::get('/workflow/step/{id}/{formId}/show/',  'WorkflowController@show');
 

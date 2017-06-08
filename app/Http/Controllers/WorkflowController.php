@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\MModels\Form;
+use App\Models\ApplicationStepForms;
 use App\Models\ApplicationUserTypes;
 use App\Models\EmailTemplate;
 use App\Models\User;
@@ -19,6 +20,7 @@ class WorkflowController extends Controller
 {
     public $step;
     public $application;
+    public $allFormsWithErrors = [];
     /**
      * Create a new controller instance.
      *
@@ -51,11 +53,13 @@ class WorkflowController extends Controller
 
     /*
      * **********************************************************
-     * Remeber, this function requires "artisan queue:listen"
+     * Remember, this function requires "artisan queue:listen"
      * **********************************************************
      */
     public function stepActions(Request $request)
     {
+//        dd('here', $request->all());
+        \DB::beginTransaction();
         if ( $this->step->responsible != Auth::user()->id ) {
             //dd('você não tem permissão de ação neste step');
             return redirect('/');
@@ -76,6 +80,23 @@ class WorkflowController extends Controller
                 break;
         }
 
+        switch ($this->step->morphs_from)
+        {
+            case FormTemplate::class:
+                //return $this->saveStepForm($request);
+                $res = $this->saveStepForm($request);
+            break;
+            case Approval::class:
+//                return $this->saveApproval($request);
+                $res = $this->saveApproval($request);
+            break;
+            default:
+                return json_encode(['status' => false]);
+            break;
+        }
+
+//        dd($receivedByList);
+
         foreach ($receivedByList as $receiver)
         {
             $uType          = ApplicationUserTypes::where('application_id', $this->application->id)->where('id', $receiver->received_by)->first();
@@ -93,9 +114,12 @@ class WorkflowController extends Controller
                     $contentComplement = 'This e-mail should have been sent to: '.$uType->title.', User: '.$user->name.' | '.$user->email.'when step is '.$request->status.'<br>';
                 }
 
+//                dd($this->allFormsWithErrors);
+
                 $mailData = [
-                    'title' => $emailTemplate->title,
-                    'text' => $contentComplement.$emailTemplate->text
+                    'title'                 => $emailTemplate->title,
+                    'text'                  => $contentComplement.$emailTemplate->text,
+                    'allFormsWithErrors'    => $this->allFormsWithErrors
                 ];
 
                 $c = new Carbon();
@@ -105,22 +129,13 @@ class WorkflowController extends Controller
                 dispatch($job);
             }
         }
-
-        switch ($this->step->morphs_from)
-        {
-            case FormTemplate::class:
-                return $this->saveStepForm($request);
-            break;
-            case Approval::class:
-                return $this->saveApproval($request);
-            break;
-            default:
-                return json_encode(['status' => false]);
-            break;
-        }
+//        dd('do not commit');
+        \DB::commit();
+        return $res;
     }
 
-    public function show(Request $request, $id, $formId = null){
+    public function show(Request $request, $id, $formId = null)
+    {
         $step = ApplicationStep::findOrFail($id);
         switch ($step->morphs_from)
         {
@@ -138,7 +153,8 @@ class WorkflowController extends Controller
         }
     }
 
-    private function applicationForm($stepId, $stepResponsible, $form){
+    private function applicationForm($stepId, $stepResponsible, $form)
+    {
         $this->pageInfo->title              = 'Workflow';
         $this->pageInfo->category->title    = 'Form';
         $this->pageInfo->subCategory->title = 'View';
@@ -160,7 +176,8 @@ class WorkflowController extends Controller
         return view('workflow.form')->with(['stepId' => $stepId, 'isResponsible' => $isResponsible,  'containers' => $form, 'pageInfo' => $this->pageInfo]);
     }
 
-    public function applicationApproval($stepId, $stepResponsible, $approval){
+    public function applicationApproval($stepId, $stepResponsible, $approval)
+    {
         $this->pageInfo->title              = 'Workflow';
         $this->pageInfo->category->title    = 'Approval';
         $this->pageInfo->subCategory->title = 'View';
@@ -208,34 +225,49 @@ class WorkflowController extends Controller
     public function saveApproval(Request $request)
     {
         try{
-            \DB::beginTransaction();
             $step = ApplicationStep::findOrFail($request->id);
 
             if($step->Approval->has_report===1){
-                $report = Report::where('approval_id', $step->Approval->id)->first();
-                if($report != null){
-                    $report  = Report::where("id", $report->id)->update(
-                        [
-                            'form' => \GuzzleHttp\json_encode($request->form),
-                            'title' => $step->title . " (Report)"
-                        ]
-                    );
-                }else{
-                    $report  = Report::create(
-                        [
-                            'approval_id' => $step->Approval->id,
-                            'form' => \GuzzleHttp\json_encode($request->form),
-                            'title' => $step->title . " (Report)"
-                        ]
-                    );
+
+                $this->allFormsWithErrors = $this->_getAllFormsErrorsField($step);
+
+                $slightJson = [];
+
+                foreach ($this->allFormsWithErrors as $form)
+                {
+                    $f = [
+                        'name' => $form->name,
+                        'fields' => []
+                    ];
+                    foreach ($form->fieldsWithError as $field)
+                    {
+                        $fieldData = [
+                            'label' => $field->setting->label,
+                            'value' => $field->setting->value,
+                            'error' => $field->setting->error,
+                        ];
+
+                        array_push($f['fields'], $fieldData);
+                    }
+
+                    array_push($slightJson, $f);
                 }
+
+                Report::create(
+                    [
+                        'approval_id' => $step->Approval->id,
+                        'form' => \GuzzleHttp\json_encode($request->form),
+                        'forms_errors' => \GuzzleHttp\json_encode($slightJson),
+                        'title' => $step->title
+                    ]
+                );
             }
             $step->status = $request->status;
             $step->save();
 
             switch ($request->status){
                 case 'reproved':
-                    $previousStep = ApplicationStep::findOrFail( $step->previousStep()->id);
+                    $previousStep = ApplicationStep::findOrFail( $step->previousStep()->id );
                     $previousStep->status = "current";
                     $previousStep->save();
                     break;
@@ -243,8 +275,6 @@ class WorkflowController extends Controller
                     $this->nextStepOrCompleteApplication($step);
                     break;
             }
-
-            \DB::commit();
             return json_encode(['status' => 'success', 'message' => 'Form saved']);
         }catch (Exception $e){
             return json_encode(['status' => 'error', 'message' => 'Error']);

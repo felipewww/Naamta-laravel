@@ -26,6 +26,7 @@ class CreateReportsTable extends Migration
         });
 
         DB::statement("ALTER TABLE reports ADD form MEDIUMBLOB");
+        DB::statement("ALTER TABLE reports ADD forms_errors MEDIUMBLOB");
     }
 
     /**

@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ApplicationStep;
+use App\Models\ApplicationStepForms;
 use App\Models\Approval;
+use App\Models\FormTemplate;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -337,6 +340,92 @@ class Controller extends BaseController
     protected function get_http_response_code($url) {
         $headers = get_headers($url);
         return substr($headers[0], 9, 3);
+    }
+
+    protected function _getAllFormsErrorsField($step)
+    {
+        $app = $step->application;
+        $allSteps = ApplicationStep::where('application_id', $app->id)->where('morphs_from', FormTemplate::class)->get();
+        $allStepsIDs = [];
+        foreach ($allSteps as $appStep)
+        {
+            array_push($allStepsIDs, $appStep->id);
+        }
+
+        //Find all forms that was been sent in all steps
+        $forms = ApplicationStepForms::whereIn('application_step_id', $allStepsIDs)->get();
+
+        $mongoFormsIDS = [];
+        foreach ($forms as $submitedForm)
+        {
+            array_push($mongoFormsIDS, $submitedForm->mform_id);
+        }
+
+
+        $mongoForms = Form::whereIn('_id', $mongoFormsIDS)->with([
+            'containers',
+            'containers.fields',
+            'containers.fields.setting',
+        ])->get();
+
+        $formsWithError = [];
+
+        foreach ($mongoForms as &$mForm)
+        {
+            $errors = $this->_getErrorsField($mForm, 'field');
+
+            if ($errors) {
+                $mForm->offsetSet('fieldsWithError', $errors);
+                array_push($formsWithError, $mForm);
+            }
+        }
+
+//        dd($formsWithError);
+
+        return $formsWithError;
+    }
+
+    protected function _getLastFormErrorsField($step){
+        if($step->morphs_from === FormTemplate::class)
+        {
+            $errors = array();
+            foreach($step->forms as $form){
+                $f = Form::with(array('containers', 'containers.config', 'containers.fields', 'containers.fields.comments',
+                    'containers.fields.setting', 'containers.fields.setting.rule', 'containers.fields.setting.rule.conditions') )->findOrFail($form->mform_id);
+
+                array_push($errors, array("formId" => $form->form_templates_id, "containers" => $this->_getErrorsField($f)));
+            }
+
+            return $errors;
+        }
+        if( $step->previousStep() !== null){
+            return $this->_getLastFormErrorsField($step->previousStep());
+        }
+    }
+
+    protected function _getErrorsField($form, $wich = 'errors'){
+        $errors = array();
+        $arr = [];
+        try{
+            foreach ($form->containers as $i => $c){
+                foreach($c->fields as $k => $v){
+                    if(isset($v->setting->error)){
+                        if ($v->setting->error == 'Fail' || $v->setting->error == 'Audit') {
+                            array_push($arr, $v);
+                            array_push($errors, Field::find($v->_id));
+                        }
+                    }
+                }
+            }
+
+            if ($wich == 'errors'){
+                return $errors;
+            }else{
+                return $arr;
+            }
+        }catch (Exception $e){
+            return null;
+        }
     }
 }
 

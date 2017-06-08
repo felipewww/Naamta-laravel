@@ -216,11 +216,13 @@ class HomeController extends Controller
             }
 
 
+//            $approvalWithReport = $application->steps->where('morphs_from', Approval::class)->where('approval.has_report', '1')->all();
             $approvalWithReport = $application->steps->where('morphs_from', Approval::class)->where('approval.has_report', '1')->all();
+//            dd($approvalWithReport);
             $reports = array();
 
-            if ( $currentStep->morphs_from == Approval::class )
-            {
+//            if ( $currentStep->morphs_from == Approval::class )
+//            {
                 foreach($approvalWithReport as $approval)
                 {
                     $step = ApplicationStep::findOrFail($approval->id);
@@ -229,9 +231,11 @@ class HomeController extends Controller
                         array_push($reports, array('stepId' => $approval->id, 'report' => $step->Approval->report));
                     }
                 }
-            }
+//            }
 
-            $errorsFormsFields = $this->_getLastFormErrorsField($currentStep);
+            //$errorsFormsFields = $this->_getLastFormErrorsField($currentStep);
+            $errorsFormsFields = $this->_getAllFormsErrorsField($currentStep);
+//                dd($errorsFormsFields);
             $cComplianceForms = ContinuousCompliance::where('application_id', $application->id)->get();
 
             return view('homes.application', [
@@ -259,44 +263,6 @@ class HomeController extends Controller
         }
         if( $step->previousStep() !== null){
             return $this->_getLastFormErrorsField($step->previousStep());
-        }
-    }
-
-    private function _getLastFormErrorsField($step){
-        if($step->morphs_from === FormTemplate::class)
-        {
-            $errors = array();
-            foreach($step->forms as $form){
-                $f = Form::with(array('containers', 'containers.config', 'containers.fields', 'containers.fields.comments',
-                    'containers.fields.setting', 'containers.fields.setting.rule', 'containers.fields.setting.rule.conditions') )->findOrFail($form->mform_id);
-
-                array_push($errors, array("formId" => $form->form_templates_id, "containers" => $this->_getErrorsField($f)));
-            }
-
-            return $errors;
-        }
-        if( $step->previousStep() !== null){
-            return $this->_getLastFormErrorsField($step->previousStep());
-        }
-    }
-
-    private function _getErrorsField($form){
-        $errors = array();
-        $arr = [];
-        try{
-            foreach ($form->containers as $i => $c){
-                foreach($c->fields as $k => $v){
-                    if(isset($v->setting->error)){
-                        if ($v->setting->error == 'Fail' || $v->setting->error == 'Audit') {
-                            array_push($arr, $v);
-                            array_push($errors, Field::find($v->_id));
-                        }
-                    }
-                }
-            }
-            return $errors;
-        }catch (Exception $e){
-            return null;
         }
     }
 }

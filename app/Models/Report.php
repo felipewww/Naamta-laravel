@@ -15,7 +15,7 @@ class Report extends Model
      * @var array
      */
     protected $fillable = [
-       'id', 'title', 'approval_id', 'form'
+       'id', 'title', 'approval_id', 'form', 'forms_errors'
     ];
 
     public function approval()

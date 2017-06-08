@@ -31,6 +31,37 @@
             </div>
         </div>
         @if($isResponsible)
+            @php
+                $forms_errors = json_decode($approval->report->forms_errors)
+            @endphp
+
+            @if( !empty($forms_errors) )
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="white-box">
+                            <h3 class="box-title m-b-0">Forms Errors</h3>
+                            <ul>
+                            @foreach($forms_errors as $formWithError)
+                                <li>
+                                    <h3>{{ $formWithError->name }}</h3>
+                                    @foreach($formWithError->fields as $fieldError)
+                                        <br>
+                                        <strong>Field:</strong> {{ $fieldError->label }}
+                                        <br>
+                                        <strong>Filled out:</strong> "{{ $fieldError->value }}"
+                                        <br>
+                                        <strong>Error type:</strong> {{ $fieldError->error }}
+                                        <br>
+                                    @endforeach
+                                </li>
+                            @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            @if($approval->status == 'current')
             <div class="row">
                 <div class="col-sm-12">
                     <div class="white-box">
@@ -53,6 +84,7 @@
                     workflow.sendApproval('reproved', '{{$stepId}}', form)
                 })
             </script>
+            @endif
         @endif
 
 
@@ -67,19 +99,6 @@
             createTabs($('input[name=report]').val(), {{ $isResponsible ? 'false' : 'true' }});
         </script>
         <script>
-
-            $('.sendReport').click(function(){
-                $('input[name=report]').val(toJson())
-                var form = toJson();
-                workflow.sendApproval('approved', '{{$stepId}}', form)
-            })
-
-
-            $('.rejectReport').click(function(){
-                $('input[name=report]').val(toJson())
-                var form = toJson();
-                workflow.sendApproval('reproved', '{{$stepId}}', form)
-            })
             @if($isResponsible)
                 $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4')
                 $('input, select, radio, textarea, checkbox, option').attr('disabled', 'disabled').css('opacity', '0.4')

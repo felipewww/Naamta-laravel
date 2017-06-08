@@ -52,13 +52,15 @@ class WorkflowEmails extends Mailable
 
     public function approved()
     {
+        echo "Email approving an step sent.\n";
         $this->subject = $this->params['title'];
 
         view('emails.workflow.templates', ['text' => $this->params['text']])->withShortcodes();
 
         return $this->with([
-            'text' => $this->params['text']
-            ])
+            'text' => $this->params['text'],
+            'allFormsWithErrors' => $this->params['allFormsWithErrors'],
+        ])
             ->view('emails.workflow.templates');
 //            ->view(['html' => 'emails.workflow.templates']);
 
@@ -71,7 +73,8 @@ class WorkflowEmails extends Mailable
         view('emails.workflow.templates', ['text' => $this->params['text']])->withShortcodes();
 
         return $this->with([
-            'text' => $this->params['text']
+            'text' => $this->params['text'],
+            'allFormsWithErrors' => $this->params['allFormsWithErrors'],
         ])
             ->view('emails.workflow.templates');
 

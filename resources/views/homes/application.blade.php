@@ -152,8 +152,7 @@
                             </thead>
                             <tbody>
                             @foreach($errorsFormsFields as $form)
-                                @foreach($form["containers"] as $field)
-                                    {{--{{ dd($field->container->forms) }}--}}
+                                @foreach($form->fieldsWithError as $field)
                                     <tr>
                                         <td>
                                             <h6>{{ $field->container->forms->name }}</h6>
