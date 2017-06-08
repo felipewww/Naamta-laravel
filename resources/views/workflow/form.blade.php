@@ -29,7 +29,7 @@
             <div id="drag-container"></div>
         </div>
         <div class="white-box">
-            <a href="/application/{{$appID}}/dashboard" class="btn btn-primary pull-right">Back</a>
+            <a href="/application/{{$appID}}/dashboard" class="btn btn-primary pull-right btn-submit">Back</a>
             <button onclick="workflow.sendForm();" class="btn btn-primary pull-right btn-submit">Submit Form</button>
             <div class="clearfix"></div>
         </div>
@@ -50,10 +50,8 @@
 <script>
     createTabs($('input[name=containers]').val(), true, "{{$isResponsible}}");
     @if(!$isResponsible)
-        $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4')
-        $('input, select, radio, textarea, checkbox, option').attr('disabled', 'disabled').css('opacity', '0.4')
-        $('.comment-msg, .is-incorrect').removeAttr('disabled').css('opacity', '0')
-        $('.is-incorrect').css('display', '0')
+        $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4');
+        $('.is-incorrect').css('display', '0');
     @else
         $('.drag-validate').css('display', 'none')
     @endif

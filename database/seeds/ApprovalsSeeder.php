@@ -19,6 +19,7 @@ class ApprovalsSeeder extends Seeder
                     'id'                => 1,
                     'title'             => 'Approval Template One',
                     'description'       => Faker::create()->paragraph(1),
+                    'has_report'        => 1
                 ],
                 [
                     'id'                => 2,
@@ -29,6 +30,7 @@ class ApprovalsSeeder extends Seeder
                     'id'                => 3,
                     'title'             => 'Approval Template Three',
                     'description'       => Faker::create()->paragraph(1),
+                    'has_report'        => 1
                 ],
             )
         );

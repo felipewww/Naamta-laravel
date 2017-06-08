@@ -107,8 +107,6 @@
         <script>
             @if(!$isResponsible)
                 $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4')
-                $('input, select, radio, textarea, checkbox, option').attr('disabled', 'disabled').css('opacity', '0.4')
-                $('.comment-msg').removeAttr('disabled').css('opacity', '1')
             @endif
         </script>
     @endif

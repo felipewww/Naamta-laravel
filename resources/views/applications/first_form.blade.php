@@ -51,4 +51,15 @@
 
 @section('scripts')
     <script src="{{ asset("js/workflow.js") }}"></script>
+    <script>
+        $(document).ready(function () {
+            $('#save, #open-history, .form-holder > .filter').hide();
+        });
+
+        @if(!$isResponsible)
+        $(document).ready(function () {
+            $('#list-container, #addTab').hide();
+        });
+        @endif
+    </script>
 @endsection
