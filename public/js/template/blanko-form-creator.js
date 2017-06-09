@@ -33,7 +33,7 @@ function toFieldObject(){
   obj.setting.ordenate = parseInt($(this).find('.ordenation').text().replace('(','').replace(')','')) ;
   obj.setting.isRequired = $(this).find('.update-required').hasClass('required');
   obj.setting.label = $(this).find('.update-label').text();
-  obj.setting.help = $(this).find('.help + .text').html();
+  obj.setting.help = $(this).find('.help-text').html();
   if(obj.type != 'file-upload'){
     obj.setting.value = $(this).find('.update-value').val();
   }
@@ -269,7 +269,8 @@ function configureField(node, options, type, id){
   node.find('.update-label').text(options.label);
   node.find('.update-label').val(options.label);
   node.find('.help + .text').html(options.help);
-  if(node.find('.help + .text').html() == '') node.find('.help .icon').hide();
+  node.find('.help-text').html(options.help);
+  if(node.find('.help-text').html() == '') node.find('.help .icon').hide();
 
   //Size of the field
   node.addClass(options.class);
@@ -332,7 +333,7 @@ function configureField(node, options, type, id){
   node = node.find('.drag-options');
   node.find('.is-required').prop('checked', options.isRequired);
   node.find('.label-text').val(options.label);
-  node.find('.help-text').text(options.help);
+  node.find('.help-text').html(options.help);
 
   node.find('.value').val(options.value);
   node.find('.min-value').val(options.min);
@@ -510,7 +511,7 @@ function getComments(id){
         _id : $(this).attr('comment-id'),
         fieldId : id,
         username : $(this).find('span.username').text(),
-        msg : $(this).find('span.message').text(),
+        msg : $(this).find('.message').text(),
         type : $(this).attr('comment-type')
       };
     result.push(comment);
