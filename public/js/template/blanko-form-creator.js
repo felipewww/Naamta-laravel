@@ -510,7 +510,7 @@ function getComments(id){
         _id : $(this).attr('comment-id'),
         fieldId : id,
         username : $(this).find('span.username').text(),
-        msg : $(this).find('span.message').text(),
+        msg : $(this).find('.message').text(),
         type : $(this).attr('comment-type')
       };
     result.push(comment);

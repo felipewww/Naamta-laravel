@@ -818,7 +818,7 @@ function appendComment(user, msg, type = 'external', node, id){
     }else{
       node.find('.internal-comments').append(comment);
     }
-    $('.comments:visible').scrollTop($('.comments:visible')[0].scrollHeight);
+    //$('.comments:visible').scrollTop($('.comments:visible')[0].scrollHeight);
     node.find('.comment-icon').addClass('has-comments');
   }
 }
