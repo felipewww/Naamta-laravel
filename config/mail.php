@@ -1,5 +1,8 @@
 <?php
 
+$to = [];
+$address_to = ( env('app') == 'local' ) ? array_push($to, env('MAIL_LOCAL_RECEIVER', 'admin@blanko.be')) : false;
+
 return [
 
     /*
@@ -60,10 +63,7 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Blanko mail tests2'),
     ],
 
-    'to' => [
-        'address' => env('MAIL_LOCAL_RECEIVER', 'admin@blanko.be'),
-        'name' => 'Example Mail'
-    ],
+    'to' => $to,
 
     /*
     |--------------------------------------------------------------------------

@@ -25,6 +25,7 @@ class ApprovalsSeeder extends Seeder
                     'id'                => 2,
                     'title'             => 'Approval Template two',
                     'description'       => Faker::create()->paragraph(1),
+                    'has_report'        => 0
                 ],
                 [
                     'id'                => 3,
