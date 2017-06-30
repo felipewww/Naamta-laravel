@@ -115,7 +115,7 @@
                            @endif
                        </div>
 
-                       {{--@if( $stepFrom == 'application' )--}}
+                       @if( $vars->stepFrom == 'application' )
                            @if( isset($vars->morphItem) )
                                 @if( $vars->morphItem->deleted_at )
                                     <div class="alert alert-danger">
@@ -151,7 +151,7 @@
                                    </select>
                                </div>
                            </div>
-                       {{--@endif--}}
+                       @endif
 
                        <div class="form-group" id="show-approval">
                            <label class="col-sm-12">Uses E-mail?</label>

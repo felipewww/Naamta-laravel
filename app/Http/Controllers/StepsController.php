@@ -157,9 +157,14 @@ class StepsController extends Controller
         $this->pageInfo->subCategory->title = 'Create Step';
 
         $vars = $this->defaultVars();
+//        dd($vars);
 
         return view(
-            'steps.form', ['vars' => $vars, 'pageInfo' => $this->pageInfo]
+            'steps.form', [
+                'vars' => $vars,
+                'pageInfo' => $this->pageInfo,
+                'backLink' => '/steps'
+            ]
         );
     }
 
