@@ -16,20 +16,20 @@
         <div class="white-box">
             @if( $isResponsible )
             <button onclick="workflow.continuousCompliance();" class="btn btn-primary pull-right btn-submit">Send Form</button>
-            {{--@else--}}
+            @else
             <a href="/application/{{$application->id}}/dashboard" class="btn btn-danger pull-right">Return to app info</a>
             @endif
             <div class="clearfix"></div>
         </div>
     </div>
 </div>
+
 <script>
     var username  = '{{ Auth::user()->name }}';
     var appFolder = '{{ Auth::user()->email }}';
 </script>
 <script src="{{ asset("js/template/signature_pad.js") }}"></script>
 <script src="{{ asset("js/template/dropzone.js") }}"></script>
-<!-- Reference https://github.com/szimek/signature_pad -->
 
 <script src="{{ asset("js/template/blanko-form-builder.js") }}"></script>
 <script src="{{ asset("js/template/blanko-form-creator.js") }}"></script>
@@ -37,14 +37,16 @@
 
 <script>
     createTabs($('input[name=containers]').val(), true, "{{$isResponsible}}");
-    @if(!$isResponsible)
-        $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4')
-        $('input, select, radio, textarea, checkbox, option').attr('disabled', 'disabled').css('opacity', '0.4')
-        $('.comment-msg, .is-incorrect').removeAttr('disabled').css('opacity', '0')
-        $('.is-incorrect').css('display', '0')
-    @else
+    {{--@if(!$isResponsible)--}}
+//        $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4')
+//        $('input, select, radio, textarea, checkbox, option').attr('disabled', 'disabled').css('opacity', '0.4')
+//        $('.comment-msg, .is-incorrect').removeAttr('disabled').css('opacity', '0')
+//        $('.is-incorrect').css('display', '0')
+    {{--@else--}}
+    $(document).ready(function () {
         $('.drag-validate').css('display', 'none');
-    @endif
+    });
+    {{--@endif--}}
 </script>
 
 @endsection

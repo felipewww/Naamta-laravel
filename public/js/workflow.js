@@ -19,9 +19,12 @@ workflow = {
             dataType: 'json',
             success: function (data) {
                 console.log('Success!');
-                // window.location.href = window.location.protocol + "//" + window.location.hostname;
+                window.location.href = window.location.protocol + "//" + window.location.hostname;
             },
             error: function (data) {
+                title   = 'Error during send this form';
+                content = 'Please, contact the system administrator.';
+                Script.xmodal().setTitle(title).setContent(content).setHeader('alert-danger').show();
                 console.log('Error!');
             }
         });
@@ -87,7 +90,8 @@ workflow = {
             method: 'POST',
             data: sequence,
             success: function (data) {
-               window.location.href = window.location.protocol + "//" + window.location.hostname;
+                console.log(data)
+               //window.location.href = window.location.protocol + "//" + window.location.hostname;
             },
             error: function (data) {
                 console.log(data)

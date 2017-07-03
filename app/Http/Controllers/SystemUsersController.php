@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Roles;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class SystemUsersController extends Controller
@@ -18,10 +19,11 @@ class SystemUsersController extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->middleware(function ($request, $next) {
-            $user = \Auth::user()->authorizeRoles(['admin']);;
-            return $next($request);
-        });
+//        $this->middleware(function ($request, $next) {
+//            dd($request);
+//            $user = \Auth::user()->authorizeRoles(['admin']);;
+//            return $next($request);
+//        });
         
         $this->roles = Roles::whereIn('name', ['admin','staff'])->get();
         $this->users = User::whereHas('roles', function($query) {
@@ -38,6 +40,10 @@ class SystemUsersController extends Controller
         $this->pageInfo->title              = 'System';
         $this->pageInfo->category->title    = 'Users';
         $this->pageInfo->subCategory->title = 'Users List';
+
+        if (!Auth::user()->hasRole('admin')) {
+            return redirect('/');
+        }
 
         $this->dataTablesInit();
         return view('systemUsers.list', ['dataTables' => $this->dataTables, 'pageInfo' => $this->pageInfo ]);
@@ -104,9 +110,11 @@ class SystemUsersController extends Controller
         $this->pageInfo->subCategory->title = 'User Edit';
 
         $user = User::findOrFail($id);
-        
+
         if($user->roles->first()->name == 'client'){
-            return redirect('users');
+            if (Auth::user()->id != $user->id) {
+                return redirect('/');
+            }
         }
         
         return view('systemUsers.form')->with(['user' => $user, 'roles'=>$this->roles, 'pageInfo' => $this->pageInfo]);
