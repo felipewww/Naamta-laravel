@@ -74,15 +74,21 @@
     font-size: 1em;
     padding: 10px;
 }
-
+.paragraph-content{
+    height: auto;
+}
 
 .help + .text h4, 
-.help-text h4{
+.help-text h4,
+.paragraph-content h4,
+.update-paragraph h4{
     font-weight: normal;
     font-size: 1.6em;
 }
 .help + .text h5, 
-.help-text h5{
+.help-text h5,
+.paragraph-content h5,
+.update-paragraph h5{
     font-weight: normal;
     font-size: 1.2em;
 }
@@ -473,4 +479,8 @@ h5.bold{
     to{
         opacity: 1;
     }
+}
+
+h4 i{
+    cursor: pointer;
 }

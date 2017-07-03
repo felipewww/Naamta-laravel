@@ -22,7 +22,7 @@
     <div class="col-sm-12">
         <div class="white-box">
             <h3 class="box-title m-b-20">Form Preview</h3>
-            <div id="drag-container"></div>
+            <div id="drag-container" class="preview-form"></div>
         </div>
     </div>
 </div>
@@ -39,6 +39,11 @@
 <script>
 var appFolder = "teste";
 
-createTabs('<?= str_replace("'", "\'", $containers ) ?>', true, "{{ Auth::user()->isClient() ? true : false }}");
+<?php
+    $containers = str_replace("'", "\'", $containers );
+    $containers = str_replace('"', '\"', $containers );
+?>
+
+createTabs('<?= $containers ?>', true, "{{ Auth::user()->isClient() ? true : false }}");
 </script>
 @endsection
