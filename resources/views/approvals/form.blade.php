@@ -53,9 +53,9 @@
                             <label for="text" class="col-md-4 control-label">Has Report?</label>
                             <div class="col-md-6">
                                 <label for="report_yes">Yes</label>
-                                <input type="radio" id="report_yes" name="has_report" value="1">
+                                <input type="radio" {{ ($approval->has_report == 1) ? 'checked="checked"' : ''  }} id="report_yes" name="has_report" value="1">
                                 <label for="report_no">No</label>
-                                <input type="radio" id="report_no" name="has_report" value="0">
+                                <input type="radio" {{ ($approval->has_report == 0) ? 'checked="checked"' : ''  }} id="report_no" name="has_report" value="0">
                             </div>
                         </div>
                         <div class="form-group">

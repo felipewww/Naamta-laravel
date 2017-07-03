@@ -343,6 +343,7 @@ class StepsController extends Controller
                 'success' => $request->emails_success,
                 'rejected' => $request->emails_rejected
             ];
+
             foreach ($emails as $send_when => $sync)
             {
                 if (!is_array($sync)) { $sync = []; }

@@ -68,7 +68,12 @@
                                                             </tbody>
                                                         </table>
                                                     @endif
-                                                    <h5 class="m-t-0 m-b-20"><b>Form:</b> Form 1</h5>
+
+                                                    @if($step->morphs_from == \App\Models\FormTemplate::class)
+                                                    <h5 class="m-t-0 m-b-20"><b>Form:</b>{{$step->title}}</h5>
+                                                    @elseif($step->morphs_from == \App\Models\Approval::class)
+                                                    <h5 class="m-t-0 m-b-20"><b>Approval:</b>{{$step->title}}</h5>
+                                                    @endif
 
                                                     <div class="row action">
                                                         <div>

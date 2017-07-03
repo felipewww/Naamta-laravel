@@ -107,7 +107,7 @@ class RegisterController extends Controller
 
             switch (app('env') )
             {
-                case 'local' || 'staging':
+                case 'local' || 'staging' || 'dev':
                     if (!$fullProccess) {
                         $user->verified = true;
                         $user->save();

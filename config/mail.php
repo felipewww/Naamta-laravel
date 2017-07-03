@@ -1,7 +1,7 @@
 <?php
 
 $to = [];
-$address_to = ( env('app') == 'local' ) ? array_push($to, env('MAIL_LOCAL_RECEIVER', 'admin@blanko.be')) : false;
+$address_to = ( env('app') == 'dev' ) ? array_push($to, env('MAIL_LOCAL_RECEIVER', 'admin@blanko.be')) : false;
 
 return [
 
