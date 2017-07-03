@@ -31,7 +31,7 @@ function toFieldObject(){
 
   obj.setting.error = $('[name="incorrect__'+ obj._id +'"]:checked').val();
   obj.setting.ordenate = parseInt($(this).find('.ordenation').text().replace('(','').replace(')','')) ;
-  obj.setting.isRequired = $(this).find('.update-required').hasClass('required');
+  obj.setting.isRequired = true;
   obj.setting.label = $(this).find('.update-label').text();
   obj.setting.help = $(this).find('.help-text').html();
   if(obj.type != 'file-upload'){
@@ -179,10 +179,11 @@ function createTabs(json, clientView = false, isClient){
     });
   });
   
+  $('.required-field').remove();
   $('.tab-control').removeClass('active');
   $('.tab-control:first-of-type').addClass('active');
 
-  if(clientView){
+  if(isClientView){
     $('.draggable-input').removeClass('panel');
     $('.tabs-options #addTab').hide();
     $('.drag-heading li:not(:first-of-type)').hide();
@@ -199,6 +200,7 @@ function createTabs(json, clientView = false, isClient){
     $('#save-changes').show();
   }else{
     $('.filter').hide();
+    console.log('asdsad');
     $('#save-changes').hide();
   }
   
