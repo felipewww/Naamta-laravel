@@ -474,3 +474,7 @@ h5.bold{
         opacity: 1;
     }
 }
+
+h4 i{
+    cursor: pointer;
+}
