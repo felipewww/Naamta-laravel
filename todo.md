@@ -84,3 +84,13 @@ sudo nano /etc/anacrontab
 cadastro de forms > clientes > por tempo..
 -[ ] Se for automático (padrão para todos), quando criar um form novo, atribuir para todos os clientes ou apenas para novos?
 -[ ] Se for atribuir para todos. por exemplo, um form recorrente de 4 em 4 meses. Conta a partir da data do registro do form ou da aprovação final da aplicação?
+
+##Testes 30/06
+- Erro ao criar step se não existir nenhum
+- Botão salvar parece estar "sem ação" front end
+- Tags shortcodes
+- tirar filtro do form na criação
+- 2 botões de save na criação do form
+- Has report nao esta carregando o selecionado
+- remover botão de editar do fomr (confirmar com leonardo)
+- Exibir o email que foi enviado na tela de confirmação

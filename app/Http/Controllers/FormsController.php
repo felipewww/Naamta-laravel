@@ -204,6 +204,8 @@ class FormsController extends Controller
                 'status'    => (int)$request->status
             ]);
 
+            $this->_saveContainers(json_decode($request->containers), $id);
+
             \Session::flash('success_msg','Form Edited: ' . $request->name);
         } catch(Exception $e){
             \Session::flash('error','Form update failed: ' . $e);

@@ -69,9 +69,9 @@ var Steps = {
             if (e.checked) { Steps.__showSelect(e.value); }
 
             e.addEventListener('change', function () {
-                Steps.__showSelect(this.value)
-            })
-        })
+                Steps.__showSelect(this.value);
+            });
+        });
     },
     
     __showSelect: function (value) 
@@ -86,7 +86,6 @@ var Steps = {
         });
 
         all.hide();
-
         switch (value)
         {
             case "App\\Models\\FormTemplate":
@@ -101,7 +100,8 @@ var Steps = {
         /**
          * The "form select" is showed only when editing a cloned step
          * */
-        if (value == "App\\Models\\FormTemplate" && this.action == 'edit' && this.from != 'clone') {
+        // if (value == "App\\Models\\FormTemplate" && this.action == 'edit' && this.from != 'clone') {
+        if (value == "App\\Models\\FormTemplate" && this.action == 'edit' && this.from != 'application') {
             return false;
         }
 

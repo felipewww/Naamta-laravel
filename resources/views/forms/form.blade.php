@@ -10,11 +10,23 @@
             $route = route('forms.update', ['id' => $form->id]);
             $method = 'PUT';
         }
+        $noFilter = false;
     }else{
+        $noFilter = true;
         $form = new App\Models\FormTemplate();
     }
 
 @endphp
+
+@if($noFilter)
+    @section('scripts')
+        <script>
+            $(document).ready(function () {
+                $('#save, #open-history, .form-holder > .filter').hide();
+            });
+        </script>
+    @endsection
+@endif
 
 @section('styles')
     <link href="{{ asset("css/template/blanko-form-builder.css") }}" rel="stylesheet">
@@ -59,7 +71,7 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="white-box">
-                <h3 class="box-title m-b-0">Registration Form</h3>
+                <h3 class="box-title m-b-0">Form Registration</h3>
                 <div id="drag-container"></div>
                 <div class="clearfix"></div>
             </div>

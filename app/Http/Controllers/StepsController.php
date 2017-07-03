@@ -157,7 +157,6 @@ class StepsController extends Controller
         $this->pageInfo->subCategory->title = 'Create Step';
 
         $vars = $this->defaultVars();
-//        dd($vars);
 
         return view(
             'steps.form', [
@@ -179,7 +178,7 @@ class StepsController extends Controller
          * If it's a clone, the morphs_from cant be update, so, get morphs_from from the edited step.
          * Beacause the radio buttons are hidden and them not sent in the post
          * */
-        if ($request->_stepFrom == 'clone') {
+        if ($request->_stepFrom == 'clone' || $request->_stepFrom == 'application') {
             $request->offsetSet('morphs_from', $this->step->morphs_from);
         }
 
@@ -242,7 +241,7 @@ class StepsController extends Controller
                 $redirect = '/steps/'.$id.'/edit';
                 break;
 
-            case 'clone':
+            case 'clone' || 'application':
                 $this->step = ApplicationStep::findOrFail($id);
                 if ($this->step->application->reset_at) {
 
@@ -299,11 +298,14 @@ class StepsController extends Controller
         $request->offsetUnset('emails_success');
         $request->offsetUnset('emails_rejected');
 
-        $lastStep = Step::find(1)->orderBy('ordination')->get()->last();
+//        $lastStep = Step::find(1)->orderBy('ordination')->get()->last();
+        $lastStep = Step::find(1);
 
         if ( !$lastStep ) {
             $lastStep = new Step();
             $lastStep->id = null;
+        }else{
+            $lastStep = Step::find(1)->orderBy('ordination')->get()->last();
         }
 
         $request->offsetSet('ordination', Step::count());
@@ -324,7 +326,7 @@ class StepsController extends Controller
                 $model = UsesEmail::class;
                 break;
 
-            case 'clone':
+            case 'clone' || 'application':
                 $key = 'application_step_id';
                 $model = ApplicationUsesEmail::class;
                 break;
@@ -341,26 +343,30 @@ class StepsController extends Controller
                 'success' => $request->emails_success,
                 'rejected' => $request->emails_rejected
             ];
-
             foreach ($emails as $send_when => $sync)
             {
                 if (!is_array($sync)) { $sync = []; }
                 foreach ($sync as $data)
                 {
                     $templateID = $data[0][0];
-                    foreach ($data[1] as $userTypeID)
+
+                    //If to avoid error if admin selected email to send without an receiver
+                    if (isset($data[1]))
                     {
-                        $reg = [
-                            $key       => $this->step->id,
-                            'email_id'      => $templateID,
-                            'received_by'   => $userTypeID,
-                            'send_when'     => $send_when,
-                        ];
-                        try{
-                            $model::create($reg);
-                        }catch (QueryException $e){
-                            //TODO - Create a message to notify user that this e-mail wasn't saved on DB, because FK already exists.
-                            continue;
+                        foreach ($data[1] as $userTypeID)
+                        {
+                            $reg = [
+                                $key       => $this->step->id,
+                                'email_id'      => $templateID,
+                                'received_by'   => $userTypeID,
+                                'send_when'     => $send_when,
+                            ];
+                            try{
+                                $model::create($reg);
+                            }catch (QueryException $e){
+                                //TODO - Create a message to notify user that this e-mail wasn't saved on DB, because FK already exists.
+                                continue;
+                            }
                         }
                     }
                 }
@@ -393,6 +399,7 @@ class StepsController extends Controller
 
         $vars = $this->defaultVars($action, $step);
         $vars->step = $step;
+//        dd($vars);
 
         $forms      = FormTemplate::withTrashed()->where('status', 1)->get();
         $approvals    = Approval::all();
@@ -431,6 +438,8 @@ class StepsController extends Controller
                 throw new \Error('Morph item not found in both table, even on trash. Contact the system administrator');
                 break;
         }
+
+        $vars->stepFrom = $this->stepFrom;
 
         return view(
             'steps.form',
