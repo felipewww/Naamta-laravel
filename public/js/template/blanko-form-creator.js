@@ -183,7 +183,7 @@ function createTabs(json, clientView = false, isClient){
   $('.tab-control').removeClass('active');
   $('.tab-control:first-of-type').addClass('active');
 
-  if(clientView){
+  if(isClientView){
     $('.draggable-input').removeClass('panel');
     $('.tabs-options #addTab').hide();
     $('.drag-heading li:not(:first-of-type)').hide();
@@ -200,6 +200,7 @@ function createTabs(json, clientView = false, isClient){
     $('#save-changes').show();
   }else{
     $('.filter').hide();
+    console.log('asdsad');
     $('#save-changes').hide();
   }
   
