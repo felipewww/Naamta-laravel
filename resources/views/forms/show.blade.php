@@ -38,6 +38,7 @@
 
 <script>
 var appFolder = "teste";
-    createTabs('<?=$containers?>', true, "{{ Auth::user()->isClient() ? true : false }}");
+
+createTabs('<?= str_replace("'", "\'", $containers ) ?>', true, "{{ Auth::user()->isClient() ? true : false }}");
 </script>
 @endsection
