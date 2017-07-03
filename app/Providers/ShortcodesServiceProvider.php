@@ -3,6 +3,7 @@
 namespace App\Providers;
 use App\Shortcodes\BoldShortcode;
 use App\Shortcodes\ItalicShortcode;
+use App\Shortcodes\UserNameShortcode;
 use Illuminate\Support\ServiceProvider;
 
 class ShortcodesServiceProvider extends ServiceProvider
@@ -25,5 +26,6 @@ class ShortcodesServiceProvider extends ServiceProvider
     {
         \Shortcode::register('b', BoldShortcode::class);
         \Shortcode::register('i', ItalicShortcode::class);
+        \Shortcode::register('UserName', UserNameShortcode::class);
     }
 }

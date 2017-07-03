@@ -36,7 +36,7 @@ class WorkflowEmails extends Mailable
     public function __construct($wich, Array $params)
     {
         $this->wich     = $wich;
-        $this->params   = $params;
+        $this->params   = $this->checkShortcodesText($params);
     }
 
     /**
@@ -55,7 +55,7 @@ class WorkflowEmails extends Mailable
         echo "Email approving an step sent.\n";
         $this->subject = $this->params['title'];
 
-        view('emails.workflow.templates', ['text' => $this->params['text']])->withShortcodes();
+        view('emails.workflow.templates', ['text' => $this->params['text']]);
 
         return $this->with([
             'text' => $this->params['text'],
@@ -70,13 +70,23 @@ class WorkflowEmails extends Mailable
     {
         $this->subject = $this->params['title'];
 
-        view('emails.workflow.templates', ['text' => $this->params['text']])->withShortcodes();
+        view('emails.workflow.templates', ['text' => $this->params['text']]);
 
         return $this->with([
             'text' => $this->params['text'],
             'allFormsWithErrors' => $this->params['allFormsWithErrors'],
         ])
             ->view('emails.workflow.templates');
+    }
 
+    private function checkShortcodesText($params){
+        $client = $params->application->getClient();
+        $user = User::find($client->user_id);
+
+        $ret = str_replace("[ClientName]", $user->name, $params['text']);
+        $ret = str_replace("[ClientEmail]", $user->email, $ret);
+        $ret = str_replace("[ClientCompany]", $client->company, $ret);
+
+        return $ret;
     }
 }

@@ -116,6 +116,7 @@ class WorkflowController extends Controller
 //                dd($this->allFormsWithErrors);
 
                 $mailData = [
+                    'application'           => $this->application,
                     'title'                 => $emailTemplate->title,
                     'text'                  => $contentComplement.$emailTemplate->text,
                     'allFormsWithErrors'    => $this->allFormsWithErrors
