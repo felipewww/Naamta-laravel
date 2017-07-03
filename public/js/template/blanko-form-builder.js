@@ -855,7 +855,7 @@ function addRule(node, page, field, comparison, value) {
 
   $('.rule .tabs').val('initial');
   $('.rule .fields').val('initial');
-  $('.rule .input-holder').html('<input type="text">');
+  $('.rule .input-holder').html('<input class="form-control" type="text">');
 }
  
 function updateRulesPages(){

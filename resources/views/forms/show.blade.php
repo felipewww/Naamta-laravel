@@ -22,7 +22,7 @@
     <div class="col-sm-12">
         <div class="white-box">
             <h3 class="box-title m-b-20">Form Preview</h3>
-            <div id="drag-container"></div>
+            <div id="drag-container" class="preview-form"></div>
         </div>
     </div>
 </div>

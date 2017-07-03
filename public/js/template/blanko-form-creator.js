@@ -200,7 +200,7 @@ function createTabs(json, clientView = false, isClient){
     $('#save-changes').show();
   }else{
     $('.filter').hide();
-    console.log('asdsad');
+    $('.drag-validate').hide();
     $('#save-changes').hide();
   }
   
@@ -212,6 +212,12 @@ function createTabs(json, clientView = false, isClient){
   if(isClient || !clientView){
     $('.drag-validate').hide();
   }
+
+  
+    $('.preview-form .filter').hide();
+    $('.preview-form #save-changes').hide();
+    $('.preview-form .drag-validate').hide();
+    $('.preview-form .tabs-options').hide();
 }
 
 // Creates the fields related to the createTabs function
