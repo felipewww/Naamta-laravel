@@ -8,6 +8,9 @@
 @include('partials.dataTables')
 
 @section('content')
+    @if ($error)
+        <div class="alert alert-info">{{$error}}</div>
+    @endif
     <div class="row">
         <div class="panel panel-default">
             <div class="panel-heading">

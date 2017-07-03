@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 
 use App\Library\DataTablesExtensions;
+use Symfony\Component\VarDumper\Dumper\DataDumperInterface;
 use Validator;
 use Session;
 use Illuminate\Support\Facades\Input;
@@ -46,8 +47,11 @@ class UserTypesController extends Controller
         $this->pageInfo->category->title    = 'Workflow';
         $this->pageInfo->subCategory->title = 'User Types List';
 
+        $error = $request->session()->get('error', false);
+        $request->session()->remove('error');
+
         $this->dataTablesInit();
-        return view('userTypes.list', ['dataTables' => $this->dataTables, 'pageInfo' => $this->pageInfo ]);
+        return view('userTypes.list', ['dataTables' => $this->dataTables, 'pageInfo' => $this->pageInfo, 'error' => $error ]);
     }
 
     public function dataTablesConfig()
@@ -111,20 +115,16 @@ class UserTypesController extends Controller
         Validator::make($request->all(), $this->rules)->validate();
         
          try{
-            // store
 
             $userTypes = UserType::create([
                 'slug'  => str_slug($request->title, '-'),
                 'title' => $request->title,
                 'status'=> (int)$request->status,
             ]);
-        
-            \Session::flash('success','User Type created: ' . $request->name);
 
-        } catch(Exception $e){
 
-            \Session::flash('error','Email create failed: ' . $e);
-
+        } catch(\Exception $e){
+             session(['error'=> 'Error! "Usertype" cannot be created.']);
         }
 
         return Redirect::to('usertypes');
@@ -163,6 +163,7 @@ class UserTypesController extends Controller
             \Session::flash('success','User Type updated: ' . $request->name);
 
         }catch(Exception $e){
+
             \Session::flash('error','User Type updated failed: ' . $e);
         }
                 
