@@ -32,7 +32,11 @@ function toFieldObject(){
   obj.setting.error = $('[name="incorrect__'+ obj._id +'"]:checked').val();
   obj.setting.ordenate = parseInt($(this).find('.ordenation').text().replace('(','').replace(')','')) ;
   obj.setting.isRequired = true;
-  obj.setting.label = $(this).find('.update-label').text();
+  if(obj.type != 'paragraph'){
+    obj.setting.label = $(this).find('.update-label').text();
+  }else{
+    obj.setting.label = $(this).find('.update-paragraph').html();
+  }
   obj.setting.help = $(this).find('.help-text').html();
   if(obj.type != 'file-upload'){
     obj.setting.value = $(this).find('.update-value').val();
@@ -274,8 +278,14 @@ function configureField(node, options, type, id){
   /*Visual*/
   node.addClass('order_' + options.ordenate);
 
-  node.find('.update-label').text(options.label);
-  node.find('.update-label').val(options.label);
+  if(type != 'paragraph'){
+    node.find('.update-label').text(options.label);
+    node.find('.update-label').val(options.label);
+  }else{
+    node.find('.update-paragraph').html(options.label);
+    node.find('.paragraph-content').html(options.label);
+  }
+
   node.find('.help + .text').html(options.help);
   node.find('.help-text').html(options.help);
   if(node.find('.help-text').html() == '') node.find('.help .icon').hide();
