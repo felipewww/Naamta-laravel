@@ -59,8 +59,20 @@ class WorkflowController extends Controller
     public function stepActions(Request $request)
     {
         \DB::beginTransaction();
-        if ( $this->step->responsible != Auth::user()->id ) {
-            //dd('você não tem permissão de ação neste step');
+
+        $currentUserType = $this->step->application->users()->where('user_id', Auth::user()->id)->get();
+
+        if ($currentUserType->count() == 1)
+        {
+            $currentUserType = $currentUserType->first();
+            $isResponsible = ($this->step->responsible == $currentUserType->user_type);
+        }
+        else
+        {
+            $isResponsible = $currentUserType->where('user_type', $this->step->responsible)->first();
+        }
+
+        if ( !$isResponsible ) {
             return redirect('/');
         }
 
@@ -82,19 +94,15 @@ class WorkflowController extends Controller
         switch ($this->step->morphs_from)
         {
             case FormTemplate::class:
-                //return $this->saveStepForm($request);
                 $res = $this->saveStepForm($request);
             break;
             case Approval::class:
-//                return $this->saveApproval($request);
                 $res = $this->saveApproval($request);
             break;
             default:
                 return json_encode(['status' => false]);
             break;
         }
-
-//        dd($receivedByList);
 
         foreach ($receivedByList as $receiver)
         {
@@ -112,8 +120,6 @@ class WorkflowController extends Controller
                 {
                     $contentComplement = 'This e-mail should have been sent to: '.$uType->title.', User: '.$user->name.' | '.$user->email.'when step is '.$request->status.'<br>';
                 }
-
-//                dd($this->allFormsWithErrors);
 
                 $mailData = [
                     'application'           => $this->application,

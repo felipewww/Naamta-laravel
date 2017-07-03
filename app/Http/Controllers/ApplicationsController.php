@@ -326,8 +326,23 @@ class ApplicationsController extends Controller
             throw new \Error('Error. Relation not found. Please, contact system administrator');
         }
 
+        $mForm = Form::find($rel->mongoform_id)->first();
+
+//        dd($request->all());
+//        dd($mForm);
+//        $formsController = new FormsController();
+//        $formsController->_saveContainers(\GuzzleHttp\json_decode($request->form_json), $relid);
+//        dd('here!');
+        $this->_updateFormToMongo(\GuzzleHttp\json_decode($request->form_json));
+
         $rel->status = 'sent';
         $rel->save();
+
+        $arr = [
+            'status' => true
+        ];
+
+        return json_encode($arr);
     }
 
     public function continuousComplianceForm(Request $request, $appID, $relid)
