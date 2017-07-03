@@ -280,7 +280,7 @@
     padding: 20px;
     width: 33%;
 }
-#drag-container.client-view .draggable-input.expanded{
+#drag-container.client-view .draggable-input.expanded, #drag-container.client-view .draggable-input[id*="paragraph"], #drag-container.client-view .draggable-input[id*="header"] {
     width: 99%;
 }
 #drag-container.client-view .draggable-input.expanded + .draggable-input:nth-of-type(3n){
