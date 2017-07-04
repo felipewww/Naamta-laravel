@@ -72,7 +72,7 @@ sysSteps = {
 
     save: function () {
         _this = this;
-
+        var title, content;
         var sequence = { _token: window.Laravel.csrfToken, ids: [], toInactive: [] };
         $('#sortables .step-sortable').each(function (e) {
             $this = $(this);
@@ -84,22 +84,23 @@ sysSteps = {
             sequence.toInactive.push( $(this).attr('data-stepid') );
         });
 
-        console.log(sequence);
-        // return false;
-
         $.ajax({
             url: '/steps/saveDefaultStepsPosition',
             method: 'POST',
             data: sequence,
             success: function (data) {
-                console.log('Success!');
+                alert(data);
                 _this.safeLeave.setStatus(true);
+                title   = 'Success';
+                content = 'Steps has been saved!';
+                Script.xmodal().setTitle(title).setContent(content).setHeader('alert-success').show();
             },
-            error: function (data) {
-                console.log('Error!');
+            error: function (data){
+                title = 'Error during send this form';
+                content = 'Please, contact the system administrator.';
+                Script.xmodal().setTitle(title).setContent(content).setHeader('alert-danger').show();
             }
         });
-        console.log(sequence);
     },
     
     // changeStatus: function (e) {

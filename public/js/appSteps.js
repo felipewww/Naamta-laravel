@@ -4,7 +4,7 @@ $(document).ready(function () {
 
 var appSteps = {
     appID: null,
-    
+
     init: function ()
     {
         this.safeLeave = new Script.safeLeave().start();
@@ -26,24 +26,33 @@ var appSteps = {
     save: function () {
         _this = this;
         var sequence = { _token: window.Laravel.csrfToken, ids: [] };
+        var header, title, content;
+
         $('.step-sortable').each(function (e) {
             $this = $(this);
             sequence.ids.push( $(this).attr('data-stepid') );
         });
-        
+
         $.ajax({
             url: 'saveStepsPosition',
             method: 'POST',
             data: sequence,
             success: function (data) {
-                console.log('Success!');
                 _this.safeLeave.setStatus(true);
+                var response = JSON.parse(data);
+                title   = response.title;
+                content = response.message;
+                header  = response.header;
+                Script.xmodal().setTitle(title).setContent(content).setHeader(header).show();
             },
             error: function (data) {
-                console.log('Error!');
+                var response = JSON.parse(data);
+                title = response.title;
+                content = response.message;
+                header  = response.header;
+                Script.xmodal().setTitle(title).setContent(content).setHeader(header).show();
             }
         });
-        console.log(sequence);
     },
 
     changeStatus: function (e, stepID)
