@@ -195,7 +195,9 @@ function createTabs(json, clientView = false, isClient){
     objs.forEach(function(obj){
       if(obj.fields != undefined){
         [].forEach.call(obj.fields, function(field){
-          activateRule(field.setting.ordenate, field.setting.rule.ruleAction, field.setting.rule.ruleTarget, field.setting.rule.conditions);
+          if(field.isEditable && clientView) {
+            activateRule(field.setting.ordenate, field.setting.rule.ruleAction, field.setting.rule.ruleTarget, field.setting.rule.conditions);
+          }
         });
       }
     });
