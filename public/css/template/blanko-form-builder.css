@@ -131,16 +131,21 @@
 }
 #drag-container #list-container li{
     list-style: none;
-    padding: 5px 10px;
-    margin: 5px 0;
-    background-color: white;
+    margin: 5px;
     cursor: pointer;
+    padding: 10px;
+    width: auto;
+    display: inline-block;
+    background-color: #eee;
+}
+#drag-container #list-container li:hover{
+    background-color: #f59623;
 }
 #drag-container #list-container li a{
     color: #282828;
 }
-#drag-container #list-container li a:hover{
-    color: #f59623;
+#drag-container #list-container li:hover a{
+    color: #fff;
 }
 #drag-container{
     min-height: 140px;
