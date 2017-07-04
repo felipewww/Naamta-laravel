@@ -51,11 +51,15 @@ class StepsController extends Controller
         $vars = new \stdClass();
         $vars->steps        = Step::where('status', '1')->orderBy('ordination')->get();
         $vars->inactives    = Step::where('status', '0')->get();
-        
+
+        $success = $request->session()->get('success', false);
+        $request->session()->remove('success');
+//        dd($success);
         return view(
             'steps.list', [
                 'vars' => $vars,
-                'pageInfo' => $this->pageInfo
+                'pageInfo' => $this->pageInfo,
+                'success' => $success
             ]
         );
     }
@@ -65,17 +69,21 @@ class StepsController extends Controller
         $vars = new \stdClass();
         $vars->steps            = $this->steps;
         $vars->morphs_from      = [FormTemplate::class, Approval::class];
-        $vars->emailTemplates   = EmailTemplate::all();
+
+//        dd($step);
+//        dd($action);
+        $vars->emailTemplates   = EmailTemplate::where('status', 1)->get();
 
         if ( $action == 'edit' )
         {
+
             if ($step instanceof ApplicationStep) {
                 $vars->application = $step->application;
                 $vars->userTypes = $step->application->userTypes;
                 $vars->stepFrom = 'clone';
             }else{
                 $vars->application = new Application();
-                $vars->userTypes = UserType::all();
+                $vars->userTypes = UserType::where('status', 1)->get();
                 $vars->stepFrom = 'default';
             }
 
@@ -197,7 +205,7 @@ class StepsController extends Controller
                         $relForm->delete();
                     }
                 }
-//dd($request->morphs_item);
+
                 /*
                  * create form and nosql relation
                  **/
@@ -238,7 +246,9 @@ class StepsController extends Controller
                     $this->_saveJsonClone($request);
                     unset($this->step->morphs_json); //Este attributo é criado no metodo, mas nao existirá na tabela de steps default
                 }
-                $redirect = '/steps/'.$id.'/edit';
+
+                session(['success'=> 'Step '.$this->step->title.' update success.']);
+                $redirect = '/steps';
                 break;
 
             case 'clone' || 'application':

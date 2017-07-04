@@ -19,11 +19,6 @@ class SystemUsersController extends Controller
     public function __construct()
     {
         parent::__construct();
-//        $this->middleware(function ($request, $next) {
-//            dd($request);
-//            $user = \Auth::user()->authorizeRoles(['admin']);;
-//            return $next($request);
-//        });
         
         $this->roles = Roles::whereIn('name', ['admin','staff'])->get();
         $this->users = User::whereHas('roles', function($query) {

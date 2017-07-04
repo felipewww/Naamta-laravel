@@ -86,7 +86,9 @@ class HomeController extends Controller
                 $lastDateSubmit = 'None';
             }
             else
-            {  $previous = ApplicationStep::find($currStep->previous_step);
+            {
+                $previous = ApplicationStep::find($currStep->previous_step);
+
                 if (!$previous) {
                     $lastDateSubmit = ' ';
                 }else{

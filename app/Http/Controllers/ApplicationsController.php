@@ -354,7 +354,6 @@ class ApplicationsController extends Controller
         if (!$rel) {
             throw new \Error('Error. Relation not found. Please, contact system administrator');
         }
-
         if ($rel->mongoform_id == null) {
             $mysql_form = FormTemplate::withTrashed()
                 ->with([
@@ -475,8 +474,8 @@ class ApplicationsController extends Controller
 
     public static function cloneApplication(Application $application, User $user)
     {
-        $uTypes = UserType::all();
-
+        $uTypes = UserType::where('status', 1)->get();
+//dd($uTypes);
         /*
         * Clone user types default with new ids.
         * */
@@ -522,10 +521,19 @@ class ApplicationsController extends Controller
                 $newRefID = $default_ids[$step->previous_step];
             }
 
+            //If the userType set as Inactive, define the first element of all userTypes (cloned) as Responsible.
+            if (!array_key_exists($step->responsible, $uTypesClones))
+            {
+                $copy = $uTypesClones;
+                $responsible = array_shift($copy);
+            }else{
+                $responsible = $uTypesClones[$step->responsible];
+            }
+
             $dataNewStep = [
                 'application_id'    => $application->id,
                 'previous_step'     => $newRefID,
-                'responsible'       => $uTypesClones[$step->responsible], //Keep the usertype relation with new id
+                'responsible'       => $responsible, //Keep the usertype relation with new id
                 'title'             => $step->title,
                 'description'       => $step->description,
                 'ordination'        => $step->ordination,
@@ -533,6 +541,12 @@ class ApplicationsController extends Controller
                 'morphs_from'       => $step->morphs_from,
                 'morphs_id'         => $step->morphs_id,
             ];
+
+            if (!$responsible) {
+                dd($uTypesClones);
+//                dd($dataNewStep);
+            }
+
 
             $appSteps = ApplicationStep::create($dataNewStep);
             $default_ids[$step->id] = $appSteps->id;
@@ -542,6 +556,7 @@ class ApplicationsController extends Controller
              * */
             $emails = UsesEmail::where('step_id', $step->id)->get();
 
+            $t = [];
             foreach ($emails as $clone)
             {
                 $cloneID = $clone->received_by;
@@ -550,10 +565,22 @@ class ApplicationsController extends Controller
                 unset($clone['received_by']);
                 $clone->application_step_id = $appSteps->id;
                 $newEmailRelation = new ApplicationUsesEmail($clone->getAttributes());
+//dd(array_search($cloneID, $uTypesClones));
+//dd($uTypesClones);
+//                array_push($t,[$cloneID => array_key_exists($cloneID, $uTypesClones), $uTypesClones]);
 
-                $newEmailRelation->received_by = $uTypesClones[$cloneID]; //$newAppType->id;
-                $newEmailRelation->save();
+                if ( array_key_exists($cloneID, $uTypesClones) )
+                {
+//                    dd($uTypesClones[$cloneID]);
+                    $newEmailRelation->received_by = $uTypesClones[$cloneID]; //$newAppType->id;
+                    $newEmailRelation->save();
+                }
+
+//                if ($uTypesClones[$cloneID])
+//                {
+//                }
             }
+//                dd($t);
         }
     }
 }

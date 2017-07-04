@@ -10,11 +10,22 @@
     <script src="/js/template/drag.js"></script>
     <script src="/js/template/cbpFWTabs.js"></script>
     <script src="/js/sysSteps.js"></script>
+
+    @if($success)
+        <script type="text/javascript">
+            $(document).ready(function () {
+                title   = 'Success';
+                content = '{{ $success }}';
+                Script.xmodal().setTitle(title).setContent(content).setHeader('alert-success').show();
+            })
+        </script>
+    @endif
 @endsection
 
 @section('content')
     @include('partials._modal_steps')
     @include('partials._modal_delete_step')
+    @include('partials._modal_default')
 
     <div class="row">
         <div class="col-md-12">
