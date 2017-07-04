@@ -199,19 +199,32 @@
                                    <div id="eventsEmails">
                                    @foreach($vars->usedEmails as $event => $usedMail)
                                        @foreach($usedMail as $email_id => $staffs_id)
-                                           <div class="mail-component-{{ $event }}">
-                                               <span class="btn btn-danger pull-right delete_component">Delete</span>
-                                               <select name="usedemails[{{$event}}][{{$email_id}}][id]">
+                                           <div class="mail-component mail-component-{{ $event }}">
+                                           <div class="col-sm-4">
+                                            <h6>E-mail Template</h6>
+                                           </div>
+                                           <div class="col-sm-8">
+                                            <h6>User Types</h6>
+                                           </div>
+                                                <div class="col-sm-4">
+                                                  <select name="usedemails[{{$event}}][{{$email_id}}][id]" class="form-control ">
                                                    @foreach($vars->emailTemplates as $tpl)
                                                        <option {{ ( $tpl->id == $email_id ) ? 'selected' : ''  }} value="{{$tpl->id}}">{{ $tpl->title }}</option>
                                                    @endforeach
-                                               </select>
-                                               <select name="usedemails[{{$event}}][{{$email_id}}][staffs][]" multiple>
-                                                   <option>Select an user type</option>
-                                                   @foreach($vars->userTypes as $utype)
-                                                       <option {{ ( gettype(array_search($utype->id, $staffs_id)) == 'integer'  ? 'selected' : '') }} value="{{$utype->id}}">{{ $utype->title }}</option>
-                                                   @endforeach
-                                               </select>
+                                                  </select>
+                                               </div>
+                                               <div class="col-sm-6">
+                                                 <select name="usedemails[{{$event}}][{{$email_id}}][staffs][]" class="form-control chosen-select" multiple>
+                                                     <option>Select an user type</option>
+                                                     @foreach($vars->userTypes as $utype)
+                                                         <option {{ ( gettype(array_search($utype->id, $staffs_id)) == 'integer'  ? 'selected' : '') }} value="{{$utype->id}}">{{ $utype->title }}</option>
+                                                     @endforeach
+                                                 </select>
+                                               </div>
+                                               <div class="col-sm-2">
+                                                  <span class="btn btn-danger pull-right delete_component">Delete</span>
+                                               </div>
+                                               <div class="clearfix"></div>
                                            </div>
                                        @endforeach
                                    @endforeach
