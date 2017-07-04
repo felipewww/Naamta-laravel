@@ -25,6 +25,11 @@
     background-color: #333;
     padding: 10px 15px;
 }   
+
+#drag-container.client-view .drag-heading{
+    cursor: default;
+}
+
 #drag-container .drag-heading.Pass{
     background-color: #67953f;
 }
