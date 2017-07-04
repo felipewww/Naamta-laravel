@@ -719,7 +719,7 @@ function addTab(obj = null){
 
   
   var config = '<div class="form-group"><label>Title</label><input type="text" class="form-control tab-title" value="'+ title +'"></div>';
-  var modal = '<div class="modal modal-dialog modal-md"><div class="modal-content"><div class="modal-header"><button type="button" class="close" aria-hidden="true">×</button><h4 class="modal-title" id="mySmallModalLabel">Tab Configuration</h4> </div><div class="modal-body">' + config + '</div></div></div>';
+  var modal = '<div class="modal modal-dialog modal-md"><div class="modal-content"><div class="modal-header"><button type="button" class="close" aria-hidden="true">×</button><h4 class="modal-title" id="mySmallModalLabel">Tab Configuration</h4> </div><div class="modal-body">' + config + '</div><div class="text-center p-b-20"><a class="btn btn-save p-l-20 p-r-20 ok">OK</a></div></div></div>';
   var containerTab = $('<div id="tab'+ tabId +'" tab-id="" class="tab tab-control active">' + modal + '</div>');
   $('.form-holder nav ul').append(navTab);
   $('.form-holder .tabs-holder').append(containerTab);
@@ -729,20 +729,21 @@ function addTab(obj = null){
   }
 
   //Update Tab Title
-  $('.modal').find('.tab-title').keyup(function(){
-    var id = $(this).closest('.tab').attr('id');
-    var title = $(this).val();
+  $('.modal').find('.btn.ok').click(function(){
+    var $this = $(this).closest('.modal').find('.tab-title');
+    var id = $this.closest('.tab').attr('id');
+    var title = $this.val();
     $('a[href="#' + id + '"]').text(title);
 
     $('.rule .tabs option').each(function(){
-      if( $(this).val() == id.replace('tab', '') ){
-        $(this).text(title);
+      if($this.val() == id.replace('tab', '') ){
+       $this.text(title);
       }
     });
 
     $('.rules td').each(function(){
-      if( $(this).attr('page-id') == id.replace('tab', '') ){
-        $(this).text(title);
+      if($this.attr('page-id') == id.replace('tab', '') ){
+       $this.text(title);
       }
     });
   });
@@ -776,7 +777,7 @@ function addTab(obj = null){
   });
 
   // close config modal
-  $('.modal-header button.close').click(function(){
+  $('.modal-header button.close, .modal .btn.ok').click(function(){
     $(this).closest('.modal').hide();
   });
   

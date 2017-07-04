@@ -12,6 +12,13 @@ var tempContainers;
 var tempFields;
 var clones = new Array();
 
+$(document).on('keyup keypress', 'form input[type="text"]', function(e) {
+  if(e.which == 13) {
+    e.preventDefault();
+    return false;
+  }
+});
+
 // Transform fields in objects
 function toFieldObject(){
   var obj = {
@@ -163,34 +170,34 @@ function createTabs(json, clientView = false, isClient){
   $('#drag-container').toggleClass('client-view', clientView);
   $('.tab-control').remove();
   var objs = JSON.parse(json);
-  objs.forEach(function(obj){
-    clones = new Array();
-    addTab(obj.config);
-    if(obj.fields != undefined){
-      [].forEach.call(obj.fields, function(obj){
-        createFields(obj, clientView);
+
+    objs.forEach(function(obj){
+      clones = new Array();
+      addTab(obj.config);
+      if(obj.fields != undefined){
+        [].forEach.call(obj.fields, function(obj){
+          createFields(obj, clientView);
+        });
+      }
+      clones.sort(function(a, b){
+        var a = parseInt($(a).attr('class').split('order_')[1]);
+        var b =  parseInt($(b).attr('class').split('order_')[1]);
+        return a - b;
       });
-    }
-    clones.sort(function(a, b){
-      var a = parseInt($(a).attr('class').split('order_')[1]);
-      var b =  parseInt($(b).attr('class').split('order_')[1]);
-      return a - b;
-    });
-    clones.forEach(function(clone){
-      $(clone).appendTo('.tab.active');
-      ordenateFields();
-      updateRulesPages();
+      clones.forEach(function(clone){
+        $(clone).appendTo('.tab.active');
+        ordenateFields();
+        updateRulesPages();
+      });
     });
 
-
-  });
-
-
-  objs.forEach(function(obj){
-    [].forEach.call(obj.fields, function(field){
-      activateRule(field.setting.ordenate, field.setting.rule.ruleAction, field.setting.rule.ruleTarget, field.setting.rule.conditions);
+    objs.forEach(function(obj){
+      if(obj.fields != undefined){
+        [].forEach.call(obj.fields, function(field){
+          activateRule(field.setting.ordenate, field.setting.rule.ruleAction, field.setting.rule.ruleTarget, field.setting.rule.conditions);
+        });
+      }
     });
-  });
   
   $('.required-field').remove();
   $('.tab-control').removeClass('active');
