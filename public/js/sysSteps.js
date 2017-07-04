@@ -89,7 +89,6 @@ sysSteps = {
             method: 'POST',
             data: sequence,
             success: function (data) {
-                alert(data);
                 _this.safeLeave.setStatus(true);
                 title   = 'Success';
                 content = 'Steps has been saved!';
