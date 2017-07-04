@@ -114,7 +114,7 @@ class ApprovalsController extends Controller
             Approval::create([
                 'title'         => $request->title,
                 'description'   => $request->description,
-                'has_report'    => 0,
+                'has_report'    => $request->has_report,
             ]);
             \Session::flash('success','Approval template created: ' . $request->title);
             \DB::commit();
