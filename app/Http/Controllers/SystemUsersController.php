@@ -17,7 +17,7 @@ class SystemUsersController extends Controller
     private $roles;
 
     public function __construct()
-    
+    {
         parent::__construct();
         
         $this->roles = Roles::whereIn('name', ['admin','staff'])->get();
