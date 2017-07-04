@@ -55,6 +55,10 @@ function toFieldObject(){
   obj.setting.type = $(this).find('[type=radio]:checked').val();
   obj.setting.class = ($(this).hasClass('half-row')) ? 'half-row' : '';
 
+  if(obj.type == 'phone-field'){
+    obj.setting.mask =  $(this).find('.mask').val();
+  }
+
   if(obj.type == 'signature'){
     [].forEach.call(canvasArray, function(sign){
       if(sign.field == obj._id){
@@ -328,6 +332,10 @@ function configureField(node, options, type, id){
     'step' : options.step,
   });
 
+  if(options.mask != null){
+     node.find('.drag-input input').mask(options.mask);
+     node.find('.mask').val(options.mask);
+  }
 
   if( type == 'file-upload' ){
     if(options.value != null){
