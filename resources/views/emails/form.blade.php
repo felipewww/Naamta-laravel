@@ -51,13 +51,17 @@
                         </div>
 
                         <div class="form-group{{ $errors->has('text') ? ' has-error' : '' }}">
-                            <label for="text" class="col-md-4 control-label">Text<br>
-
-                            </label>
+                            <label for="text" class="col-md-4 control-label">Shortcodes</label>
+                            <div class="col-md-6 m-b-10">
+                                    <a class="btn btn-default shortcode" onclick="insertTextAtCursor('[ClientName]')"><small>Client Name</small></a>
+                                    <a class="btn btn-default shortcode" onclick="insertTextAtCursor('[ClientEmail]')"><small> Client Email</small></a>
+                                    <a class="btn btn-default shortcode" onclick="insertTextAtCursor('[ClientCompany]')"><small>Client Company</small></a>
+                            </div>
+                            <label for="text" class="col-md-4 control-label">E-mail Text<br></label>
                             <div class="col-md-6">
-                                <small class="help-block">Shortcodes: [ClientName], [ClientEmail], [ClientCompany]</small>
                                 {{--<textarea id="text" type="text" class="form-control" name="text" required>{{ $email->text!=null ? $email->text : old('text') }}</textarea>--}}
                                 <textarea id="text-hidden" type="text" class="hidden" name="text" required></textarea>
+                                
                                 <div id="text">{!! $email->text !!}</div>
 
                                 @if ($errors->has('text'))
@@ -96,4 +100,22 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+var sel;
+function insertTextAtCursor(text) {
+    var range, html;
+    if (window.getSelection) {
+        sel = window.getSelection();
+        if($(sel.baseNode).closest('#text')[0] == $('#text')[0] ){
+            if (sel.getRangeAt && sel.rangeCount) {
+                range = sel.getRangeAt(0);
+                range.deleteContents();
+                range.insertNode( document.createTextNode(text) );
+            }
+        }
+    } else if (document.selection && document.selection.createRange) {
+        document.selection.createRange().text = text;
+    }
+}
+</script>
 @endsection
