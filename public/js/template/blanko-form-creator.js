@@ -181,6 +181,15 @@ function createTabs(json, clientView = false, isClient){
       ordenateFields();
       updateRulesPages();
     });
+
+
+  });
+
+
+  objs.forEach(function(obj){
+    [].forEach.call(obj.fields, function(field){
+      activateRule(field.setting.ordenate, field.setting.rule.ruleAction, field.setting.rule.ruleTarget, field.setting.rule.conditions);
+    });
   });
   
   $('.required-field').remove();
@@ -266,9 +275,9 @@ function createFields(obj, clientView){
 
   });
 
-  if(obj.isEditable && clientView) {
-    activateRule(obj.setting.ordenate, obj.setting.rule.ruleAction, obj.setting.rule.ruleTarget, obj.setting.rule.conditions);
-  }
+  // if(obj.isEditable && clientView) {
+  //   activateRule(obj.setting.ordenate, obj.setting.rule.ruleAction, obj.setting.rule.ruleTarget, obj.setting.rule.conditions);
+  // }
 }
 
 // Field values according to json from createTabs
@@ -364,6 +373,7 @@ function configureField(node, options, type, id){
 function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
   var cond = "";
   var changes = "";
+  console.log(conditions);
   if(conditions.length >0){
     var i = 0;
 
@@ -375,13 +385,19 @@ function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
       var comparison = condition.comparison;
       var value = condition.value;
       changes += "'.order_"+field.index + " .drag-input .form-control'";
-      cond += " " + "$('.order_"+field.index + " .drag-input .form-control').val()" + comparison.value + value.value;
+      //changes += "'[data-id=\""+field._id+"\"] .drag-input .form-control'";
+      cond += " " + "$('.order_"+field.index + " .drag-input .form-control').val() " + comparison.value + "'" + value.value + "'";
+      //cond += " " + "$('[data-id=\""+ field._id + "\"] .drag-input .form-control').val() " + comparison.value + "'" + value.value + "'";
+      
       if(conditions.length>1 && !is_last_item){
         cond += (ruleTarget == "all" ? " && " : " || " );
         changes += ", ";
       }
       i++;
     });
+
+    console.log(cond);
+    console.log(changes);
 
     $(eval(changes)).change(function() {
       if(eval(cond)){
@@ -447,7 +463,7 @@ function toHtml(){
 }
 
 function checkFieldValue(id, value, options, isIncorrect, file){
-  console.log(id, value, options, isIncorrect, file);
+  //console.log(id, value, options, isIncorrect, file);
   $('#save-changes').removeClass('btn-default').addClass('btn-save').html('<i class="fa fa-check m-r-20"></i> Save Changes');
   var elem = $('.draggable-input[data-id="'+id+'"]');
 
@@ -509,10 +525,12 @@ function checkFieldValue(id, value, options, isIncorrect, file){
     data: sequence,
     success: function (data) {
       console.log('Success!');
+      //console.log(data);
       //window.location.href = window.location.protocol + "//" + window.location.hostname;
     },
     error: function (data) {
       console.log('Error!');
+      //console.log(data);
     }
   });
 
