@@ -197,7 +197,7 @@ class StepsController extends Controller
                         $relForm->delete();
                     }
                 }
-
+//dd($request->morphs_item);
                 /*
                  * create form and nosql relation
                  **/
