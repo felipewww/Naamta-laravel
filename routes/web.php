@@ -13,6 +13,10 @@ use Jenssegers\Mongodb\Eloquent\Model;
 |
 */
 
+Route::get('/admin/php/info', function (\Illuminate\Http\Request $request){
+    phpinfo();
+});
+
 Route::get('register/confirmation/{token}', 'Auth\RegisterController@emailConfirmation');
 Route::get('register/confirmation/resend/{token}/{id}', 'Auth\RegisterController@resendConfirmationToken');
 

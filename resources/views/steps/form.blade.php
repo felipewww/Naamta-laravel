@@ -152,7 +152,7 @@
                            </div>
                        @endif
 
-                       <div class="form-group" id="show-approval">
+                       <div class="form-group">
                            <label class="col-sm-12">Uses E-mail?</label>
                            <div class="col-sm-12" id="approval">
                                <div id="emails_success">
@@ -166,7 +166,6 @@
                                </div>
                               <hr>
                                <div id="mail-component" style="visibility: hidden;">
-
                                    <div class="col-sm-4">
                                     <h6>E-mail Template</h6>
                                    </div>
@@ -182,12 +181,12 @@
                                      </select>
                                    </div>
                                    <div class="col-sm-6">
-                                   <select multiple class="form-control">
-                                       <option>Select an user type</option>
-                                       @foreach($vars->userTypes as $utype)
-                                           <option value="{{$utype->id}}">{{ $utype->title }}</option>
-                                       @endforeach
-                                   </select>
+                                       <select multiple class="form-control">
+                                           <option>Select an user type</option>
+                                           @foreach($vars->userTypes as $utype)
+                                               <option value="{{$utype->id}}">{{ $utype->title }}</option>
+                                           @endforeach
+                                       </select>
                                    </div>
                                    <div class="col-sm-2">
                                    <span class="btn btn-danger pull-right delete_component">Delete</span>

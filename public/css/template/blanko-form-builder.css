@@ -280,15 +280,25 @@
     padding: 20px;
     width: 33%;
 }
-#drag-container.client-view .draggable-input.expanded{
-    width: 99%;
+.client-view [id*="paragraph"] .drag-heading , .client-view [id*="header"] .drag-heading {
+    display: none;
 }
+
+#drag-container.client-view .draggable-input.expanded, #drag-container.client-view .draggable-input[id*="paragraph"], #drag-container.client-view .draggable-input[id*="header"] {
+    width: 99%;
+}/*
 #drag-container.client-view .draggable-input.expanded + .draggable-input:nth-of-type(3n){
     margin-left: 66%;
+}
+#drag-container.client-view .draggable-input.expanded + .draggable-input:nth-of-type(3n)[id*="paragraph"], #drag-container.client-view .draggable-input.expanded + .draggable-input:nth-of-type(3n)[id*="header"]{
+    margin-left: 0%;
 }
 #drag-container.client-view .draggable-input.expanded + .draggable-input:nth-of-type(3n-1){
     margin-left: 33%;
 }
+#drag-container.client-view .draggable-input.expanded + .draggable-input:nth-of-type(3n-1)[id*="paragraph"], #drag-container.client-view .draggable-input.expanded + .draggable-input:nth-of-type(3n-1)[id*="header"]{
+    margin-left: 0%;
+}*/
 #drag-container.client-view .draggable-input.half-row{
     margin-right: 0;
 }

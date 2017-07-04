@@ -10,6 +10,9 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
+    <link rel="shortcut icon" href="media/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="media/images/favicon.ico" type="image/x-icon">
+    
     <!-- Styles -->
     <link href="{{ asset("bower_components/bootstrap/dist/css/bootstrap.min.css") }}" rel="stylesheet">
     <link href="{{ asset("css/template/style.css") }}" rel="stylesheet">

@@ -90,10 +90,12 @@ var Steps = {
         {
             case "App\\Models\\FormTemplate":
                 selectContainer += 'forms';
+                this.__showEmailsSelectForm();
                 break;
 
             case "App\\Models\\Approval":
                 selectContainer += 'approvals';
+                this.__showEmailsSelectApproval();
                 break;
         }
 
@@ -101,7 +103,8 @@ var Steps = {
          * The "form select" is showed only when editing a cloned step
          * */
         // if (value == "App\\Models\\FormTemplate" && this.action == 'edit' && this.from != 'clone') {
-        if (value == "App\\Models\\FormTemplate" && this.action == 'edit' && this.from != 'application') {
+        if (value == 'App\\Models\\FormTemplate' && this.action == 'edit' && (this.from != 'application' && this.from != 'dev' && this.from != 'local')) {
+            console.log(this.action, this.from);
             return false;
         }
 
@@ -111,6 +114,23 @@ var Steps = {
         selectContainer.find('select').first().attr('required','required');
         selectContainer.find('select').first().attr('name','morphs_item[]');
 
+
+    },
+
+    __showEmailsSelectApproval: function ()
+    {
+        // $('#show-emails-form').hide();
+        // $('#show-approval').show();
+        this.containers.rejected.style.display="block";
+        this.containers.success.getElementsByTagName('h4')[0].innerHTML = "On Step Success";
+    },
+
+    __showEmailsSelectForm: function ()
+    {
+        this.containers.rejected.style.display="none";
+        this.containers.success.getElementsByTagName('h4')[0].innerHTML = "On forms submitted";
+        // $('#show-emails-form').show();
+        // $('#show-approval').hide();
     },
 
     setTemplate: function () {
