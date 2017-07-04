@@ -19,11 +19,19 @@ class SystemUsersController extends Controller
     public function __construct()
     {
         parent::__construct();
-        
+//        $this->middleware(function ($request, $next) {
+//            $user = \Auth::user()->authorizeRoles(['admin','staff']);;
+//            return $next($request);
+//        });
+//        $user = Auth::user();
+//        if ( !Auth::user()->hasRole('admin') ) {
+//            dd('not admin');
+//        }
+
         $this->roles = Roles::whereIn('name', ['admin','staff'])->get();
         $this->users = User::whereHas('roles', function($query) {
             $query->whereNotIn('name', ['client']);
-        })->get();   
+        })->get();
     }
 
     /**
@@ -32,6 +40,7 @@ class SystemUsersController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request){
+//dd('1',Auth::user());
         $this->pageInfo->title              = 'System';
         $this->pageInfo->category->title    = 'Users';
         $this->pageInfo->subCategory->title = 'Users List';
@@ -100,6 +109,10 @@ class SystemUsersController extends Controller
     
     public function edit(Request $request, $id){
 
+        if (Auth::user()->id != $id) {
+            abort(401, 'This action is unauthorized.');
+        }
+
         $this->pageInfo->title              = 'System';
         $this->pageInfo->category->title    = 'Users';
         $this->pageInfo->subCategory->title = 'User Edit';
@@ -117,13 +130,22 @@ class SystemUsersController extends Controller
     
     public function update(Request $request, $id){
         try{
+
             $user = User::findOrFail($id);
-            $user->status = $request->status;
-            $user->see_apps = $request->see_apps;
-            $user->roles()->sync($request->user_type);
-            $user->save();
+
+            if (!Auth::user()->hasRole('admin'))
+            {
+                $request->offsetUnset('user_type');
+            }
+            else{
+                $user->roles()->sync($request->user_type);
+            }
+
+
+            $user->update($request->all());
+
             \Session::flash('success_msg','User Edited: ' . $user->name);
-        } catch(Exception $e){
+        } catch(\Exception $e){
             \Session::flash('error','User update failed: ' . $e);
         }
         
@@ -163,5 +185,15 @@ class SystemUsersController extends Controller
         }
 
         return redirect('users');
+    }
+
+    public function clientProfile(Request $request)
+    {
+        if (Auth::user()->id != $request->id) {
+            abort(401, 'This action is unauthorized.');
+        }
+
+        $user = User::findOrFail($request->id);
+        return view('systemUsers.form_client')->with(['user' => $user, 'roles'=>$this->roles, 'pageInfo' => $this->pageInfo]);
     }
 }
