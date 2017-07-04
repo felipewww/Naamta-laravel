@@ -168,6 +168,7 @@ function createTabs(json, clientView = false, isClient){
   isUserClient = isClient;
   isClientView = clientView;
   $('#drag-container').toggleClass('client-view', clientView);
+  $('.help .icon').hide();
   $('.tab-control').remove();
   var objs = JSON.parse(json);
 
@@ -304,7 +305,11 @@ function configureField(node, options, type, id){
 
   node.find('.help + .text').html(options.help);
   node.find('.help-text').html(options.help);
-  if(node.find('.help-text').html() == '') node.find('.help .icon').hide();
+  if(node.find('.help-text').html() == '') {
+    node.find('.help .icon').hide();
+  }else{
+    node.find('.help .icon').show();
+  }
 
   //Size of the field
   node.addClass(options.class);
