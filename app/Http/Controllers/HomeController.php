@@ -87,7 +87,11 @@ class HomeController extends Controller
             else
             {
                 $previous = ApplicationStep::find($currStep->previous_step);
-                $lastDateSubmit = $previous->updated_at->toDateTimeString();
+                if (!$previous) {
+                    $lastDateSubmit = ' ';
+                }else{
+                    $lastDateSubmit = $previous->updated_at->toDateTimeString();
+                }
             }
             $app->offsetSet('currStep', $currStep);
             $app->offsetSet('lastDateSubmit', $lastDateSubmit);

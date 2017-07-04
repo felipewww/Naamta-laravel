@@ -83,7 +83,7 @@ class SystemUsersController extends Controller
             ['title' => 'id', 'width' => '40px'],
             ['title' => 'Name'],
             ['title' => 'Role'],
-            ['title' => 'Se all Apps'],
+            ['title' => 'Se all Applications'],
             ['title' => 'Status'],
             ['title' => 'Actions'],
         ];

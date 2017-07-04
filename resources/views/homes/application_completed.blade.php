@@ -53,7 +53,7 @@
                             <label class="col-sm-12">Form Template</label>
                             <div class="col-sm-12">
                                 <select class="chosen" name="form_template_id">
-                                    @foreach(\App\Models\FormTemplate::all() as $form)
+                                    @foreach(\App\Models\FormTemplate::where('status',1)->get() as $form)
                                         <option value="{{$form->id}}">{{$form->name}}</option>
                                     @endforeach
                                 </select>
@@ -81,7 +81,7 @@
                         <tbody>
                         @foreach($cCompliancesRegistered as $registered)
                             <tr>
-                                <td>{{$registered->form->name}}</td>
+                                <td>{{$registered->form()->withTrashed()->first()->name}}</td>
                                 <td>{{$registered->interval}}</td>
                                 <td>{{$registered->times}}</td>
                                 <td>{{$registered->updated_at}}</td>
@@ -128,7 +128,4 @@
     <!-- /.container-fluid -->
     <script src="{{ asset("js/workflow.js") }}"></script>
 
-@endsection
-
-@section('scripts')
 @endsection
