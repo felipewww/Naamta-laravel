@@ -79,7 +79,13 @@
                                 <li><a href="{{ url('applications') }}"><i class="ti-view-list"></i> Applications</a></li>
                                 <li role="separator" class="divider"></li>
                             @endif
-                            <li><a href="{{ route('users.edit', ['id' => Auth::id()]) }}"><i class="ti-user"></i> My Profile</a></li>
+
+                            @if(\Illuminate\Support\Facades\Auth::user()->hasRole('client'))
+                                <li><a href="/client/{{\Illuminate\Support\Facades\Auth::user()->id}}/profile"><i class="ti-user"></i> My Profile</a></li>
+                            @else
+                                <li><a href="{{ route('users.edit', ['id' => Auth::id()]) }}"><i class="ti-user"></i> My Profile</a></li>
+                            @endif
+
                             <li role="separator" class="divider"></li>
 
                             <li>

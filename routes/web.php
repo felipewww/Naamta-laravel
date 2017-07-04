@@ -65,6 +65,8 @@ Route::group(['middleware' => 'auth'], function(){
     Route::resource('/approvals', 'ApprovalsController');
     Route::resource('/applications',  'ApplicationsController');
 
+    Route::get('/client/{id}/profile', 'SystemUsersController@clientProfile');
+
     Route::post('/step/delete',  'ApplicationsController@deleteStep');
 
     Route::get('/application/{id}/dashboard',  function(\Illuminate\Http\Request $request, $id){
