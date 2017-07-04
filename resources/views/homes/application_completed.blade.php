@@ -38,14 +38,14 @@
                         <div class="form-group col-md-2">
                             <label class="">Interval</label>
                             <div class="">
-                                <input class="form-control" name="interval" type="number" placeholder="Interval in days">
+                                <input required="required" class="form-control" name="interval" type="number" placeholder="Interval in days">
                             </div>
                         </div>
 
                         <div class="form-group col-md-2">
                             <label class="">How many times?</label>
                             <div class="">
-                                <input class="form-control" name="times" type="number" placeholder="How many times?">
+                                <input required="required" class="form-control" name="times" type="number" placeholder="How many times?">
                             </div>
                         </div>
 
