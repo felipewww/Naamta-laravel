@@ -132,9 +132,10 @@ class WorkflowController extends Controller
                 }
 
                 $mailData = [
-                    'title'                 => $emailTemplate->title,
-                    'text'                  => $contentComplement.$emailTemplate->text,
-                    'allFormsWithErrors'    => $this->allFormsWithErrors
+                    'application_id'     => $this->application->id,
+                    'title'              => $emailTemplate->title,
+                    'text'               => $contentComplement.$emailTemplate->text,
+                    'allFormsWithErrors' => $this->allFormsWithErrors
                 ];
 
                 $c = new Carbon();

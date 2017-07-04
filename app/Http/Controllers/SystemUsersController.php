@@ -17,13 +17,8 @@ class SystemUsersController extends Controller
     private $roles;
 
     public function __construct()
-    {
+    
         parent::__construct();
-//        $this->middleware(function ($request, $next) {
-//            dd($request);
-//            $user = \Auth::user()->authorizeRoles(['admin']);;
-//            return $next($request);
-//        });
         
         $this->roles = Roles::whereIn('name', ['admin','staff'])->get();
         $this->users = User::whereHas('roles', function($query) {
@@ -83,7 +78,7 @@ class SystemUsersController extends Controller
             ['title' => 'id', 'width' => '40px'],
             ['title' => 'Name'],
             ['title' => 'Role'],
-            ['title' => 'Se all Applications'],
+            ['title' => 'See all applications'],
             ['title' => 'Status'],
             ['title' => 'Actions'],
         ];

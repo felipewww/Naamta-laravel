@@ -49,9 +49,13 @@
                                 @endif
                             </div>
                         </div>
+
                         <div class="form-group{{ $errors->has('text') ? ' has-error' : '' }}">
-                            <label for="text" class="col-md-4 control-label">Text</label>
+                            <label for="text" class="col-md-4 control-label">Text<br>
+
+                            </label>
                             <div class="col-md-6">
+                                <small class="help-block">Shortcodes: [ClientName], [ClientEmail], [ClientCompany]</small>
                                 {{--<textarea id="text" type="text" class="form-control" name="text" required>{{ $email->text!=null ? $email->text : old('text') }}</textarea>--}}
                                 <textarea id="text-hidden" type="text" class="hidden" name="text" required></textarea>
                                 <div id="text">{!! $email->text !!}</div>
@@ -79,7 +83,6 @@
                             </div>
                         </div>
 
-                       
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
                                 <button id="sendform" type="submit" class="btn btn-primary">
