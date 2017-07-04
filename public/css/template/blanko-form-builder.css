@@ -287,8 +287,14 @@
 
 #drag-container.client-view .draggable-input{
     border: none;
-    padding: 20px;
+    padding: 0 10px 20px 10px ;
     width: 33%;
+}
+#drag-container.client-view .draggable-input[id*="header"]{
+    padding: 0 10px 0 10px;
+}
+#drag-container.client-view .draggable-input[id*="paragraph"]{
+    font-size: 1.2em;
 }
 .client-view [id*="paragraph"] .drag-heading , .client-view [id*="header"] .drag-heading {
     display: none;
@@ -381,6 +387,7 @@
 
 #drag-container h3{
     font-weight: bold;
+    font-size: 2.5em;
 }
 
 #drag-container canvas{

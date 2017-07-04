@@ -307,7 +307,9 @@ function configureField(node, options, type, id){
 
   node.find('.help + .text').html(options.help);
   node.find('.help-text').html(options.help);
-  if(node.find('.help-text').html() == '') {
+  var text = node.find('.help-text').text().trim();
+  console.log("text =" + text);
+  if(text == '') {
     node.find('.help .icon').hide();
   }else{
     node.find('.help .icon').show();
