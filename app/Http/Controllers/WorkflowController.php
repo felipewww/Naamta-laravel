@@ -6,6 +6,7 @@ use App\MModels\Form;
 use App\Models\ApplicationStepForms;
 use App\Models\ApplicationUserTypes;
 use App\Models\EmailTemplate;
+use App\Models\Step;
 use App\Models\User;
 use App\Models\UserApplication;
 use Carbon\Carbon;
@@ -59,6 +60,15 @@ class WorkflowController extends Controller
     public function stepActions(Request $request)
     {
         \DB::beginTransaction();
+
+        /*
+         * Fall ehre when submit all forms, so, convert status to approved and find the step
+         * */
+        if (!$this->step){
+            $request->offsetSet('status', 'approved');
+            $this->step = ApplicationStep::findOrFail($request->step_id);
+            $this->application = $this->step->application;
+        }
 
         $currentUserType = $this->step->application->users()->where('user_id', Auth::user()->id)->get();
 
@@ -122,9 +132,10 @@ class WorkflowController extends Controller
                 }
 
                 $mailData = [
-                    'title'                 => $emailTemplate->title,
-                    'text'                  => $contentComplement.$emailTemplate->text,
-                    'allFormsWithErrors'    => $this->allFormsWithErrors
+                    'application_id'     => $this->application->id,
+                    'title'              => $emailTemplate->title,
+                    'text'               => $contentComplement.$emailTemplate->text,
+                    'allFormsWithErrors' => $this->allFormsWithErrors
                 ];
 
                 $c = new Carbon();
@@ -228,7 +239,7 @@ class WorkflowController extends Controller
             if($this->_updateFormToMongo(\GuzzleHttp\json_decode($request->form_json)))
 
             return json_encode(['status' => 'success', 'message' => 'Form saved']);
-        }catch (Exception $e){
+        }catch (\Exception $e){
             return json_encode(['status' => 'error', 'message' => 'Error']);
         }
     }
@@ -238,7 +249,7 @@ class WorkflowController extends Controller
         $step = ApplicationStep::findOrFail($request->step_id);
         $step->status = "approved";
         $step->save();
-
+        $this->stepActions($request);
         $this->nextStepOrCompleteApplication($step);
 
         return json_encode(['status' => 'success', 'message' => 'Form saved']);

@@ -48,6 +48,7 @@ class ApplicationsController extends Controller
     public function __construct()
     {
         parent::__construct();
+
 //        $this->middleware(function ($request, $next) {
 //            $user = \Auth::user()->authorizeRoles(['admin', 'staff']);
 //            return $next($request);
@@ -397,7 +398,7 @@ class ApplicationsController extends Controller
         $app = Application::findOrFail($appID);
 
         if ($app->reset_at || $app->status == '1') {
-            return json_encode(['status' => false]);
+            return json_encode(['status' => false, 'title' => 'Error', 'message' => 'This application can not be changed!', 'header' => 'alert-danger']);
         }
 
         \DB::beginTransaction();
@@ -416,7 +417,7 @@ class ApplicationsController extends Controller
         }
         \DB::commit();
 
-        return json_encode(['status' => true]);
+        return json_encode(['status' => true, 'title' => 'Success', 'message' => 'This application has been changed!', 'header' => 'alert-success']);
     }
 
     public function changeStepStatus(Request $request)

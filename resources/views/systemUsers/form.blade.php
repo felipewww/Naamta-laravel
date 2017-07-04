@@ -54,8 +54,8 @@
                         <div class="row"style="margin-top: 15px;" >
                             <div class="col-md-12">
                                 <select class="form-control" name="see_apps">
-                                    <option value="1" {{ (isset($user) && $user->see_apps == 1 ? "selected" : "") }} >See all apps</option>
-                                    <option value="0" {{ (isset($user) && $user->see_apps == 0 ? "selected" : "") }} >See only my apps</option>
+                                    <option value="1" {{ (isset($user) && $user->see_apps == 1 ? "selected" : "") }} >See all applications</option>
+                                    <option value="0" {{ (isset($user) && $user->see_apps == 0 ? "selected" : "") }} >See only my applications</option>
                                 </select>
                             </div>
                         </div>

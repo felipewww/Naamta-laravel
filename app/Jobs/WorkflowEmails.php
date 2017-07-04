@@ -39,6 +39,7 @@ class WorkflowEmails implements ShouldQueue
     {
         Mail::to($this->theuser)->send(
             new \App\Mail\WorkflowEmails($this->status, [
+                'application_id' => $this->mailData['application_id'],
                 'title' => $this->mailData['title'],
                 'text' => $this->mailData['text'],
                 'allFormsWithErrors' => $this->mailData['allFormsWithErrors'], //only when it's a Approval, it may have a info about latest forms with errors

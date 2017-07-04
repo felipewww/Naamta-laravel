@@ -12,7 +12,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     E-mails
-                     <a role="button" href="{{ URL::to($page . '/create') }}" class="btn btn-success pull-right m-r-20"><i class="fa fa-plus"></i> Add</span></a>
+                     <a role="button" href="{{ URL::to($page . '/create') }}" class="btn btn-success pull-right m-r-20"><i class="fa fa-plus"></i> Add</a>
                 </div>
 
                 <div class="panel-body">

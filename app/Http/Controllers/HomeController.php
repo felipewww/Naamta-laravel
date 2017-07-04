@@ -76,6 +76,7 @@ class HomeController extends Controller
         $this->vars->completedApplications = Application::where('status', 'completed')->get();
 
         $this->vars->activeApplications = Application::where('status', '1')->get();
+
         foreach ($this->vars->activeApplications as &$app)
         {
             $currStep = $app->steps()->where('status', 'current')->first();
@@ -85,9 +86,12 @@ class HomeController extends Controller
                 $lastDateSubmit = 'None';
             }
             else
-            {
-                $previous = ApplicationStep::find($currStep->previous_step);
-                $lastDateSubmit = $previous->updated_at->toDateTimeString();
+            {  $previous = ApplicationStep::find($currStep->previous_step);
+                if (!$previous) {
+                    $lastDateSubmit = ' ';
+                }else{
+                    $lastDateSubmit = $previous->updated_at->toDateTimeString();
+                }
             }
             $app->offsetSet('currStep', $currStep);
             $app->offsetSet('lastDateSubmit', $lastDateSubmit);
