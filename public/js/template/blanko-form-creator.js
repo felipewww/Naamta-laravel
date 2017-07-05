@@ -105,7 +105,7 @@ function toFieldObject(){
         obj.setting.options.push(option);
       });
     }
-    console.log(obj.setting.options);
+    
   if(obj.type == 'radio-group'){
     var options = $(this).find('.drag-input .radio');
     options.each(function(){
@@ -375,10 +375,6 @@ function configureField(node, options, type, id){
     node.find('.drag-input button').attr({'type' : options.type});
   }
 
-  if(type == 'select'){
-    console.log(options);
-  }
-
   // required
   node.find('.span-required').toggle(options.isRequired);
   node.find('.update-required').toggleClass('required', options.isRequired);
@@ -490,8 +486,16 @@ function toHtml(){
 }
 
 function checkFieldValue(id, value, options, isIncorrect, file){
-  console.log(options);
-  console.log(id);
+  
+  $('.tab').each(function(){
+    var l = $(this).find('.required-fail').length;
+    if( l <= 0 ){
+      var id = $(this).attr('id');
+      console.log('[href="#'+ id +'"]');
+      $('[href="#'+ id +'"]').removeClass('tab-fail');
+    }
+  });
+
   //console.log(id, value, options, isIncorrect, file);
   $('#save-changes').removeClass('btn-default').addClass('btn-save').html('<i class="fa fa-check m-r-20"></i> Save Changes');
   var elem = $('.draggable-input[data-id="'+id+'"]');

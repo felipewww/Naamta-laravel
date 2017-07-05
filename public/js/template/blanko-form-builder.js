@@ -465,8 +465,8 @@ function addEvents(elem, id = null, signature = null){
   radio.change(function(){
     if($(this).prop('checked') == true) {
       $(elem).find('.drag-heading').removeClass('Pass Fail Audit').addClass($(this).val());
-      checkFieldValue(id, null, null, $(this).val());
       $(elem).find('.drag-input').removeClass('required-fail');
+      checkFieldValue(id, null, null, $(this).val());
     }
   });
 
@@ -491,8 +491,8 @@ function addEvents(elem, id = null, signature = null){
         };
         optionsArray.push(option);
       });
-      checkFieldValue(id, null, optionsArray);
       $(elem).find('.drag-input').removeClass('required-fail');
+      checkFieldValue(id, null, optionsArray);
     });
   }else if(type == 'radio-group'){
     $(elem).find('.drag-input input[type="radio"]').change(function(){
@@ -508,8 +508,8 @@ function addEvents(elem, id = null, signature = null){
         };
         optionsArray.push(option);
       });
-      checkFieldValue(id, null, optionsArray);
       $(elem).find('.drag-input').removeClass('required-fail');
+      checkFieldValue(id, null, optionsArray);
     });
   }else if(type == 'checkbox-group'){
     $(elem).find('.drag-input input[type="checkbox"]').change(function(){
@@ -525,8 +525,8 @@ function addEvents(elem, id = null, signature = null){
         };
         optionsArray.push(option);
       });
-      checkFieldValue(id, null, optionsArray);
       $(elem).find('.drag-input').removeClass('required-fail');
+      checkFieldValue(id, null, optionsArray);
     });
   }else//File upload DROPZONE
   if(type == 'file-upload'){
@@ -543,8 +543,8 @@ function addEvents(elem, id = null, signature = null){
             type: file.type,
             name: file.name
           }
-          checkFieldValue(id, null, null, null, fileObj);
           $(elem).find('.drag-input').removeClass('required-fail');
+          checkFieldValue(id, null, null, null, fileObj);
         });
         this.on('error', function(file, response) {
           $('.dz-success-mark').remove();
@@ -572,11 +572,11 @@ function addEvents(elem, id = null, signature = null){
       }
     });
   }else{
-    
+
     $(elem).find('.drag-input .update-value').change(function(){
       var val = $(this).val();
-      checkFieldValue(id, val, []);
       $(elem).find('.drag-input').removeClass('required-fail');
+      checkFieldValue(id, val, []);
       $(elem).find('.drag-heading.Fail').removeClass('Fail');
       $(elem).find('.drag-validate input[value="Fail"]').prop('checked', false);
     });
