@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Auth\GuardHelpers;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -20,6 +21,7 @@ class Handler extends ExceptionHandler
         \Illuminate\Database\Eloquent\ModelNotFoundException::class,
         \Illuminate\Session\TokenMismatchException::class,
         \Illuminate\Validation\ValidationException::class,
+        AuthenticationException::class
     ];
 
     /**
@@ -38,8 +40,9 @@ class Handler extends ExceptionHandler
             'file'      => $exception->getFile(),
             'line'      => $exception->getLine(),
         ];
-//        return response()->view('errors.template', $data, (int)$exception->getCode());
-        return parent::report($exception);
+
+        return response()->view('errors.template', $data, (int)$exception->getCode());
+//        return parent::report($exception);
     }
 
     /**
@@ -57,8 +60,8 @@ class Handler extends ExceptionHandler
             'file'      => $exception->getFile(),
             'line'      => $exception->getLine(),
         ];
-//        return response()->view('errors.template', $data, 500);
-        return parent::render($request, $exception);
+        return response()->view('errors.template', $data, (int)$exception->getCode());
+//        return parent::render($request, $exception);
     }
 
     /**

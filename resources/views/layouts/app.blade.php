@@ -40,6 +40,23 @@
     <script src="{{ asset("js/template/custom.js") }}"></script>
     <script src="{{ asset("js/template/jasny-bootstrap.js") }}"></script>
     <script src="{{ asset("js/script.js") }}"></script>
+
+    <script>
+        $(document).ready(function () {
+            var btnLogout = document.getElementById("btnLogout");
+            
+            btnLogout.onclick = function () {
+                $.ajax({
+                    url: '/logout',
+                    method: 'post',
+                    data: { _token: window.Laravel.csrfToken },
+                    complete: function () {
+                        window.location.replace('/login');
+                    }
+                })
+            }
+        })
+    </script>
     @yield('scripts')
 
 
@@ -89,7 +106,8 @@
                             <li role="separator" class="divider"></li>
 
                             <li>
-                                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fa fa-power-off"></i> Logout</a>
+                                {{--<a href="/login" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fa fa-power-off"></i> Logout</a>--}}
+                                <a id="btnLogout" href="javascript:;"><i class="fa fa-power-off"></i> Logout</a>
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                     {{ csrf_field() }}
                                 </form>
