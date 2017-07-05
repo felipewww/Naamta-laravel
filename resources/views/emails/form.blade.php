@@ -63,7 +63,7 @@
                                 <textarea id="text-hidden" type="text" class="hidden" name="text" required></textarea>
                                 
                                 <div id="text">{!! $email->text !!}</div>
-
+{{--{{$asd}}--}}
                                 @if ($errors->has('text'))
                                     <span class="help-block">
                                         <strong>{{ $errors->first('text') }}</strong>

@@ -32,7 +32,13 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
-        parent::report($exception);
+        $data = [
+            'message'   => $exception->getMessage(),
+            'code'      => $exception->getCode(),
+            'file'      => $exception->getFile(),
+            'line'      => $exception->getLine(),
+        ];
+        return response()->view('errors.template', $data, (int)$exception->getCode());
     }
 
     /**
@@ -44,7 +50,13 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        return parent::render($request, $exception);
+        $data = [
+            'message'   => $exception->getMessage(),
+            'code'      => $exception->getCode(),
+            'file'      => $exception->getFile(),
+            'line'      => $exception->getLine(),
+        ];
+        return response()->view('errors.template', $data, (int)$exception->getCode());
     }
 
     /**
