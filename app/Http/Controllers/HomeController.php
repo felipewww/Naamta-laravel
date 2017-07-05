@@ -17,6 +17,7 @@ use App\Models\Client;
 use App\Models\ApplicationStep;
 use App\MModels\Form;
 use App\MModels\Field;
+use Illuminate\Support\Facades\Redirect;
 
 
 class HomeController extends Controller
@@ -32,10 +33,18 @@ class HomeController extends Controller
     {
         parent::__construct();
         $this->vars = new \stdClass();
-        $this->middleware(function ($request, $next) {
-            $user = \Auth::user()->authorizeRoles(['admin', 'staff', 'client']);;
-            return $next($request);
-        });
+        if (!Auth::user())
+        {
+            return Redirect::to('/login');
+        }
+        else
+        {
+            $this->middleware(function ($request, $next) {
+                $user = \Auth::user()->authorizeRoles(['admin', 'staff', 'client']);;
+                return $next($request);
+            });
+        }
+
     }
 
     /**
@@ -45,6 +54,9 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
+        if (!Auth::user()) {
+            return Redirect::to('/login');
+        }
         if (!Auth::user()->verified) {
             $activation = new ActivationService();
             return view('homes.wait_emailverify', 
