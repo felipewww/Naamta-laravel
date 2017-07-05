@@ -477,14 +477,6 @@ function addEvents(elem, id = null, signature = null){
   //On Change
 
   // On Change Value
-  $(elem).find('.drag-input .update-value').change(function(){
-    var val = $(this).val();
-    checkFieldValue(id, val, []);
-    $(elem).find('.drag-input').removeClass('required-fail');
-    $(elem).find('.drag-heading.Fail').removeClass('Fail');
-    $(elem).find('.drag-validate input[value="Fail"]').prop('checked', false);
-  });
-
   if(type == 'select'){
     $(elem).find('.drag-input .update-value').change(function(){
       $(elem).find('.drag-heading.Fail').removeClass('Fail');
@@ -502,9 +494,7 @@ function addEvents(elem, id = null, signature = null){
       checkFieldValue(id, null, optionsArray);
       $(elem).find('.drag-input').removeClass('required-fail');
     });
-  }
-
-  if(type == 'radio-group'){
+  }else if(type == 'radio-group'){
     $(elem).find('.drag-input input[type="radio"]').change(function(){
       $(elem).find('.drag-heading.Fail').removeClass('Fail');
       $(elem).find('.drag-validate input[value="Fail"]').prop('checked', false);
@@ -521,9 +511,7 @@ function addEvents(elem, id = null, signature = null){
       checkFieldValue(id, null, optionsArray);
       $(elem).find('.drag-input').removeClass('required-fail');
     });
-  }
-
-  if(type == 'checkbox-group'){
+  }else if(type == 'checkbox-group'){
     $(elem).find('.drag-input input[type="checkbox"]').change(function(){
       $(elem).find('.drag-heading.Fail').removeClass('Fail');
       $(elem).find('.drag-validate input[value="Fail"]').prop('checked', false);
@@ -540,9 +528,7 @@ function addEvents(elem, id = null, signature = null){
       checkFieldValue(id, null, optionsArray);
       $(elem).find('.drag-input').removeClass('required-fail');
     });
-  }
-
-  //File upload DROPZONE
+  }else//File upload DROPZONE
   if(type == 'file-upload'){
     $(elem).find('.drag-input').addClass('dropzone').dropzone({
       url : "/upload-files",
@@ -585,6 +571,16 @@ function addEvents(elem, id = null, signature = null){
         formData.append("_token", window.Laravel.csrfToken);
       }
     });
+  }else{
+    
+    $(elem).find('.drag-input .update-value').change(function(){
+      var val = $(this).val();
+      checkFieldValue(id, val, []);
+      $(elem).find('.drag-input').removeClass('required-fail');
+      $(elem).find('.drag-heading.Fail').removeClass('Fail');
+      $(elem).find('.drag-validate input[value="Fail"]').prop('checked', false);
+    });
+
   }
 
   //Text Format
