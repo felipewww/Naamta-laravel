@@ -466,6 +466,7 @@ function addEvents(elem, id = null, signature = null){
     if($(this).prop('checked') == true) {
       $(elem).find('.drag-heading').removeClass('Pass Fail Audit').addClass($(this).val());
       checkFieldValue(id, null, null, $(this).val());
+      $(elem).find('.drag-input').removeClass('required-fail');
     }
   });
 
@@ -479,6 +480,7 @@ function addEvents(elem, id = null, signature = null){
   $(elem).find('.drag-input .update-value').change(function(){
     var val = $(this).val();
     checkFieldValue(id, val, []);
+    $(elem).find('.drag-input').removeClass('required-fail');
     $(elem).find('.drag-heading.Fail').removeClass('Fail');
     $(elem).find('.drag-validate input[value="Fail"]').prop('checked', false);
   });
@@ -498,6 +500,7 @@ function addEvents(elem, id = null, signature = null){
         optionsArray.push(option);
       });
       checkFieldValue(id, null, optionsArray);
+      $(elem).find('.drag-input').removeClass('required-fail');
     });
   }
 
@@ -516,6 +519,7 @@ function addEvents(elem, id = null, signature = null){
         optionsArray.push(option);
       });
       checkFieldValue(id, null, optionsArray);
+      $(elem).find('.drag-input').removeClass('required-fail');
     });
   }
 
@@ -534,6 +538,7 @@ function addEvents(elem, id = null, signature = null){
         optionsArray.push(option);
       });
       checkFieldValue(id, null, optionsArray);
+      $(elem).find('.drag-input').removeClass('required-fail');
     });
   }
 
@@ -553,6 +558,7 @@ function addEvents(elem, id = null, signature = null){
             name: file.name
           }
           checkFieldValue(id, null, null, null, fileObj);
+          $(elem).find('.drag-input').removeClass('required-fail');
         });
         this.on('error', function(file, response) {
           $('.dz-success-mark').remove();
@@ -566,7 +572,7 @@ function addEvents(elem, id = null, signature = null){
           [].forEach.call(filesArray[id], function(item, index){
             if(item.name == file.name){
               filesArray[id].splice(index, 1);
-              checkFieldValue(id, filesArray[id])
+              checkFieldValue(id, filesArray[id]);
             }
           });
         });
@@ -931,4 +937,102 @@ function getOptions(node, fieldId){
     node.find('.rule .input-holder').html(clone);
   }
   
+}
+
+// function validateForm(){
+//   var container = $('#drag-container');
+
+//   var objs = JSON.parse(toJson());
+//   var errors = 0;
+
+//     objs.forEach(function(obj){
+//       obj.fields.forEach(function(field){
+//         var type = field.type;
+//         var dragInput = $('#' + field.type + '__' + field._id).find('.drag-input');
+//         if(type == "checkbox-group" || type == "radio-group"){
+//           var intErrors = 0;
+
+//           field.setting.options.forEach(function(option){
+//             if(!option.prop){
+//               intErrors++;
+//             }else{
+//               intErrors = 0;
+//             }
+//           });
+
+//           if(intErrors > 0){
+//             errors++;
+//             dragInput.addClass('required-fail');
+//           }else{
+//             dragInput.removeClass('required-fail');
+//           }
+
+//         }else if(type == "file-upload"){
+//           console.log(field.setting);
+//         }else{
+//           if(field.setting.value == ""){
+//             errors++;
+//           }
+//         }
+//       });
+//     });
+
+//     if(errors == 0){
+//       return true;
+
+//     }else{
+//       return false;
+
+//     }
+
+// }
+
+
+function validateForm(){
+  $('.tabs-holder .draggable-input:not([style="display: none;"])').each(function(){
+    var type = $(this).attr('id').split('__')[0];
+    var dragInput = $(this).find('.drag-input');
+    if(type == 'radio-group'){
+      if( $(this).find('.drag-input input:radio:checked').length <= 0 ){
+        dragInput.addClass('required-fail');
+      }else{
+        dragInput.removeClass('required-fail');
+      }
+    }else if (type =='checkbox-group'){
+      if( $(this).find('.drag-input input:checkbox:checked').length <= 0 ){
+        dragInput.addClass('required-fail');
+      }else{
+        dragInput.removeClass('required-fail');
+      }
+    }else if(type == 'file-upload'){
+      if($(this).find('.dz-preview').length > 0 || $(this).find('.file-holder h5').length > 0){
+        dragInput.removeClass('required-fail');
+      }else{
+        dragInput.addClass('required-fail');
+      }
+    }else{
+      if($(this).find('.drag-input input').val() == ''){
+        dragInput.addClass('required-fail');
+      }else{
+        dragInput.removeClass('required-fail');
+      }
+    }
+  });
+
+  var fails = $('.required-fail');
+
+
+  var id = $('.tab-fail').removeClass('tab-fail');
+
+  fails.each(function(){
+    var id = $(this).closest('.tab').attr('id');
+    $('[href="#'+id+'"]').addClass('tab-fail');
+    console.log(id);
+  })
+
+  if(fails.length > 0){
+    return false;
+  }else{
+    return true;
+  }
 }

@@ -24,12 +24,33 @@
     cursor: move;
     background-color: #333;
     padding: 10px 15px;
-}   
-
+} 
+.required-fail{
+    border: 2px #f00 solid;
+    padding: 5px;
+}
+.tab-fail:after{
+    content : ' [!]';
+    color: red;
+    font-weight: bold;
+}
+/*
 #drag-container.client-view .drag-heading{
     cursor: default;
+    padding: 5px;
+    background-color: rgba(0,0,0,0);
 }
+#drag-container.client-view .drag-heading h4, #drag-container.client-view .drag-heading .ordenation{
+    color: white;
+}
+#drag-container.client-view .drag-heading ul{
+    margin-right: 20px;
+}
+*/
 
+#drag-container.client-view .drag-heading ul li{
+    color: #555;
+}
 #drag-container .drag-heading.Pass{
     background-color: #67953f;
 }
