@@ -41,8 +41,12 @@ class Handler extends ExceptionHandler
             'line'      => $exception->getLine(),
         ];
 
-        return response()->view('errors.template', $data, (int)$exception->getCode());
-//        return parent::report($exception);
+        if (app('env') == 'local') {
+            return parent::report($exception);
+        }else{
+            return response()->view('errors.template', $data, (int)$exception->getCode());
+        }
+
     }
 
     /**
@@ -60,8 +64,12 @@ class Handler extends ExceptionHandler
             'file'      => $exception->getFile(),
             'line'      => $exception->getLine(),
         ];
-        return response()->view('errors.template', $data, (int)$exception->getCode());
-//        return parent::render($request, $exception);
+
+        if (app('env') == 'local') {
+            return parent::render($request, $exception);
+        }else{
+            return response()->view('errors.template', $data, (int)$exception->getCode());
+        }
     }
 
     /**
