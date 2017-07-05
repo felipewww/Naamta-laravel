@@ -20,6 +20,7 @@ Route::get('/admin/php/info', function (\Illuminate\Http\Request $request){
 Route::get('register/confirmation/{token}', 'Auth\RegisterController@emailConfirmation');
 Route::get('register/confirmation/resend/{token}/{id}', 'Auth\RegisterController@resendConfirmationToken');
 
+
 Auth::routes();
 Route::get('/test', function (Request $request) {
 
@@ -30,6 +31,14 @@ Route::get('/formtest', function (Request $request) {
 });
 
 Route::group(['middleware' => 'auth'], function(){
+
+    Route::post('/user/logout', function (\Illuminate\Http\Request $request){
+        $arr = [
+            'status' => 1
+        ];
+        \Illuminate\Support\Facades\Auth::logout();
+        return json_encode($arr);
+    });
 
     Route::get('/seemail/{email}', function(\Illuminate\Http\Request $request, $email){
         return App\Mail\SeeEmail::see($email);

@@ -47,10 +47,10 @@
             
             btnLogout.onclick = function () {
                 $.ajax({
-                    url: '/logout',
+                    url: '/user/logout',
                     method: 'post',
                     data: { _token: window.Laravel.csrfToken },
-                    complete: function () {
+                    complete: function (data) {
                         window.location.replace('/login');
                     }
                 })
