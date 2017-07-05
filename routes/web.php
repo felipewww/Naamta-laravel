@@ -30,6 +30,8 @@ Route::get('/formtest', function (Request $request) {
 
 });
 
+Route::get('/', 'HomeController@index');
+
 Route::group(['middleware' => 'auth'], function(){
 
     Route::post('/user/logout', function (\Illuminate\Http\Request $request){
@@ -48,7 +50,6 @@ Route::group(['middleware' => 'auth'], function(){
         return response()->download(storage_path('app/public/'.$path.'/'.$file));
     });
 
-    Route::get('/', 'HomeController@index');
     Route::get('/home', 'HomeController@index');
 
     Route::get('/callback', function (Request $request) {
