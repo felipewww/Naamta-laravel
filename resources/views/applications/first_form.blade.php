@@ -15,7 +15,7 @@
         </div>
         <div class="white-box">
             @if( $isResponsible )
-            <button onclick="workflow.firstForm();" class="btn btn-primary pull-right btn-submit">Submit Form</button>
+            <button class="btn btn-primary pull-right btn-submit" id="submit">Submit Form</button>
             @else
             <a href="/applications/{{$appID}}/edit" class="btn btn-primary pull-right">Return to app info</a>
             @endif
@@ -38,6 +38,18 @@
 
 <script>
     createTabs($('input[name=containers]').val(), true, "{{$isResponsible}}");
+
+    
+    $('.btn-submit').on('click', function(e){
+        e.preventDefault();
+        if( validateForm() ){
+            workflow.firstForm();
+        }else{
+            console.log('You shall not pass')
+        }
+    });
+    
+
     @if(!$isResponsible)
         $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4')
         $('input, select, radio, textarea, checkbox, option').attr('disabled', 'disabled').css('opacity', '0.4')

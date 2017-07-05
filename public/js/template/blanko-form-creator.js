@@ -168,7 +168,7 @@ function toJson(){
 // Creates tabs from json
 // Uses createFields
 function createTabs(json, clientView = false, isClient){
-  console.log(json);
+  
   isUserClient = isClient;
   isClientView = clientView;
   $('#drag-container').toggleClass('client-view', clientView);
@@ -312,7 +312,7 @@ function configureField(node, options, type, id){
   node.find('.help + .text').html(options.help);
   node.find('.help-text').html(options.help);
   var text = node.find('.help-text').text().trim();
-  console.log("text =" + text);
+  
   if(text == '') {
     node.find('.help .icon').hide();
   }else{
@@ -397,7 +397,7 @@ function configureField(node, options, type, id){
 function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
   var cond = "";
   var changes = "";
-  console.log(conditions);
+  
   if(conditions.length >0){
     var i = 0;
 
@@ -420,8 +420,7 @@ function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
       i++;
     });
 
-    console.log(cond);
-    console.log(changes);
+    
 
     $(eval(changes)).change(function() {
       if(eval(cond)){
@@ -603,7 +602,7 @@ function saveComments(id, username, message, type){
     }
   });
 }
+
 function commentCallback(result) {
   console.log(result.commentId);
 }
-

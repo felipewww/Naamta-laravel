@@ -160,14 +160,17 @@ class WorkflowController extends Controller
     public function show(Request $request, $id, $formId = null)
     {
         $step = ApplicationStep::findOrFail($id);
+
         switch ($step->morphs_from)
         {
             case FormTemplate::class:
                 $form = Form::with(array('containers', 'containers.config', 'containers.fields', 'containers.fields.comments',
                     'containers.fields.setting', 'containers.fields.setting.rule', 'containers.fields.setting.rule.conditions') )->findOrFail($formId);
+                $this->step = $step;
                 return $this->applicationForm($step->id, $step->responsible, json_encode($form->containers));
                 break;
             case Approval::class:
+                $this->step = $step;
                 return $this->applicationApproval($step->id, $step->responsible, $step->Approval);
                 break;
             default:
@@ -224,6 +227,7 @@ class WorkflowController extends Controller
 
         return
             view('workflow.approval')->with([
+                'step' => $this->step,
                 'stepId' => $stepId,
                 'appID' => $currentStep->application_id,
                 'isResponsible' => $isResponsible,
