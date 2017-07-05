@@ -36,8 +36,8 @@ Route::group(['middleware' => 'auth'], function(){
         $arr = [
             'status' => 1
         ];
-        return json_encode($arr);
         \Illuminate\Support\Facades\Auth::logout();
+        return json_encode($arr);
     });
 
     Route::get('/seemail/{email}', function(\Illuminate\Http\Request $request, $email){
