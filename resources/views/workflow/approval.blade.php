@@ -60,7 +60,7 @@
             </div>
         @endif
         @if($isResponsible)
-            @if($approval->Step->status == 'current')
+            @if($step->status == 'current')
             <div class="row">
                 <div class="col-sm-12">
                     <div class="white-box">
