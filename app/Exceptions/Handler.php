@@ -38,7 +38,8 @@ class Handler extends ExceptionHandler
             'file'      => $exception->getFile(),
             'line'      => $exception->getLine(),
         ];
-        return response()->view('errors.template', $data, (int)$exception->getCode());
+//        return response()->view('errors.template', $data, (int)$exception->getCode());
+        return parent::report($exception);
     }
 
     /**
@@ -56,7 +57,8 @@ class Handler extends ExceptionHandler
             'file'      => $exception->getFile(),
             'line'      => $exception->getLine(),
         ];
-        return response()->view('errors.template', $data, (int)$exception->getCode());
+//        return response()->view('errors.template', $data, 500);
+        return parent::render($request, $exception);
     }
 
     /**
