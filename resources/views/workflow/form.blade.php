@@ -52,7 +52,7 @@
     {{--{{dd($isResponsible)}}--}}
     @if(!$isResponsible)
         $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4')
-        $('input, select, radio, textarea, checkbox, option').attr('disabled', 'disabled')
+        $('input, select, radio, textarea, checkbox, option').prop('disabled', true);
         $('.comment-msg, .is-incorrect').removeAttr('disabled').css('opacity', '0')
         $('.is-incorrect').css('display', '0')
     @else

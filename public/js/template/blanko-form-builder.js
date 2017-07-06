@@ -936,100 +936,55 @@ function getOptions(node, fieldId){
   
 }
 
-// function validateForm(){
-//   var container = $('#drag-container');
-
-//   var objs = JSON.parse(toJson());
-//   var errors = 0;
-
-//     objs.forEach(function(obj){
-//       obj.fields.forEach(function(field){
-//         var type = field.type;
-//         var dragInput = $('#' + field.type + '__' + field._id).find('.drag-input');
-//         if(type == "checkbox-group" || type == "radio-group"){
-//           var intErrors = 0;
-
-//           field.setting.options.forEach(function(option){
-//             if(!option.prop){
-//               intErrors++;
-//             }else{
-//               intErrors = 0;
-//             }
-//           });
-
-//           if(intErrors > 0){
-//             errors++;
-//             dragInput.addClass('required-fail');
-//           }else{
-//             dragInput.removeClass('required-fail');
-//           }
-
-//         }else if(type == "file-upload"){
-//           console.log(field.setting);
-//         }else{
-//           if(field.setting.value == ""){
-//             errors++;
-//           }
-//         }
-//       });
-//     });
-
-//     if(errors == 0){
-//       return true;
-
-//     }else{
-//       return false;
-
-//     }
-
-// }
-
-
 function validateForm(){
-  $('.tabs-holder .draggable-input:not([style="display: none;"])').each(function(){
-    var type = $(this).attr('id').split('__')[0];
-    var dragInput = $(this).find('.drag-input');
-    if(type == 'radio-group'){
-      if( $(this).find('.drag-input input:radio:checked').length <= 0 ){
-        dragInput.addClass('required-fail');
-      }else{
-        dragInput.removeClass('required-fail');
-      }
-    }else if (type =='checkbox-group'){
-      if( $(this).find('.drag-input input:checkbox:checked').length <= 0 ){
-        dragInput.addClass('required-fail');
-      }else{
-        dragInput.removeClass('required-fail');
-      }
-    }else if(type == 'file-upload'){
-      if($(this).find('.dz-preview').length > 0 || $(this).find('.file-holder h5').length > 0){
-        dragInput.removeClass('required-fail');
-      }else{
-        dragInput.addClass('required-fail');
-      }
-    }else{
-      if($(this).find('.drag-input input').val() == ''){
-        dragInput.addClass('required-fail');
-      }else{
-        dragInput.removeClass('required-fail');
-      }
-    }
-  });
-
-  var fails = $('.required-fail');
-
-
-  var id = $('.tab-fail').removeClass('tab-fail');
-
-  fails.each(function(){
-    var id = $(this).closest('.tab').attr('id');
-    $('[href="#'+id+'"]').addClass('tab-fail');
-    console.log(id);
-  })
-
-  if(fails.length > 0){
-    return false;
-  }else{
+  if(Script.env == 'local'){
     return true;
+  }else{
+    $('.tabs-holder .draggable-input:not([style="display: none;"])').each(function(){
+      var type = $(this).attr('id').split('__')[0];
+      var dragInput = $(this).find('.drag-input');
+      if(type == 'radio-group'){
+        if( $(this).find('.drag-input input:radio:checked').length <= 0 ){
+          dragInput.addClass('required-fail');
+        }else{
+          dragInput.removeClass('required-fail');
+        }
+      }else if (type =='checkbox-group'){
+        if( $(this).find('.drag-input input:checkbox:checked').length <= 0 ){
+          dragInput.addClass('required-fail');
+        }else{
+          dragInput.removeClass('required-fail');
+        }
+      }else if(type == 'file-upload'){
+        if($(this).find('.dz-preview').length > 0 || $(this).find('.file-holder h5').length > 0){
+          dragInput.removeClass('required-fail');
+        }else{
+          dragInput.addClass('required-fail');
+        }
+      }else{
+        if($(this).find('.drag-input input').val() == ''){
+          dragInput.addClass('required-fail');
+        }else{
+          dragInput.removeClass('required-fail');
+        }
+      }
+    });
+
+    var fails = $('.required-fail');
+
+
+    var id = $('.tab-fail').removeClass('tab-fail');
+
+    fails.each(function(){
+      var id = $(this).closest('.tab').attr('id');
+      $('[href="#'+id+'"]').addClass('tab-fail');
+      console.log(id);
+    })
+
+    if(fails.length > 0){
+      return false;
+    }else{
+      return true;
+    }
   }
 }
