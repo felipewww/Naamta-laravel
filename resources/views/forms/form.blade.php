@@ -101,7 +101,8 @@
         e.preventDefault();
         $('input[name=containers]').val(toJson());
         $(this).unbind().submit();
-    })
+    });
+
     if($('input[name=containers]').val() != ''){
         createTabs($('input[name=containers]').val(), false);
     }else{
