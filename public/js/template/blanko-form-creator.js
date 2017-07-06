@@ -225,6 +225,12 @@ function createTabs(json, clientView = false, isClient){
       }
     }));
     $('#save-changes').show();
+
+    $('.drag-label').each(function(){
+      var heading = $(this).closest('.draggable-input').find('.ordenation');
+      $(this).insertAfter(heading);
+    });
+
   }else{
     $('.filter').hide();
     $('.drag-validate').hide();

@@ -30,7 +30,7 @@
         </div>
         <div class="white-box">
             <a href="/application/{{$appID}}/dashboard" class="btn btn-primary pull-right btn-submit">Back</a>
-            <button onclick="workflow.sendForm();" class="btn btn-primary pull-right btn-submit">Submit Form</button>
+            <button class="btn btn-primary pull-right btn-submit">Submit Form</button>
             <div class="clearfix"></div>
         </div>
     </div>
@@ -50,6 +50,16 @@
 
 <script>
     createTabs($('input[name=containers]').val(), true, "{{$isResponsible}}");
+
+    $('.btn-submit').on('click', function(e){
+        e.preventDefault();
+        if( validateForm() ){
+            workflow.sendForm();
+        }else{
+            console.log('You shall not pass')
+        }
+    });
+
     @if(!$isResponsible)
         $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4');
         $('.is-incorrect').css('display', '0');
