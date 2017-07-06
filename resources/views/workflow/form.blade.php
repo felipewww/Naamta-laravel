@@ -49,7 +49,7 @@
 <script src="{{ asset("js/template/jquery.mask.min.js") }}"></script>
 
 <script>
-    {{--{{dd($isResponsible)}}--}}
+{{--    {{dd($isResponsible)}}--}}
     @if(!$isResponsible)
         $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4')
         $('input, select, radio, textarea, checkbox, option').attr('disabled', 'disabled').css('opacity', '0.4')

@@ -18,6 +18,10 @@ class Approval extends Model
        'id', 'title', 'description', 'has_report'
     ];
 
+    /**
+     * @Deprecated
+     * Don't use this method. It returns all reports, of all clients.
+     */
     public function report()
     {
         if($this->has_report)

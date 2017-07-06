@@ -10,8 +10,8 @@ class ApplicationStepForms extends Model
     public $fillable = ['application_step_id', 'mform_id', 'form_templates_id'];
     public $timestamps = false;
 
-    public function Ftest()
+    public function Step()
     {
-        dd('ftest');
+        return $this->hasOne(ApplicationStep::class, 'id', 'application_step_id');
     }
 }

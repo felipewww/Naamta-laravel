@@ -17,11 +17,16 @@ class CreateReportsTable extends Migration
             $table->increments('id');
             $table->string('title');
             $table->integer('approval_id')->unsigned();
+            $table->integer('application_steps_id')->unsigned();
             $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('approval_id')
                 ->references('id')->on('approvals')
+                ->onDelete('cascade');
+
+            $table->foreign('application_steps_id')
+                ->references('id')->on('application_steps')
                 ->onDelete('cascade');
         });
 

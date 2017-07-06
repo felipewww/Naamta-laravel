@@ -56,6 +56,28 @@ class Controller extends BaseController
         return $data;
     }
 
+//    public function isStepResponsible($step)
+//    {
+//        $currentUserType = $step->application->users()->where('user_id', Auth::user()->id)->get();
+//
+//        if (!$currentUserType) {
+//            abort(401, 'Unauthorized.');
+//        }
+//
+//
+//        if ($currentUserType->count() == 1)
+//        {
+//            $currentUserType = $currentUserType->first();
+//            $isResponsible = ($step->responsible == $currentUserType->user_type);
+//        }
+//        else
+//        {
+//            $isResponsible = $currentUserType->where('user_type', $step->responsible)->first();
+//        }
+//
+//        return $isResponsible;
+//    }
+
     public function urlStoredFile($path)
     {
         $storage = Storage::disk('public');

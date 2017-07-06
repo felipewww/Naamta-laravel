@@ -22,6 +22,7 @@ class WorkflowController extends Controller
     public $step;
     public $application;
     public $allFormsWithErrors = [];
+    public $defaultVars;
     /**
      * Create a new controller instance.
      *
@@ -30,6 +31,9 @@ class WorkflowController extends Controller
     public function __construct()
     {
         parent::__construct();
+
+        $this->defaultVars = new \stdClass();
+
         $this->middleware(function ($request, $next) {
             $user = Auth::user();
             $user->authorizeRoles(['admin', 'staff', 'client']);;
@@ -154,6 +158,7 @@ class WorkflowController extends Controller
     {
         $step = ApplicationStep::findOrFail($id);
         $report = $step->approval->report()->findOrFail($report);
+
         return $this->getApprovalView($id, $step->approval, $report, ['editable' => false]);
     }
 
@@ -183,11 +188,12 @@ class WorkflowController extends Controller
 
     public function showFormErrors(Request $request, $id, $formId = null)
     {
-        $step = ApplicationStep::findOrFail($id);
         $form = Form::with(array('containers', 'containers.config', 'containers.fields', 'containers.fields.comments',
             'containers.fields.setting', 'containers.fields.setting.rule', 'containers.fields.setting.rule.conditions') )->findOrFail($formId);
 
-        return $this->applicationForm($step->id, $step->responsible, json_encode($form->containers));
+        $appStepFrom = ApplicationStepForms::where('mform_id', $formId)->first();
+
+        return $this->applicationForm($appStepFrom->Step->id, $appStepFrom->Step->responsbile, json_encode($form->containers));
     }
 
     private function applicationForm($stepId, $stepResponsible, $form)
@@ -198,24 +204,13 @@ class WorkflowController extends Controller
 
         $currentStep = ApplicationStep::where("id", $stepId)->first();
 
-//        $currentUserType = $currentStep->application->users()->where('user_id', Auth::user()->id)->get();
-//
-//        if ($currentUserType->count() == 1)
-//        {
-//            $currentUserType = $currentUserType->first();
-//            $isResponsible = ($currentStep->responsible == $currentUserType->user_type);
-//        }
-//        else
-//        {
-//            $isResponsible = $currentUserType->where('user_type', $currentStep->responsible)->first();
-//        }
-
         return view('workflow.form')->with([
             'stepId' => $stepId,
             'appID' => $currentStep->application_id,
             'isResponsible' => $currentStep->loggedUserIsResponsible(),
             'containers' => $form,
-            'pageInfo' => $this->pageInfo
+            'pageInfo' => $this->pageInfo,
+            'defaultVars' => $this->defaultVars
         ]);
     }
 
@@ -304,6 +299,7 @@ class WorkflowController extends Controller
                 Report::create(
                     [
                         'approval_id' => $step->Approval->id,
+                        'application_steps_id' => $step->id,
                         'form' => \GuzzleHttp\json_encode($request->form),
                         'forms_errors' => \GuzzleHttp\json_encode($slightJson),
                         'title' => $step->title

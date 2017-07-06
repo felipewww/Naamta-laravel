@@ -8,6 +8,7 @@ use App\Models\Approval;
 use App\Models\ClientFirstForm;
 use App\Models\ContinuousCompliance;
 use App\Models\FormTemplate;
+use App\Models\Report;
 use App\Models\SysContinuousCompliance;
 use App\Models\UserApplication;
 use Faker\Factory;
@@ -233,7 +234,6 @@ class HomeController extends Controller
                 $stepHasForm->offsetSet('mongoForms', $thisForms);
             }
 
-
             $approvalWithReport = $application->steps->where('morphs_from', Approval::class)->where('approval.has_report', '1')->all();
             $reports = array();
 
@@ -241,7 +241,8 @@ class HomeController extends Controller
             foreach($approvalWithReport as $approval)
             {
                 $step = ApplicationStep::findOrFail($approval->id);
-                $allReports = $step->Approval->report()->orderBy('created_at','DESC')->get();
+
+                $allReports = Report::where('application_steps_id', $step->id)->get();
 
                 if($allReports != null)
                 {

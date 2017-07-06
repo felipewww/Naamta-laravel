@@ -15,9 +15,13 @@ class Report extends Model
      * @var array
      */
     protected $fillable = [
-       'id', 'title', 'approval_id', 'form', 'forms_errors'
+       'id', 'title', 'approval_id', 'application_steps_id', 'form', 'forms_errors'
     ];
 
+    /**
+     * @Deprecated
+     * Don't use this method!!! Error! Returning all approvals...
+     */
     public function approval()
     {
         return $this->hasOne('App\Models\Approval');
