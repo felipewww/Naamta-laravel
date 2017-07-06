@@ -21,7 +21,7 @@
     cursor: move;
 }
 #drag-container .drag-heading{
-    cursor: move;
+    cursor: default;
     background-color: #333;
     padding: 10px 15px;
 } 
