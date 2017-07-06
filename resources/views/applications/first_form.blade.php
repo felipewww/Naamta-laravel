@@ -51,10 +51,11 @@
     
 
     @if(!$isResponsible)
-        $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4')
-        $('input, select, radio, textarea, checkbox, option').attr('disabled', 'disabled').css('opacity', '0.4')
-        $('.comment-msg, .is-incorrect').removeAttr('disabled').css('opacity', '0')
-        $('.is-incorrect').css('display', '0')
+        $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4');
+        $('input, select, radio, textarea, checkbox, option').prop('disabled', true);
+        $('.dropzone, .remove-file').remove();
+        $('.comment-msg, .is-incorrect').removeAttr('disabled').css('opacity', '0');
+        $('.is-incorrect').css('display', '0');
     @else
         $('.drag-validate').css('display', 'none');
     @endif

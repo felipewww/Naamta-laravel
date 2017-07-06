@@ -30,7 +30,7 @@
         </div>
         <div class="white-box">
             <a href="/application/{{$appID}}/dashboard" class="btn btn-primary pull-right btn-submit">Back</a>
-            <button onclick="workflow.sendForm();" class="btn btn-primary pull-right btn-submit">Submit Form</button>
+            <button class="btn btn-primary pull-right btn-submit">Submit Form</button>
             <div class="clearfix"></div>
         </div>
     </div>
@@ -49,23 +49,33 @@
 <script src="{{ asset("js/template/jquery.mask.min.js") }}"></script>
 
 <script>
-{{--    {{dd($isResponsible)}}--}}
+    createTabs($('input[name=containers]').val(), true, "{{$isResponsible}}");
+
     @if(!$isResponsible)
-        $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4')
-        $('input, select, radio, textarea, checkbox, option').attr('disabled', 'disabled').css('opacity', '0.4')
-        $('.comment-msg, .is-incorrect').removeAttr('disabled').css('opacity', '0')
-        $('.is-incorrect').css('display', '0')
+        $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4');
+        $('input, select, radio, textarea, checkbox, option').prop('disabled', true);
+        $('.dropzone, .remove-file').remove();
+        $('.comment-msg, .is-incorrect').removeAttr('disabled');
+        $('.is-incorrect').css('display', '0');
     @else
         $('.drag-validate').css('display', 'none');
     @endif
+    
+    $('.btn-submit').on('click', function(e){
+        e.preventDefault();
+        if( validateForm() ){
+            workflow.sendForm();
+        }else{
+            console.log('You shall not pass')
+        }
+    });
 
-    createTabs($('input[name=containers]').val(), true, "{{$isResponsible}}");
-    @if(!$isResponsible)
-        $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4');
-        $('.is-incorrect').css('display', '0');
-    @else
-        $('.drag-validate').css('display', 'none')
-    @endif
+    {{--@if(!$isResponsible)--}}
+        {{--$('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4');--}}
+        {{--$('.is-incorrect').css('display', '0');--}}
+    {{--@else--}}
+        {{--$('.drag-validate').css('display', 'none')--}}
+    {{--@endif--}}
 </script>
 
 @endsection
