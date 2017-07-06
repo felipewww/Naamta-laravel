@@ -125,7 +125,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/workflow/saveStepForm',  'WorkflowController@stepActions');
     Route::post('/workflow/saveApproval',  'WorkflowController@stepActions');
 
-    Route::get('/workflow/step/{id}/{formId}/show/',  'WorkflowController@show');
+    Route::get('/workflow/step/{id}/{formId}/show/',  'WorkflowController@showFormErrors');
 
     Route::post('/workflow/updateFormField',  'WorkflowController@updateFormField');
     Route::post('/workflow/addFieldComment',  'WorkflowController@addFieldComment');

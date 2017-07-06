@@ -23,6 +23,10 @@ class ClientFirstFormController extends Controller
 
     public function staffView(Request $request, $id)
     {
+        $this->category->title = "Client";
+        $this->subCategory->title = "Registration";
+        $this->title = "Registration Form";
+
         $user = Auth::user();
 
         if(!$user->hasRole(['admin','staff'])) { return redirect('/'); }

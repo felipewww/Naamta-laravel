@@ -169,14 +169,25 @@ class WorkflowController extends Controller
                 $this->step = $step;
                 return $this->applicationForm($step->id, $step->responsible, json_encode($form->containers));
                 break;
-            case Approval::class:
+
+                case Approval::class:
                 $this->step = $step;
                 return $this->applicationApproval($step->id, $step->responsible, $step->Approval);
                 break;
+
             default:
                 throw new \Error('Morph item not found in both table, even on trash. Contact the system administrator');
                 break;
         }
+    }
+
+    public function showFormErrors(Request $request, $id, $formId = null)
+    {
+        $step = ApplicationStep::findOrFail($id);
+        $form = Form::with(array('containers', 'containers.config', 'containers.fields', 'containers.fields.comments',
+            'containers.fields.setting', 'containers.fields.setting.rule', 'containers.fields.setting.rule.conditions') )->findOrFail($formId);
+
+        return $this->applicationForm($step->id, $step->responsible, json_encode($form->containers));
     }
 
     private function applicationForm($stepId, $stepResponsible, $form)

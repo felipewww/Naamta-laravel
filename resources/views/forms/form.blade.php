@@ -71,7 +71,7 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="white-box">
-                <h3 class="box-title m-b-0">Registration Form</h3>
+                {{--<h3 class="box-title m-b-0">Registration Form2</h3>--}}
                 <div id="drag-container"></div>
                 <div class="clearfix"></div>
             </div>

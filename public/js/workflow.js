@@ -90,11 +90,11 @@ workflow = {
             method: 'POST',
             data: sequence,
             success: function (data) {
-                console.log(data)
-               //window.location.href = window.location.protocol + "//" + window.location.hostname;
+                console.log(data);
+               window.location.href = window.location.protocol + "//" + window.location.hostname;
             },
             error: function (data) {
-                console.log(data)
+                console.log(data);
                 console.log('Error!');
             }
         });
