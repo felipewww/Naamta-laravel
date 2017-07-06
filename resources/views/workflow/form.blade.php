@@ -50,17 +50,19 @@
 
 <script>
     {{--{{dd($isResponsible)}}--}}
+
+
+    createTabs($('input[name=containers]').val(), true, "{{$isResponsible}}");
+    
     @if(!$isResponsible)
         $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4')
-        $('input, select, radio, textarea, checkbox, option').prop('disabled', true);
+        $('input, select, radio, textarea, checkbox, option').prop('disabled', true)
         $('.comment-msg, .is-incorrect').removeAttr('disabled').css('opacity', '0')
         $('.is-incorrect').css('display', '0')
     @else
         $('.drag-validate').css('display', 'none');
     @endif
-
-    createTabs($('input[name=containers]').val(), true, "{{$isResponsible}}");
-
+    
     $('.btn-submit').on('click', function(e){
         e.preventDefault();
         if( validateForm() ){
