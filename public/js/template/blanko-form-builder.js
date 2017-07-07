@@ -613,6 +613,8 @@ function addEvents(elem, id = null, signature = null){
 
     $(elem).find('.help-text').keyup();
     $(elem).find('.paragraph-content').keyup();
+    
+    $('#drag-container').find('a:not(.btn)').attr('target', '_blank');
   });
 }
 

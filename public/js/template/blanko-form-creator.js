@@ -210,6 +210,8 @@ function createTabs(json, clientView = false, isClient){
   $('.tab-control').removeClass('active');
   $('.tab-control:first-of-type').addClass('active');
 
+  $('#drag-container').find('a:not(.btn)').attr('target', '_blank');
+
   if(isClientView){
     $('.draggable-input').removeClass('panel');
     $('.tabs-options #addTab').hide();
