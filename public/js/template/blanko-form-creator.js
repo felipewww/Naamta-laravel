@@ -225,11 +225,17 @@ function createTabs(json, clientView = false, isClient){
       }
     }));
     $('#save-changes').show();
-
-    $('.drag-label').each(function(){
-      var heading = $(this).closest('.draggable-input').find('.ordenation');
-      $(this).insertAfter(heading);
+    
+    $('.draggable-input').each(function(){
+      var ordenation = $(this).find('.drag-heading .ordenation').clone();
+      $(this).find('.drag-heading .ordenation').hide();
+      $(this).find('.drag-label').prepend(ordenation);
     });
+
+    //$('.drag-label').each(function(){
+      //var heading = $(this).closest('.draggable-input').find('.ordenation');
+      //$(this).insertAfter(heading);
+    //});
 
   }else{
     $('.filter').hide();

@@ -51,11 +51,20 @@
 #drag-container .drag-heading.Pass{
     background-color: #67953f;
 }
+#drag-container .drag-heading.Pass:after{
+    content: "Approved";
+}
 #drag-container .drag-heading.Fail{
     background-color: #d43f3a;
 }
+#drag-container .drag-heading.Fail:after{
+    content: "Needs review";
+}
 #drag-container .drag-heading.Audit{
     background-color: #4973a9;
+}
+#drag-container .drag-heading.Audit:after{
+    content: "Site Audit";
 }
 #drag-container .drag-heading h4{
     color: white;
@@ -68,12 +77,7 @@
     margin: 0;
     display: inline;
 }
-#drag-container.client-view .drag-heading ul{
-    float: none;
-    display: inline-block;
-    vertical-align: top;
-    width: 5%;
-}
+
 #drag-container .drag-heading ul li{
     display: inline-block;
     color: white;
@@ -89,17 +93,11 @@
 #drag-container .drag-heading .fa-compress, #drag-container .drag-heading .fa-expand{
     transform: rotate(45deg);
 }
+
 #drag-container.client-view h4{
     display: none;
 }
-#drag-container.client-view .drag-heading .drag-label{
-    display: inline-block;
-    margin-left: 10px;
-    color: white;
-    width: 80%;
-    font-size: 1.2em;
-    vertical-align: top;
-}
+
 #drag-container.client-view .drag-heading .drag-label label{
     font-weight: 300;
     margin-bottom: 0;
@@ -118,6 +116,44 @@
     font-size: 1em;
     padding: 10px;
 }
+/*
+#drag-container.client-view .drag-heading ul{
+    float: none;
+    display: inline-block;
+    vertical-align: top;
+    width: 5%;
+}
+
+#drag-container.client-view .drag-heading .drag-label{
+    display: inline-block;
+    margin-left: 10px;
+    color: white;
+    width: 80%;
+    font-size: 1.2em;
+    vertical-align: top;
+}
+*/
+#drag-container.client-view .drag-heading{
+    padding: 5px;
+}
+#drag-container.client-view .drag-heading ul{
+    float: none;
+}
+#drag-container.client-view .drag-heading ul li, #drag-container.client-view .drag-heading .ordenation{
+    color: #555;
+    margin-left: 10px;
+}
+#drag-container.client-view .drag-heading{
+    background-color: rgba(0,0,0,0);
+}
+#drag-container.client-view .drag-label{
+    font-size: 1.2em;
+}
+#drag-container.client-view .drag-label .ordenation{
+    color: #999;
+    font-size: 0.9em;
+}
+
 .paragraph-content{
     height: auto;
 }
