@@ -48,24 +48,6 @@
 }
 */
 
-#drag-container .drag-heading.Pass{
-    background-color: #67953f;
-}
-#drag-container .drag-heading.Pass:after{
-    content: "Approved";
-}
-#drag-container .drag-heading.Fail{
-    background-color: #d43f3a;
-}
-#drag-container .drag-heading.Fail:after{
-    content: "Needs review";
-}
-#drag-container .drag-heading.Audit{
-    background-color: #4973a9;
-}
-#drag-container .drag-heading.Audit:after{
-    content: "Site Audit";
-}
 #drag-container .drag-heading h4{
     color: white;
     display: inline;
@@ -152,6 +134,34 @@
 #drag-container.client-view .drag-label .ordenation{
     color: #999;
     font-size: 0.9em;
+}
+#drag-container.client-view .drag-heading:after{
+    color: #fff;
+    margin-left: 10px;
+    font-weight: 500;
+}
+#drag-container.client-view .drag-heading.Pass ul li,
+#drag-container.client-view .drag-heading.Fail ul li,
+#drag-container.client-view .drag-heading.Audit ul li{
+    color: #fff;
+}
+#drag-container.client-view .drag-heading.Pass{
+    background-color: #67953f;
+}
+#drag-container.client-view .drag-heading.Pass:after{
+    content: "Approved";
+}
+#drag-container.client-view .drag-heading.Fail{
+    background-color: #d43f3a;
+}
+#drag-container.client-view .drag-heading.Fail:after{
+    content: "Needs review";
+}
+#drag-container.client-view .drag-heading.Audit{
+    background-color: #4973a9;
+}
+#drag-container.client-view .drag-heading.Audit:after{
+    content: "Site audit";
 }
 
 .paragraph-content{
