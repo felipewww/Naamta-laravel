@@ -175,7 +175,9 @@ function addEvents(elem, id = null, signature = null){
     }
   });
 
-  $(elem).find('.drag-input input').mask($(elem).find('.mask').val());
+  if($(elem).find('.mask').length > 0){
+    $(elem).find('.drag-input input').mask($(elem).find('.mask').val());
+  }
 
   $(elem).find('.mask').change(function(){
     $(elem).find('.drag-input input').mask($(this).val());
@@ -963,6 +965,12 @@ function validateForm(){
         }else{
           dragInput.addClass('required-fail');
         }
+      }else if(type == 'select'){
+        if( $(this).find('.drag-input select').val() == 'initial-value' ){
+          dragInput.addClass('required-fail');
+        }else{
+          dragInput.removeClass('required-fail');
+        } 
       }else{
         if($(this).find('.drag-input input').val() == ''){
           dragInput.addClass('required-fail');
