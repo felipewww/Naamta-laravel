@@ -42,6 +42,9 @@
     <script src="{{ asset("js/script.js") }}"></script>
 
     <script>
+
+        Script.env = '{{ app('env') }}';
+
         $(document).ready(function () {
             var btnLogout = document.getElementById("btnLogout");
             
