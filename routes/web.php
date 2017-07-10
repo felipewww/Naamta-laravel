@@ -103,7 +103,7 @@ Route::group(['middleware' => 'auth'], function(){
 
     Route::get('/applications/{id}/payment/first_form', 'ClientFirstFormController@staffView');
     Route::post('/applications/client/first_form', 'ClientFirstFormController@_firstFormSave');
-
+    Route::get('/application/reset/{id}',  'ApplicationsController@manualResetApplication');
     Route::get('/applications/{id}/payment/{action}', 'ApplicationsController@validatePayment');
 
     Route::post('/steps/saveDefaultStepsPosition', 'StepsController@saveDefaultStepsPosition');

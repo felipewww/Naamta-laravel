@@ -277,8 +277,14 @@ class HomeController extends Controller
              * */
             $currentStep = $application->steps->where("status", "current")->first();
 
+            if (!$currentStep) {
+                $currentStep = $application->steps->where("status", "1")->first();
+            }
+
             $isResponsible = $currentStep->loggedUserIsStepResponsible();
             $userResponsible = User::findOrFail($currentStep->responsible);
+
+//            dd($currentStep);
 
             /*
              * End verify responsible

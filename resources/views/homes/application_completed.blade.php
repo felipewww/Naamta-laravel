@@ -8,8 +8,11 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="white-box">
-                    <h3 class="box-title m-b-0"><b>Application Info</b></h3>
-
+                    <h3 class="box-title m-b-0"><b>Application Info</b>
+                        @if(\Illuminate\Support\Facades\Auth::user()->isAdmin())
+                            {{--<a href="/application/reset/{{$application->id}}">Reset App</a>--}}
+                        @endif
+                    </h3>
                     <div class="col-md-4">
                         <h4>Application Started:</h4>
                         <p class="m-b-40">{{ $application->created_at }}</p>
