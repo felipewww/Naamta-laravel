@@ -172,6 +172,9 @@ class Controller extends BaseController
                 if(isset($config->value))
                     $setting->value = $config->value;
 
+                if(isset($config->placeholder))
+                    $setting->placeholder = $config->placeholder;
+
                 if(isset($config->checked))
                     $setting->checked = $config->checked;
 
