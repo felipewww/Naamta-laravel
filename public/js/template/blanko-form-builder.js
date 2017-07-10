@@ -474,6 +474,7 @@ function addEvents(elem, id = null, signature = null){
     if($(this).prop('checked') == true) {
       $(elem).find('.drag-heading').removeClass('Pass Fail Audit').addClass($(this).val());
       $(elem).find('.drag-input').removeClass('required-fail');
+      $(elem).find('.required-error-message').remove()
       checkFieldValue(id, null, null, $(this).val());
     }
   });
@@ -500,6 +501,7 @@ function addEvents(elem, id = null, signature = null){
         optionsArray.push(option);
       });
       $(elem).find('.drag-input').removeClass('required-fail');
+      $(elem).find('.required-error-message').remove()
       checkFieldValue(id, null, optionsArray);
     });
   }else if(type == 'radio-group'){
@@ -517,6 +519,7 @@ function addEvents(elem, id = null, signature = null){
         optionsArray.push(option);
       });
       $(elem).find('.drag-input').removeClass('required-fail');
+      $(elem).find('.required-error-message').remove()
       checkFieldValue(id, null, optionsArray);
     });
   }else if(type == 'checkbox-group'){
@@ -534,6 +537,7 @@ function addEvents(elem, id = null, signature = null){
         optionsArray.push(option);
       });
       $(elem).find('.drag-input').removeClass('required-fail');
+      $(elem).find('.required-error-message').remove()
       checkFieldValue(id, null, optionsArray);
     });
   }else//File upload DROPZONE
@@ -552,6 +556,7 @@ function addEvents(elem, id = null, signature = null){
             name: file.name
           }
           $(elem).find('.drag-input').removeClass('required-fail');
+          $(elem).find('.required-error-message').remove()
           checkFieldValue(id, null, null, null, fileObj);
         });
         this.on('error', function(file, response) {
@@ -584,6 +589,7 @@ function addEvents(elem, id = null, signature = null){
     $(elem).find('.drag-input .update-value').change(function(){
       var val = $(this).val();
       $(elem).find('.drag-input').removeClass('required-fail');
+      $(elem).find('.required-error-message').remove()
       checkFieldValue(id, val, []);
       $(elem).find('.drag-heading.Fail').removeClass('Fail');
       $(elem).find('.drag-validate input[value="Fail"]').prop('checked', false);
@@ -693,7 +699,7 @@ function appendNavigation(){
     }else{
       createTabs(toJson(), isClientView, isUserClient);
     }
-  })
+  });
 
   //Append History
   var historyModal = '<div id="history" class="modal modal-dialog modal-md"><div class="modal-content"><div class="modal-header"><button type="button" id="close-history" class="close" aria-hidden="true">×</button><h4 class="modal-title" id="mySmallModalLabel">Reviews History</h4> </div><div class="modal-body"> <div id="checkpoints"></div> </div></div></div>';
@@ -951,7 +957,6 @@ function validateForm(){
       var type = $(this).attr('id').split('__')[0];
       var dragInput = $(this).find('.drag-input');
 
-      $('.required-error-message').remove();
 
       if(type == 'radio-group'){
         if( $(this).find('.drag-input input:radio:checked').length <= 0 ){
