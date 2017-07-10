@@ -177,7 +177,8 @@ class StepsController extends Controller
 
     protected function _saveJsonClone(Request $request)
     {
-        if ( $this->step->application->reset_at ) {
+//        dd($this->step);
+        if ( $this->step->application && $this->step->application->reset_at ) {
             //dd('This application cannot be updated because its a reseted application');
             return;
         }
@@ -223,9 +224,11 @@ class StepsController extends Controller
                 break;
 
             case Approval::class:
-                $request->offsetSet('morphs_item', $request->morphs_item[0]);
-                $approval = Approval::where('id', $request->morphs_item)->first();
-                $this->step->morphs_id = $approval->id;
+                if($request->_stepFrom != 'default'){
+                    $request->offsetSet('morphs_item', $request->morphs_item[0]);
+                    $approval = Approval::where('id', $request->morphs_item)->first();
+                    $this->step->morphs_id = $approval->id;
+                }
                 break;
 
             default:
@@ -237,11 +240,15 @@ class StepsController extends Controller
     public function update($id, Request $request)
     {
         \DB::beginTransaction();
-
         switch ($request->_stepFrom)
         {
             case 'default':
                 $this->step = Step::findOrFail($id);
+
+
+                //Default seeder send a relation, but, when step is edited, needs to delete this relation, because default steps dont ahve a relation, just ApplicantSteps
+                $this->step->morphs_id = null;
+
                 if ($request->morphs_from == Approval::class) {
                     $this->_saveJsonClone($request);
                     unset($this->step->morphs_json); //Este attributo é criado no metodo, mas nao existirá na tabela de steps default
@@ -324,7 +331,8 @@ class StepsController extends Controller
         $this->step = Step::create($request->all());
         $this->verifyNewEmails('default');
 
-        return $this->create();
+        //return $this->create();
+        return redirect('/steps');
     }
 
     private function verifyNewEmails($from)
@@ -394,11 +402,15 @@ class StepsController extends Controller
 
     public function edit($id)
     {
-        $this->pageInfo->title              = 'Default Steps Create';
+        $this->pageInfo->title              = 'Default Step Edit';
         $this->pageInfo->category->title    = 'Workflow';
         $this->pageInfo->subCategory->title = 'Edit Step';
 
         if ( $id instanceof ApplicationStep ) {
+            $this->pageInfo->title              = 'Applicant Step Edit';
+            $this->pageInfo->category->title    = 'Workflow';
+            $this->pageInfo->subCategory->title = 'Edit Step';
+
             $step = $id;
             $action = 'edit';
             $backLink = '/applications/'.$step->application->id.'/edit';
@@ -418,7 +430,6 @@ class StepsController extends Controller
         switch ($step->morphs_from)
         {
             case FormTemplate::class:
-
                 /*
                  * Default step has no forms related
                  */
@@ -432,6 +443,7 @@ class StepsController extends Controller
 
                     $vars->seeItemLink = '/forms/'.$step->morphs_id;
                     $vars->morphItem = FormTemplate::withTrashed()->where('id', $step->morphs_id)->first();
+//                    dd($vars->morphItem);
                     $vars->itemName = 'Form';
                     //$this->_setSelectedItem($forms, $step->morphs_id);
                     $this->_setMultipleSelectItem($forms, $selecteds);
