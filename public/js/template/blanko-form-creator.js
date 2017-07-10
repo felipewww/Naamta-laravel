@@ -49,7 +49,6 @@ function toFieldObject(){
     obj.setting.value = $(this).find('.update-value').val();
   }
   obj.setting.placeholder = $(this).find('.update-value').attr('placeholder');
-  console.log(obj.setting.placeholder);
   obj.setting.checked = $(this).find('.update-value').prop('checked');
   obj.setting.min = $(this).find('.update-min').attr('min');
   obj.setting.max = $(this).find('.update-max').attr('max');
@@ -170,7 +169,7 @@ function toJson(){
 // Creates tabs from json
 // Uses createFields
 function createTabs(json, clientView = false, isClient){
-  
+  //console.log(json);
   isUserClient = isClient;
   isClientView = clientView;
   $('#drag-container').toggleClass('client-view', clientView);
@@ -245,6 +244,7 @@ function createTabs(json, clientView = false, isClient){
     $('.filter').hide();
     $('.drag-validate').hide();
     $('#save-changes').hide();
+    $('.drag-input.dropzone').hide();
   }
   
   if(isClient){
@@ -273,7 +273,6 @@ function createFields(obj, clientView){
   clone.find('.drag-heading').toggle(obj.isEditable);
   clone.find('.drag-options').toggle(obj.isEditable);
   configureField(clone, obj.setting, obj.type, obj._id);
-  obj.setting.signature;
   clones.splice(obj.setting.ordenate, 0, clone);
 
 
@@ -350,8 +349,6 @@ function configureField(node, options, type, id){
     'placeholder' : options.placeholder
   });
 
-  console.log(options);
-
   if(options.mask != null){
      node.find('.drag-input input').mask(options.mask);
      node.find('.mask').val(options.mask);
@@ -400,7 +397,6 @@ function configureField(node, options, type, id){
   node.find('.update-required').toggleClass('required', options.isRequired);
 
   node.find('.update-value').text(options.value);
-  console.log(options.placeholder);
   node.find('.update-value').attr('placeholder', options.placeholder);
 
   /*Options*/
@@ -507,88 +503,95 @@ function toHtml(){
 }
 
 function checkFieldValue(id, value, options, isIncorrect, file){
-  
-  $('.tab').each(function(){
-    var l = $(this).find('.required-fail').length;
-    if( l <= 0 ){
-      var id = $(this).attr('id');
-      console.log('[href="#'+ id +'"]');
-      $('[href="#'+ id +'"]').removeClass('tab-fail');
-    }
-  });
+  if( isClientView ){
+    var elem = $('.draggable-input[data-id="'+id+'"]');
 
-  //console.log(id, value, options, isIncorrect, file);
-  $('#save-changes').removeClass('btn-default').addClass('btn-save').html('<i class="fa fa-check m-r-20"></i> Save Changes');
-  var elem = $('.draggable-input[data-id="'+id+'"]');
-
-  var obj = {
-    _id : id,
-    setting : {
-    }
-  };
-
-  if(value != null){
-    obj.setting.value = value;
-  }
-  if(options != null){
-    obj.setting.options = options;
-  }
-  if(isIncorrect != null){
-    obj.setting.error = isIncorrect;
-  }
-
-  if(file != null){
-    if(filesArray[id] == null){
-      filesArray[id] = new Array();
-    }
-      filesArray[id].push(file);
-      obj.setting.value = filesArray[id];
-    //Como está
-    //obj.setting.value = file; //substitui pelo ultimo arquivo
-    // Como tem que ser
-  }
-
-/*
-  if(elem.find("input[type=file]").length > 0){
-    var fData = new FormData();
-    fData.append("folder", appFolder);
-    fData.append("_token", window.Laravel.csrfToken);
-    fData.append("upload", elem.find("input[type=file]").prop('files')[0]);
-    $.ajax({
-      url: "/upload-files", // Url to which the request is send
-      type: "POST",             // Type of request to be send, called as method
-      data: fData, // Data sent to server, a set of key/value pairs (i.e. form fields and values)
-      contentType: false,       // The content type used when sending data to the server.
-      cache: false,             // To unable request pages to be cached
-      processData:false,  // To send DOMDocument or non processed data file it is set to false
-      async: false,
-      success: function(data)   // A function to be called if request succeeds
-      {
-        obj.setting.value = data.upload;
+    console.log(value);
+    $('.tab').each(function(){
+      var l = $(this).find('.required-fail').length;
+      if( l <= 0 ){
+        var tabid = $(this).attr('id');
+        $('[href="#'+ tabid +'"]').removeClass('tab-fail');
       }
     });
-  }
-*/
 
-  var sequence = { _token: window.Laravel.csrfToken, field: JSON.stringify(obj) };
+    $('#save-changes').removeClass('btn-default').addClass('btn-save').html('<i class="fa fa-check m-r-20"></i> Save Changes');
 
-  $.ajax({
-    url: '/workflow/updateFormField',
-    dataType: "json",
-    method: 'POST',
-    data: sequence,
-    success: function (data) {
-      console.log('Success!');
-      //console.log(data);
-      //window.location.href = window.location.protocol + "//" + window.location.hostname;
-    },
-    error: function (data) {
-      console.log('Error!');
-      //console.log(data);
+    var type = elem.attr('id').split('__')[0];
+
+    var obj = {
+      _id : id,
+      setting : {
+      }
+    };
+
+    console.log(type);
+    if(value != null){
+      if(type == 'signature'){
+        console.log('aqui');
+        obj.setting.signature = value;
+      }else{
+        obj.setting.value = value;
+      }
     }
-  });
+    if(options != null){
+      obj.setting.options = options;
+    }
+    if(isIncorrect != null){
+      obj.setting.error = isIncorrect;
+    }
 
-  return obj;
+    if(file != null){
+      if(filesArray[id] == null){
+        filesArray[id] = new Array();
+      }
+        filesArray[id].push(file);
+        obj.setting.value = filesArray[id];
+      //Como está
+      //obj.setting.value = file; //substitui pelo ultimo arquivo
+      // Como tem que ser
+    }
+
+  /*
+    if(elem.find("input[type=file]").length > 0){
+      var fData = new FormData();
+      fData.append("folder", appFolder);
+      fData.append("_token", window.Laravel.csrfToken);
+      fData.append("upload", elem.find("input[type=file]").prop('files')[0]);
+      $.ajax({
+        url: "/upload-files", // Url to which the request is send
+        type: "POST",             // Type of request to be send, called as method
+        data: fData, // Data sent to server, a set of key/value pairs (i.e. form fields and values)
+        contentType: false,       // The content type used when sending data to the server.
+        cache: false,             // To unable request pages to be cached
+        processData:false,  // To send DOMDocument or non processed data file it is set to false
+        async: false,
+        success: function(data)   // A function to be called if request succeeds
+        {
+          obj.setting.value = data.upload;
+        }
+      });
+    }
+  */
+
+    var sequence = { _token: window.Laravel.csrfToken, field: JSON.stringify(obj) };
+
+    $.ajax({
+      url: '/workflow/updateFormField',
+      dataType: "json",
+      method: 'POST',
+      data: sequence,
+      success: function (data) {
+        console.log('Success!');
+        //window.location.href = window.location.protocol + "//" + window.location.hostname;
+      },
+      error: function (data) {
+        console.log('Error!');
+      }
+    });
+
+    return obj;
+  }
 }
 
 function getComments(id){

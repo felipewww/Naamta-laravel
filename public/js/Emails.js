@@ -20,14 +20,11 @@ var Emails = {
         var _this       = this;
         var submit      = document.getElementById('sendform');
         var textarea    = document.getElementById('text-hidden');
-
         submit.addEventListener('click', function (e) {
             if (!_this.quillValidated) {
                 e.preventDefault();
             }
-
             textarea.innerHTML = _this.quill.container.firstChild.innerHTML;
-
             _this.quillValidated = true;
             this.click();
         })

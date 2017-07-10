@@ -203,11 +203,12 @@ class WorkflowController extends Controller
 
     private function applicationForm($stepId, $stepResponsible, $form)
     {
-        $this->pageInfo->title              = 'Workflow';
-        $this->pageInfo->category->title    = 'Form';
-        $this->pageInfo->subCategory->title = 'View';
-
         $currentStep = ApplicationStep::where("id", $stepId)->first();
+        $this->pageInfo->title              = 'Workflow';
+        $this->pageInfo->category->title    = $this->pageInfo->application->client->company . "'s ";
+        $this->pageInfo->category->link     = "/home";
+        $this->pageInfo->subCategory->title = $currentStep->title;
+
 
         $activeStep = $currentStep->application->steps()->where('status','current')->first();
 

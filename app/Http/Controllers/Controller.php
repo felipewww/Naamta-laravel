@@ -172,6 +172,9 @@ class Controller extends BaseController
                 if(isset($config->value))
                     $setting->value = $config->value;
 
+                if(isset($config->placeholder))
+                    $setting->placeholder = $config->placeholder;
+
                 if(isset($config->checked))
                     $setting->checked = $config->checked;
 
@@ -270,6 +273,16 @@ class Controller extends BaseController
         try{
             $field = Field::find($v->_id);
 
+            if(isset($v->setting->signature)){
+
+                //Admin and staffs not allowed to change values, only client and just when field not passed
+                if (Auth::user()->hasRole(['client']) && $field->setting->error != "Pass") {
+                    $field->setting->signature = $v->setting->signature;
+                    $field->setting->save();
+                }else{
+                    return false;
+                }
+            }
             if(isset($v->setting->value)){
 
                 $field->setting->value = $v->setting->value;

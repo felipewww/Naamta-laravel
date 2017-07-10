@@ -69,12 +69,19 @@ class HomeController extends Controller
             );
         }
 
-        $userType = Auth::user()->roles[0]->name;
-
-        $this->pageInfo->title              = Auth::user()->name."'s".' Dashboard';
-        $this->pageInfo->category->title    = $userType;
-        $this->pageInfo->subCategory->title = 'Homepage';
+        $user = Auth::user();
+        $userType = $user->roles[0]->name;
         $this->vars->userType = $userType;
+
+        $this->pageInfo->title              = 'Dashboard';
+        $this->pageInfo->category->title    = "Applications";
+        $this->pageInfo->category->link     = "/home";
+        $this->pageInfo->subCategory->title =  Auth::user()->name . "'s";
+        $this->vars->userType = $userType;
+
+        if($userType == 'client'){
+            $this->pageInfo->category->title    = $user->client->company."'s";
+        }
 
         if($userType === "client"){
             $application = Client::where("user_id", Auth::id())->first()->application()->first();
@@ -144,9 +151,10 @@ class HomeController extends Controller
 
         if ( $application->status == 'wt_firstform' || $application->status == 'denied' )
         {
-            $this->pageInfo->title              = $user->client->company."'s".' Registration';
-            $this->pageInfo->category->title    = 'Registration';
-            $this->pageInfo->subCategory->title = 'Form';
+            $this->pageInfo->title              = 'Registration';
+            $this->pageInfo->category->title    = $user->client->company."'s";
+            $this->pageInfo->category->link     = "/home";
+            $this->pageInfo->subCategory->title = 'Registration Form';
 
             $user = Auth::user();
             $form = \App\MModels\Form::with([
@@ -168,9 +176,10 @@ class HomeController extends Controller
         }
         else if( $application->status == 'wt_firstform_validation' )
         {
-            $this->pageInfo->title              = $user->client->company."'s".' Registration';
-            $this->pageInfo->category->title    = 'Waiting validation';
-            $this->pageInfo->subCategory->title = 'Form';
+            $this->pageInfo->title              = 'Registration';
+            $this->pageInfo->category->title    = $user->client->company."'s";
+            $this->pageInfo->category->link     = "/home";
+            $this->pageInfo->subCategory->title = 'Waiting validation';
 
             return view('applications.wait_firstform_verify')->with([
                 'pageInfo' => $this->pageInfo
@@ -178,8 +187,9 @@ class HomeController extends Controller
         }
         else if( $application->status == 'completed' )
         {
-            $this->pageInfo->title              = $application->client->company."'s".' Accredited Registration';
-            $this->pageInfo->category->title    = 'Client';
+            $this->pageInfo->title              = 'Accredited Registration';
+            $this->pageInfo->category->title    = $application->client->company."'s";
+            $this->pageInfo->category->link     = "/home";
             $this->pageInfo->subCategory->title = 'Dashboard';
 
             $cComplianceForms = ContinuousCompliance::where('application_id', $application->id)->get();
@@ -195,6 +205,11 @@ class HomeController extends Controller
         }
         else
         {
+            $this->pageInfo->title              = 'Application';
+            $this->pageInfo->category->title    = $application->client->company."'s";
+            $this->pageInfo->category->link     = "/home";
+            $this->pageInfo->subCategory->title = 'Dashboard';
+
             /*
              * Verify if current user has some responsibility about this step
              * */

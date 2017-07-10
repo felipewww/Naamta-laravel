@@ -288,8 +288,9 @@ class ApplicationsController extends Controller
         $application = Application::findOrFail($id);
 
         $this->pageInfo->title              = $application->client->company."'s".' Accredited Registration';
-        $this->pageInfo->category->title    = 'Client';
-        $this->pageInfo->subCategory->title = 'Dashboard';
+        $this->pageInfo->category->title    = $application->client->company;
+        $this->pageInfo->category->link     = "/home";
+        $this->pageInfo->subCategory->title = 'Continuous Compliance';
 
         $cComplianceForms = ContinuousCompliance::where('application_id', $application->id)->get();
         $cCompliancesRegistered = SysContinuousCompliance::where('application_id', $application->id)->orderBy('created_at', 'DESC')->get();

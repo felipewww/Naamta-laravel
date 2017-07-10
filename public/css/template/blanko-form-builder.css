@@ -200,6 +200,17 @@
     max-height: 260px;
 }
 
+#drag-container .read-value{
+    background-color: #eee;
+    border: 1px solid #e4e7ea;
+    border-radius: 0;
+    box-shadow: none;
+    color: #565656;
+    height: 38px;
+    max-width: 100%;
+    padding: 7px 12px;
+}
+
 #drag-container .help .comment-icon{
     display: inline;
 }
@@ -438,6 +449,7 @@
 #drag-container.client-view .drag-comments textarea{
     height: 38px;
 }
+
 #drag-container.client-view .toggle-comments{
     margin-left: 5px;
     cursor: pointer;

@@ -46,7 +46,8 @@ class FormsController extends Controller
     public function index(Request $request)
     {
         $this->pageInfo->title              = 'Form Templates';
-        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->category->title    = 'Form Types';
+        $this->pageInfo->category->link     = '/forms';
         $this->pageInfo->subCategory->title = 'Forms List';
 
         $request->user()->authorizeRoles(['admin', 'staff']);
@@ -106,7 +107,8 @@ class FormsController extends Controller
      */
     public function create(Request $request, $id = null)
     {   $this->pageInfo->title              = 'Form Templates';
-        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->category->title    = 'Form Types';
+        $this->pageInfo->category->link     = '/forms';
         $this->pageInfo->subCategory->title = 'Form Create';
 
         if(isset($id)){
@@ -163,7 +165,8 @@ class FormsController extends Controller
     public function show(Request $request, $id){
 
         $this->pageInfo->title              = 'Form Templates';
-        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->category->title    = 'Form Types';
+        $this->pageInfo->category->link     = '/forms';
         $this->pageInfo->subCategory->title = 'Form View';
 
         $form = FormTemplate::withTrashed()->with( array( 'containers', 'containers.fields', 'containers.fields.comments') )->findOrFail($id);
@@ -178,7 +181,8 @@ class FormsController extends Controller
         }
 
         $this->pageInfo->title              = 'First Form Edit';
-        $this->pageInfo->category->title    = 'Register';
+        $this->pageInfo->category->title    = 'Form Types';
+        $this->pageInfo->category->link     = '/forms';
         $this->pageInfo->subCategory->title = 'Form';
 
         $form = FormTemplate::withTrashed()->with( array( 'containers', 'containers.fields', 'containers.fields.comments') )->findOrFail(1);
@@ -188,7 +192,8 @@ class FormsController extends Controller
 
     public function edit(Request $request, $id){
         $this->pageInfo->title              = 'Form Templates';
-        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->category->title    = 'Form Types';
+        $this->pageInfo->category->link     = '/forms';
         $this->pageInfo->subCategory->title = 'Form Edit';
 
         $form = FormTemplate::with( array( 'containers', 'containers.fields', 'containers.fields.comments') )->findOrFail($id);
@@ -314,51 +319,4 @@ class FormsController extends Controller
         }
         return $string;
     }
-
-    /*
-    Example
-
-    var tabObj1 = {
-      config : {
-        id : 1959595,
-        title: 'Title'
-      },
-      fields : [
-        {
-          id : 1233123,
-          type : 'checkbox-group',
-          isEditable : true,
-          comments : [
-            {
-              username : 'John',
-              msg : 'A Comment'
-            },
-            {
-              username : 'Josephine',
-              msg : 'Another Comment'
-            }
-          ],
-          options : {
-            isRequired : true,
-            label : 'Label',
-            help : 'Help Text',
-            value : '',
-            min : '',
-            max : '',
-            step : '',
-            type : '',
-            options : [
-              {
-                label : 'Option Label 1',
-                value : 'Option Value 1'
-              },
-              {
-                label : 'Option Label 2',
-                value : 'Option Value 2'
-              }
-            ]
-          }
-        }
-      ]
-    }*/
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Library\DataTablesExtensions;
+use App\Models\Application;
+use App\Models\Client;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Role;
@@ -194,6 +196,13 @@ class SystemUsersController extends Controller
         }
 
         $user = User::findOrFail($request->id);
+        $client = Client::where(array("user_id" => $user->id))->firstOrFail();
+
+        $this->pageInfo->title              = 'Profile';
+        $this->pageInfo->category->title    = $client->company . "'s ";;
+        $this->pageInfo->category->link     = '/home';
+        $this->pageInfo->subCategory->title = 'Update Profile: ' . $user->name ;
+
         return view('systemUsers.form_client')->with(['user' => $user, 'roles'=>$this->roles, 'pageInfo' => $this->pageInfo]);
     }
 }
