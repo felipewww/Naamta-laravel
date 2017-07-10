@@ -49,10 +49,6 @@ class ApplicationsController extends Controller
     {
         parent::__construct();
 
-//        $this->middleware(function ($request, $next) {
-//            $user = \Auth::user()->authorizeRoles(['admin', 'staff']);
-//            return $next($request);
-//        });
 
         $this->applications     = Application::all();
         $this->userTypes        = UserType::All();
@@ -201,9 +197,19 @@ class ApplicationsController extends Controller
                 array_push($arrTypes, ApplicationUserTypes::where('id', $user_type)->first()->slug);
             }
 
-            if( array_search('client', $arrTypes) === false ){
+            $validaHasClientType = array_count_values($arrTypes);
+
+            if ( !isset($validaHasClientType['client']) || $validaHasClientType['client'] > 1 ) {
                 return false;
             }
+//            dd(array_count_values($arrTypes));
+//            dd($arrTypes);
+//            dd(array_search('client', $arrTypes));
+
+//            if( array_search('client', $arrTypes) === false ){
+//                return false;
+//            }
+
 
             return true;
         });
@@ -329,11 +335,6 @@ class ApplicationsController extends Controller
 
         $mForm = Form::find($rel->mongoform_id)->first();
 
-//        dd($request->all());
-//        dd($mForm);
-//        $formsController = new FormsController();
-//        $formsController->_saveContainers(\GuzzleHttp\json_decode($request->form_json), $relid);
-//        dd('here!');
         $this->_updateFormToMongo(\GuzzleHttp\json_decode($request->form_json));
 
         $rel->status = 'sent';

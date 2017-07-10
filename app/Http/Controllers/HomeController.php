@@ -115,7 +115,7 @@ class HomeController extends Controller
         /*
          * Não da para exibir os firstforms pq o cliente pode ter ou nao preenchido e exibe o botão de approve e deny, antes de ter preenchido
          */
-        $this->vars->inactiveApplications = Application::whereIn('status', ['0','wt_payment','denied', 'wt_firstform_validation'])->get();
+        $this->vars->inactiveApplications = Application::whereIn('status', ['0','wt_payment','denied', 'wt_firstform_validation'])->orderBy('created_at', 'DESC')->get();
         foreach ($this->vars->inactiveApplications as &$inApp)
         {
             switch ($inApp->status)
@@ -222,6 +222,7 @@ class HomeController extends Controller
 
             //Starting... Get all forms related with all steps, including the current step
             $stepsWithForm =  $application->steps->where("morphs_from", FormTemplate::class )->all();
+//            dd($stepsWithForm);
             foreach ($stepsWithForm as &$stepHasForm)
             {
                 $thisForms = $stepHasForm->Forms()->get();

@@ -40,7 +40,7 @@
     createTabs($('input[name=containers]').val(), true, "{{$isResponsible}}");
 
     @if(!$isResponsible)
-        Script.env = 'local';
+        Script.env = '{{ app('env') }}';
         $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4');
         $('input, select, radio, textarea, checkbox, option').prop('disabled', true);
         $('.dropzone, .remove-file').remove();

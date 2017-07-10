@@ -50,10 +50,25 @@
 <script src="{{ asset("js/template/jquery.mask.min.js") }}"></script>
 
 <script>
-    createTabs($('input[name=containers]').val(), true, "{{$isResponsible}}");
+
+    {{--{{ dd(\Illuminate\Support\Facades\Auth::user()->isAdmin()) }}--}}
+{{--    {{dd(\Illuminate\Support\Facades\Auth::user()->isClient())}}--}}
+
+    //If the logged user isn't a admin
+    {{--{{ $isResponsible = (\Illuminate\Support\Facades\Auth::user()->isAdmin() || \Illuminate\Support\Facades\Auth::user()->isStaff()) ? false : true }}--}}
+{{--    {{ $isResponsible = \Illuminate\Support\Facades\Auth::user()->isClient() }}--}}
+
+    createTabs($('input[name=containers]').val(), true, "{{  \Illuminate\Support\Facades\Auth::user()->isClient() }}");
+
+    //var isClient =  \Illuminate\Support\Facades\Auth::user()->isClient();
+
+    @if(!$allowEditForm)
+        $('input, select, radio, textarea, checkbox, option').prop('disabled', true);
+        $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4');
+    @endif
 
     @if(!$isResponsible)
-        Script.env = 'local';
+        Script.env = "{{ app('env') }}";
         $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4');
         $('input, select, radio, textarea, checkbox, option').prop('disabled', true);
         $('.dropzone, .remove-file').remove();

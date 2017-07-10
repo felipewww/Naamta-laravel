@@ -42,7 +42,7 @@
                        <div class="form-group{{ $errors->has('title') ? ' has-error' : '' }}">
                            <label class="col-md-12">Title</label>
                            <div class="col-md-12">
-                               <input required type="text" class="form-control" name="title" placeholder="Title" value="{{ $vars->step->title }}">
+                               <input required type="text" class="form-control" name="title" placeholder="Title" value="{{ $vars->step->title }}" {{ ( $vars->step instanceof \App\Models\ApplicationStep ) ? "disabled" : '' }}>
                            @if ($errors->has('title'))
                                <span class="help-block">
                                         <strong>{{ $errors->first('title') }}</strong>
@@ -54,7 +54,7 @@
                        <div class="form-group {{ $errors->has('title') ? ' has-error' : '' }}">
                            <label class="col-md-12">Description</label>
                            <div class="col-md-12">
-                               <input required type="text" class="form-control" name="description" placeholder="Description" value="{{ $vars->step->description }}">
+                               <input required type="text" class="form-control" name="description" placeholder="Description" value="{{ $vars->step->description }}" {{ ( $vars->step instanceof \App\Models\ApplicationStep ) ? "disabled" : '' }}>
                                @if ($errors->has('title'))
                                    <span class="help-block">
                                         <strong>{{ $errors->first('title') }}</strong>
