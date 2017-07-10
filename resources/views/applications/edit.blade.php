@@ -35,7 +35,7 @@
 
                     @if( $hasInactiveSteps )
                     <div class="alert alert-dark">
-                        <strong>Warning!</strong> This application has one ore more steps inactivated and cannot be activated for a while. <a href="/applications/{{$application->id}}/edit">Click here to solve it.</a>
+                        <strong>Warning!</strong> This application has one ore more steps inactivated and cannot be activated  yet. <a href="/applications/{{$application->id}}/edit">Click here to solve it.</a>
                     </div>
                     @endif
                    <form class="form-horizontal" role="form" method="POST" action="{{ $route }}">

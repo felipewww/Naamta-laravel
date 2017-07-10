@@ -48,6 +48,8 @@ function toFieldObject(){
   if(obj.type != 'file-upload'){
     obj.setting.value = $(this).find('.update-value').val();
   }
+  obj.setting.placeholder = $(this).find('.update-value').attr('placeholder');
+  console.log(obj.setting.placeholder);
   obj.setting.checked = $(this).find('.update-value').prop('checked');
   obj.setting.min = $(this).find('.update-min').attr('min');
   obj.setting.max = $(this).find('.update-max').attr('max');
@@ -210,6 +212,8 @@ function createTabs(json, clientView = false, isClient){
   $('.tab-control').removeClass('active');
   $('.tab-control:first-of-type').addClass('active');
 
+  $('#drag-container').find('a:not(.btn)').attr('target', '_blank');
+
   if(isClientView){
     $('.draggable-input').removeClass('panel');
     $('.tabs-options #addTab').hide();
@@ -225,11 +229,17 @@ function createTabs(json, clientView = false, isClient){
       }
     }));
     $('#save-changes').show();
-
-    $('.drag-label').each(function(){
-      var heading = $(this).closest('.draggable-input').find('.ordenation');
-      $(this).insertAfter(heading);
+    
+    $('.draggable-input').each(function(){
+      var ordenation = $(this).find('.drag-heading .ordenation').clone();
+      $(this).find('.drag-heading .ordenation').hide();
+      $(this).find('.drag-label').prepend(ordenation);
     });
+
+    //$('.drag-label').each(function(){
+      //var heading = $(this).closest('.draggable-input').find('.ordenation');
+      //$(this).insertAfter(heading);
+    //});
 
   }else{
     $('.filter').hide();
@@ -318,7 +328,8 @@ function configureField(node, options, type, id){
   node.find('.help + .text').html(options.help);
   node.find('.help-text').html(options.help);
   var text = node.find('.help-text').text().trim();
-  
+ 
+
   if(text == '') {
     node.find('.help .icon').hide();
   }else{
@@ -336,7 +347,10 @@ function configureField(node, options, type, id){
     'max' : options.max,
     'value' : options.value,
     'step' : options.step,
+    'placeholder' : options.placeholder
   });
+
+  console.log(options);
 
   if(options.mask != null){
      node.find('.drag-input input').mask(options.mask);
@@ -386,13 +400,16 @@ function configureField(node, options, type, id){
   node.find('.update-required').toggleClass('required', options.isRequired);
 
   node.find('.update-value').text(options.value);
+  console.log(options.placeholder);
+  node.find('.update-value').attr('placeholder', options.placeholder);
+
   /*Options*/
   node = node.find('.drag-options');
   node.find('.is-required').prop('checked', options.isRequired);
   node.find('.label-text').val(options.label);
   node.find('.help-text').html(options.help);
 
-  node.find('.value').val(options.value);
+  node.find('.value').val(options.placeholder);
   node.find('.min-value').val(options.min);
   node.find('.max-value').val(options.max);
   node.find('.step-value').val(options.step);
@@ -425,8 +442,6 @@ function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
       }
       i++;
     });
-
-    
 
     $(eval(changes)).change(function() {
       if(eval(cond)){
