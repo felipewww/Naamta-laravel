@@ -39,6 +39,16 @@
 <script>
     createTabs($('input[name=containers]').val(), true, "{{$isResponsible}}");
 
+    @if(!$isResponsible)
+        Script.env = 'local';
+        $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4');
+        $('input, select, radio, textarea, checkbox, option').prop('disabled', true);
+        $('.dropzone, .remove-file').remove();
+        $('.comment-msg, .is-incorrect').removeAttr('disabled').css('opacity', '0');
+        $('.is-incorrect').css('display', '0');
+    @else
+        $('.drag-validate').css('display', 'none');
+    @endif
     
     $('.btn-submit').on('click', function(e){
         e.preventDefault();
@@ -50,15 +60,6 @@
     });
     
 
-    @if(!$isResponsible)
-        $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4');
-        $('input, select, radio, textarea, checkbox, option').prop('disabled', true);
-        $('.dropzone, .remove-file').remove();
-        $('.comment-msg, .is-incorrect').removeAttr('disabled').css('opacity', '0');
-        $('.is-incorrect').css('display', '0');
-    @else
-        $('.drag-validate').css('display', 'none');
-    @endif
 </script>
 
 @endsection
