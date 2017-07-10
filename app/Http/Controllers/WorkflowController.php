@@ -400,31 +400,31 @@ class WorkflowController extends Controller
     }
 
     public function updateFormField(Request $request){
-        $fieldJson = json_decode($request->field);
-
-        //Find form by Field ID
-        $fieldID = $fieldJson->_id;
-
-        $mform = \App\MModels\Field::findOrFail($fieldID)->container->forms;
-        $formMongoID = $mform->_id;
-
-        $step = ApplicationStepForms::where('mform_id', $formMongoID)->first()->Step;
-
-        if ( !$step->loggedUserIsStepResponsible() ) {
-            abort(401, 'Action not allowed');
-        }
-
-        $application = $step->application;
-
-        $activeStep = $application->steps()->where('status','current')->first();
-
-        if (!$activeStep) {
-            $activeStep = $application->steps()->where('status','1')->first();
-        }
-
-        if ($activeStep->id != $step->id) {
-            abort(401, 'Action not allowed');
-        }
+//        $fieldJson = json_decode($request->field);
+//
+//        //Find form by Field ID
+//        $fieldID = $fieldJson->_id;
+//
+//        $mform = \App\MModels\Field::findOrFail($fieldID)->container->forms;
+//        $formMongoID = $mform->_id;
+//
+//        $step = ApplicationStepForms::where('mform_id', $formMongoID)->first()->Step;
+//
+//        if ( !$step->loggedUserIsStepResponsible() ) {
+//            abort(401, 'Action not allowed');
+//        }
+//
+//        $application = $step->application;
+//
+//        $activeStep = $application->steps()->where('status','current')->first();
+//
+//        if (!$activeStep) {
+//            $activeStep = $application->steps()->where('status','1')->first();
+//        }
+//
+//        if ($activeStep->id != $step->id) {
+//            abort(401, 'Action not allowed');
+//        }
 
         try{
             $t = $this->_updateFieldToMongo(\GuzzleHttp\json_decode($request->field));

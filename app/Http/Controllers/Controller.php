@@ -285,6 +285,35 @@ class Controller extends BaseController
             }
             if(isset($v->setting->value)){
 
+                //$fieldJson = json_decode($v->field);
+
+                //Find form by Field ID
+                $fieldID = $field->_id;
+
+                $mform = \App\MModels\Field::findOrFail($fieldID)->container->forms;
+                $formMongoID = $mform->_id;
+
+                $step = ApplicationStepForms::where('mform_id', $formMongoID)->first()->Step;
+
+                if ( !$step->loggedUserIsStepResponsible() ) {
+                    abort(401, 'Action not allowed');
+                }
+
+                $application = $step->application;
+
+                $activeStep = $application->steps()->where('status','current')->first();
+
+                if (!$activeStep) {
+                    $activeStep = $application->steps()->where('status','1')->first();
+                }
+
+                if ($activeStep->id != $step->id) {
+                    abort(401, 'Action not allowed');
+                }
+//                if ( !$step->loggedUserIsStepResponsible() ) {
+//                    abort(401, 'Action not allowed');
+//                }
+
                 $field->setting->value = $v->setting->value;
                 $field->setting->save();
                 //Admin and staffs not allowed to change values, only client and just when field not passed
