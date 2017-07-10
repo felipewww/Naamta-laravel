@@ -15,7 +15,7 @@
         </div>
         <div class="white-box">
             @if( $isResponsible )
-            <button class="btn btn-primary pull-right btn-submit" id="submit">Submit Form</button>
+            <button class="btn btn-primary pull-right btn-submit submit-form" id="submit">Submit Form</button>
             @else
             <a href="/applications/{{$appID}}/edit" class="btn btn-primary pull-right">Return to app info</a>
             @endif
@@ -50,7 +50,7 @@
         $('.drag-validate').css('display', 'none');
     @endif
     
-    $('.btn-submit').on('click', function(e){
+    $('.submit-form').on('click', function(e){
         e.preventDefault();
         if( validateForm() ){
             workflow.firstForm();
