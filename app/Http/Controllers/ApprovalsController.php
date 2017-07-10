@@ -41,7 +41,8 @@ class ApprovalsController extends Controller
     public function index(Request $request)
     {
         $this->pageInfo->title              = 'Approvals';
-        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->category->title    = 'Approval Templates';
+        $this->pageInfo->category->link     = '/approvals';
         $this->pageInfo->subCategory->title = 'Approvals List';
 
         $request->user()->authorizeRoles(['admin', 'staff']);
@@ -94,7 +95,8 @@ class ApprovalsController extends Controller
     public function create()
     {
         $this->pageInfo->title              = 'Approvals';
-        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->category->title    = 'Approval Templates';
+        $this->pageInfo->category->link     = '/approvals';
         $this->pageInfo->subCategory->title = 'Approval Create';
 
         // get all the nerds
@@ -130,7 +132,8 @@ class ApprovalsController extends Controller
     public function edit(Request $request, $id){
 
         $this->pageInfo->title              = 'Approvals';
-        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->category->title    = 'Approval Templates';
+        $this->pageInfo->category->link     = '/approvals';
         $this->pageInfo->subCategory->title = 'Approval Edit';
 
         $approval = Approval::findOrFail($id);
