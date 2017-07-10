@@ -15,7 +15,7 @@
         </div>
         <div class="white-box">
             @if( $isResponsible )
-            <button class="btn btn-primary pull-right btn-submit" id="submit">Submit Form</button>
+            <button class="btn btn-primary pull-right btn-submit submit-form" id="submit">Submit Form</button>
             @else
             <a href="/applications/{{$appID}}/edit" class="btn btn-primary pull-right">Return to app info</a>
             @endif
@@ -39,8 +39,18 @@
 <script>
     createTabs($('input[name=containers]').val(), true, "{{$isResponsible}}");
 
+    @if(!$isResponsible)
+        Script.env = 'local';
+        $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4');
+        $('input, select, radio, textarea, checkbox, option').prop('disabled', true);
+        $('.dropzone, .remove-file').remove();
+        $('.comment-msg, .is-incorrect').removeAttr('disabled').css('opacity', '0');
+        $('.is-incorrect').css('display', '0');
+    @else
+        $('.drag-validate').css('display', 'none');
+    @endif
     
-    $('.btn-submit').on('click', function(e){
+    $('.submit-form').on('click', function(e){
         e.preventDefault();
         if( validateForm() ){
             workflow.firstForm();
@@ -50,15 +60,6 @@
     });
     
 
-    @if(!$isResponsible)
-        $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4');
-        $('input, select, radio, textarea, checkbox, option').prop('disabled', true);
-        $('.dropzone, .remove-file').remove();
-        $('.comment-msg, .is-incorrect').removeAttr('disabled').css('opacity', '0');
-        $('.is-incorrect').css('display', '0');
-    @else
-        $('.drag-validate').css('display', 'none');
-    @endif
 </script>
 
 @endsection

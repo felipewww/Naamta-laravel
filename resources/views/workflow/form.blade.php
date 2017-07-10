@@ -29,9 +29,10 @@
             <div id="drag-container"></div>
         </div>
         <div class="white-box">
-            <a href="/application/{{$appID}}/dashboard" class="btn btn-primary pull-right btn-submit">Back</a>
-            <button class="btn btn-primary pull-right btn-submit">Submit Form</button>
+            <button class="btn btn-primary pull-right btn-submit submit-form">Submit Form</button>
+            <a href="/application/{{$appID}}/dashboard" class="btn btn-danger m-r-20 pull-right btn-submit">Back</a>
             <div class="clearfix"></div>
+
         </div>
     </div>
 </div>
@@ -52,6 +53,7 @@
     createTabs($('input[name=containers]').val(), true, "{{$isResponsible}}");
 
     @if(!$isResponsible)
+        Script.env = 'local';
         $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4');
         $('input, select, radio, textarea, checkbox, option').prop('disabled', true);
         $('.dropzone, .remove-file').remove();
@@ -61,7 +63,7 @@
         $('.drag-validate').css('display', 'none');
     @endif
     
-    $('.btn-submit').on('click', function(e){
+    $('.submit-form').on('click', function(e){
         e.preventDefault();
         if( validateForm() ){
             workflow.sendForm();
