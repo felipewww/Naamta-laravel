@@ -10,6 +10,7 @@ use App\Models\ContinuousCompliance;
 use App\Models\FormTemplate;
 use App\Models\Report;
 use App\Models\SysContinuousCompliance;
+use App\Models\User;
 use App\Models\UserApplication;
 use Faker\Factory;
 use Illuminate\Http\Request;
@@ -92,10 +93,33 @@ class HomeController extends Controller
                 return $this->applicationDashboard($request, $application->id);
             }
         }
-        
-        $this->vars->completedApplications = Application::where('status', 'completed')->get();
 
-        $this->vars->activeApplications = Application::where('status', '1')->get();
+        $appIds = UserApplication::where('user_id', Auth::user()->id)->with(['application','application.steps'])->get();
+
+
+        if (Auth::user()->isAdmin())
+        {
+            $this->vars->completedApplications = Application::where('status', 'completed')->get();
+            $this->vars->activeApplications = Application::where('status', '1')->get();
+        }
+        else if(Auth::user()->isstaff())
+        {
+            $completedApplications = $appIds->where('application.status', 'completed');
+            $this->vars->completedApplications = [];
+
+            foreach ($completedApplications as $userApp)
+            {
+                array_push($this->vars->completedApplications, $userApp->application);
+            }
+
+            $activeApplications = $appIds->where('application.status', '1');
+
+            $this->vars->activeApplications = [];
+            foreach ($activeApplications as $userApp)
+            {
+                array_push($this->vars->activeApplications, $userApp->application);
+            }
+        }
 
         foreach ($this->vars->activeApplications as &$app)
         {
@@ -195,11 +219,49 @@ class HomeController extends Controller
             $cComplianceForms = ContinuousCompliance::where('application_id', $application->id)->get();
             $cCompliancesRegistered = SysContinuousCompliance::where('application_id', $application->id)->orderBy('created_at', 'DESC')->get();
 
+            $workflowInfo = $this->getApplicationWorkflowInfo($application);
+//            $stepsWithForm =  $application->steps->where("morphs_from", FormTemplate::class )->all();
+//
+//            foreach ($stepsWithForm as &$stepHasForm)
+//            {
+//                $thisForms = $stepHasForm->Forms()->get();
+//                foreach ($thisForms as &$relData)
+//                {
+//                    $mongoForm = Form::findOrFail($relData->mform_id);
+//                    $relData->offsetSet('mongoform', $mongoForm);
+//                }
+//
+//                $stepHasForm->offsetSet('mongoForms', $thisForms);
+//            }
+//
+//            $approvalWithReport = $application->steps->where('morphs_from', Approval::class)->where('approval.has_report', '1')->all();
+//            $reports = array();
+//
+//
+//            foreach($approvalWithReport as $approval)
+//            {
+//                $step = ApplicationStep::findOrFail($approval->id);
+//
+//                $allReports = Report::where('application_steps_id', $step->id)->get();
+//
+//                if($allReports != null)
+//                {
+//                    foreach ($allReports as $rep)
+//                    {
+//                        array_push($reports, array('stepId' => $approval->id, 'report' => $rep));
+//                    }
+//                }
+//            }
+
+            //dd($workflowInfo['approvalWithReport']);
+
             return view('homes.application_completed', [
                 'pageInfo'                  => $this->pageInfo,
                 'application'               => $application,
                 'cComplianceForms'          => $cComplianceForms,
                 'cCompliancesRegistered'    => $cCompliancesRegistered,
+                'stepsWithForm'             => $workflowInfo['stepsWithForm'],
+                'approvalWithReport'        => $workflowInfo['approvalWithReport'],
                 'isAdmin'                   => $user->hasRole(['admin','staff'])
             ]);
         }
@@ -215,59 +277,48 @@ class HomeController extends Controller
              * */
             $currentStep = $application->steps->where("status", "current")->first();
 
-            if($currentStep===null){
-                $currentStep = $application->steps->first();
-            }
-
-            $currentUserType = $application->users()->where('user_id', $user->id)->get();
-
-            if ($currentUserType->count() == 1)
-            {
-                $currentUserType = $currentUserType->first();
-                $isResponsible = ($currentStep->responsible == $currentUserType->user_type);
-            }
-            else
-            {
-                $isResponsible = $currentUserType->where('user_type', $currentStep->responsible)->first();
-            }
+            $isResponsible = $currentStep->loggedUserIsStepResponsible();
+            $userResponsible = User::findOrFail($currentStep->responsible);
 
             /*
              * End verify responsible
              * */
 
             //Starting... Get all forms related with all steps, including the current step
-            $stepsWithForm =  $application->steps->where("morphs_from", FormTemplate::class )->all();
-//            dd($stepsWithForm);
-            foreach ($stepsWithForm as &$stepHasForm)
-            {
-                $thisForms = $stepHasForm->Forms()->get();
-                foreach ($thisForms as &$relData)
-                {
-                    $mongoForm = Form::findOrFail($relData->mform_id);
-                    $relData->offsetSet('mongoform', $mongoForm);
-                }
+//            $stepsWithForm =  $application->steps->where("morphs_from", FormTemplate::class )->all();
+//
+//            foreach ($stepsWithForm as &$stepHasForm)
+//            {
+//                $thisForms = $stepHasForm->Forms()->get();
+//                foreach ($thisForms as &$relData)
+//                {
+//                    $mongoForm = Form::findOrFail($relData->mform_id);
+//                    $relData->offsetSet('mongoform', $mongoForm);
+//                }
+//
+//                $stepHasForm->offsetSet('mongoForms', $thisForms);
+//            }
+//
+//            $approvalWithReport = $application->steps->where('morphs_from', Approval::class)->where('approval.has_report', '1')->all();
+//            $reports = array();
+//
+//
+//            foreach($approvalWithReport as $approval)
+//            {
+//                $step = ApplicationStep::findOrFail($approval->id);
+//
+//                $allReports = Report::where('application_steps_id', $step->id)->get();
+//
+//                if($allReports != null)
+//                {
+//                    foreach ($allReports as $rep)
+//                    {
+//                        array_push($reports, array('stepId' => $approval->id, 'report' => $rep));
+//                    }
+//                }
+//            }
 
-                $stepHasForm->offsetSet('mongoForms', $thisForms);
-            }
-
-            $approvalWithReport = $application->steps->where('morphs_from', Approval::class)->where('approval.has_report', '1')->all();
-            $reports = array();
-
-
-            foreach($approvalWithReport as $approval)
-            {
-                $step = ApplicationStep::findOrFail($approval->id);
-
-                $allReports = Report::where('application_steps_id', $step->id)->get();
-
-                if($allReports != null)
-                {
-                    foreach ($allReports as $rep)
-                    {
-                        array_push($reports, array('stepId' => $approval->id, 'report' => $rep));
-                    }
-                }
-            }
+            $workflowInfo = $this->getApplicationWorkflowInfo($application);
 
             $errorsFormsFields = $this->_getAllFormsErrorsField($currentStep);
             $cComplianceForms = ContinuousCompliance::where('application_id', $application->id)->get();
@@ -275,14 +326,59 @@ class HomeController extends Controller
             return view('homes.application', [
                 'pageInfo'              => $this->pageInfo,
                 'application'           => $application,
-                'stepsWithForm'         => $stepsWithForm,
-                'approvalWithReport'    => $reports,
+                'stepsWithForm'         => $workflowInfo['stepsWithForm'],
+                'approvalWithReport'    => $workflowInfo['approvalWithReport'],
                 'currentStep'           => $currentStep,
                 'isResponsible'         => $isResponsible,
                 'errorsFormsFields'     => $errorsFormsFields,
                 'cComplianceForms'      => $cComplianceForms,
+                'userResponsible'       => $userResponsible
             ]);
         }
+    }
+
+    private function getApplicationWorkflowInfo($application)
+    {
+        $stepsWithForm =  $application->steps->where("morphs_from", FormTemplate::class )->all();
+
+        foreach ($stepsWithForm as &$stepHasForm)
+        {
+            $thisForms = $stepHasForm->Forms()->get();
+            foreach ($thisForms as &$relData)
+            {
+                $mongoForm = Form::findOrFail($relData->mform_id);
+                $relData->offsetSet('mongoform', $mongoForm);
+            }
+
+            $stepHasForm->offsetSet('mongoForms', $thisForms);
+        }
+
+        $approvalWithReport = $application->steps->where('morphs_from', Approval::class)->where('approval.has_report', '1')->all();
+        $reports = array();
+
+
+        foreach($approvalWithReport as $approval)
+        {
+            $step = ApplicationStep::findOrFail($approval->id);
+
+            $allReports = Report::where('application_steps_id', $step->id)->get();
+
+            if($allReports != null)
+            {
+                foreach ($allReports as $rep)
+                {
+                    array_push($reports, array('stepId' => $approval->id, 'report' => $rep));
+                }
+            }
+        }
+
+        $res = [
+            'approvalWithReport'    => $reports,
+            'stepsWithForm'         => $stepsWithForm
+
+        ];
+//    dd($res);
+        return $res;
     }
 
     private function _getStepsForm($steps, $currentStep){

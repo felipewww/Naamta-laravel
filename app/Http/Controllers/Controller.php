@@ -329,7 +329,8 @@ class Controller extends BaseController
                 $field->setting->save();
             }
             if(isset($v->setting->error)){
-                if (Auth::user()->hasRole(['admin','staff'])) {
+//                if (Auth::user()->hasRole(['admin','staff'])) {
+                if (Auth::user()->authorizeRoles(['admin','staff'])) {
                     $field->setting->error = $v->setting->error;
                     $field->setting->save();
                 }

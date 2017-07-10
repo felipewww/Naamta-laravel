@@ -49,8 +49,8 @@ class WorkflowController extends Controller
                 if ($userVerify->isEmpty()) {
                     return redirect('/');
                 }
-                
-                if( $user->hasRole('client') && $this->application->status != '1' ){
+
+                if( $user->hasRole('client') && ( $this->application->status != '1' && $this->application->status != 'completed') ){
                     return redirect('/');
                 }
             }
@@ -67,8 +67,6 @@ class WorkflowController extends Controller
     {
         \DB::beginTransaction();
 
-
-//        dd($request->all());
         /*
          * Fall here when submit all forms, so, convert status to approved and find the step
          * */
@@ -78,17 +76,6 @@ class WorkflowController extends Controller
             $this->application = $this->step->application;
         }
 
-//        $currentUserType = $this->step->application->users()->where('user_id', Auth::user()->id)->get();
-//
-//        if ($currentUserType->count() == 1)
-//        {
-//            $currentUserType = $currentUserType->first();
-//            $isResponsible = ($this->step->responsible == $currentUserType->user_type);
-//        }
-//        else
-//        {
-//            $isResponsible = $currentUserType->where('user_type', $this->step->responsible)->first();
-//        }
         $isResponsible = $this->step->loggedUserIsStepResponsible();
 
         if ( !$isResponsible ) {
@@ -216,9 +203,7 @@ class WorkflowController extends Controller
             $activeStep = $currentStep->application->steps()->where('status','1')->first();
         }
 
-        $allowEditForm = ( $currentStep->id == $activeStep->id ) ? true : false;
-
-//        dd($currentStep->application->steps()->where('status','current')->first());
+        $allowEditForm = ( !$activeStep || $currentStep->id != $activeStep->id ) ? false : true;
 
         return view('workflow.form')->with([
             'stepId' => $stepId,
@@ -400,35 +385,8 @@ class WorkflowController extends Controller
     }
 
     public function updateFormField(Request $request){
-//        $fieldJson = json_decode($request->field);
-//
-//        //Find form by Field ID
-//        $fieldID = $fieldJson->_id;
-//
-//        $mform = \App\MModels\Field::findOrFail($fieldID)->container->forms;
-//        $formMongoID = $mform->_id;
-//
-//        $step = ApplicationStepForms::where('mform_id', $formMongoID)->first()->Step;
-//
-//        if ( !$step->loggedUserIsStepResponsible() ) {
-//            abort(401, 'Action not allowed');
-//        }
-//
-//        $application = $step->application;
-//
-//        $activeStep = $application->steps()->where('status','current')->first();
-//
-//        if (!$activeStep) {
-//            $activeStep = $application->steps()->where('status','1')->first();
-//        }
-//
-//        if ($activeStep->id != $step->id) {
-//            abort(401, 'Action not allowed');
-//        }
-
         try{
             $t = $this->_updateFieldToMongo(\GuzzleHttp\json_decode($request->field));
-//            dd('T', $t);
             return json_encode(['status' => 'success', 'message' => 'Comment added']);
         }catch (Exception $e){
             return json_encode(['status' => 'error', 'message' => 'Error']);

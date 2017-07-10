@@ -120,9 +120,9 @@
                     </div>
                 </div>
                 <ul class="wp-side-menu">
+                    <li> <a href="{{ url('') }}"> Dashboard</a></li>
                     @if(Auth::user()!=null && Auth::user()->isAdmin())
                         <li class="nav-small-cap">USERS</li>
-                        <li> <a href="{{ url('') }}"> Dashboard</a></li>
                         {{--<li> <a href="{{ url('/firstFormEdit') }}"> Edit Register Form</a></li>--}}
                         <li> <a href="{{ url('users') }}">Users List</a> </li>
                         <li> <a href="{{ url('usertypes') }}">User Types</a></li>
@@ -135,7 +135,7 @@
                         <li> <a href="{{ url('emails') }}"> Email Templates</a></li>
                     @endif
                     @if(Auth::user()!=null && (Auth::user()->isAdmin() || Auth::user()->isStaff()))
-                        <li> <a href="{{ url('forms') }}"> Form Types</a></li>
+                        <li> <a href="{{ url('forms') }}"> Form Templates</a></li>
                         <li> <a href="{{ url('approvals') }}"> Approval Templates</a></li>
                     @endif
                 </ul>

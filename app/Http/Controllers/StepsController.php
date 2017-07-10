@@ -31,7 +31,8 @@ class StepsController extends Controller
         parent::__construct();
 
         $this->middleware(function ($request, $next) {
-            $user = \Auth::user()->authorizeRoles(['admin']);;
+            \Auth::user()->authorizeRoles(['admin','staff']);
+//            $user = \Auth::user()->authorizeRoles(['admin']);;
             return $next($request);
         });
         $this->steps = Step::all();
