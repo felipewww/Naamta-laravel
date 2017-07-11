@@ -128,6 +128,10 @@ function handleDrop(e) {
         $(dragSrcEl).insertAfter(lastValidField);
       }
     }
+    setTimeout(function(){
+      $(dragSrcEl).find('.label-text').focus();
+      $(dragSrcEl).find('.paragraph-content').focus();
+    });
   }
   $('#blankSpace').remove();
   return false;
@@ -234,6 +238,14 @@ function addEvents(elem, id = null, signature = null){
   // Configure Field
   $(elem).find('.drag-heading .fa-cog').click(function(){
     $(this).closest('.draggable-input').find('.drag-options').toggleClass('hidden');
+    if(type == 'paragraph' && $('.report-view').length > 0){
+      if ( $(this).closest('.draggable-input').find('.drag-options').hasClass('hidden') ){
+        $(this).closest('.draggable-input').find('.update-paragraph').show();
+      }else{
+        $(this).closest('.draggable-input').find('.update-paragraph').hide();
+        
+      }
+    }
   });
 
   // Toggle Comments
@@ -639,6 +651,19 @@ function addEvents(elem, id = null, signature = null){
 
     $('#drag-container').find('a:not(.btn)').attr('target', '_blank');
   });
+
+  $('.draggable-input').find('.drag-options').addClass('hidden');
+  $(elem).find('.drag-options').removeClass('hidden');
+
+  setTimeout(function(){
+    if( type == 'paragraph'){
+      $(elem).find('.paragraph-content')[0].focus();
+    }else{
+      $(elem).find('.label-text')[0].focus();
+    }
+  });
+
+  //end addEvents
 }
 
 // Appends field models
@@ -663,8 +688,10 @@ function appendList(){
       e.preventDefault();
       var id = getHash(this);
       var clone = $('#input-types ' + id).clone();
+
       addEvents(clone[0]);
       $('#drag-container .tab.active').append(clone);
+
       ordenateFields();
       updateRulesPages();
   });

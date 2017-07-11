@@ -231,6 +231,9 @@
     margin-top: 10px;
     z-index: 666;
 }
+#drag-container #list-container h3{
+        font-size: 1.4em;
+}
 #drag-container #list-container li{
     list-style: none;
     margin: 5px;
