@@ -169,7 +169,7 @@ function toJson(){
 // Creates tabs from json
 // Uses createFields
 function createTabs(json, clientView = false, isClient){
-  console.log(json);
+  //console.log(json);
   isUserClient = isClient;
   isClientView = clientView;
   $('#drag-container').toggleClass('client-view', clientView);
@@ -514,11 +514,10 @@ function checkFieldValue(id, value, options, isIncorrect, file){
     }
   });
 
-
   $('#save-changes').removeClass('btn-default').addClass('btn-save').html('<i class="fa fa-check m-r-20"></i> Save Changes');
 
   var type = elem.attr('id').split('__')[0];
-  console.log(type);
+
   var obj = {
     _id : id,
     setting : {

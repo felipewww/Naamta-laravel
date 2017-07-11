@@ -585,17 +585,13 @@ function addEvents(elem, id = null, signature = null){
     });
   }else if(type == 'signature'){
     $(elem).find('canvas').on('mouseup', function() {
-
-      function hasSameId(elem) {
-        return elem.field == id;
-      }
+      function hasSameId(elem) {return elem.field == id;}
 
       var filtered = canvasArray.filter(hasSameId)[0];      
 
       var val = filtered.signature.toDataURL();
       
       checkFieldValue(id, val);
-      
     });
   }else{
 
@@ -968,10 +964,20 @@ function validateForm(){
   }else{
     $('.tabs-holder .draggable-input:not([style="display: none;"])').each(function(){
       var type = $(this).attr('id').split('__')[0];
+      var id = $(this).attr('id').split('__')[1];
       var dragInput = $(this).find('.drag-input');
 
+      if(type == 'signature'){
+        function hasSameId(elem) {return elem.field == id;}
 
-      if(type == 'radio-group'){
+        var sign = canvasArray.filter(hasSameId)[0];
+
+        if( sign.signature.isEmpty() ){
+          dragInput.addClass('required-fail');
+        }else{
+          dragInput.removeClass('required-fail');
+        }
+      }else if(type == 'radio-group'){
         if( $(this).find('.drag-input input:radio:checked').length <= 0 ){
           dragInput.addClass('required-fail');
         }else{
