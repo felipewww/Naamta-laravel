@@ -14,8 +14,15 @@
                     <h4>Previous Step:</h4>
                     <p class="">Step :  {{($currentStep->previousStep()!=null ? $currentStep->previousStep()->title : "It's the first step")}}</p>
                     <br>
-                    <h4>Responsible user:</h4>
-                    <p class="">{{ $userResponsible->name }}, {{ $userResponsible->email }}</p>
+                    <h4>Responsible User Type: <strong>{{ $userTypeResponsible->title }}</strong></h4>
+                    <ul>
+                        @foreach($userResponsible as $ures)
+                        <li>
+                            {{ $ures->user->name }}, {{ $ures->user->email }}
+                        </li>
+                        @endforeach
+                    </ul>
+
                     @if($isResponsible)
                         @if($currentStep->morphs_from === "App\Models\Approval")
                             @if($currentStep->approval->has_report === 0)

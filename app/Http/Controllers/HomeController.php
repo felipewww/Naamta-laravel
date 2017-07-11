@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Auth\ActivationService;
 use App\Models\Application;
+use App\Models\ApplicationUserTypes;
 use App\Models\Approval;
 use App\Models\ClientFirstForm;
 use App\Models\ContinuousCompliance;
@@ -220,40 +221,6 @@ class HomeController extends Controller
             $cCompliancesRegistered = SysContinuousCompliance::where('application_id', $application->id)->orderBy('created_at', 'DESC')->get();
 
             $workflowInfo = $this->getApplicationWorkflowInfo($application);
-//            $stepsWithForm =  $application->steps->where("morphs_from", FormTemplate::class )->all();
-//
-//            foreach ($stepsWithForm as &$stepHasForm)
-//            {
-//                $thisForms = $stepHasForm->Forms()->get();
-//                foreach ($thisForms as &$relData)
-//                {
-//                    $mongoForm = Form::findOrFail($relData->mform_id);
-//                    $relData->offsetSet('mongoform', $mongoForm);
-//                }
-//
-//                $stepHasForm->offsetSet('mongoForms', $thisForms);
-//            }
-//
-//            $approvalWithReport = $application->steps->where('morphs_from', Approval::class)->where('approval.has_report', '1')->all();
-//            $reports = array();
-//
-//
-//            foreach($approvalWithReport as $approval)
-//            {
-//                $step = ApplicationStep::findOrFail($approval->id);
-//
-//                $allReports = Report::where('application_steps_id', $step->id)->get();
-//
-//                if($allReports != null)
-//                {
-//                    foreach ($allReports as $rep)
-//                    {
-//                        array_push($reports, array('stepId' => $approval->id, 'report' => $rep));
-//                    }
-//                }
-//            }
-
-            //dd($workflowInfo['approvalWithReport']);
 
             return view('homes.application_completed', [
                 'pageInfo'                  => $this->pageInfo,
@@ -282,47 +249,8 @@ class HomeController extends Controller
             }
 
             $isResponsible = $currentStep->loggedUserIsStepResponsible();
-            $userResponsible = User::findOrFail($currentStep->responsible);
-
-//            dd($currentStep);
-
-            /*
-             * End verify responsible
-             * */
-
-            //Starting... Get all forms related with all steps, including the current step
-//            $stepsWithForm =  $application->steps->where("morphs_from", FormTemplate::class )->all();
-//
-//            foreach ($stepsWithForm as &$stepHasForm)
-//            {
-//                $thisForms = $stepHasForm->Forms()->get();
-//                foreach ($thisForms as &$relData)
-//                {
-//                    $mongoForm = Form::findOrFail($relData->mform_id);
-//                    $relData->offsetSet('mongoform', $mongoForm);
-//                }
-//
-//                $stepHasForm->offsetSet('mongoForms', $thisForms);
-//            }
-//
-//            $approvalWithReport = $application->steps->where('morphs_from', Approval::class)->where('approval.has_report', '1')->all();
-//            $reports = array();
-//
-//
-//            foreach($approvalWithReport as $approval)
-//            {
-//                $step = ApplicationStep::findOrFail($approval->id);
-//
-//                $allReports = Report::where('application_steps_id', $step->id)->get();
-//
-//                if($allReports != null)
-//                {
-//                    foreach ($allReports as $rep)
-//                    {
-//                        array_push($reports, array('stepId' => $approval->id, 'report' => $rep));
-//                    }
-//                }
-//            }
+            $userTypeResponsible = ApplicationUserTypes::where('id', $currentStep->responsible)->first();
+            $userResponsible = UserApplication::where('user_type', $currentStep->responsible)->get();
 
             $workflowInfo = $this->getApplicationWorkflowInfo($application);
 
@@ -338,7 +266,8 @@ class HomeController extends Controller
                 'isResponsible'         => $isResponsible,
                 'errorsFormsFields'     => $errorsFormsFields,
                 'cComplianceForms'      => $cComplianceForms,
-                'userResponsible'       => $userResponsible
+                'userResponsible'       => $userResponsible,
+                'userTypeResponsible'   => $userTypeResponsible
             ]);
         }
     }
