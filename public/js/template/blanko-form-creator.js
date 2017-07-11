@@ -587,7 +587,7 @@ function checkFieldValue(id, value, options, isIncorrect, file){
         //window.location.href = window.location.protocol + "//" + window.location.hostname;
       },
       error: function (data) {
-        console.log(data);
+      //  console.log(data);
         console.log('Error!');
       }
     });
