@@ -293,23 +293,27 @@ class Controller extends BaseController
                 $mform = \App\MModels\Field::findOrFail($fieldID)->container->forms;
                 $formMongoID = $mform->_id;
 
-                $step = ApplicationStepForms::where('mform_id', $formMongoID)->first()->Step;
+                //verification to resolve bugs on upload image from first form
+                $appStepForm = ApplicationStepForms::where('mform_id', $formMongoID)->first();
+                if($appStepForm!=null){
+                    $step = $appStepForm->Step;
+                    if ( !$step->loggedUserIsStepResponsible() ) {
+                        abort(401, 'Action not allowed');
+                    }
 
-                if ( !$step->loggedUserIsStepResponsible() ) {
-                    abort(401, 'Action not allowed');
+                    $application = $step->application;
+
+                    $activeStep = $application->steps()->where('status','current')->first();
+
+                    if (!$activeStep) {
+                        $activeStep = $application->steps()->where('status','1')->first();
+                    }
+
+                    if ($activeStep->id != $step->id) {
+                        abort(401, 'Action not allowed');
+                    }
                 }
 
-                $application = $step->application;
-
-                $activeStep = $application->steps()->where('status','current')->first();
-
-                if (!$activeStep) {
-                    $activeStep = $application->steps()->where('status','1')->first();
-                }
-
-                if ($activeStep->id != $step->id) {
-                    abort(401, 'Action not allowed');
-                }
 //                if ( !$step->loggedUserIsStepResponsible() ) {
 //                    abort(401, 'Action not allowed');
 //                }
