@@ -9,6 +9,7 @@ use App\Models\Client;
 use App\Models\Application;
 
 use App\Http\Controllers\Controller;
+use App\Models\UserApplication;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -48,35 +49,40 @@ class RegisterController extends Controller
 //        $this->middleware('guest');
     }
 
+    public function register(Request $request)
+    {
+        try{
+            $this->validator($request->all())->validate();
+
+            event(new Registered($user = $this->create($request->all())));
+
+            $this->guard()->login($user);
+
+            return $this->registered($request, $user)
+                ?: redirect($this->redirectPath());
+
+        }catch (\Exception $e){
+            return redirect('/register')->withErrors($this->validator($request->all()))->withInput();
+        }
+    }
+
     /*
      * Get a validator for an incoming registration request.
      *
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
-
-    public function register(Request $request)
+    protected function validator(array $data)
     {
-        dd('...', $request->all());
-//        event(new Registered($user = $this->create($request->all())));
+        $validator = Validator::make($data, [
+            'company'  => 'required|max:255',
+            'name'     => 'required|max:255',
+            'email'    => 'required|email|max:255|unique:users',
+            'password' => 'required|min:6|confirmed',
+        ]);
 
-//        $this->guard()->login($user);
-
-//        return $this->registered($request, $user) ? : redirect($this->redirectPath());
-        return $this->registered($request, $user) ? : dd('...');
+        return $validator;
     }
-
-//    protected function validator(array $data)
-//    {
-//        $validator = Validator::make($data, [
-//            'company'  => 'required|max:255',
-//            'name'     => 'required|max:255',
-//            'email'    => 'required|email|max:255',
-//            'password' => 'required|min:6|confirmed',
-//        ]);
-//
-//        return $validator;
-//    }
 
     /*
      * Create a new user instance after a valid registration.
