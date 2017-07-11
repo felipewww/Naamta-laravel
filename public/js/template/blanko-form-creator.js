@@ -547,6 +547,7 @@ function checkFieldValue(id, value, options, isIncorrect, file){
       }
         filesArray[id].push(file);
         obj.setting.value = filesArray[id];
+        console.log(obj.setting.value);
       //Como está
       //obj.setting.value = file; //substitui pelo ultimo arquivo
       // Como tem que ser
@@ -586,6 +587,7 @@ function checkFieldValue(id, value, options, isIncorrect, file){
         //window.location.href = window.location.protocol + "//" + window.location.hostname;
       },
       error: function (data) {
+        console.log(data);
         console.log('Error!');
       }
     });

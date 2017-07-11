@@ -464,12 +464,19 @@ function addEvents(elem, id = null, signature = null){
 
   updateRulesPages();
 
+  var labels = $(elem).find('input + label').each(function(index){
+    var name = 'input_' + id + '__' + index;
+    $(this).attr('for', name);
+    $(this).prev().attr('id', name);
+  });
 
+  //prevInput.next().attr('for', radio.attr('name'));
   //Incorrect / Correct
   var radio = $(elem).find('input[name="incorrect"]');
   var chosenRadio = $(elem).find('input[name="incorrect"]:checked');
   $(elem).find('.drag-heading').removeClass('Pass Fail Audit').addClass(chosenRadio.val());
-  radio.attr('name', radio.attr('name') + '__' + id)
+  radio.attr('name', radio.attr('name') + '__' + id);
+  
   radio.change(function(){
     if($(this).prop('checked') == true) {
       $(elem).find('.drag-heading').removeClass('Pass Fail Audit').addClass($(this).val());
