@@ -41,8 +41,9 @@
 
     @if(!$isResponsible)
         Script.env = 'local';
-        $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4');
+        $('.submit-form').attr('disabled', 'disabled').css('opacity', '0.4');
         $('input, select, radio, textarea, checkbox, option').prop('disabled', true);
+        $('canvas').css('pointer-events', 'none');
         $('.dropzone, .remove-file').remove();
         $('.comment-msg, .is-incorrect').removeAttr('disabled').css('opacity', '0');
         $('.is-incorrect').css('display', '0');
