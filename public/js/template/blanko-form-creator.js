@@ -245,6 +245,7 @@ function createTabs(json, clientView = false, isClient){
     $('.filter').hide();
     $('.drag-validate').hide();
     $('#save-changes').hide();
+    $('.drag-input.dropzone').hide();
   }
   
   if(isClient){

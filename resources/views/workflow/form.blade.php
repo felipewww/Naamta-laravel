@@ -59,6 +59,10 @@
         $('.dropzone, .remove-file').remove();
         $('.comment-msg, .is-incorrect').removeAttr('disabled');
         $('.is-incorrect').css('display', '0');
+        $('[id*="text-field"] .update-value').each(function(){
+            $(this).append('<p>'+ $(this).val() +'</p>');
+            $(this).hide();
+        })
     @else
         $('.drag-validate').css('display', 'none');
     @endif
