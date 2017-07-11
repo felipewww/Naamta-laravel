@@ -440,28 +440,33 @@ function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
     });
 
     $(eval(changes)).change(function() {
-      if(eval(cond)){
-        if(ruleAction === "show"){
-          $(".order_" + obj_id).show();
-        }else{
-          $(".order_" + obj_id).hide();
-        }
-      }else{
-        if(ruleAction === "show"){
-          $(".order_" + obj_id).hide();
-        }else{
-          $(".order_" + obj_id).show();
-        }
-      }
+      evaluate(obj_id, cond, ruleAction);
     });
-    $(document).ready(function(){
-      if(ruleAction === "show"){
-        $(".order_" + obj_id).hide();
-      }else{
-        $(".order_" + obj_id).show();
-      }
-    })
+    // $(document).ready(function(){
+    //   if(ruleAction === "show"){
+    //     $(".order_" + obj_id).hide();
+    //   }else{
+    //     $(".order_" + obj_id).show();
+    //   }
+    // });
+    evaluate(obj_id, cond, ruleAction);
   }
+}
+
+function evaluate(obj_id, cond, ruleAction){
+  if(eval(cond)){
+        if(ruleAction === "show"){
+          $(".order_" + obj_id).show();
+        }else{
+          $(".order_" + obj_id).hide();
+        }
+      }else{
+        if(ruleAction === "show"){
+          $(".order_" + obj_id).hide();
+        }else{
+          $(".order_" + obj_id).show();
+        }
+    }
 }
 // Creates form from current tabs and fields
 function toHtml(){
