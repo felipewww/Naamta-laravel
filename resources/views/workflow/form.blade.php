@@ -60,7 +60,7 @@
         $('.comment-msg, .is-incorrect').removeAttr('disabled');
         $('.is-incorrect').css('display', '0');
         $('[id*="text-field"] .update-value').each(function(){
-            $(this).append('<p>'+ $(this).val() +'</p>');
+            $(this).after('<p class="read-value">'+ $(this).val() +'</p>');
             $(this).hide();
         })
     @else
