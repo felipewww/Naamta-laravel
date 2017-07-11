@@ -60,7 +60,13 @@ class HomeController extends Controller
         if (!Auth::user()) {
             return Redirect::to('/login');
         }
+
         if (!Auth::user()->verified) {
+
+            $this->pageInfo->title = Auth::user()->client->company;
+            $this->pageInfo->category->title    = "Applications";
+            $this->pageInfo->subCategory->title =  "Waiting e-mail verification";
+
             $activation = new ActivationService();
             return view('homes.wait_emailverify', 
                 [
