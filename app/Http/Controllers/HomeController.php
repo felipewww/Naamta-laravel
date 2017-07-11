@@ -278,7 +278,12 @@ class HomeController extends Controller
         }
     }
 
-    private function getApplicationWorkflowInfo($application)
+    public static function _getApplicationWorkflowInfo($application)
+    {
+        return self::getApplicationWorkflowInfo($application);
+    }
+
+    private static function getApplicationWorkflowInfo($application)
     {
         $stepsWithForm =  $application->steps->where("morphs_from", FormTemplate::class )->all();
 

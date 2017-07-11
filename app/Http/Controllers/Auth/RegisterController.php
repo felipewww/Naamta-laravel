@@ -9,6 +9,7 @@ use App\Models\Client;
 use App\Models\Application;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -53,15 +54,29 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    protected function validator(array $data)
+
+    public function register(Request $request)
     {
-        return Validator::make($data, [
-            'company'  => 'required|max:255',
-            'name'     => 'required|max:255',
-            'email'    => 'required|email|max:255|unique:users',
-            'password' => 'required|min:6|confirmed',
-        ]);
+        dd('...', $request->all());
+//        event(new Registered($user = $this->create($request->all())));
+
+//        $this->guard()->login($user);
+
+//        return $this->registered($request, $user) ? : redirect($this->redirectPath());
+        return $this->registered($request, $user) ? : dd('...');
     }
+
+//    protected function validator(array $data)
+//    {
+//        $validator = Validator::make($data, [
+//            'company'  => 'required|max:255',
+//            'name'     => 'required|max:255',
+//            'email'    => 'required|email|max:255',
+//            'password' => 'required|min:6|confirmed',
+//        ]);
+//
+//        return $validator;
+//    }
 
     /*
      * Create a new user instance after a valid registration.
@@ -74,7 +89,6 @@ class RegisterController extends Controller
         \DB::beginTransaction();
 
         try{
-
             $user = new User();
             $user->fillable([
                 'name', 'password', 'status', 'see_apps', 'email'
@@ -84,7 +98,6 @@ class RegisterController extends Controller
             $user->email     = $data['email'];
             $user->verified  = false;
             $user->password  = bcrypt($data['password']);
-
             $user->save();
 
             $user
