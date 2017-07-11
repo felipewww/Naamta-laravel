@@ -345,7 +345,7 @@ class WorkflowController extends Controller
 
             switch ($request->status){
                 case 'reproved':
-                    $previousStep = ApplicationStep::findOrFail( $step->previousStep()->id );
+                    $previousStep = ApplicationStep::findOrFail( $step->previous_step );
                     $previousStep->status = "current";
                     $previousStep->save();
                     break;

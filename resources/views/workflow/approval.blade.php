@@ -65,8 +65,8 @@
                 <div class="col-sm-12">
                     <div class="white-box">
                         <button type="button" class="btn btn-danger center-block waves-effect waves-light pull-left rejectReport">Reject and submit Report</button>
-                        <a style="margin-left: 10px;" href="/application/{{$appID}}/dashboard" class="btn btn-save pull-right">Back</a>
-                        <button type="button" class="btn btn-success center-block waves-effect waves-light pull-right sendReport">Approve and submit Report</button>
+                        <button type="button" class="btn btn-success center-block waves-effect waves-light pull-right sendReport btn-submit m-l-20">Approve and submit Report</button>
+                        <a style="margin-left: 10px;" href="/application/{{$appID}}/dashboard" class="btn btn-danger pull-right">Back</a>
                         <div class="clearfix"></div>
                     </div>
                 </div>
@@ -87,7 +87,7 @@
         @else
             <div class="col-sm-12">
                 <div class="white-box">
-                    <a href="/application/{{$appID}}/dashboard" class="btn btn-save pull-right">Back</a>
+                    <a href="/application/{{$appID}}/dashboard" class="btn btn-danger pull-right">Back</a>
                     <div class="clearfix"></div>
                 </div>
             </div>

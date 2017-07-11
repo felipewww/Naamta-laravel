@@ -64,12 +64,12 @@
 
     @if(!$allowEditForm)
         $('input, select, radio, textarea, checkbox, option').prop('disabled', true);
-        $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4');
+        $('.submit-form').attr('disabled', 'disabled').css('opacity', '0.4');
     @endif
 
     @if(!$isResponsible)
         Script.env = "{{ app('env') }}";
-        $('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4');
+        $('.submit-form').attr('disabled', 'disabled').css('opacity', '0.4');
         $('input, select, radio, textarea, checkbox, option').prop('disabled', true);
         $('canvas').css('pointer-events', 'none');
         $('button.clear').remove();
@@ -94,7 +94,7 @@
     });
 
     {{--@if(!$isResponsible)--}}
-        {{--$('.btn-submit').attr('disabled', 'disabled').css('opacity', '0.4');--}}
+        {{--$('.submit-form').attr('disabled', 'disabled').css('opacity', '0.4');--}}
         {{--$('.is-incorrect').css('display', '0');--}}
     {{--@else--}}
         {{--$('.drag-validate').css('display', 'none')--}}

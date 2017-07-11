@@ -25,7 +25,7 @@
         .error-actions .btn { margin-right:10px; font-family: Arial, sans-serif; font-size: 13px; }
 
         div#details {
-            display: none;
+            /*display: none;*/
             position: absolute;
             bottom: 0;
             background: rgb(236, 236, 236);
