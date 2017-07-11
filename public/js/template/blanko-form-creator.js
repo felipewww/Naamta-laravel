@@ -49,7 +49,6 @@ function toFieldObject(){
     obj.setting.value = $(this).find('.update-value').val();
   }
   obj.setting.placeholder = $(this).find('.update-value').attr('placeholder');
-  console.log(obj.setting.placeholder);
   obj.setting.checked = $(this).find('.update-value').prop('checked');
   obj.setting.min = $(this).find('.update-min').attr('min');
   obj.setting.max = $(this).find('.update-max').attr('max');
@@ -274,7 +273,6 @@ function createFields(obj, clientView){
   clone.find('.drag-heading').toggle(obj.isEditable);
   clone.find('.drag-options').toggle(obj.isEditable);
   configureField(clone, obj.setting, obj.type, obj._id);
-  obj.setting.signature;
   clones.splice(obj.setting.ordenate, 0, clone);
 
 
@@ -351,8 +349,6 @@ function configureField(node, options, type, id){
     'placeholder' : options.placeholder
   });
 
-  console.log(options);
-
   if(options.mask != null){
      node.find('.drag-input input').mask(options.mask);
      node.find('.mask').val(options.mask);
@@ -401,7 +397,6 @@ function configureField(node, options, type, id){
   node.find('.update-required').toggleClass('required', options.isRequired);
 
   node.find('.update-value').text(options.value);
-  console.log(options.placeholder);
   node.find('.update-value').attr('placeholder', options.placeholder);
 
   /*Options*/
@@ -509,20 +504,21 @@ function toHtml(){
 
 function checkFieldValue(id, value, options, isIncorrect, file){
   
+  var elem = $('.draggable-input[data-id="'+id+'"]');
+
   $('.tab').each(function(){
     var l = $(this).find('.required-fail').length;
     if( l <= 0 ){
       var id = $(this).attr('id');
-      console.log('[href="#'+ id +'"]');
       $('[href="#'+ id +'"]').removeClass('tab-fail');
     }
   });
 
 
-  //console.log(id, value, options, isIncorrect, file);
   $('#save-changes').removeClass('btn-default').addClass('btn-save').html('<i class="fa fa-check m-r-20"></i> Save Changes');
-  var elem = $('.draggable-input[data-id="'+id+'"]');
 
+  var type = elem.attr('id').split('__')[0];
+  console.log(type);
   var obj = {
     _id : id,
     setting : {
@@ -530,7 +526,11 @@ function checkFieldValue(id, value, options, isIncorrect, file){
   };
 
   if(value != null){
-    obj.setting.value = value;
+    if(type == 'signature'){
+      obj.setting.signature = value;
+    }else{
+      obj.setting.value = value;
+    }
   }
   if(options != null){
     obj.setting.options = options;
@@ -581,12 +581,10 @@ function checkFieldValue(id, value, options, isIncorrect, file){
     data: sequence,
     success: function (data) {
       console.log('Success!');
-      //console.log(data);
       //window.location.href = window.location.protocol + "//" + window.location.hostname;
     },
     error: function (data) {
       console.log('Error!');
-      //console.log(data);
     }
   });
 

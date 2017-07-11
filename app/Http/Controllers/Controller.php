@@ -277,7 +277,16 @@ class Controller extends BaseController
 //            if ($field->setting->error == "Pass") {
 //                return false;
 //            }
+            if(isset($v->setting->signature)){
 
+                //Admin and staffs not allowed to change values, only client and just when field not passed
+                if (Auth::user()->hasRole(['client']) && $field->setting->error != "Pass") {
+                    $field->setting->signature = $v->setting->signature;
+                    $field->setting->save();
+                }else{
+                    return false;
+                }
+            }
             if(isset($v->setting->value)){
 
                 //Admin and staffs not allowed to change values, only client and just when field not passed

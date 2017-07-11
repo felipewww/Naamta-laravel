@@ -540,8 +540,7 @@ function addEvents(elem, id = null, signature = null){
       $(elem).find('.required-error-message').remove()
       checkFieldValue(id, null, optionsArray);
     });
-  }else//File upload DROPZONE
-  if(type == 'file-upload'){
+  }else if(type == 'file-upload'){
     $(elem).find('.drag-input').addClass('dropzone').dropzone({
       url : "/upload-files",
       addRemoveLinks: true,
@@ -583,6 +582,20 @@ function addEvents(elem, id = null, signature = null){
         formData.append("folder", appFolder);
         formData.append("_token", window.Laravel.csrfToken);
       }
+    });
+  }else if(type == 'signature'){
+    $(elem).find('canvas').on('mouseup', function() {
+
+      function hasSameId(elem) {
+        return elem.field == id;
+      }
+
+      var filtered = canvasArray.filter(hasSameId)[0];      
+
+      var val = filtered.signature.toDataURL();
+      
+      checkFieldValue(id, val);
+      
     });
   }else{
 

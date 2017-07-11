@@ -57,6 +57,7 @@
         $('.submit-form').attr('disabled', 'disabled').css('opacity', '0.4');
         $('input, select, radio, textarea, checkbox, option').prop('disabled', true);
         $('canvas').css('pointer-events', 'none');
+        $('button.clear').remove();
         $('.dropzone, .remove-file').remove();
         $('.comment-msg, .is-incorrect').removeAttr('disabled');
         $('.is-incorrect').css('display', '0');
