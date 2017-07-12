@@ -23,16 +23,23 @@ blankSpace.addEventListener('drop', handleDrop);
  
 // Fixed menu while scrolling
 var menuTop = $('#list-container').offset().top;
+
 $(window).on('scroll', function(){
   var scrollTop = $(window).scrollTop();
-  // If the scroll reached the menu, the menu fixes on the screen
-  if(scrollTop >= menuTop && (scrollTop + $('#list-container').height()) < (scrollTop + $('#drag-container').height()) ){
-      $('#list-container').addClass('fixed').css({
-          top: scrollTop - menuTop
-      });
-  }else{
-      $('#list-container').removeClass('fixed');
-  }
+  console.log(scrollTop);
+  console.log($('#page-wrapper').height())
+  
+    if(scrollTop >= menuTop && (scrollTop + $('#list-container').height()) < (scrollTop + $('#drag-container').height()) ){
+      if( scrollTop < $('#page-wrapper').height() - $('#list-container').height() ) {  
+        if(1){
+          $('#list-container').addClass('fixed').css({
+              top: scrollTop - menuTop
+          });
+        }
+      }
+    }else{
+        $('#list-container').removeClass('fixed');
+    }
 });
 
 //When drag starts
@@ -139,6 +146,9 @@ function handleDrop(e) {
 
 // Adds all events necessary for the field
 function addEvents(elem, id = null, signature = null){
+
+  //$(elem).css('display', 'none');
+
   var type;
   type = $(elem).attr('id').split("__")[0];
 

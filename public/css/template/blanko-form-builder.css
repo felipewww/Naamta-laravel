@@ -12,6 +12,12 @@
     width: 99%;
     vertical-align: top;
 }
+#drag-container .draggable-input{
+    display: none;
+}
+#drag-container .active .draggable-input{
+    display: block;
+}
 #drag-container .draggable-input.half-row{
     width: 49%;
     margin-right: 1%;
@@ -624,6 +630,12 @@ h5.bold{
         float: none;
         overflow: hidden;
         padding: 10px; 
+    }
+    #drag-container .form-holder{
+        width: 60% !important;
+    }
+    #drag-container .list-container{
+        width: 40% !important;
     }
 }
 

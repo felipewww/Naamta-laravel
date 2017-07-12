@@ -32,7 +32,7 @@
                     @if($isResponsible)
                         @if($currentStep->morphs_from === "App\Models\Approval")
                             @if($currentStep->approval->has_report === 0)
-                                <button onclick="workflow.sendApproval('reproved', '{{$currentStep->id}}', null);" class="btn btn-danger pull-left">Reprove</button>
+                                <button onclick="workflow.sendApproval('rejected', '{{$currentStep->id}}', null);" class="btn btn-danger pull-left">Reprove</button>
                                 <button onclick="workflow.sendApproval('approved', '{{$currentStep->id}}', null);" class="btn btn-primary pull-right">Approve</button>
                             @else
                                 <a href="/workflow/step/{{$currentStep->id}}/show" class="btn btn-success pull-right">Evaluate with report</a>
@@ -40,7 +40,7 @@
                         @else
                             @foreach($currentStep->mongoForms as $form)
                                 <div style="display: block; margin-bottom: 10px;">
-                                    <a href="/workflow/step/{{$currentStep->id}}/{{$form->mform_id}}/show" class="btn btn-success">Fill Form: {{ $form->mongoform->name }}</a>
+                                    <a href="/workflow/step/{{$currentStep->id}}/{{$form->mform_id}}/show" class="btn btn-success text-left"><strong>Fill Form:</strong> {{ $form->mongoform->name }}</a>
                                 </div>
                             @endforeach
                                 <a href="javascript:;" onclick="workflow.gotoNextStep({{$currentStep->id}})" class="btn btn-danger">Submit all forms</a>

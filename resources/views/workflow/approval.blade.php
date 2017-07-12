@@ -80,7 +80,7 @@
                 $('.rejectReport').click(function(){
                     $('input[name=report]').val(toJson())
                     var form = toJson();
-                    workflow.sendApproval('reproved', '{{$stepId}}', form)
+                    workflow.sendApproval('rejected', '{{$stepId}}', form)
                 })
             </script>
             @endif

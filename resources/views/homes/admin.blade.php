@@ -2,7 +2,7 @@
 
 @section('content')
     {{--<div id="page-wrapper">--}}
-        <div class="container-fluid">
+        <div class="container-fluid dashboard-applications">
             {{--<div class="alert alert-custom">You have <a href="#">4 Applications</a> in need of your attention (of <a href="#">10 under your supervision</a>)</div>--}}
 
             <!-- .row -->
