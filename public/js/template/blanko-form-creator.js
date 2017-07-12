@@ -169,13 +169,18 @@ function toJson(){
 // Creates tabs from json
 // Uses createFields
 function createTabs(json, clientView = false, isClient){
-  //console.log(json);
+  
+  var objs = JSON.parse(json);
+  
+  if(objs.length <= 0){
+      objs = [{"config":{"_id":"00","title":"New Page","tabId":""},"fields":[]}];
+  }
+
   isUserClient = isClient;
   isClientView = clientView;
   $('#drag-container').toggleClass('client-view', clientView);
   $('.help .icon').hide();
   $('.tab-control').remove();
-  var objs = JSON.parse(json);
 
     objs.forEach(function(obj){
       clones = new Array();
