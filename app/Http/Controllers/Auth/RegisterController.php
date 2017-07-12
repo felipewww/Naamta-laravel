@@ -87,13 +87,6 @@ class RegisterController extends Controller
 
             $user->save();
 
-//            $user = User::create([
-//                'name'      => $data['name'],
-//                'email'     => $data['email'],
-//                'verified'  => false,
-//                'password'  => bcrypt($data['password'])
-//            ]);
-
             $user
                 ->roles()
                 ->attach(Role::where('name', 'client')->first());
@@ -179,7 +172,7 @@ class RegisterController extends Controller
         $actService->sendActivationMail(\App\Models\User::findOrFail($id));
 
         Auth::logout();
-        return redirect()->to('/');
 
+        return redirect('/login')->with('resend', true);
     }
 }

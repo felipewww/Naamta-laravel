@@ -29,7 +29,7 @@
                                 <button onclick="workflow.sendApproval('reproved', '{{$currentStep->id}}', null);" class="btn btn-danger pull-left">Reprove</button>
                                 <button onclick="workflow.sendApproval('approved', '{{$currentStep->id}}', null);" class="btn btn-primary pull-right">Approve</button>
                             @else
-                                <a href="/workflow/step/{{$currentStep->id}}/show" class="btn btn-success pull-right">Approve with report</a>
+                                <a href="/workflow/step/{{$currentStep->id}}/show" class="btn btn-success pull-right">Evaluate with report</a>
                             @endif
                         @else
                             @foreach($currentStep->mongoForms as $form)

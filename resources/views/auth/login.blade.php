@@ -4,6 +4,13 @@
 <form class="form-horizontal form-material" id="loginform" role="form" method="POST" action="{{ route('login') }}">
     {{ csrf_field() }}
     <h3 class="box-title m-b-20">Log in</h3>
+
+    @if(session('resend'))
+        <div class="alert text-center" style="border: 1px solid orangered">
+            Forwarded email. Please check your email and try to sign in again.
+        </div>
+    @endif
+
     <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
         <div class="col-md-12">
             <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="Email Address" required autofocus>
