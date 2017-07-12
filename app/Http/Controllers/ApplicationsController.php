@@ -10,6 +10,7 @@ use App\Models\ApplicationUsesEmail;
 use App\Models\Approval;
 use App\Models\ContinuousCompliance;
 use App\Models\FormTemplate;
+use App\Models\Roles;
 use App\Models\Step;
 use App\Models\SysContinuousCompliance;
 use App\Models\UsesEmail;
@@ -85,13 +86,13 @@ class ApplicationsController extends Controller
 
         if ($application->status == '1') 
         {
-            if (app('env') != 'local')
+            if (Auth::user()->isAdmin())
             {
-                return redirect('/application/'.$application->id.'/dashboard');
+                return $this->settings($request, $application->id);
             }
             else
             {
-                $this->pageInfo->title = 'ALREADY APPROVED - ONLY LOCAL';
+                return redirect('/application/'.$application->id.'/dashboard');
             }
         }
         
@@ -202,19 +203,16 @@ class ApplicationsController extends Controller
             if ( !isset($validaHasClientType['client']) || $validaHasClientType['client'] > 1 ) {
                 return false;
             }
-//            dd(array_count_values($arrTypes));
-//            dd($arrTypes);
-//            dd(array_search('client', $arrTypes));
-
-//            if( array_search('client', $arrTypes) === false ){
-//                return false;
-//            }
-
 
             return true;
         });
 
-        $validator = Validator::make($request->all(), $this->rules)->validate();
+        try{
+            $validator = Validator::make($request->all(), $this->rules)->validate();
+        }catch (\Exception $e){
+            $validator = Validator::make($request->all(), $this->rules);
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
         \DB::beginTransaction();
         try{
@@ -264,11 +262,21 @@ class ApplicationsController extends Controller
         $this->pageInfo->category->title    = 'Application';
         $this->pageInfo->subCategory->title = 'Edit Settings';
 
-        $usersApplication = UserApplication::with(['user','appType'])->where('application_id', $id)->get();
-        $application    = Application::FindOrFail($id);
-        $userTypes      = $application->userTypes;
-        $staffs         = User::all();
-        $hasInactiveSteps = $application->steps()->where('status', '0')->get()->count();
+        $usersApplication   = UserApplication::with(['user','appType'])->where('application_id', $id)->get();
+        $application        = Application::FindOrFail($id);
+        $userTypes          = $application->userTypes;
+
+        $roles = Roles::where('name', "!=", 'none')->where('name', "!=", 'client')->with('Users')->get();
+
+        $staffs = [];
+        foreach ($roles as $role)
+        {
+            foreach ($role->Users as $user)
+            {
+                array_push($staffs, $user);
+            }
+        }
+        $hasInactiveSteps   = $application->steps()->where('status', '0')->get()->count();
 
         return view('applications.edit',
             [

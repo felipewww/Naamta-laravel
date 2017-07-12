@@ -263,7 +263,19 @@ class HomeController extends Controller
             $errorsFormsFields = $this->_getAllFormsErrorsField($currentStep);
             $cComplianceForms = ContinuousCompliance::where('application_id', $application->id)->get();
 
+            if (!$currentStep->previous_step) {
+                $previousStep = new ApplicationStep();
+//                $previousStep->created_at = 'nothing submited yet';
+//                dd($previousStep->created_at);
+            }else{
+                $previousStep = ApplicationStep::findOrFail($currentStep->previous_step);
+            }
+
+
+//            dd($currentStep);
+
             return view('homes.application', [
+                'previous_step'         => $previousStep,
                 'pageInfo'              => $this->pageInfo,
                 'application'           => $application,
                 'stepsWithForm'         => $workflowInfo['stepsWithForm'],
