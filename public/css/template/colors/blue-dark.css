@@ -474,3 +474,8 @@ table.dataTable tbody tr.selected, table.dataTable tbody th.selected, table.data
   background-color: #ededed;
   border: 1px solid #dedede;
 }
+
+.col-md-6:nth-of-type(2n + 1){
+  display: block;
+  clear: left;
+}
