@@ -168,8 +168,8 @@ function toJson(){
 
 // Creates tabs from json
 // Uses createFields
-function createTabs(json, clientView = false, isClient){
-  
+function createTabs(json, clientView = false, isClient, report){
+
   var objs = JSON.parse(json);
   
   if(objs.length <= 0){
@@ -260,7 +260,6 @@ function createTabs(json, clientView = false, isClient){
   if(isClient || !clientView){
     $('.drag-validate').hide();
   }
-
   
     $('.preview-form .filter').hide();
     $('.preview-form #save-changes').hide();

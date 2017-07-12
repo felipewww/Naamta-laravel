@@ -238,6 +238,14 @@ function addEvents(elem, id = null, signature = null){
   // Configure Field
   $(elem).find('.drag-heading .fa-cog').click(function(){
     $(this).closest('.draggable-input').find('.drag-options').toggleClass('hidden');
+    if(type == 'paragraph' && $('.report-view').length > 0){
+      if ( $(this).closest('.draggable-input').find('.drag-options').hasClass('hidden') ){
+        $(this).closest('.draggable-input').find('.update-paragraph').show();
+      }else{
+        $(this).closest('.draggable-input').find('.update-paragraph').hide();
+        
+      }
+    }
   });
 
   // Toggle Comments
