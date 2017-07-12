@@ -295,11 +295,15 @@ class ApplicationsController extends Controller
         $cComplianceForms = ContinuousCompliance::where('application_id', $application->id)->get();
         $cCompliancesRegistered = SysContinuousCompliance::where('application_id', $application->id)->orderBy('created_at', 'DESC')->get();
 
+        $workflowInfo = HomeController::_getApplicationWorkflowInfo($application);
+
         return view('homes.application_completed', [
             'pageInfo'                  => $this->pageInfo,
             'application'               => $application,
             'cComplianceForms'          => $cComplianceForms,
             'cCompliancesRegistered'    => $cCompliancesRegistered,
+            'stepsWithForm'             => $workflowInfo['stepsWithForm'],
+            'approvalWithReport'        => $workflowInfo['approvalWithReport'],
             'isAdmin'                   => $user->hasRole(['admin','staff'])
         ]);
     }

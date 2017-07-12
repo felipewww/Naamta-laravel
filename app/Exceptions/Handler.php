@@ -44,6 +44,12 @@ class Handler extends ExceptionHandler
         if (app('env') == 'local') {
             return parent::report($exception);
         }else{
+            //23000 - duplicate email (unique key) on register
+            if ( $exception->getCode() == '23000' )
+            {
+                return true;
+            }
+
             return response()->view('errors.template', $data, (int)$exception->getCode());
         }
 
@@ -68,6 +74,14 @@ class Handler extends ExceptionHandler
         if (app('env') == 'local') {
             return parent::render($request, $exception);
         }else{
+
+            //23000 - duplicate email (unique key) on register
+            if ( $exception->getCode() == '23000' )
+            {
+                //return parent::render($request, $exception);
+                return;
+            }
+
             return response()->view('errors.template', $data, (int)$exception->getCode());
         }
     }
