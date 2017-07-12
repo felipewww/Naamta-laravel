@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\MModels\Config;
 use App\MModels\Form;
 use App\Models\ApplicationStepForms;
 use App\Models\ApplicationUserTypes;
 use App\Models\EmailTemplate;
+use App\Models\Field;
 use App\Models\Step;
 use App\Models\User;
 use App\Models\UserApplication;
@@ -47,8 +49,8 @@ class WorkflowController extends Controller
                 if ($userVerify->isEmpty()) {
                     return redirect('/');
                 }
-                
-                if( $user->hasRole('client') && $this->application->status != '1' ){
+
+                if( $user->hasRole('client') && ( $this->application->status != '1' && $this->application->status != 'completed') ){
                     return redirect('/');
                 }
             }
@@ -66,7 +68,7 @@ class WorkflowController extends Controller
         \DB::beginTransaction();
 
         /*
-         * Fall ehre when submit all forms, so, convert status to approved and find the step
+         * Fall here when submit all forms, so, convert status to approved and find the step
          * */
         if (!$this->step){
             $request->offsetSet('status', 'approved');
@@ -74,17 +76,7 @@ class WorkflowController extends Controller
             $this->application = $this->step->application;
         }
 
-        $currentUserType = $this->step->application->users()->where('user_id', Auth::user()->id)->get();
-
-        if ($currentUserType->count() == 1)
-        {
-            $currentUserType = $currentUserType->first();
-            $isResponsible = ($this->step->responsible == $currentUserType->user_type);
-        }
-        else
-        {
-            $isResponsible = $currentUserType->where('user_type', $this->step->responsible)->first();
-        }
+        $isResponsible = $this->step->loggedUserIsStepResponsible();
 
         if ( !$isResponsible ) {
             return redirect('/');
@@ -198,11 +190,20 @@ class WorkflowController extends Controller
 
     private function applicationForm($stepId, $stepResponsible, $form)
     {
-        $this->pageInfo->title              = 'Workflow';
-        $this->pageInfo->category->title    = 'Form';
-        $this->pageInfo->subCategory->title = 'View';
-
         $currentStep = ApplicationStep::where("id", $stepId)->first();
+        $this->pageInfo->title              = 'Workflow';
+        $this->pageInfo->category->title    = $this->pageInfo->application->client->company . "'s ";
+        $this->pageInfo->category->link     = "/home";
+        $this->pageInfo->subCategory->title = $currentStep->title;
+
+
+        $activeStep = $currentStep->application->steps()->where('status','current')->first();
+
+        if (!$activeStep) {
+            $activeStep = $currentStep->application->steps()->where('status','1')->first();
+        }
+
+        $allowEditForm = ( !$activeStep || $currentStep->id != $activeStep->id ) ? false : true;
 
         return view('workflow.form')->with([
             'stepId' => $stepId,
@@ -210,6 +211,7 @@ class WorkflowController extends Controller
             'isResponsible' => $currentStep->loggedUserIsResponsible(),
             'containers' => $form,
             'pageInfo' => $this->pageInfo,
+            'allowEditForm' => $allowEditForm,
             'defaultVars' => $this->defaultVars
         ]);
     }
@@ -245,13 +247,45 @@ class WorkflowController extends Controller
 
     public function saveStepForm(Request $request)
     {
-        try{
-            if($this->_updateFormToMongo(\GuzzleHttp\json_decode($request->form_json)))
+        if ( isset($request->form_json) )
+        {
+            $formJson = json_decode($request->form_json);
 
-            return json_encode(['status' => 'success', 'message' => 'Form saved']);
-        }catch (\Exception $e){
-            return json_encode(['status' => 'error', 'message' => 'Error']);
+            //Find form by config ID
+            $formConfigID = $formJson[0]->config->_id;
+            $formMongoID = Config::findOrFail($formConfigID)->container->forms->_id;
+
+            //Validate if exists a form with these ID's (step and mform_id)
+            $validate = ApplicationStepForms::where('application_step_id', $request->id)->where('mform_id', $formMongoID)->first();
+
+            //If the relations is ok, validate if the step can be updated (if it's a current step)
+            $application = $validate->Step->application;
+
+            $activeStep = $application->steps()->where('status','current')->first();
+
+            if (!$activeStep) {
+                $activeStep = $application->steps()->where('status','1')->first();
+            }
+
+            if ($activeStep->id != $validate->Step->id) {
+                abort(401, 'Action not allowed');
+            }
+
+            if ( !$validate->Step->loggedUserIsStepResponsible() ) {
+                abort(401, 'Action not allowed');
+            }
+
+
+            try{
+                if($this->_updateFormToMongo(\GuzzleHttp\json_decode($request->form_json)))
+
+                return json_encode(['status' => 'success', 'message' => 'Form saved']);
+            }catch (\Exception $e){
+                return json_encode(['status' => 'error', 'message' => 'Error']);
+            }
         }
+
+        return null;
     }
 
     public function gotoNextStep(Request $request)
@@ -352,7 +386,7 @@ class WorkflowController extends Controller
 
     public function updateFormField(Request $request){
         try{
-            $this->_updateFieldToMongo(\GuzzleHttp\json_decode($request->field));
+            $t = $this->_updateFieldToMongo(\GuzzleHttp\json_decode($request->field));
             return json_encode(['status' => 'success', 'message' => 'Comment added']);
         }catch (Exception $e){
             return json_encode(['status' => 'error', 'message' => 'Error']);

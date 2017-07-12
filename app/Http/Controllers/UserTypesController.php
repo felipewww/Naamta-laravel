@@ -44,7 +44,8 @@ class UserTypesController extends Controller
      */
     public function index(Request $request){
         $this->pageInfo->title              = 'User Types Default';
-        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->category->title    = 'User Types';
+        $this->pageInfo->category->link     = '/usertypes';
         $this->pageInfo->subCategory->title = 'User Types List';
 
         $error = $request->session()->get('error', false);
@@ -98,7 +99,8 @@ class UserTypesController extends Controller
     public function create()
     {
         $this->pageInfo->title              = 'User Types Default';
-        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->category->title    = 'User Types';
+        $this->pageInfo->category->link     = '/usertypes';
         $this->pageInfo->subCategory->title = 'User Types Create';
 
         // load the view and pass the email
@@ -137,7 +139,8 @@ class UserTypesController extends Controller
      */
     public function edit($id){
         $this->pageInfo->title              = 'User Types Default';
-        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->category->title    = 'User Types';
+        $this->pageInfo->category->link     = '/usertypes';
         $this->pageInfo->subCategory->title = 'User Types List';
 
         $userType = UserType::findOrFail($id);

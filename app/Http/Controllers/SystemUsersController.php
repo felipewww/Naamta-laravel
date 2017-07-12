@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Library\DataTablesExtensions;
+use App\Models\Application;
+use App\Models\Client;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Role;
@@ -19,14 +21,6 @@ class SystemUsersController extends Controller
     public function __construct()
     {
         parent::__construct();
-//        $this->middleware(function ($request, $next) {
-//            $user = \Auth::user()->authorizeRoles(['admin','staff']);;
-//            return $next($request);
-//        });
-//        $user = Auth::user();
-//        if ( !Auth::user()->hasRole('admin') ) {
-//            dd('not admin');
-//        }
 
         $this->roles = Roles::whereIn('name', ['admin','staff'])->get();
         $this->users = User::whereHas('roles', function($query) {
@@ -109,7 +103,7 @@ class SystemUsersController extends Controller
     
     public function edit(Request $request, $id){
 
-        if (Auth::user()->id != $id) {
+        if (Auth::user()->id != $id && !Auth::user()->isAdmin()) {
             abort(401, 'This action is unauthorized.');
         }
 
@@ -194,6 +188,13 @@ class SystemUsersController extends Controller
         }
 
         $user = User::findOrFail($request->id);
+        $client = Client::where(array("user_id" => $user->id))->firstOrFail();
+
+        $this->pageInfo->title              = 'Profile';
+        $this->pageInfo->category->title    = $client->company . "'s ";;
+        $this->pageInfo->category->link     = '/home';
+        $this->pageInfo->subCategory->title = 'Update Profile: ' . $user->name ;
+
         return view('systemUsers.form_client')->with(['user' => $user, 'roles'=>$this->roles, 'pageInfo' => $this->pageInfo]);
     }
 }

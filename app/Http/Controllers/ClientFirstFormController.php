@@ -29,7 +29,8 @@ class ClientFirstFormController extends Controller
 
         $user = Auth::user();
 
-        if(!$user->hasRole(['admin','staff'])) { return redirect('/'); }
+        $user->authorizeRoles(['admin','staff']);
+
 
         $application = Application::findOrFail($id);
         $form = Form::with([

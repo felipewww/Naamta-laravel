@@ -49,10 +49,6 @@ class ApplicationsController extends Controller
     {
         parent::__construct();
 
-//        $this->middleware(function ($request, $next) {
-//            $user = \Auth::user()->authorizeRoles(['admin', 'staff']);
-//            return $next($request);
-//        });
 
         $this->applications     = Application::all();
         $this->userTypes        = UserType::All();
@@ -201,9 +197,19 @@ class ApplicationsController extends Controller
                 array_push($arrTypes, ApplicationUserTypes::where('id', $user_type)->first()->slug);
             }
 
-            if( array_search('client', $arrTypes) === false ){
+            $validaHasClientType = array_count_values($arrTypes);
+
+            if ( !isset($validaHasClientType['client']) || $validaHasClientType['client'] > 1 ) {
                 return false;
             }
+//            dd(array_count_values($arrTypes));
+//            dd($arrTypes);
+//            dd(array_search('client', $arrTypes));
+
+//            if( array_search('client', $arrTypes) === false ){
+//                return false;
+//            }
+
 
             return true;
         });
@@ -282,8 +288,9 @@ class ApplicationsController extends Controller
         $application = Application::findOrFail($id);
 
         $this->pageInfo->title              = $application->client->company."'s".' Accredited Registration';
-        $this->pageInfo->category->title    = 'Client';
-        $this->pageInfo->subCategory->title = 'Dashboard';
+        $this->pageInfo->category->title    = $application->client->company;
+        $this->pageInfo->category->link     = "/home";
+        $this->pageInfo->subCategory->title = 'Continuous Compliance';
 
         $cComplianceForms = ContinuousCompliance::where('application_id', $application->id)->get();
         $cCompliancesRegistered = SysContinuousCompliance::where('application_id', $application->id)->orderBy('created_at', 'DESC')->get();
@@ -329,11 +336,6 @@ class ApplicationsController extends Controller
 
         $mForm = Form::find($rel->mongoform_id)->first();
 
-//        dd($request->all());
-//        dd($mForm);
-//        $formsController = new FormsController();
-//        $formsController->_saveContainers(\GuzzleHttp\json_decode($request->form_json), $relid);
-//        dd('here!');
         $this->_updateFormToMongo(\GuzzleHttp\json_decode($request->form_json));
 
         $rel->status = 'sent';
@@ -472,10 +474,30 @@ class ApplicationsController extends Controller
         return json_encode($res);
     }
 
+    public function manualResetApplication(Request $request)
+    {
+        $app = Application::findOrFail($request->id);
+
+        $currYear   = date('Y');
+        $currMonth  = date('m');
+        $currDay    = date('d');
+
+        $currDate = date('Y-m-d G:i:s', mktime(0,0,0,$currMonth, $currDay, $currYear));
+        $app->status = 'wt_firstform';
+        $app->created_at = date('Y-m-d G:i:s', mktime(0,0,0,$currMonth, $currDay, $currYear));
+        $app->reset_at = $currDate;
+        $app->save();
+
+        foreach ($app->steps as $step)
+        {
+            $step->status = '0';
+            $step->save();
+        }
+    }
+
     public static function cloneApplication(Application $application, User $user)
     {
         $uTypes = UserType::where('status', 1)->get();
-//dd($uTypes);
         /*
         * Clone user types default with new ids.
         * */
@@ -510,7 +532,6 @@ class ApplicationsController extends Controller
         /*
          * Clone default steps with new ID
          * */
-        $arr = [];
         $defaultSteps = Step::where('status', 1)->orderBy('ordination')->get();
         $default_ids = [];
         
@@ -541,12 +562,10 @@ class ApplicationsController extends Controller
                 'morphs_from'       => $step->morphs_from,
                 'morphs_id'         => $step->morphs_id,
             ];
-
-            if (!$responsible) {
-                dd($uTypesClones);
-//                dd($dataNewStep);
-            }
-
+//            if (!$responsible) {
+//                dd($uTypesClones);
+////                dd($dataNewStep);
+//            }
 
             $appSteps = ApplicationStep::create($dataNewStep);
             $default_ids[$step->id] = $appSteps->id;
@@ -556,7 +575,6 @@ class ApplicationsController extends Controller
              * */
             $emails = UsesEmail::where('step_id', $step->id)->get();
 
-            $t = [];
             foreach ($emails as $clone)
             {
                 $cloneID = $clone->received_by;
@@ -565,22 +583,13 @@ class ApplicationsController extends Controller
                 unset($clone['received_by']);
                 $clone->application_step_id = $appSteps->id;
                 $newEmailRelation = new ApplicationUsesEmail($clone->getAttributes());
-//dd(array_search($cloneID, $uTypesClones));
-//dd($uTypesClones);
-//                array_push($t,[$cloneID => array_key_exists($cloneID, $uTypesClones), $uTypesClones]);
 
                 if ( array_key_exists($cloneID, $uTypesClones) )
                 {
-//                    dd($uTypesClones[$cloneID]);
                     $newEmailRelation->received_by = $uTypesClones[$cloneID]; //$newAppType->id;
                     $newEmailRelation->save();
                 }
-
-//                if ($uTypesClones[$cloneID])
-//                {
-//                }
             }
-//                dd($t);
         }
     }
 }

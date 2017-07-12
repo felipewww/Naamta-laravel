@@ -89,4 +89,21 @@ class ApplicationStep extends Model
 
         return ( $try == null ) ? false : true;
     }
+
+    public function loggedUserIsStepResponsible()
+    {
+        $currentUserType = $this->application->users()->where('user_id', Auth::user()->id)->get();
+
+        if ($currentUserType->count() == 1)
+        {
+            $currentUserType = $currentUserType->first();
+            $isResponsible = ($this->responsible == $currentUserType->user_type);
+        }
+        else
+        {
+            $isResponsible = $currentUserType->where('user_type', $this->responsible)->first();
+        }
+
+        return $isResponsible;
+    }
 }

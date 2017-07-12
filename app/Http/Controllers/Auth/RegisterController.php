@@ -74,12 +74,25 @@ class RegisterController extends Controller
         \DB::beginTransaction();
 
         try{
-            $user = User::create([
-                'name'      => $data['name'],
-                'email'     => $data['email'],
-                'verified'  => false,
-                'password'  => bcrypt($data['password'])
+
+            $user = new User();
+            $user->fillable([
+                'name', 'password', 'status', 'see_apps', 'email'
             ]);
+
+            $user->name      = $data['name'];
+            $user->email     = $data['email'];
+            $user->verified  = false;
+            $user->password  = bcrypt($data['password']);
+
+            $user->save();
+
+//            $user = User::create([
+//                'name'      => $data['name'],
+//                'email'     => $data['email'],
+//                'verified'  => false,
+//                'password'  => bcrypt($data['password'])
+//            ]);
 
             $user
                 ->roles()

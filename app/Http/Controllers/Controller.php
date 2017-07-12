@@ -272,11 +272,7 @@ class Controller extends BaseController
     protected function _updateFieldToMongo($v){
         try{
             $field = Field::find($v->_id);
-//            dd($field->setting);
 
-//            if ($field->setting->error == "Pass") {
-//                return false;
-//            }
             if(isset($v->setting->signature)){
 
                 //Admin and staffs not allowed to change values, only client and just when field not passed
@@ -289,20 +285,52 @@ class Controller extends BaseController
             }
             if(isset($v->setting->value)){
 
-                //Admin and staffs not allowed to change values, only client and just when field not passed
-                if (Auth::user()->hasRole(['client']) && $field->setting->error != "Pass") {
-                    $field->setting->value = $v->setting->value;
-                    $field->setting->save();
-                }else{
-                    return false;
+                //$fieldJson = json_decode($v->field);
+
+                //Find form by Field ID
+                $fieldID = $field->_id;
+
+                $mform = \App\MModels\Field::findOrFail($fieldID)->container->forms;
+                $formMongoID = $mform->_id;
+
+                $step = ApplicationStepForms::where('mform_id', $formMongoID)->first()->Step;
+
+                if ( !$step->loggedUserIsStepResponsible() ) {
+                    abort(401, 'Action not allowed');
                 }
+
+                $application = $step->application;
+
+                $activeStep = $application->steps()->where('status','current')->first();
+
+                if (!$activeStep) {
+                    $activeStep = $application->steps()->where('status','1')->first();
+                }
+
+                if ($activeStep->id != $step->id) {
+                    abort(401, 'Action not allowed');
+                }
+//                if ( !$step->loggedUserIsStepResponsible() ) {
+//                    abort(401, 'Action not allowed');
+//                }
+
+                $field->setting->value = $v->setting->value;
+                $field->setting->save();
+                //Admin and staffs not allowed to change values, only client and just when field not passed
+//                if (Auth::user()->hasRole(['client']) && $field->setting->error != "Pass") {
+//                    $field->setting->value = $v->setting->value;
+//                    $field->setting->save();
+//                }else{
+//                    return false;
+//                }
             }
             if(isset($v->setting->options)){
                 $field->setting->options = $v->setting->options;
                 $field->setting->save();
             }
             if(isset($v->setting->error)){
-                if (Auth::user()->hasRole(['admin','staff'])) {
+//                if (Auth::user()->hasRole(['admin','staff'])) {
+                if (Auth::user()->authorizeRoles(['admin','staff'])) {
                     $field->setting->error = $v->setting->error;
                     $field->setting->save();
                 }

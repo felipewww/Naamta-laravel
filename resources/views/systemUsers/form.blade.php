@@ -26,7 +26,7 @@
                         <input type="hidden" name="_method" value="{{ $method }}">
                         <div class="row" style="margin-top: 15px;">
                             <div class="col-md-12">
-                                <input type="text" class="form-control" name="name" disabled placeholder="Name" value="{{ $user->name!=null ? $user->name : old('name') }}" >
+                                <input type="text" class="form-control" name="name" placeholder="Name" value="{{ $user->name!=null ? $user->name : old('name') }}" >
                             </div>
                         </div>
                         <div class="row" style="margin-top: 15px;">

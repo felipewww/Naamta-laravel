@@ -8,8 +8,11 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="white-box">
-                    <h3 class="box-title m-b-0"><b>Application Info</b></h3>
-
+                    <h3 class="box-title m-b-0"><b>Application Info</b>
+                        @if(\Illuminate\Support\Facades\Auth::user()->isAdmin())
+                            {{--<a href="/application/reset/{{$application->id}}">Reset App</a>--}}
+                        @endif
+                    </h3>
                     <div class="col-md-4">
                         <h4>Application Started:</h4>
                         <p class="m-b-40">{{ $application->created_at }}</p>
@@ -28,9 +31,75 @@
                     <div class="clearfix"></div>
                 </div>
             </div>
+
+            {{--FORMS--}}
+            <div class="col-sm-12">
+                <div class="white-box col-sm-6">
+                    <h3 class="box-title m-b-0"><b>All Forms</b></h3>
+                    <div class="table-responsive">
+                        <table id="allforms" class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Form</th>
+                                <th>Status</th>
+                                <th>Last update</th>
+                                <th style="width: 120px">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($stepsWithForm as $formStep)
+                                @foreach($formStep->mongoForms as $stepMongoForm)
+                                    <tr>
+                                        <td>{{ $stepMongoForm->mongoform->name }}</td>
+                                        <td>{{ $stepMongoForm->mongoform->status }}</td>
+                                        <td>{{ $stepMongoForm->mongoform->updated_at }}</td>
+                                        <td>
+                                            @if($formStep->status !== "0" &&  $formStep->status !== "1")
+                                                <a href="/workflow/step/{{$formStep->id}}/{{$stepMongoForm->mform_id}}/show" class="btn btn-warning btn-circle"><i class="fa fa-pencil"></i></a>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="white-box col-sm-6">
+                    <h3 class="box-title m-b-0"><b>Reports</b></h3>
+                    <div class="table-responsive">
+                        <table id="allforms" class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Report</th>
+                                <th>Last Update</th>
+                                <th style="width: 120px">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{--@foreach($approvalWithReport as $k => $approvalStep)--}}
+                            @foreach($approvalWithReport as $approvalStep)
+                                @if($approvalStep!=null && $approvalStep["report"]!=null)
+                                    <tr>
+                                        <td>{{ $approvalStep["report"]->title }}</td>
+                                        <td>{{  $approvalStep["report"]->updated_at }}</td>
+                                        <td>
+                                            <a href="/workflow/step/{{$approvalStep["stepId"]}}/approval/{{$approvalStep['report']->id}}" class="btn btn-warning btn-circle"><i class="fa fa-eye"></i></a>
+                                        </td>
+                                    </tr>
+                                @endif
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {{--FORMS--}}
+
             <div class="col-sm-12">
                 <div class="white-box">
-                @if($isAdmin)
+                {{--@if($isAdmin)--}}
+                @if( \Illuminate\Support\Facades\Auth::user()->isAdmin() || \Illuminate\Support\Facades\Auth::user()->isStaff() )
                     <h3 class="box-title m-b-0"><b>Continuous Compliance</b></h3>
                     <h2>Create new</h2>
                     <form class="form-horizontal" method="post" action="addContinuousCompliance">

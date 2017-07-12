@@ -2,17 +2,6 @@
 
 @section('content')
     <div class="container-fluid">
-        <!-- .row -->
-        <div class="row">
-            <div class="col-sm-12">
-                {{--<div class="white-box">
-                    <h3 class="box-title m-b-20" style="text-align: left;"><b>Latest Comments</b></h3>
-                    <button class="btn btn-success m-t-0" style="float: right">See Full History</button>
-                    <p><b>Steave : </b>Lorem ipsum dolor sit amet, consectetur adipisicing elit. </p>
-                    <p><b>Steave : </b>Nam sit amet ex quis ipsum lacinia feugiat id finibus turpis. </p>
-                </div>--}}
-            </div>
-        </div>
         <div class="row">
             <div class="col-sm-12 col-md-4">
                 <div class="white-box">
@@ -24,6 +13,16 @@
                     <p class="m-b-40">Step : {{ ($currentStep->nextStep() != null) ? $currentStep->nextStep()->title : "It's the last step" }}</p>
                     <h4>Previous Step:</h4>
                     <p class="">Step :  {{($currentStep->previousStep()!=null ? $currentStep->previousStep()->title : "It's the first step")}}</p>
+                    <br>
+                    <h4>Responsible User Type: <strong>{{ $userTypeResponsible->title }}</strong></h4>
+                    <ul>
+                        @foreach($userResponsible as $ures)
+                        <li>
+                            {{ $ures->user->name }}, {{ $ures->user->email }}
+                        </li>
+                        @endforeach
+                    </ul>
+
                     @if($isResponsible)
                         @if($currentStep->morphs_from === "App\Models\Approval")
                             @if($currentStep->approval->has_report === 0)
@@ -37,7 +36,6 @@
                                 <div style="display: block; margin-bottom: 10px;">
                                     <a href="/workflow/step/{{$currentStep->id}}/{{$form->mform_id}}/show" class="btn btn-success">Fill Form: {{ $form->mongoform->name }}</a>
                                 </div>
-                            {{--<a href="/workflow/step/{{$currentStep->id}}/show" class="btn btn-success pull-right">View Form</a>--}}
                             @endforeach
                                 <a href="javascript:;" onclick="workflow.gotoNextStep({{$currentStep->id}})" class="btn btn-danger">Submit all forms</a>
                         @endif

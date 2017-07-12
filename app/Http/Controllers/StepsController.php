@@ -31,7 +31,8 @@ class StepsController extends Controller
         parent::__construct();
 
         $this->middleware(function ($request, $next) {
-            $user = \Auth::user()->authorizeRoles(['admin']);;
+            \Auth::user()->authorizeRoles(['admin','staff']);
+//            $user = \Auth::user()->authorizeRoles(['admin']);;
             return $next($request);
         });
         $this->steps = Step::all();
@@ -45,7 +46,8 @@ class StepsController extends Controller
     public function index(Request $request)
     {
         $this->pageInfo->title              = 'Default Steps List';
-        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->category->title    = 'Steps';
+        $this->pageInfo->category->link     = '/steps';
         $this->pageInfo->subCategory->title = 'Default steps';
 
         $vars = new \stdClass();
@@ -161,7 +163,8 @@ class StepsController extends Controller
     public function create()
     {
         $this->pageInfo->title              = 'Default Steps Create';
-        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->category->title    = 'Steps';
+        $this->pageInfo->category->link     = '/steps';
         $this->pageInfo->subCategory->title = 'Create Step';
 
         $vars = $this->defaultVars();
@@ -403,12 +406,14 @@ class StepsController extends Controller
     public function edit($id)
     {
         $this->pageInfo->title              = 'Default Step Edit';
-        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->category->title    = 'Steps';
+        $this->pageInfo->category->link     = '/steps';
         $this->pageInfo->subCategory->title = 'Edit Step';
 
         if ( $id instanceof ApplicationStep ) {
             $this->pageInfo->title              = 'Applicant Step Edit';
-            $this->pageInfo->category->title    = 'Workflow';
+            $this->pageInfo->category->title    = 'Steps';
+            $this->pageInfo->category->link     = '/steps';
             $this->pageInfo->subCategory->title = 'Edit Step';
 
             $step = $id;

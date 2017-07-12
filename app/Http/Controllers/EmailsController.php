@@ -42,7 +42,8 @@ class EmailsController extends Controller
     public function index(Request $request)
     {
         $this->pageInfo->title              = 'Email Templates';
-        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->category->title    = 'Emails';
+        $this->pageInfo->category->link    = '/emails';
         $this->pageInfo->subCategory->title = 'Email List';
 
         $this->dataTablesInit();
@@ -93,7 +94,8 @@ class EmailsController extends Controller
     public function create()
     {
         $this->pageInfo->title              = 'Email Templates';
-        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->category->title    = 'Emails';
+        $this->pageInfo->category->link    = '/emails';
         $this->pageInfo->subCategory->title = 'Email Create';
         // load the view and pass the email
         return view('emails.form', ['pageInfo' => $this->pageInfo]);
@@ -135,7 +137,8 @@ class EmailsController extends Controller
     public function edit($id)
     {
         $this->pageInfo->title              = 'Email Templates';
-        $this->pageInfo->category->title    = 'Workflow';
+        $this->pageInfo->category->title    = 'Emails';
+        $this->pageInfo->category->link    = '/emails';
         $this->pageInfo->subCategory->title = 'Email Edit';
 
         // Get email template

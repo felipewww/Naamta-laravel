@@ -23,4 +23,10 @@ class UserApplication extends Model
     {
         return $this->belongsTo(ApplicationUserTypes::class, 'user_type', 'id');
     }
+
+    public function application()
+    {
+        return $this->belongsTo(Application::class);
+//        return $this->belongsToMany(Application::class, );
+    }
 }

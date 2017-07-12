@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Auth\ActivationService;
 use App\Models\Application;
+use App\Models\ApplicationUserTypes;
 use App\Models\Approval;
 use App\Models\ClientFirstForm;
 use App\Models\ContinuousCompliance;
 use App\Models\FormTemplate;
 use App\Models\Report;
 use App\Models\SysContinuousCompliance;
+use App\Models\User;
 use App\Models\UserApplication;
 use Faker\Factory;
 use Illuminate\Http\Request;
@@ -69,12 +71,19 @@ class HomeController extends Controller
             );
         }
 
-        $userType = Auth::user()->roles[0]->name;
-
-        $this->pageInfo->title              = Auth::user()->name."'s".' Dashboard';
-        $this->pageInfo->category->title    = $userType;
-        $this->pageInfo->subCategory->title = 'Homepage';
+        $user = Auth::user();
+        $userType = $user->roles[0]->name;
         $this->vars->userType = $userType;
+
+        $this->pageInfo->title              = 'Dashboard';
+        $this->pageInfo->category->title    = "Applications";
+        $this->pageInfo->category->link     = "/home";
+        $this->pageInfo->subCategory->title =  Auth::user()->name . "'s";
+        $this->vars->userType = $userType;
+
+        if($userType == 'client'){
+            $this->pageInfo->category->title    = $user->client->company."'s";
+        }
 
         if($userType === "client"){
             $application = Client::where("user_id", Auth::id())->first()->application()->first();
@@ -85,10 +94,33 @@ class HomeController extends Controller
                 return $this->applicationDashboard($request, $application->id);
             }
         }
-        
-        $this->vars->completedApplications = Application::where('status', 'completed')->get();
 
-        $this->vars->activeApplications = Application::where('status', '1')->get();
+        $appIds = UserApplication::where('user_id', Auth::user()->id)->with(['application','application.steps'])->get();
+
+
+        if (Auth::user()->isAdmin())
+        {
+            $this->vars->completedApplications = Application::where('status', 'completed')->get();
+            $this->vars->activeApplications = Application::where('status', '1')->get();
+        }
+        else if(Auth::user()->isstaff())
+        {
+            $completedApplications = $appIds->where('application.status', 'completed');
+            $this->vars->completedApplications = [];
+
+            foreach ($completedApplications as $userApp)
+            {
+                array_push($this->vars->completedApplications, $userApp->application);
+            }
+
+            $activeApplications = $appIds->where('application.status', '1');
+
+            $this->vars->activeApplications = [];
+            foreach ($activeApplications as $userApp)
+            {
+                array_push($this->vars->activeApplications, $userApp->application);
+            }
+        }
 
         foreach ($this->vars->activeApplications as &$app)
         {
@@ -115,7 +147,7 @@ class HomeController extends Controller
         /*
          * Não da para exibir os firstforms pq o cliente pode ter ou nao preenchido e exibe o botão de approve e deny, antes de ter preenchido
          */
-        $this->vars->inactiveApplications = Application::whereIn('status', ['0','wt_payment','denied', 'wt_firstform_validation'])->get();
+        $this->vars->inactiveApplications = Application::whereIn('status', ['0','wt_payment','denied', 'wt_firstform_validation'])->orderBy('created_at', 'DESC')->get();
         foreach ($this->vars->inactiveApplications as &$inApp)
         {
             switch ($inApp->status)
@@ -144,9 +176,10 @@ class HomeController extends Controller
 
         if ( $application->status == 'wt_firstform' || $application->status == 'denied' )
         {
-            $this->pageInfo->title              = $user->client->company."'s".' Registration';
-            $this->pageInfo->category->title    = 'Registration';
-            $this->pageInfo->subCategory->title = 'Form';
+            $this->pageInfo->title              = 'Registration';
+            $this->pageInfo->category->title    = $user->client->company."'s";
+            $this->pageInfo->category->link     = "/home";
+            $this->pageInfo->subCategory->title = 'Registration Form';
 
             $user = Auth::user();
             $form = \App\MModels\Form::with([
@@ -168,9 +201,10 @@ class HomeController extends Controller
         }
         else if( $application->status == 'wt_firstform_validation' )
         {
-            $this->pageInfo->title              = $user->client->company."'s".' Registration';
-            $this->pageInfo->category->title    = 'Waiting validation';
-            $this->pageInfo->subCategory->title = 'Form';
+            $this->pageInfo->title              = 'Registration';
+            $this->pageInfo->category->title    = $user->client->company."'s";
+            $this->pageInfo->category->link     = "/home";
+            $this->pageInfo->subCategory->title = 'Waiting validation';
 
             return view('applications.wait_firstform_verify')->with([
                 'pageInfo' => $this->pageInfo
@@ -178,80 +212,47 @@ class HomeController extends Controller
         }
         else if( $application->status == 'completed' )
         {
-            $this->pageInfo->title              = $application->client->company."'s".' Accredited Registration';
-            $this->pageInfo->category->title    = 'Client';
+            $this->pageInfo->title              = 'Accredited Registration';
+            $this->pageInfo->category->title    = $application->client->company."'s";
+            $this->pageInfo->category->link     = "/home";
             $this->pageInfo->subCategory->title = 'Dashboard';
 
             $cComplianceForms = ContinuousCompliance::where('application_id', $application->id)->get();
             $cCompliancesRegistered = SysContinuousCompliance::where('application_id', $application->id)->orderBy('created_at', 'DESC')->get();
+
+            $workflowInfo = $this->getApplicationWorkflowInfo($application);
 
             return view('homes.application_completed', [
                 'pageInfo'                  => $this->pageInfo,
                 'application'               => $application,
                 'cComplianceForms'          => $cComplianceForms,
                 'cCompliancesRegistered'    => $cCompliancesRegistered,
+                'stepsWithForm'             => $workflowInfo['stepsWithForm'],
+                'approvalWithReport'        => $workflowInfo['approvalWithReport'],
                 'isAdmin'                   => $user->hasRole(['admin','staff'])
             ]);
         }
         else
         {
+            $this->pageInfo->title              = 'Application';
+            $this->pageInfo->category->title    = $application->client->company."'s";
+            $this->pageInfo->category->link     = "/home";
+            $this->pageInfo->subCategory->title = 'Dashboard';
+
             /*
              * Verify if current user has some responsibility about this step
              * */
             $currentStep = $application->steps->where("status", "current")->first();
 
-            if($currentStep===null){
-                $currentStep = $application->steps->first();
+            if (!$currentStep) {
+                $currentStep = $application->steps->where("status", "1")->first();
             }
 
-            $currentUserType = $application->users()->where('user_id', $user->id)->get();
+            $isResponsible = $currentStep->loggedUserIsStepResponsible();
+            $userTypeResponsible = ApplicationUserTypes::where('id', $currentStep->responsible)->first();
+            $userResponsible = UserApplication::where('user_type', $currentStep->responsible)->get();
 
-            if ($currentUserType->count() == 1)
-            {
-                $currentUserType = $currentUserType->first();
-                $isResponsible = ($currentStep->responsible == $currentUserType->user_type);
-            }
-            else
-            {
-                $isResponsible = $currentUserType->where('user_type', $currentStep->responsible)->first();
-            }
-
-            /*
-             * End verify responsible
-             * */
-
-            //Starting... Get all forms related with all steps, including the current step
-            $stepsWithForm =  $application->steps->where("morphs_from", FormTemplate::class )->all();
-            foreach ($stepsWithForm as &$stepHasForm)
-            {
-                $thisForms = $stepHasForm->Forms()->get();
-                foreach ($thisForms as &$relData)
-                {
-                    $mongoForm = Form::findOrFail($relData->mform_id);
-                    $relData->offsetSet('mongoform', $mongoForm);
-                }
-
-                $stepHasForm->offsetSet('mongoForms', $thisForms);
-            }
-
-            $approvalWithReport = $application->steps->where('morphs_from', Approval::class)->where('approval.has_report', '1')->all();
-            $reports = array();
-
-
-            foreach($approvalWithReport as $approval)
-            {
-                $step = ApplicationStep::findOrFail($approval->id);
-
-                $allReports = Report::where('application_steps_id', $step->id)->get();
-
-                if($allReports != null)
-                {
-                    foreach ($allReports as $rep)
-                    {
-                        array_push($reports, array('stepId' => $approval->id, 'report' => $rep));
-                    }
-                }
-            }
+            $workflowInfo = $this->getApplicationWorkflowInfo($application);
 
             $errorsFormsFields = $this->_getAllFormsErrorsField($currentStep);
             $cComplianceForms = ContinuousCompliance::where('application_id', $application->id)->get();
@@ -259,14 +260,60 @@ class HomeController extends Controller
             return view('homes.application', [
                 'pageInfo'              => $this->pageInfo,
                 'application'           => $application,
-                'stepsWithForm'         => $stepsWithForm,
-                'approvalWithReport'    => $reports,
+                'stepsWithForm'         => $workflowInfo['stepsWithForm'],
+                'approvalWithReport'    => $workflowInfo['approvalWithReport'],
                 'currentStep'           => $currentStep,
                 'isResponsible'         => $isResponsible,
                 'errorsFormsFields'     => $errorsFormsFields,
                 'cComplianceForms'      => $cComplianceForms,
+                'userResponsible'       => $userResponsible,
+                'userTypeResponsible'   => $userTypeResponsible
             ]);
         }
+    }
+
+    private function getApplicationWorkflowInfo($application)
+    {
+        $stepsWithForm =  $application->steps->where("morphs_from", FormTemplate::class )->all();
+
+        foreach ($stepsWithForm as &$stepHasForm)
+        {
+            $thisForms = $stepHasForm->Forms()->get();
+            foreach ($thisForms as &$relData)
+            {
+                $mongoForm = Form::findOrFail($relData->mform_id);
+                $relData->offsetSet('mongoform', $mongoForm);
+            }
+
+            $stepHasForm->offsetSet('mongoForms', $thisForms);
+        }
+
+        $approvalWithReport = $application->steps->where('morphs_from', Approval::class)->where('approval.has_report', '1')->all();
+        $reports = array();
+
+
+        foreach($approvalWithReport as $approval)
+        {
+            $step = ApplicationStep::findOrFail($approval->id);
+
+            $allReports = Report::where('application_steps_id', $step->id)->get();
+
+            if($allReports != null)
+            {
+                foreach ($allReports as $rep)
+                {
+                    array_push($reports, array('stepId' => $approval->id, 'report' => $rep));
+                }
+            }
+        }
+
+        $res = [
+            'approvalWithReport'    => $reports,
+            'stepsWithForm'         => $stepsWithForm
+
+        ];
+//    dd($res);
+        return $res;
     }
 
     private function _getStepsForm($steps, $currentStep){
