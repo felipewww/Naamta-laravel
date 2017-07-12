@@ -1041,6 +1041,7 @@ function validateForm(){
             dragInput.removeClass('required-fail');
           }else{
             dragInput.addClass('required-fail');
+            dragInput.next('.required-error-message').remove();
             $('<p class="required-error-message m-t-10" style="color: red">Please, insert a valid e-mail.</p>').insertAfter(dragInput);
           } 
       }else{
@@ -1052,17 +1053,24 @@ function validateForm(){
       }
     });
 
-    var fails = $('.required-fail');
+    var fails = $('.required-fail, .drag-heading.Fail');
 
+    var reproves = $('.drag-heading.Fail');
 
     var id = $('.tab-fail').removeClass('tab-fail');
 
     fails.each(function(){
       var id = $(this).closest('.tab').attr('id');
       $('[href="#'+id+'"]').addClass('tab-fail');
-    })
+    });
 
-    if(fails.length > 0){
+    $('.fail-error').remove();
+    if(reproves.length > 0){
+      var holder = $('.btn-submit').parent();
+      $('<p class="alert text-center alert-danger fail-error">There are fields needing review</p>').prependTo(holder);
+    }
+
+    if(fails.length > 0 || reproves.length > 0){
       return false;
     }else{
       return true;
