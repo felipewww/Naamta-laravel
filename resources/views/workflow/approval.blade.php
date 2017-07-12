@@ -16,6 +16,7 @@
                 <h3 class="box-title m-b-20">Approval</h3>
                 {{ $approval->title }}<br>
                 {{ $approval->description }}
+
             </div>
         </div>
     </div>
@@ -102,10 +103,7 @@
         <script src="{{ asset("js/template/jquery.mask.min.js") }}"></script>
         <script>
             var username = '{{ Auth::user()->name }}';
-
             createTabs($('input[name=report]').val(), {{ $isResponsible ? 'false' : 'true' }});
-
-
         </script>
         <script>
             @if(!$isResponsible)
@@ -126,7 +124,6 @@
         $(document).ready(function () {
             $('#list-container, #addTab').hide();
         });
-
         @endif
     </script>
 @endsection
