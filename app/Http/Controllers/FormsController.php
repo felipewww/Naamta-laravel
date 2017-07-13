@@ -170,7 +170,7 @@ class FormsController extends Controller
         $this->pageInfo->subCategory->title = 'Form View';
 
         $form = FormTemplate::withTrashed()->with( array( 'containers', 'containers.fields', 'containers.fields.comments') )->findOrFail($id);
-       
+
         return view('forms.show')->with(['form' => $form, 'containers' => $this->_convertFormToJson($form), 'pageInfo' => $this->pageInfo]);
     }
 

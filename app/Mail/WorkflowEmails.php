@@ -64,7 +64,7 @@ class WorkflowEmails extends Mailable
         ])->view('emails.workflow.templates');
     }
 
-    public function reproved()
+    public function reject()
     {
         $this->subject = $this->params['title'];
 

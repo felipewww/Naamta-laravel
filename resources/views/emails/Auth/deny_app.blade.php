@@ -8,6 +8,6 @@
     Hello {{ $user->name }},
     <br>
     <br>
-    Sorry, your company's application <strong>({{ $client->company }})</strong> was reproved.
+    Sorry, your company's application <strong>({{ $client->company }})</strong> was rejected.
     Please, access the panel, validate if all information was filled correctly and send again.
 @endsection

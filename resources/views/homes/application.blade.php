@@ -26,7 +26,7 @@
                     @if($isResponsible)
                         @if($currentStep->morphs_from === "App\Models\Approval")
                             @if($currentStep->approval->has_report === 0)
-                                <button onclick="workflow.sendApproval('reproved', '{{$currentStep->id}}', null);" class="btn btn-danger pull-left">Reprove</button>
+                                <button onclick="workflow.sendApproval('rejected', '{{$currentStep->id}}', null);" class="btn btn-danger pull-left">Reprove</button>
                                 <button onclick="workflow.sendApproval('approved', '{{$currentStep->id}}', null);" class="btn btn-primary pull-right">Approve</button>
                             @else
                                 <a href="/workflow/step/{{$currentStep->id}}/show" class="btn btn-success pull-right">Evaluate with report</a>

@@ -88,7 +88,7 @@ class WorkflowController extends Controller
                 $receivedByList = $this->step->usesEmails()->where('send_when','success')->get();
                 break;
 
-            case 'reproved';
+            case 'rejected';
                 $receivedByList = $this->step->usesEmails()->where('send_when','rejected')->get();
                 break;
 
@@ -344,7 +344,7 @@ class WorkflowController extends Controller
             $step->save();
 
             switch ($request->status){
-                case 'reproved':
+                case 'rejected':
                     $previousStep = ApplicationStep::findOrFail( $step->previous_step );
                     $previousStep->status = "current";
                     $previousStep->save();

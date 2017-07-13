@@ -48,7 +48,7 @@
         $('canvas').css('pointer-events', 'none');
         $('button.clear').remove();
         $('.dropzone, .remove-file').remove();
-        $('.comment-msg, .is-incorrect').removeAttr('disabled').css('opacity', '0');
+       $('.comment-msg, .is-incorrect').removeAttr('disabled');
         $('.is-incorrect').css('display', '0');
 
         $('[id*="text-field"] .update-value').each(function(){
@@ -77,7 +77,7 @@
     <script src="{{ asset("js/workflow.js") }}"></script>
     <script>
         $(document).ready(function () {
-            $('#save, #open-history, .form-holder > .filter').hide();
+            $('#save, #open-history').hide();
         });
 
         @if(!$isResponsible)
