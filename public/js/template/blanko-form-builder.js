@@ -26,8 +26,8 @@ var menuTop = $('#list-container').offset().top;
 
 $(window).on('scroll', function(){
   var scrollTop = $(window).scrollTop();
-  console.log(scrollTop);
-  console.log($('#page-wrapper').height())
+  //console.log(scrollTop);
+  //console.log($('#page-wrapper').height())
   
     if(scrollTop >= menuTop && (scrollTop + $('#list-container').height()) < (scrollTop + $('#drag-container').height()) ){
       if( scrollTop < $('#page-wrapper').height() - $('#list-container').height() ) {  
@@ -283,12 +283,13 @@ function addEvents(elem, id = null, signature = null){
   // Delete Field
   $(elem).find('.drag-heading .fa-times').click(function(){
     var fieldId = $(this).closest('.draggable-input').attr('id').split('__')[1];
-    $('.rules tr td').each(function(){
-      
-      if($(this).attr('field-id') == fieldId ){
-        $(this).parent().remove();
+    var rules = $('.rules tr td')
+    for(var i = 0; i < rules.length; i++){
+      var rule = rules[i];
+      if($(rule).attr('field-id') == fieldId ){
+        $(rule).parent().remove();
       }
-    })
+    }
     $(this).closest('.draggable-input').remove();
     ordenateFields();
   });
@@ -467,15 +468,16 @@ function addEvents(elem, id = null, signature = null){
     var fields = $('#tab' + id).find('.draggable-input');
     var elemId = $(this).closest('.draggable-input').attr('id').split('__')[1];
     options = '<option value="initial">Select Field</option>';
-
-    [].forEach.call(fields, function(field, index){
+    for(var i = 0; i < fields.length; i++){
+      var field = fields[i];
+      var index = i;
       id = $(field).attr('id').split('__')[1];
       title = $(field).find('.drag-heading h4').text();
       ordenation = $(field).find('.drag-heading .ordenation').text().replace('(', '').replace(')','');
       if( ( (title != "Static Paragraph") && (title != "Static Header") && (title != "Signature") && (title != "File Upload") ) && ( elemId != id) ){
         options += '<option value="'+ id +'" ordenation="'+ ordenation +'">('+ ordenation + ')' + title +'</option>';
       }
-    });
+    }
     $(this).closest('.drag-options').find('.fields').html(options);
   });
 
@@ -486,11 +488,15 @@ function addEvents(elem, id = null, signature = null){
 
   updateRulesPages();
 
-  var labels = $(elem).find('input + label').each(function(index){
+  var labels = $(elem).find('input + label');
+  for(var i = 0; i < labels.length; i++){
+    var label = labels[i];
+    var index = i;
+
     var name = 'input_' + id + '__' + index;
-    $(this).attr('for', name);
-    $(this).prev().attr('id', name);
-  });
+    $(label).attr('for', name);
+    $(label).prev().attr('id', name);
+  }
 
   //prevInput.next().attr('for', radio.attr('name'));
   //Incorrect / Correct
@@ -521,14 +527,15 @@ function addEvents(elem, id = null, signature = null){
       $(elem).find('.drag-validate input[value="Fail"]').prop('checked', false);
       var optionsArray = new Array();
       var options = $(this).find('option');
-      options.each(function(){
+      for(var i = 0; i < options.length; i++){
+        var opt = options[i];
         var option = {
-            label : $(this).text(),
-            value : $(this).val(),
-            prop : $(this).prop('selected')
+            label : $(opt).text(),
+            value : $(opt).val(),
+            prop : $(opt).prop('selected')
         };
         optionsArray.push(option);
-      });
+      }
       $(elem).find('.drag-input').removeClass('required-fail');
       $(elem).find('.required-error-message').remove()
       checkFieldValue(id, null, optionsArray);
@@ -539,14 +546,16 @@ function addEvents(elem, id = null, signature = null){
       $(elem).find('.drag-validate input[value="Fail"]').prop('checked', false);
       var optionsArray = new Array();
       var options = $(this).closest('.drag-input').find('.radio');
-      options.each(function(){
+      for(var i = 0; i < options.length; i++){
+      var opt = options[i];
         var option = {
-          label : $(this).find('label').text(),
-          value : $(this).find('input').val(),
-          prop : $(this).find('input').prop('checked')
+          label : $(opt).find('label').text(),
+          value : $(opt).find('input').val(),
+          prop : $(opt).find('input').prop('checked')
         };
         optionsArray.push(option);
-      });
+      
+      }
       $(elem).find('.drag-input').removeClass('required-fail');
       $(elem).find('.required-error-message').remove()
       checkFieldValue(id, null, optionsArray);
@@ -557,14 +566,16 @@ function addEvents(elem, id = null, signature = null){
       $(elem).find('.drag-validate input[value="Fail"]').prop('checked', false);
       var optionsArray = new Array();
       var options = $(this).closest('.drag-input').find('.checkbox');
-      options.each(function(){
+
+      for(var i = 0; i < options.length; i++){
+      var opt = options[i];
         var option = {
           label : $(this).find('label').text(),
           value : $(this).find('input').val(),
           prop : $(this).find('input').prop('checked')
         };
         optionsArray.push(option);
-      });
+      }
       $(elem).find('.drag-input').removeClass('required-fail');
       $(elem).find('.required-error-message').remove()
       checkFieldValue(id, null, optionsArray);
@@ -596,12 +607,14 @@ function addEvents(elem, id = null, signature = null){
             $('#file-holder').html('<img src="'+dataUrl+'" width="200" height="200" alt="<?php echo $empNameFull; ?>">');
         });
         this.on("removedfile", function(file, dataUrl) {
-          [].forEach.call(filesArray[id], function(item, index){
+          for(var i = 0; i < filesArray[id]; i++){
+          var item = filesArray[id][i]
+          var index = i;
             if(item.name == file.name){
               filesArray[id].splice(index, 1);
               checkFieldValue(id, filesArray[id]);
             }
-          });
+          }
         });
 
       },
@@ -706,10 +719,11 @@ function appendList(){
       updateRulesPages();
   });
 
-  [].forEach.call(list, function(item) {
+  for(var i = 0; i < list.length; i++){
+    var item = list[i];
     item.addEventListener('dragstart', handleDragStartList, false);
     item.addEventListener('dragend', handleDragEnd, false);
-  });
+  }
 }
 
 // Appends tabs navigation
@@ -744,11 +758,13 @@ function appendNavigation(){
   $('.order-fields').click(function(){
     var orderType = $(this).attr('data-order');
     if(orderType != "normal"){
-      $('.draggable-input').each(function(){
-        if($(this).find('[value="'+ orderType +'"]').prop('checked') == true ){
-          $(this).prependTo($(this).closest('.tab'));
+      var fields = $('.draggable-input');
+      for(var i = 0; i < fields.length; i++){
+        var field = fields[i];
+        if($(field).find('[value="'+ orderType +'"]').prop('checked') == true ){
+          $(field).prependTo($(field).closest('.tab'));
         }
-      });
+      }
     }else{
       createTabs(toJson(), isClientView, isUserClient);
     }
@@ -812,17 +828,19 @@ function addTab(obj = null){
     var title = $this.val();
     $('a[href="#' + id + '"]').text(title);
 
-    $('.rule .tabs option').each(function(){
+    var tabsOpts = $('.rule .tabs option');
+    for(var i = 0; i < tabsOpts.length; i++){
       if($this.val() == id.replace('tab', '') ){
-       $this.text(title);
+        $this.text(title);
       }
-    });
+    }
 
-    $('.rules td').each(function(){
+    var tds = $('.rules td');
+    for(var i = 0; i < tds.length; i++){
       if($this.attr('page-id') == id.replace('tab', '') ){
-       $this.text(title);
+        $this.text(title);
       }
-    });
+    }
   });
 
   // remove tab
@@ -830,20 +848,26 @@ function addTab(obj = null){
     var nav = $(this).closest('li');
     var tabId = getHash(nav);
     $('.form-holder .tabs-holder ' + tabId).remove();
-    $('.rules .tabs option').each(function(){
-      if( $(this).attr('value') == tabId.replace('#tab', '')){
-        $(this).parent().siblings().find('option').remove()
-        $(this).remove();
+
+    var tabsOpts = $('.rules .tabs option');
+    for(var i = 0; i < tabsOpts.length; i++){
+      var opt = tabsOpts[i];
+      if( $(opt).attr('value') == tabId.replace('#tab', '')){
+        $(opt).parent().siblings().find('option').remove()
+        $(opt).remove();
       }
-    });
+    }
     nav.remove();
     updateRulesPages();
-    $('.rules tr td').each(function(){
-      
-      if($(this).attr('page-id') == tabId.replace('#tab', '')){
-        $(this).parent().remove();
+
+
+    var tds = $('.rules td');
+    for(var i = 0; i < tds.length; i++){
+      var td = tds[i];
+      if($(td).attr('page-id') == tabId.replace('#tab', '')){
+        $(td).parent().remove();
       }
-    })
+    }
   });
 
   // open config modal
@@ -860,10 +884,11 @@ function addTab(obj = null){
   
   var tabs = $('#drag-container .tab');
 
-  [].forEach.call(tabs, function(tab) {
+  for(var i = 0; i < tabs.length; i++){
+  var tab = tabs[i];
     tab.addEventListener('dragover', handleDragOverList, false);
     tab.addEventListener('drop', handleDrop, false);
-  });
+  }
 
   updateRulesPages()
 }
@@ -918,20 +943,20 @@ function appendComment(user, msg, type = 'external', node, id){
 
 function ordenateFields(){
   var fields = $('.form-holder .draggable-input');
-
-  fields.each(function(index){
+  for(var i = 0; i < fields.length; i++){
+    var field = fields[i];
+    var index = i;
     var fieldIndex = index+1;
-    $(this).find('.drag-heading .ordenation').text('(' + (fieldIndex) + ')' );
-    var fieldId = $(this).attr('id').split('__')[1];
-    
-  })
+    $(field).find('.drag-heading .ordenation').text('(' + (fieldIndex) + ')' );
+    var fieldId = $(field).attr('id').split('__')[1];
+  }
 
   var rules = $('.rules td');
-
-  rules.each(function(){
-    var id = $(this).attr('field-id');
-    $(this).find('.ordenation').html();
-  });
+  for(var i = 0; i < rules.length; i++){
+    var rule = rules[i];
+    var id = $(rule).attr('field-id');
+    $(rule).find('.ordenation').html();
+  }
 
 }
 
@@ -953,9 +978,12 @@ function addRule(node, page, field, comparison, value) {
  
 function updateRulesPages(){
   var ruleOptions = '<option value="initial">Select Page</option>';
-  $('li.tab-control a').each(function(){
-    ruleOptions += '<option value="'+ $(this).attr('href').replace('#tab', '') +'">'+ $(this).text() +'</option>'
-  });
+  var anchors = $('li.tab-control a');
+  for(var i = 0; i < anchors.length; i++){
+    var anchor = anchors[i];
+    ruleOptions += '<option value="'+ $(anchor).attr('href').replace('#tab', '') +'">'+ $(anchor).text() +'</option>'
+  }
+
   $('.rule').find('.tabs').html(ruleOptions);
 }
 
@@ -967,31 +995,35 @@ function getOptions(node, fieldId){
   if( type == 'checkbox-group' ){
     var html = '<select class="rule-value form-control">';
     var options = clone.find('.checkbox');
-    [].forEach.call(options, function(option){
+    for(var i = 0; i < options.length; i++){
+      var option = options[i];
       val = $(option).find('input').attr('value');
       label = $(option).find('label').text();
       html+= '<option value="'+ val +'">'+ label +'</option>'
-    });
+    }
     html += '</select>';
     node.find('.rule .input-holder').html(html);
   }else if( type == 'radio-group' ){
     var html = '<select class="rule-value form-control">';
     var options = clone.find('.radio');
-    [].forEach.call(options, function(option){
+    for(var i = 0; i < options.length; i++){
+    var option = options[i];
       val = $(option).find('input').attr('value');
       label = $(option).find('label').text();
       html+= '<option value="'+ val +'">'+ label +'</option>'
-    });
+    }
     html += '</select>';
     node.find('.rule .input-holder').html(html);
   }else if( type == 'select' ){
     var html = '<select class="rule-value form-control">';
     var options = clone.find('select option');
-    [].forEach.call(options, function(option){
+    
+    for(var i = 0; i < options.length; i++){
+      var option = options[i];
       val = $(option).attr('value');
       label = $(option).text();
       html+= '<option value="'+ val +'">'+ label +'</option>'
-    });
+    }
     html += '</select>';
     node.find('.rule .input-holder').html(html);
   }else{
@@ -1006,62 +1038,68 @@ function validateForm(){
   if(Script.env == 'local'){
     return true;
   }else{
-    $('.tabs-holder .draggable-input:not([style="display: none;"])').each(function(){
+    var shownFields = $('.tabs-holder .draggable-input:not([style="display: none;"])');
+    for(var i = 0; i < shownFields.length; i++){
       var type = $(this).attr('id').split('__')[0];
       var id = $(this).attr('id').split('__')[1];
       var dragInput = $(this).find('.drag-input');
 
-      if(type == 'signature'){
-        function hasSameId(elem) {return elem.field == id;}
-
-        var sign = canvasArray.filter(hasSameId)[0];
-
-        if( sign.signature.isEmpty() ){
-          dragInput.addClass('required-fail');
-        }else{
-          dragInput.removeClass('required-fail');
-        }
-      }else if(type == 'radio-group'){
-        if( $(this).find('.drag-input input:radio:checked').length <= 0 ){
-          dragInput.addClass('required-fail');
-        }else{
-          dragInput.removeClass('required-fail');
-        }
-      }else if (type =='checkbox-group'){
-        if( $(this).find('.drag-input input:checkbox:checked').length <= 0 ){
-          dragInput.addClass('required-fail');
-        }else{
-          dragInput.removeClass('required-fail');
-        }
-      }else if(type == 'file-upload'){
-        if($(this).find('.dz-preview').length > 0 || $(this).find('.file-holder h5').length > 0){
-          dragInput.removeClass('required-fail');
-        }else{
-          dragInput.addClass('required-fail');
-        }
-      }else if(type == 'select'){
-        if( $(this).find('.drag-input select').val() == 'initial-value' ){
-          dragInput.addClass('required-fail');
-        }else{
-          dragInput.removeClass('required-fail');
-        } 
-      }else if(type == 'email-field'){
-           isValid = validateEmail($(this).find('.drag-input input').val());
+      switch(type){
+        case 'signature' : 
+          function hasSameId(elem) {return elem.field == id;}
+          var sign = canvasArray.filter(hasSameId)[0];
+          if( sign.signature.isEmpty() ){
+            dragInput.addClass('required-fail');
+          }else{
+            dragInput.removeClass('required-fail');
+          }
+          break;
+        case 'radio-group' : 
+          if( $(this).find('.drag-input input:radio:checked').length <= 0 ){
+            dragInput.addClass('required-fail');
+          }else{
+            dragInput.removeClass('required-fail');
+          }
+          break;
+        case 'checkbox-group' :
+          if( $(this).find('.drag-input input:checkbox:checked').length <= 0 ){
+            dragInput.addClass('required-fail');
+          }else{
+            dragInput.removeClass('required-fail');
+          }
+          break;
+        case 'file-upload' :
+          if($(this).find('.dz-preview').length > 0 || $(this).find('.file-holder h5').length > 0){
+            dragInput.removeClass('required-fail');
+          }else{
+            dragInput.addClass('required-fail');
+          }
+          break;
+        case 'select' :
+          if( $(this).find('.drag-input select').val() == 'initial-value' ){
+            dragInput.addClass('required-fail');
+          }else{
+            dragInput.removeClass('required-fail');
+          }
+          break;
+        case 'email-field' :
+          isValid = validateEmail($(this).find('.drag-input input').val());
           if( isValid){
             dragInput.removeClass('required-fail');
           }else{
             dragInput.addClass('required-fail');
             dragInput.next('.required-error-message').remove();
             $('<p class="required-error-message m-t-10" style="color: red">Please, insert a valid e-mail.</p>').insertAfter(dragInput);
-          } 
-      }else{
+          }
+          break;
+        default :
           if($(this).find('.drag-input input').val() == ''){
             dragInput.addClass('required-fail');
           }else{
             dragInput.removeClass('required-fail');
-          } 
+          }
       }
-    });
+    }
 
     var fails = $('.required-fail, .drag-heading.Fail');
 
@@ -1069,10 +1107,12 @@ function validateForm(){
 
     var id = $('.tab-fail').removeClass('tab-fail');
 
-    fails.each(function(){
-      var id = $(this).closest('.tab').attr('id');
+
+    for(var i = 0; i < fails.length; i++){
+      var fail = fails[i];
+      var id = $(fail).closest('.tab').attr('id');
       $('[href="#'+id+'"]').addClass('tab-fail');
-    });
+    }
 
     $('.fail-error').remove();
     if(reproves.length > 0){

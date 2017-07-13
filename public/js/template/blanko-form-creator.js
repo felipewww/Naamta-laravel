@@ -61,75 +61,93 @@ function toFieldObject(){
   }
 
   if(obj.type == 'signature'){
-    [].forEach.call(canvasArray, function(sign){
+    for(var i = 0; i < canvasArray.length; i++){
+      var sign = canvasArray[i];
       if(sign.field == obj._id){
         obj.setting.signature = sign.signature.toDataURL()
       }
-    })
+    }
   }
 
   obj.comments = getComments(obj._id);
 
   var rules = $(this).find('.rules tr:not(:first-of-type)');
 
-  rules.each(function(){
+  for(var i = 0; i < rules.length; i++){
+    var r = rules[i];
     var rule = {
       page : {
-        _id : $(this).find('td.page-id').attr('page-id'),
-        label : $(this).find('td.page-id').text()
+        _id : $(r).find('td.page-id').attr('page-id'),
+        label : $(r).find('td.page-id').text()
       },
       field : {
-        _id : $(this).find('td.field-id').attr('field-id'),
-        index : $(this).find('td.field-id .ordenation').text().replace('(', '').replace(')',''),
-        label : $(this).find('td.field-id .field-label').text()
+        _id : $(r).find('td.field-id').attr('field-id'),
+        index : $(r).find('td.field-id .ordenation').text().replace('(', '').replace(')',''),
+        label : $(r).find('td.field-id .field-label').text()
       },
       comparison : {
-        value : $(this).find('td.comparison').attr('value'),
-        label : $(this).find('td.comparison').text()
+        value : $(r).find('td.comparison').attr('value'),
+        label : $(r).find('td.comparison').text()
       },
       value : {
-        value : $(this).find('td.value').attr('value'),
-        label : $(this).find('td.value').text()
+        value : $(r).find('td.value').attr('value'),
+        label : $(r).find('td.value').text()
       }
     }
     obj.setting.rule.conditions.push(rule);
-  });
+  }
 
-  if(obj.type == 'select'){
+  switch(obj.type){
+    case 'select' : 
       var options = $(this).find('.drag-input select option');
-      options.each(function(){
+      
+      for(var i = 0; i < options.length; i++){
+        var opt = options[i];
         var option = {
-            label : $(this).text(),
-            value : $(this).val(),
-            prop : $(this).prop('selected')
+            label : $(opt).text(),
+            value : $(opt).val(),
+            prop : $(opt).prop('selected')
         };
         obj.setting.options.push(option);
-      });
-    }
-    
-  if(obj.type == 'radio-group'){
-    var options = $(this).find('.drag-input .radio');
-    options.each(function(){
-      var option = {
-        label : $(this).find('label').text(),
-        value : $(this).find('input').val(),
-        prop : $(this).find('input').prop('checked')
+      }
+      break;
+    case 'radio-group' :
+      var options = $(this).find('.drag-input .radio');
 
-      };
-      obj.setting.options.push(option);
-   });
+      for(var i = 0; i < options.length; i++){
+        var opt = options[i];
+        var option = {
+          label : $(opt).find('label').text(),
+          value : $(opt).find('input').val(),
+          prop : $(opt).find('input').prop('checked')
+
+        };
+        obj.setting.options.push(option);
+      }
+      break;
+    case 'checkbox-group' :
+      var options = $(this).find('.drag-input .checkbox');
+
+      for(var i = 0; i < options.length; i++){
+        var opt = options[i];
+        var option = {
+          label : $(opt).find('label').text(),
+          value : $(opt).find('input').val(),
+          prop : $(opt).find('input').prop('checked')
+        };
+        obj.setting.options.push(option);
+      }
+      break;
+  }
+  if(obj.type == 'select'){
+      
+  }
+  if(obj.type == 'radio-group'){
+
   }
 
   if(obj.type == 'checkbox-group'){
-    var options = $(this).find('.drag-input .checkbox');
-    options.each(function(){
-      var option = {
-        label : $(this).find('label').text(),
-        value : $(this).find('input').val(),
-        prop : $(this).find('input').prop('checked')
-      };
-      obj.setting.options.push(option);
-    });
+    
   }
   tempFields.push(obj);
 }
@@ -139,14 +157,15 @@ function toJson(){
   tempContainers = new Array();
   var listContainers = $('.tab');
 
-  listContainers.each(function(){
-    var id = $(this).attr('id').replace("tab", "");
-    var index = $(this).attr('id');
-    var tabId = $(this).attr('tab-id');
+  for(var i = 0; i < listContainers.length; i++){
+    var container = listContainers[i];
+    var id = $(container).attr('id').replace("tab", "");
+    var index = $(container).attr('id');
+    var tabId = $(container).attr('tab-id');
     var title = $('a[href="#' + index + '"]').text();
 
     tempFields = new Array();
-    var index = $(this).closest('.tab').index();
+    var index = $(container).closest('.tab').index();
     var tab = {
       config : {
         _id : id,
@@ -155,11 +174,11 @@ function toJson(){
       },
       fields : []
     }
-    var listFields = $(this).find('.draggable-input');
+    var listFields = $(container).find('.draggable-input');
     listFields.each(toFieldObject);
     tab.fields = tempFields;
     tempContainers.push(tab);
-  })
+  }
 
   var fieldArray = new Array();
   
@@ -182,35 +201,46 @@ function createTabs(json, clientView = false, isClient, report){
   $('.help .icon').hide();
   $('.tab-control').remove();
 
-    objs.forEach(function(obj){
+
+    for(var i = 0; i < objs.length; i++){
+      var obj = objs[i];
       clones = new Array();
       addTab(obj.config);
-      if(obj.fields != undefined){
-        [].forEach.call(obj.fields, function(obj){
-          createFields(obj, clientView);
-        });
+      if(obj.fields !== undefined || obj.fields !== null){
+
+        for(var i = 0; i < obj.fields.length; i++){
+          var objeto = obj.fields[i];
+          createFields(objeto, clientView);
+        }
       }
+
       clones.sort(function(a, b){
         var a = parseInt($(a).attr('class').split('order_')[1]);
         var b =  parseInt($(b).attr('class').split('order_')[1]);
         return a - b;
       });
-      clones.forEach(function(clone){
-        $(clone).appendTo('.tab.active');
-        ordenateFields();
-        updateRulesPages();
-      });
-    });
 
-    objs.forEach(function(obj){
+      for(var i = 0; i < clones.length; i++){
+        var clone = clones[i];
+      
+        $(clone).appendTo('.tab.active');
+        updateRulesPages();
+      }
+    }
+
+    for(var i = 0; i < objs.length; i++){
+      var obj = objs[i];
       if(obj.fields != undefined){
-        [].forEach.call(obj.fields, function(field){
+        for(var i = 0; i < obj.fields.length; i++){
+          var field = obj.fields[i];
           if(field.isEditable && clientView) {
             activateRule(field.setting.ordenate, field.setting.rule.ruleAction, field.setting.rule.ruleTarget, field.setting.rule.conditions);
           }
-        });
+        }
       }
-    });
+    }
+
+  ordenateFields();
   
   $('.required-field').remove();
   $('.tab-control').removeClass('active');
@@ -234,11 +264,13 @@ function createTabs(json, clientView = false, isClient, report){
     }));
     $('#save-changes').show();
     
-    $('.draggable-input').each(function(){
-      var ordenation = $(this).find('.drag-heading .ordenation').clone();
-      $(this).find('.drag-heading .ordenation').hide();
-      $(this).find('.drag-label').prepend(ordenation);
-    });
+    var fields = $('.draggable-input');
+    for(var i = 0; i < fields.length; i++){
+      var field = fields[i];
+      var ordenation = $(field).find('.drag-heading .ordenation').clone();
+      $(field).find('.drag-heading .ordenation').hide();
+      $(field).find('.drag-label').prepend(ordenation);
+    }
 
     //$('.drag-label').each(function(){
       //var heading = $(this).closest('.draggable-input').find('.ordenation');
@@ -284,29 +316,32 @@ function createFields(obj, clientView){
     filesArray[obj._id] = obj.setting.value;
   }
 
-  obj.setting.options.forEach(function(option){
+  for(var i = 0; i < obj.setting.options.length; i++){
+    var option = obj.setting.options[i];
     addOption(obj.type, clone, option.label, option.value, option.prop, obj._id);
-  });
+  }
 
   if(obj.comments != null){
-    obj.comments.forEach(function(comment){
+    for(var i = 0; i < obj.comments.length; i++){
+      var comment = obj.comments[i];
       appendComment(comment.username, comment.msg, comment.type, $(clone), comment._id);
-    })
-  }
+    }
+}
 
   addEvents(clone[0], obj._id, obj.setting.signature);
   //rules
   clone.find('.rule-action').val(obj.setting.rule.ruleAction);
   clone.find('.rule-target').val(obj.setting.rule.ruleTarget);
 
-  obj.setting.rule.conditions.forEach(function(condition){
+
+  for(var i = 0; i < obj.setting.rule.conditions.length; i++){
+    var condition = obj.setting.rule.conditions[i];
     var page = condition.page;
     var field = condition.field;
     var comparison = condition.comparison;
     var value = condition.value;
     addRule( clone.find('.rules'), page, field, comparison, value);
-
-  });
+  }
 
   // if(obj.isEditable && clientView) {
   //   activateRule(obj.setting.ordenate, obj.setting.rule.ruleAction, obj.setting.rule.ruleTarget, obj.setting.rule.conditions);
@@ -472,57 +507,22 @@ function evaluate(obj_id, cond, ruleAction){
         }
     }
 }
-// Creates form from current tabs and fields
-function toHtml(){
-  isEditable = false;
-  json = toJson();
-
-  $('#drag-container').remove();
-  container = $('body').append($('<form>', {
-    id : 'blanko-form'
-  }));
-  container.find('#blanko-form').append($('<div>', {
-    id : "drag-container"
-  }));
-  
-  appendNavigation();
-  appendModel();
-
-  createTabs(json);
-  
-  $('#input-types').remove();
-  $('.tabs-options').remove();
-  $('.modal').remove();
-  $('.drag-options').remove();
-  $('.tab-config').remove();
-  $('.tab-remove').remove();
-
-  // $('form').submit(function( event ) {
-  //   var obj = new Array();
-  //   $(document.forms[0]).find('input, select').each(function(){
-  //     obj.push ( {
-  //       id : $(this).attr('id'),
-  //       value : $(this).val()
-  //     });
-  //   });
-  //   event.preventDefault();
-  // });
-
-  return ;
-}
 
 function checkFieldValue(id, value, options, isIncorrect, file){
   if( isClientView ){
     var elem = $('.draggable-input[data-id="'+id+'"]');
 
-    console.log(value);
-    $('.tab').each(function(){
-      var l = $(this).find('.required-fail').length;
+    //console.log(value);
+    var tabs = $('.tab')
+    for(var i = 0; i < tabs.length; i++){
+    var tab = tabs[i];
+    
+      var l = $(tab).find('.required-fail').length;
       if( l <= 0 ){
-        var tabid = $(this).attr('id');
+        var tabid = $(tab).attr('id');
         $('[href="#'+ tabid +'"]').removeClass('tab-fail');
       }
-    });
+    }
 
     $('#save-changes').removeClass('btn-default').addClass('btn-save').html('<i class="fa fa-check m-r-20"></i> Save Changes');
 
@@ -534,10 +534,10 @@ function checkFieldValue(id, value, options, isIncorrect, file){
       }
     };
 
-    console.log(type);
+    //console.log(type);
     if(value != null){
       if(type == 'signature'){
-        console.log('aqui');
+        //console.log('aqui');
         obj.setting.signature = value;
       }else{
         obj.setting.value = value;
@@ -556,7 +556,7 @@ function checkFieldValue(id, value, options, isIncorrect, file){
       }
         filesArray[id].push(file);
         obj.setting.value = filesArray[id];
-        console.log(obj.setting.value);
+        //console.log(obj.setting.value);
       //Como está
       //obj.setting.value = file; //substitui pelo ultimo arquivo
       // Como tem que ser
@@ -596,8 +596,8 @@ function checkFieldValue(id, value, options, isIncorrect, file){
         //window.location.href = window.location.protocol + "//" + window.location.hostname;
       },
       error: function (data) {
-      //  console.log(data);
-        console.log('Error!');
+      ////  console.log(data);
+      console.log('Error!');
       }
     });
 
@@ -610,16 +610,17 @@ function getComments(id){
   var result = new Array();
   var comments = $(elem).find('.comments li');
 
-  comments.each(function(){
+  for(var i = 0; i < comments.length; i++){
+    var com = comments[i];
     var comment = {
-        _id : $(this).attr('comment-id'),
+        _id : $(com).attr('comment-id'),
         fieldId : id,
-        username : $(this).find('span.username').text(),
-        msg : $(this).find('.message').text(),
-        type : $(this).attr('comment-type')
+        username : $(com).find('span.username').text(),
+        msg : $(com).find('.message').text(),
+        type : $(com).attr('comment-type')
       };
     result.push(comment);
-  });
+  }
 
   return result;
 }
@@ -649,5 +650,5 @@ function saveComments(id, username, message, type){
 }
 
 function commentCallback(result) {
-  console.log(result.commentId);
+  //console.log(result.commentId);
 }
