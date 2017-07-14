@@ -108,7 +108,11 @@ class EmailsController extends Controller
      */
     public function store(Request $request)
     {
-        Validator::make($request->all(), $this->rules)->validate();
+        try{
+            Validator::make($request->all(), $this->rules)->validate();
+        }catch (\Exception $e){
+            return redirect()->back()->withErrors(Validator::make($request->all(), $this->rules))->withInput();
+        }
        
         try{
 
@@ -155,10 +159,14 @@ class EmailsController extends Controller
      */
     public function update(Request $request, $id)
     {
-
-        $validator = Validator::make($request->all(), $this->rules)->validate();
-        
         try{
+            $validator = Validator::make($request->all(), $this->rules)->validate();
+        }catch (\Exception $e){
+            return redirect()->back()->withErrors(Validator::make($request->all(), $this->rules))->withInput();
+        }
+
+        try{
+
             EmailTemplate::where('id', $id)->update([
                 'title'  => $request->title,
                 'text'   => $request->text,

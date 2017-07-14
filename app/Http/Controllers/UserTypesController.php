@@ -113,9 +113,12 @@ class UserTypesController extends Controller
      * @return Response
      */
     public function store(Request $request){
-        
-        Validator::make($request->all(), $this->rules)->validate();
-        
+        try{
+            Validator::make($request->all(), $this->rules)->validate();
+        }catch (\Exception $e){
+            return redirect()->back()->withErrors(Validator::make($request->all(), $this->rules))->withInput();
+        }
+
          try{
 
             $userTypes = UserType::create([

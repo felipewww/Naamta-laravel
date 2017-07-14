@@ -10,7 +10,7 @@
                 <div class="white-box">
                     <h3 class="box-title m-b-0"><b>Application Info</b>
                         @if(\Illuminate\Support\Facades\Auth::user()->isAdmin())
-                            {{--<a href="/application/reset/{{$application->id}}">Reset App</a>--}}
+                            <a href="/application/reset/{{$application->id}}">Reset App</a>
                         @endif
                     </h3>
                     <div class="col-md-4">

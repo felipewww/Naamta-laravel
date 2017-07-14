@@ -8,7 +8,13 @@
                     <h3 class="box-title m-b-0"><b>Current Step :</b> {{$currentStep->title}}</h3>
 
                     <h4>Last Step Submitted:</h4>
-                    <p class="m-b-40">{{ $currentStep->created_at }}</p>
+                    <p class="m-b-40">
+                        @if($previous_step->updated_at == null)
+                            No step submitted yet
+                        @else
+                            {{ $previous_step->updated_at }}
+                        @endif
+                    </p>
                     <h4>Next Step:</h4>
                     <p class="m-b-40">Step : {{ ($currentStep->nextStep() != null) ? $currentStep->nextStep()->title : "It's the last step" }}</p>
                     <h4>Previous Step:</h4>
@@ -44,6 +50,14 @@
                 </div>
                 <div class="white-box">
                     <h3 class="box-title m-b-0"><b>Application Info</b></h3>
+
+                    @if(\Illuminate\Support\Facades\Auth::user()->isAdmin())
+                    <br>
+                    <a class="btn btn-save" href="/applications/{{$application->id}}/edit">
+                        Edit settings
+                    </a>
+                    <br>
+                    @endif
 
                     <h4>Application Started:</h4>
                     <p class="m-b-40">{{ $application->created_at }}</p>
