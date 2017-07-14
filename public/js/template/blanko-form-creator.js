@@ -220,12 +220,17 @@ function createTabs(json, clientView = false, isClient, report){
         return a - b;
       });
 
+      var fragment = document.createDocumentFragment();
+
       for(var i = 0; i < clones.length; i++){
         var clone = clones[i];
-      
-        $(clone).appendTo('.tab.active');
-        updateRulesPages();
+        fragment.appendChild(clone[0]);
+        //$(clone).appendTo('.tab.active');
       }
+
+      $('.tab.active').append(fragment);
+
+      updateRulesPages();
     }
 
     for(var i = 0; i < objs.length; i++){
@@ -247,13 +252,13 @@ function createTabs(json, clientView = false, isClient, report){
   $('.tab-control:first-of-type').addClass('active');
 
   $('#drag-container').find('a:not(.btn)').attr('target', '_blank');
-
+  $('.drag-options').hide();
+  
   if(isClientView){
     $('.draggable-input').removeClass('panel');
     $('.tabs-options #addTab').hide();
     $('.drag-heading li:not(:first-of-type)').hide();
     $('#list-container').hide();
-    $('.drag-options').hide();
     $('.tab .modal').hide()
     $('nav .tab-control .fa').hide();
     $('.help .comment-icon').html($('<i>', {
