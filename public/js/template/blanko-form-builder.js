@@ -1,5 +1,6 @@
 var isValid;
 
+
 Dropzone.autoDiscover = false;
 
 var canvas;
@@ -149,8 +150,7 @@ function addEvents(elem, id = null, signature = null){
 
   //$(elem).css('display', 'none');
 
-  var type;
-  type = $(elem).attr('id').split("__")[0];
+  var type = $(elem).attr('id').split("__")[0];
 
   if(id == null){
     $(elem).attr('id', type + '__' + fieldCounter);
@@ -166,7 +166,7 @@ function addEvents(elem, id = null, signature = null){
 
   id = $(elem).attr('id').split("__")[1];
 
-  if( !$('#drag-container').hasClass('client-view') ){
+  if( !isClientView ){
     // Add Event Listeners for Drag and Drop
     elem.addEventListener('dragover', handleDragOver, false);
     elem.addEventListener('drop', handleDrop, false);
@@ -174,413 +174,401 @@ function addEvents(elem, id = null, signature = null){
     $(elem).find('.drag-heading')[0].addEventListener('dragstart', handleDragStart, false);
   }
 
-  // Update Label Text
-  $(elem).find('.drag-options .label-text').keyup(function(){
-    $(elem).find('.update-label').val($(this).val());
-    $(elem).find('.update-label').text($(this).val());
-  });
+  updateLabel(elem);
+  updateHelp(elem);
+  updatePlaceholder(elem);
+  headingEvents(elem);
+  clickForLabels(elem);
+  updateIncorrect(elem);
+  updateRules(elem);
+  helpFormatter(elem);
 
-  // Update Help Text
-  $(elem).find('.drag-options .help-text').keyup(function(e){
-    e.preventDefault();
-    $(elem).find('.help + .text').html($(this).html());
-    if($(this).html() == ""){
-      $(elem).find('.help .icon').hide();
-    }else{
-      $(elem).find('.help .icon').show();
-    }
-  });
-
-  if($(elem).find('.mask').length > 0){
-    $(elem).find('.drag-input input').mask($(elem).find('.mask').val());
+  switch(type){
+    case 'checkbox-group':
+      fieldOptions(elem);
+      changeCheckbox(elem);
+      break;
+    case 'radio-group':
+      fieldOptions(elem);
+      changeRadio(elem);
+      break;
+    case 'select':
+      fieldOptions(elem);
+      changeSelect(elem);
+      break;
+    case 'signature':
+      signatureField(elem);
+      changeSignature(elem);
+      break;
+    case 'number-field':
+      updateNumberField(elem);
+      changeField(elem);
+      break;
+    case 'file-upload':
+      updateFileUpload(elem);
+      changeField(elem);
+      break;
+    case 'phone-field':
+      updateMask(elem);
+      changeField(elem);
+      break;
+    case 'paragraph':
+      updateParagraph(elem);
+      changeField(elem);
+      break;
+    default :
+      changeField(elem);
   }
+  
 
-  $(elem).find('.mask').change(function(){
-    $(elem).find('.drag-input input').mask($(this).val());
-    $(elem).find('.drag-options .value').mask($(this).val());
-  });
-
-  $(elem).find('.help + .text').hide();
-
-  $(elem).find('.help .icon').click(function(){
-    $(this).parent().next('.text').slideToggle();
-  });
-
-  // Update Value
-  $(elem).find('.drag-options .value').keyup(function(){
-    //$(elem).find('.update-value').val($(this).val());
-    //$(elem).find('.update-value').text($(this).val());
-    $(elem).find('.update-value').attr('placeholder', $(this).val());
-  });
-
-  // Update Number Field
-  $(elem).find('.drag-options .min-value').keyup(function(){
-    $(elem).find('.update-min').attr('min', $(this).val());
-  });  
-  $(elem).find('.drag-options .max-value').keyup(function(){
-    $(elem).find('.update-max').attr('max', $(this).val());
-  });  
-  $(elem).find('.drag-options .step-value').keyup(function(){
-    $(elem).find('.update-step').attr('step', $(this).val());
-  });
-
-  // Update Date Field and Color Field values
-  if(type == 'date-field'){
-    $(elem).find('.drag-options .value').change(function(){
-      $(elem).find('.update-value').val($(this).val());
+  function updateLabel(elem){
+    // Update Label Text
+    $(elem).find('.drag-options .label-text').keyup(function(){
+      $(elem).find('.update-label').val($(this).val());
+      $(elem).find('.update-label').text($(this).val());
     });
   }
-
-  //Update Paragraph
-  $(elem).find('.drag-options .paragraph-content').keyup(function(){
-      $(elem).find('.update-paragraph').html($(this).html());
-  });
-
-  // Update Required
-  
-  $(elem).find('.span-required').toggle($(elem).find('.drag-options .is-required').prop('checked'));
-  $(elem).find('.drag-options .is-required').change(function(){
-    var isRequired = $(this).prop('checked');
-    $(elem).find('.span-required').toggle(isRequired);
-    $(elem).find('.update-required').toggleClass('required', isRequired);
-  });
-
-  // Configure Field
-  $(elem).find('.drag-heading .fa-cog').click(function(){
-    $(this).closest('.draggable-input').find('.drag-options').toggleClass('hidden');
-    if(type == 'paragraph' && $('.report-view').length > 0){
-      if ( $(this).closest('.draggable-input').find('.drag-options').hasClass('hidden') ){
-        $(this).closest('.draggable-input').find('.update-paragraph').show();
+  function updateHelp(elem){
+    // Update Help Text
+    $(elem).find('.drag-options .help-text').keyup(function(e){
+      e.preventDefault();
+      $(elem).find('.help + .text').html($(this).html());
+      if($(this).html() == ""){
+        $(elem).find('.help .icon').hide();
       }else{
-        $(this).closest('.draggable-input').find('.update-paragraph').hide();
-        
+        $(elem).find('.help .icon').show();
       }
-    }
-  });
+    });
 
-  // Toggle Comments
-  $(elem).find('.drag-heading .fa-comments-o').click(function(){
-    $(this).closest('.draggable-input').find('.drag-comments').toggleClass('hidden');
-  });
+    $(elem).find('.help + .text').hide();
 
-  $(elem).find('.external-comments').show();
-  $(elem).find('.internal-comments').hide();
+    $(elem).find('.help .icon').click(function(){
+      $(this).parent().next('.text').slideToggle();
+    });
+  }
+  function updateMask(elem){
+    $(elem).find('.drag-input input').mask($(elem).find('.mask').val());
 
-  $(elem).find('h4.open-external').click(function(){
+    $(elem).find('.mask').change(function(){
+      $(elem).find('.drag-input input').mask($(this).val());
+      $(elem).find('.drag-options .value').mask($(this).val());
+    });
+  }
+  function updatePlaceholder(elem){
+    $(elem).find('.drag-options .value').keyup(function(){
+      $(elem).find('.update-value').attr('placeholder', $(this).val());
+    });
+  }
+  function updateNumberField(elem){
+    // Update Number Field
+    $(elem).find('.drag-options .min-value').keyup(function(){
+      $(elem).find('.update-min').attr('min', $(this).val());
+    });  
+    $(elem).find('.drag-options .max-value').keyup(function(){
+      $(elem).find('.update-max').attr('max', $(this).val());
+    });  
+    $(elem).find('.drag-options .step-value').keyup(function(){
+      $(elem).find('.update-step').attr('step', $(this).val());
+    });
+  }
+  function updateParagraph(elem){
+    $(elem).find('.drag-options .paragraph-content').keyup(function(){
+        $(elem).find('.update-paragraph').html($(this).html());
+    });
+  }
+  function updateRequired(elem){
+    $(elem).find('.span-required').toggle($(elem).find('.drag-options .is-required').prop('checked'));
+    $(elem).find('.drag-options .is-required').change(function(){
+      var isRequired = $(this).prop('checked');
+      $(elem).find('.span-required').toggle(isRequired);
+      $(elem).find('.update-required').toggleClass('required', isRequired);
+    });
+  }
+  function headingEvents(elem){
+    // Configure Field
+    $(elem).find('.drag-heading .fa-cog').click(function(){
+      $(this).closest('.draggable-input').find('.drag-options').toggleClass('hidden');
+      if(type == 'paragraph' && $('.report-view').length > 0){
+        if ( $(this).closest('.draggable-input').find('.drag-options').hasClass('hidden') ){
+          $(this).closest('.draggable-input').find('.update-paragraph').show();
+        }else{
+          $(this).closest('.draggable-input').find('.update-paragraph').hide();
+          
+        }
+      }
+    });
+
+    //Expand Field
+    $(elem).find('.drag-heading .expand-field').click(function(){
+      var field = $(this).closest('.draggable-input');
+      $(this).toggleClass('fa-expand').toggleClass('fa-compress');
+      
+      field.toggleClass('expanded').siblings().removeClass('expanded');
+      field.toggleClass('half-row');
+      //$(field).find(canvas).hide();
+      field.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',   
+        function(e) {
+          
+      });
+    });
+
+    // Clone Field
+    $(elem).find('.drag-heading .fa-clone').click(function(){
+      var el = $(this).closest('.draggable-input');
+      var clone = el.clone();
+      addEvents(clone[0], null);
+      el.after(clone);
+      ordenateFields();
+    });
+
+    // Delete Field
+    $(elem).find('.drag-heading .fa-times').click(function(){
+      var fieldId = $(this).closest('.draggable-input').attr('id').split('__')[1];
+      var rules = $('.rules tr td')
+      for(var i = 0; i < rules.length; i++){
+        var rule = rules[i];
+        if($(rule).attr('field-id') == fieldId ){
+          $(rule).parent().remove();
+        }
+      }
+      $(this).closest('.draggable-input').remove();
+      ordenateFields();
+    });
+  }
+  function fieldComments(elem){
+    //Comments
+    var commentType = $(elem).find('input[type="radio"][name="comment-type"]');
+    commentType.attr('name', commentType.attr('name') + id);
+    $(commentType[1]).prop('checked', true);
+
+    $(elem).find('.add-comment').click(function(){
+      var message = $(elem).find('.comment-msg');
+      var type = message.attr('comment-type');
+      appendComment(username, message.val(), type, $(elem));
+      saveComments(id, username, message.val(), type);
+      message.val('');
+    });
+  }
+  function toggleComments(elem){
+    // Toggle Comments
+    $(elem).find('.drag-heading .fa-comments-o').click(function(){
+      $(this).closest('.draggable-input').find('.drag-comments').toggleClass('hidden');
+    });
     $(elem).find('.external-comments').show();
     $(elem).find('.internal-comments').hide();
-    $(this).addClass('active').siblings().removeClass('active');
-    $(this).closest('.draggable-input').find('.comment-msg').attr('comment-type', 'external');
-  })
 
-  $(elem).find('h4.open-internal').click(function(){
-    $(elem).find('.external-comments').hide();
-    $(elem).find('.internal-comments').show();
-    $(this).addClass('active').siblings().removeClass('active');
-    $(this).closest('.draggable-input').find('.comment-msg').attr('comment-type', 'internal');
-  })
+    toggleCommentTypes(elem);
+    expandField(elem);
+  }
+  function toggleCommentTypes(elem){
+    $(elem).find('h4.open-external').click(function(){
+      $(elem).find('.external-comments').show();
+      $(elem).find('.internal-comments').hide();
+      $(this).addClass('active').siblings().removeClass('active');
+      $(this).closest('.draggable-input').find('.comment-msg').attr('comment-type', 'external');
+    })
 
-  // Delete Field
-  $(elem).find('.drag-heading .fa-times').click(function(){
-    var fieldId = $(this).closest('.draggable-input').attr('id').split('__')[1];
-    var rules = $('.rules tr td')
-    for(var i = 0; i < rules.length; i++){
-      var rule = rules[i];
-      if($(rule).attr('field-id') == fieldId ){
-        $(rule).parent().remove();
-      }
-    }
-    $(this).closest('.draggable-input').remove();
-    ordenateFields();
-  });
-
-  if($('#drag-container.client-view').length > 0){
-    $(elem).removeClass('half-row');
-    $(elem).find('.drag-heading .expand-field').addClass('fa-expand').removeClass('fa-compress');
-  }else{
-    if($(elem).hasClass('half-row')){
+    $(elem).find('h4.open-internal').click(function(){
+      $(elem).find('.external-comments').hide();
+      $(elem).find('.internal-comments').show();
+      $(this).addClass('active').siblings().removeClass('active');
+      $(this).closest('.draggable-input').find('.comment-msg').attr('comment-type', 'internal');
+    })
+  }
+  function expandField(elem){
+    if(isClientView){
+      $(elem).removeClass('half-row');
       $(elem).find('.drag-heading .expand-field').addClass('fa-expand').removeClass('fa-compress');
     }else{
-      $(elem).find('.drag-heading .expand-field').addClass('fa-compress').removeClass('fa-expand');
+      if($(elem).hasClass('half-row')){
+        $(elem).find('.drag-heading .expand-field').addClass('fa-expand').removeClass('fa-compress');
+      }else{
+        $(elem).find('.drag-heading .expand-field').addClass('fa-compress').removeClass('fa-expand');
+      }
     }
   }
-
-  $(elem).find('.drag-heading .expand-field').click(function(){
-    var field = $(this).closest('.draggable-input');
-    $(this).toggleClass('fa-expand').toggleClass('fa-compress');
-    
-    field.toggleClass('expanded').siblings().removeClass('expanded');
-    field.toggleClass('half-row');
-    //$(field).find(canvas).hide();
-    field.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',   
-      function(e) {
-        
-    });
-  });
-
-  // Clone Field
-  $(elem).find('.drag-heading .fa-clone').click(function(){
-    var el = $(this).closest('.draggable-input');
-    var clone = el.clone();
-    addEvents(clone[0], null);
-    el.after(clone);
-    ordenateFields();
-  });
-
-  // Add Options
-  $(elem).find('.drag-options .add-options').click(function(e){
-    e.preventDefault();
-    var field = $(this).closest('.draggable-input');
-    var label = field.find('.label-input');
-    if(label.val() != ""){
-      addOption( type , field, label.val(), label.val(), false, id);
-      label.val('');
-    }
-  });
-
-  //Remove options
-  $(elem).find('.drag-options .remove-option i').on('click', function(e){
-    e.preventDefault();
-    var index = $(this).closest('tr').index();
-    $(elem).find('.checkbox-group .checkbox:nth-of-type('+ (index+1) +')').remove();
-    $(elem).find('.radio-group .radio:nth-of-type('+ (index+1) +')').remove();
-    $(elem).find('select option:nth-of-type('+ (index+1) +')').remove();
-    $(this).closest('tr').remove();
-  });
-
-  //Comments
-  var commentType = $(elem).find('input[type="radio"][name="comment-type"]');
-  commentType.attr('name', commentType.attr('name') + id);
-  $(commentType[1]).prop('checked', true);
-
-  $(elem).find('.add-comment').click(function(){
-    var message = $(elem).find('.comment-msg');
-    var type = message.attr('comment-type');
-    appendComment(username, message.val(), type, $(elem));
-    saveComments(id, username, message.val(), type);
-    message.val('');
-  });
-
-  //Signature Pad
-  if(type == "signature"){
-    var dragInput = $(elem).find('.drag-input');
-    canvas = $(elem).find("canvas")[0];
-    canvas.height = 120;
-    canvas.width = 400;
-    canvas = dragInput.find('canvas');
-    
-    var sign = new SignaturePad (canvas[0],{
-        minWidth : 0.6,
-        maxWidth : 1,
-        penColor: "rgb(13,5,40)"
-    });
-
-    if(signature != null){
-      sign.fromDataURL(signature);
-    }
-
-    canvasArray.push({
-      field : id,
-      signature : sign
-    });
-
-    $(elem).find('.clear').click(function(e){
+  function fieldOptions(elem){
+    // Add Options
+    $(elem).find('.drag-options .add-options').click(function(e){
       e.preventDefault();
-      sign.clear();
+      var field = $(this).closest('.draggable-input');
+      var label = field.find('.label-input');
+      if(label.val() != ""){
+        addOption( type , field, label.val(), label.val(), false, id);
+        label.val('');
+      }
     });
 
+    //Remove options
+    $(elem).find('.drag-options .remove-option i').on('click', function(e){
+      e.preventDefault();
+      var index = $(this).closest('tr').index();
+      $(elem).find('.checkbox-group .checkbox:nth-of-type('+ (index+1) +')').remove();
+      $(elem).find('.radio-group .radio:nth-of-type('+ (index+1) +')').remove();
+      $(elem).find('select option:nth-of-type('+ (index+1) +')').remove();
+      $(this).closest('tr').remove();
+    });
   }
-
-  //rules
-  if($('#drag-container.report-view').length <= 0){
-    if( $(elem).find('.rules-container').length <= 0){
-      var comparisonOptions = '<option value="==">Is</option><option value="!=">Is not</option><option value="<">Less than</option><option value="<=">Less or equal</option><option value=">">More than</option><option value=">=">More or equal</option>';
-      var addRules = '<div class="rules-container"><h4>Rules  <i class="fa fa-chevron-down toggle-rules"></i></h4><div class="rules-content"><div class="row m-b-20"><select class="col-lg-2 rule-action"><option value="hide">Hide if</option><option value="show">Show if</option></select> <select class="col-lg-2 rule-target"><option value="all">All</option><option value="any">Any</option></select></div><h5>New Condition</h5><div class="form-group row rule"><div class="col-lg-2"><select class="tabs form-control"></select></div><div class="col-lg-2"><select class="fields form-control"><option value="initial">Select Field</option></select></div><div class="col-lg-2"><select class="form-control comparison">'+ comparisonOptions +'</select></div><div class="col-lg-2 input-holder"><input type="text" class="form-control" placeholder="Value"></div> <button class=" add-rule btn btn-default">Add Condition</button></div>';
-      addRules += '<table class="table rules"><tr><td> Page</td><td> Field</td><td>comparison </td><td>Value </td><td class="text-right">Delete</td> </tr></table></div></div>';
-      $(elem).find('.drag-options').append(addRules);
-    }
-  }
-
-  $(elem).find('.rules-content').hide();
-
-  $(elem).find('.toggle-rules').click(function(){
-    $(this).closest('.drag-options').find('.rules-content').slideToggle();
-    $(this).toggleClass('fa-chevron-down');
-    $(this).toggleClass('fa-chevron-up');
-  });
-
-  $(elem).find('.add-rule').click(function(e){
-    e.preventDefault();
-    node = $(this).closest('.draggable-input').find('.rules');
-    pages = {
-      _id : $(this).parent().find('select.tabs').val(),
-      label : $(this).parent().find('select.tabs option:selected').text()
-    };
-
-    fields = {
-      _id : $(this).parent().find('select.fields').val(),
-      index : $(this).parent().find('select.fields option:selected').attr('ordenation'),
-      label : $(this).parent().find('select.fields option:selected').text().split(')')[1]
-    };
-
-    comparison = {
-      value : $(this).parent().find('select.comparison').val(),
-      label : $(this).parent().find('select.comparison option:selected').text()
-    }
-
-    var input = $(this).parent().find('.input-holder .rule-value');
-    switch(fields.label){
-      case ' Select':
-        ruleValue = input.val();
-        ruleValueLabel = input.find(':selected').text();
-        break;
-      case ' Checkbox':
-        ruleValue = input.val();
-        ruleValueLabel = input.find(':selected').text();
-        break;
-      case ' Radio Button':
-        ruleValue = input.val();
-        ruleValueLabel = input.find(':selected').text();
-        break;
-      default :
-        ruleValue = input.val();
-        ruleValueLabel = input.val();
-        break;
-    }
-    value = {
-      value: ruleValue,
-      label : ruleValueLabel
-    } 
-
-    if( (pages._id != 'initial') && (fields._id != 'initial') && (value.value != '')){
-      addRule(node, pages, fields, comparison, value);
-
-      $(elem).find('a.remove-row').click(function(e){
-        e.preventDefault();
-        $(this).closest('tr').remove();
+  function signatureField(elem){
+    //Signature Pad
+    
+      var dragInput = $(elem).find('.drag-input');
+      canvas = $(elem).find("canvas")[0];
+      canvas.height = 120;
+      canvas.width = 400;
+      canvas = dragInput.find('canvas');
+      
+      var sign = new SignaturePad (canvas[0],{
+          minWidth : 0.6,
+          maxWidth : 1,
+          penColor: "rgb(13,5,40)"
       });
 
-    }
-  });
+      if(signature != null){
+        sign.fromDataURL(signature);
+      }
 
-  $(elem).find('.tabs').change(function(){
-    var id = $(this).find(':selected').val();
-    var fields = $('#tab' + id).find('.draggable-input');
-    var elemId = $(this).closest('.draggable-input').attr('id').split('__')[1];
-    options = '<option value="initial">Select Field</option>';
-    for(var i = 0; i < fields.length; i++){
-      var field = fields[i];
+      canvasArray.push({
+        field : id,
+        signature : sign
+      });
+
+      $(elem).find('.clear').click(function(e){
+        e.preventDefault();
+        sign.clear();
+      });
+  }
+
+  function updateRules(elem){
+    //rules
+    if($('#drag-container.report-view').length <= 0){
+      if( $(elem).find('.rules-container').length <= 0){
+        var comparisonOptions = '<option value="==">Is</option><option value="!=">Is not</option><option value="<">Less than</option><option value="<=">Less or equal</option><option value=">">More than</option><option value=">=">More or equal</option>';
+        var addRules = '<div class="rules-container"><h4>Rules  <i class="fa fa-chevron-down toggle-rules"></i></h4><div class="rules-content"><div class="row m-b-20"><select class="col-lg-2 rule-action"><option value="hide">Hide if</option><option value="show">Show if</option></select> <select class="col-lg-2 rule-target"><option value="all">All</option><option value="any">Any</option></select></div><h5>New Condition</h5><div class="form-group row rule"><div class="col-lg-2"><select class="tabs form-control"></select></div><div class="col-lg-2"><select class="fields form-control"><option value="initial">Select Field</option></select></div><div class="col-lg-2"><select class="form-control comparison">'+ comparisonOptions +'</select></div><div class="col-lg-2 input-holder"><input type="text" class="form-control" placeholder="Value"></div> <button class=" add-rule btn btn-default">Add Condition</button></div>';
+        addRules += '<table class="table rules"><tr><td> Page</td><td> Field</td><td>comparison </td><td>Value </td><td class="text-right">Delete</td> </tr></table></div></div>';
+        $(elem).find('.drag-options').append(addRules);
+      }
+    }
+
+    $(elem).find('.rules-content').hide();
+
+    $(elem).find('.toggle-rules').click(function(){
+      $(this).closest('.drag-options').find('.rules-content').slideToggle();
+      $(this).toggleClass('fa-chevron-down');
+      $(this).toggleClass('fa-chevron-up');
+      updateRulesPages();
+    });
+
+    $(elem).find('.add-rule').click(function(e){
+      e.preventDefault();
+      node = $(this).closest('.draggable-input').find('.rules');
+      pages = {
+        _id : $(this).parent().find('select.tabs').val(),
+        label : $(this).parent().find('select.tabs option:selected').text()
+      };
+
+      fields = {
+        _id : $(this).parent().find('select.fields').val(),
+        index : $(this).parent().find('select.fields option:selected').attr('ordenation'),
+        label : $(this).parent().find('select.fields option:selected').text().split(')')[1]
+      };
+
+      comparison = {
+        value : $(this).parent().find('select.comparison').val(),
+        label : $(this).parent().find('select.comparison option:selected').text()
+      }
+
+      var input = $(this).parent().find('.input-holder .rule-value');
+      switch(fields.label){
+        case ' Select':
+          ruleValue = input.val();
+          ruleValueLabel = input.find(':selected').text();
+          break;
+        case ' Checkbox':
+          ruleValue = input.val();
+          ruleValueLabel = input.find(':selected').text();
+          break;
+        case ' Radio Button':
+          ruleValue = input.val();
+          ruleValueLabel = input.find(':selected').text();
+          break;
+        default :
+          ruleValue = input.val();
+          ruleValueLabel = input.val();
+          break;
+      }
+      value = {
+        value: ruleValue,
+        label : ruleValueLabel
+      } 
+
+      if( (pages._id != 'initial') && (fields._id != 'initial') && (value.value != '')){
+        addRule(node, pages, fields, comparison, value);
+
+        $(elem).find('a.remove-row').click(function(e){
+          e.preventDefault();
+          $(this).closest('tr').remove();
+        });
+
+      }
+    });
+
+    $(elem).find('.tabs').change(function(){
+      var id = $(this).find(':selected').val();
+      var fields = $('#tab' + id).find('.draggable-input');
+      var elemId = $(this).closest('.draggable-input').attr('id').split('__')[1];
+      options = '<option value="initial">Select Field</option>';
+      for(var i = 0; i < fields.length; i++){
+        var field = fields[i];
+        var index = i;
+        id = $(field).attr('id').split('__')[1];
+        title = $(field).find('.drag-heading h4').text();
+        ordenation = $(field).find('.drag-heading .ordenation').text().replace('(', '').replace(')','');
+        if( ( (title != "Static Paragraph") && (title != "Static Header") && (title != "Signature") && (title != "File Upload") ) && ( elemId != id) ){
+          options += '<option value="'+ id +'" ordenation="'+ ordenation +'">('+ ordenation + ')' + title +'</option>';
+        }
+      }
+      $(this).closest('.drag-options').find('.fields').html(options);
+    });
+
+    $(elem).find('.fields').change(function(){
+      fieldId = $(this).find('option:selected').val();
+      getOptions($(elem),fieldId);
+    })
+  }
+  function clickForLabels(elem){
+    var labels = $(elem).find('input + label');
+    for(var i = 0; i < labels.length; i++){
+      var label = labels[i];
       var index = i;
-      id = $(field).attr('id').split('__')[1];
-      title = $(field).find('.drag-heading h4').text();
-      ordenation = $(field).find('.drag-heading .ordenation').text().replace('(', '').replace(')','');
-      if( ( (title != "Static Paragraph") && (title != "Static Header") && (title != "Signature") && (title != "File Upload") ) && ( elemId != id) ){
-        options += '<option value="'+ id +'" ordenation="'+ ordenation +'">('+ ordenation + ')' + title +'</option>';
-      }
+
+      var name = 'input_' + id + '__' + index;
+      $(label).attr('for', name);
+      $(label).prev().attr('id', name);
     }
-    $(this).closest('.drag-options').find('.fields').html(options);
-  });
-
-  $(elem).find('.fields').change(function(){
-    fieldId = $(this).find('option:selected').val();
-    getOptions($(elem),fieldId);
-  })
-
-  updateRulesPages();
-
-  var labels = $(elem).find('input + label');
-  for(var i = 0; i < labels.length; i++){
-    var label = labels[i];
-    var index = i;
-
-    var name = 'input_' + id + '__' + index;
-    $(label).attr('for', name);
-    $(label).prev().attr('id', name);
   }
+  function updateIncorrect(elem){
+    //prevInput.next().attr('for', radio.attr('name'));
+    //Incorrect / Correct
+    var radio = $(elem).find('input[name="incorrect"]');
+    var chosenRadio = $(elem).find('input[name="incorrect"]:checked');
+    $(elem).find('.drag-heading').removeClass('Pass Fail Audit').addClass(chosenRadio.val());
+    radio.attr('name', radio.attr('name') + '__' + id);
+    
+    radio.change(function(){
+      if($(this).prop('checked') == true) {
+        $(elem).find('.drag-heading').removeClass('Pass Fail Audit').addClass($(this).val());
+        $(elem).find('.drag-input').removeClass('required-fail');
+        $(elem).find('.required-error-message').remove()
+        checkFieldValue(id, null, null, $(this).val());
+      }
+    });
 
-  //prevInput.next().attr('for', radio.attr('name'));
-  //Incorrect / Correct
-  var radio = $(elem).find('input[name="incorrect"]');
-  var chosenRadio = $(elem).find('input[name="incorrect"]:checked');
-  $(elem).find('.drag-heading').removeClass('Pass Fail Audit').addClass(chosenRadio.val());
-  radio.attr('name', radio.attr('name') + '__' + id);
-  
-  radio.change(function(){
-    if($(this).prop('checked') == true) {
-      $(elem).find('.drag-heading').removeClass('Pass Fail Audit').addClass($(this).val());
-      $(elem).find('.drag-input').removeClass('required-fail');
-      $(elem).find('.required-error-message').remove()
-      checkFieldValue(id, null, null, $(this).val());
+    if(type == 'header' || type == 'paragraph'){
+      $(elem).find('.drag-heading').removeClass('Pass Fail Audit');
     }
-  });
-
-  if(type == 'header' || type == 'paragraph'){
-    $(elem).find('.drag-heading').removeClass('Pass Fail Audit');
   }
-
-  //On Change
-
-  // On Change Value
-  if(type == 'select'){
-    $(elem).find('.drag-input .update-value').change(function(){
-      $(elem).find('.drag-heading.Fail').removeClass('Fail');
-      $(elem).find('.drag-validate input[value="Fail"]').prop('checked', false);
-      var optionsArray = new Array();
-      var options = $(this).find('option');
-      for(var i = 0; i < options.length; i++){
-        var opt = options[i];
-        var option = {
-            label : $(opt).text(),
-            value : $(opt).val(),
-            prop : $(opt).prop('selected')
-        };
-        optionsArray.push(option);
-      }
-      $(elem).find('.drag-input').removeClass('required-fail');
-      $(elem).find('.required-error-message').remove()
-      checkFieldValue(id, null, optionsArray);
-    });
-  }else if(type == 'radio-group'){
-    $(elem).find('.drag-input input[type="radio"]').change(function(){
-      $(elem).find('.drag-heading.Fail').removeClass('Fail');
-      $(elem).find('.drag-validate input[value="Fail"]').prop('checked', false);
-      var optionsArray = new Array();
-      var options = $(this).closest('.drag-input').find('.radio');
-      for(var i = 0; i < options.length; i++){
-      var opt = options[i];
-        var option = {
-          label : $(opt).find('label').text(),
-          value : $(opt).find('input').val(),
-          prop : $(opt).find('input').prop('checked')
-        };
-        optionsArray.push(option);
-      
-      }
-      $(elem).find('.drag-input').removeClass('required-fail');
-      $(elem).find('.required-error-message').remove()
-      checkFieldValue(id, null, optionsArray);
-    });
-  }else if(type == 'checkbox-group'){
-    $(elem).find('.drag-input input[type="checkbox"]').change(function(){
-      $(elem).find('.drag-heading.Fail').removeClass('Fail');
-      $(elem).find('.drag-validate input[value="Fail"]').prop('checked', false);
-      var optionsArray = new Array();
-      var options = $(this).closest('.drag-input').find('.checkbox');
-
-      for(var i = 0; i < options.length; i++){
-      var opt = options[i];
-        var option = {
-          label : $(this).find('label').text(),
-          value : $(this).find('input').val(),
-          prop : $(this).find('input').prop('checked')
-        };
-        optionsArray.push(option);
-      }
-      $(elem).find('.drag-input').removeClass('required-fail');
-      $(elem).find('.required-error-message').remove()
-      checkFieldValue(id, null, optionsArray);
-    });
-  }else if(type == 'file-upload'){
+  function updateFileUpload(elem){
     $(elem).find('.drag-input').addClass('dropzone').dropzone({
       url : "/upload-files",
       addRemoveLinks: true,
@@ -625,7 +613,72 @@ function addEvents(elem, id = null, signature = null){
         formData.append("_token", window.Laravel.csrfToken);
       }
     });
-  }else if(type == 'signature'){
+  }
+  function changeSelect(elem){
+    // On Change Value
+    
+      $(elem).find('.drag-input .update-value').change(function(){
+        $(elem).find('.drag-heading.Fail').removeClass('Fail');
+        $(elem).find('.drag-validate input[value="Fail"]').prop('checked', false);
+        var optionsArray = new Array();
+        var options = $(this).find('option');
+        for(var i = 0; i < options.length; i++){
+          var opt = options[i];
+          var option = {
+              label : $(opt).text(),
+              value : $(opt).val(),
+              prop : $(opt).prop('selected')
+          };
+          optionsArray.push(option);
+        }
+        $(elem).find('.drag-input').removeClass('required-fail');
+        $(elem).find('.required-error-message').remove()
+        checkFieldValue(id, null, optionsArray);
+      });
+  }
+  function changeRadio(elem){
+      $(elem).find('.drag-input input[type="radio"]').change(function(){
+        $(elem).find('.drag-heading.Fail').removeClass('Fail');
+        $(elem).find('.drag-validate input[value="Fail"]').prop('checked', false);
+        var optionsArray = new Array();
+        var options = $(this).closest('.drag-input').find('.radio');
+        for(var i = 0; i < options.length; i++){
+        var opt = options[i];
+          var option = {
+            label : $(opt).find('label').text(),
+            value : $(opt).find('input').val(),
+            prop : $(opt).find('input').prop('checked')
+          };
+          optionsArray.push(option);
+        
+        }
+        $(elem).find('.drag-input').removeClass('required-fail');
+        $(elem).find('.required-error-message').remove()
+        checkFieldValue(id, null, optionsArray);
+      });
+  }
+  function changeCheckbox(elem){
+    $(elem).find('.drag-input input[type="checkbox"]').change(function(){
+      $(elem).find('.drag-heading.Fail').removeClass('Fail');
+      $(elem).find('.drag-validate input[value="Fail"]').prop('checked', false);
+      var optionsArray = new Array();
+      var options = $(this).closest('.drag-input').find('.checkbox');
+
+      for(var i = 0; i < options.length; i++){
+      var opt = options[i];
+        var option = {
+          label : $(this).find('label').text(),
+          value : $(this).find('input').val(),
+          prop : $(this).find('input').prop('checked')
+        };
+        optionsArray.push(option);
+      }
+      $(elem).find('.drag-input').removeClass('required-fail');
+      $(elem).find('.required-error-message').remove()
+      checkFieldValue(id, null, optionsArray);
+    });
+  }
+  function changeSignature(elem){
     $(elem).find('canvas').on('mouseup', function() {
       function hasSameId(elem) {return elem.field == id;}
 
@@ -635,8 +688,8 @@ function addEvents(elem, id = null, signature = null){
       
       checkFieldValue(id, val);
     });
-  }else{
-
+  }
+  function changeField(elem){
     $(elem).find('.drag-input .update-value').change(function(){
       var val = $(this).val();
       $(elem).find('.drag-input').removeClass('required-fail');
@@ -645,18 +698,16 @@ function addEvents(elem, id = null, signature = null){
       $(elem).find('.drag-heading.Fail').removeClass('Fail');
       $(elem).find('.drag-validate input[value="Fail"]').prop('checked', false);
     });
-
   }
+  function helpFormatter(elem){
+    //Text Format
+    var helpFormatter = '<div class="commands"><button class="btn btn-default" data-command="bold"><i class="fa fa-bold"></i></button> <button class="btn btn-default" data-command="italic"><i class="fa fa-italic"></i></button> <button class="btn btn-default" data-command="underline"><i class="fa fa-underline"></i></button> <button class="btn btn-default" data-command="strikeThrough"><i class="fa fa-strikethrough"></i></button> <button class="btn btn-default" data-command="justifyLeft"><i class="fa fa-align-left"></i></button> <button class="btn btn-default" data-command="justifyCenter"><i class="fa fa-align-center"></i></button> <button class="btn btn-default" data-command="justifyRight"><i class="fa fa-align-right"></i></button> <button class="btn btn-default" data-command="justifyFull"><i class="fa fa-align-justify"></i></button> <button class="btn btn-default" data-command="indent"><i class="fa fa-indent"></i></button> <button class="btn btn-default" data-command="outdent"><i class="fa fa-outdent"></i></button> <button class="btn btn-default" data-command="insertUnorderedList"><i class="fa fa-list-ul"></i></button> <button class="btn btn-default" data-command="insertOrderedList"><i class="fa fa-list-ol"></i></button> <button class="btn btn-default" data-command="h4">H1</a> <button class="btn btn-default" data-command="h5">H2</a> <button class="btn btn-default" data-command="p">P</a> <button class="btn btn-default" data-command="createlink"><i class="fa fa-link"></i></button> <button class="btn btn-default" data-command="unlink"><i class="fa fa-unlink"></i></button></div>';
 
-  //Text Format
-  var helpFormatter = '<div class="commands"><button class="btn btn-default" data-command="bold"><i class="fa fa-bold"></i></button> <button class="btn btn-default" data-command="italic"><i class="fa fa-italic"></i></button> <button class="btn btn-default" data-command="underline"><i class="fa fa-underline"></i></button> <button class="btn btn-default" data-command="strikeThrough"><i class="fa fa-strikethrough"></i></button> <button class="btn btn-default" data-command="justifyLeft"><i class="fa fa-align-left"></i></button> <button class="btn btn-default" data-command="justifyCenter"><i class="fa fa-align-center"></i></button> <button class="btn btn-default" data-command="justifyRight"><i class="fa fa-align-right"></i></button> <button class="btn btn-default" data-command="justifyFull"><i class="fa fa-align-justify"></i></button> <button class="btn btn-default" data-command="indent"><i class="fa fa-indent"></i></button> <button class="btn btn-default" data-command="outdent"><i class="fa fa-outdent"></i></button> <button class="btn btn-default" data-command="insertUnorderedList"><i class="fa fa-list-ul"></i></button> <button class="btn btn-default" data-command="insertOrderedList"><i class="fa fa-list-ol"></i></button> <button class="btn btn-default" data-command="h4">H1</a> <button class="btn btn-default" data-command="h5">H2</a> <button class="btn btn-default" data-command="p">P</a> <button class="btn btn-default" data-command="createlink"><i class="fa fa-link"></i></button> <button class="btn btn-default" data-command="unlink"><i class="fa fa-unlink"></i></button></div>';
-  
-
-  $(elem).find('.help-formatter').html(helpFormatter);
-  
-  $(elem).find('.paragraph-content').before(helpFormatter);
-  
-  $(elem).find('.commands button').on('click', function(e) {
+    $(elem).find('.help-formatter').html(helpFormatter);
+    
+    $(elem).find('.paragraph-content').before(helpFormatter);
+    
+    $(elem).find('.commands button').on('click', function(e) {
     e.preventDefault();
 
     var command = $(this).data('command');
@@ -673,11 +724,10 @@ function addEvents(elem, id = null, signature = null){
     $(elem).find('.paragraph-content').keyup();
 
     $('#drag-container').find('a:not(.btn)').attr('target', '_blank');
-  });
-
-  $('.draggable-input').find('.drag-options').addClass('hidden');
-  $(elem).find('.drag-options').removeClass('hidden');
-
+    });
+  }
+  
+  /*
   setTimeout(function(){
     if( type == 'paragraph'){
       $(elem).find('.paragraph-content')[0].focus();
@@ -685,6 +735,7 @@ function addEvents(elem, id = null, signature = null){
       $(elem).find('.label-text')[0].focus();
     }
   });
+  */
 
   //end addEvents
 }
@@ -699,7 +750,7 @@ function appendModel(){
 
 // Appends fields menu
 function appendList(){
-  var html = $('<div id="list-container"> <h3>Input Types</h3> <ul class="input-list"> <li><a draggable="true" href="#header"><i class="fa m-r-10 fa-header"></i> Header</a></li><br><li><a draggable="true" href="#paragraph"><i class="fa m-r-10 fa-paragraph"></i> Paragraph</a></li><br><li><a draggable="true" href="#text-field"><i class="fa m-r-10 fa-font"></i> Text Field</a></li><br><li><a draggable="true" href="#text-area"><i class="fa m-r-10 fa-align-justify"></i> Text Area</a></li><br><li><a draggable="true" href="#number-field"><i class="fa m-r-10"><b>1</b></i> Number Field</a></li><br><li><a draggable="true" href="#email-field"><i class="fa m-r-10 fa-envelope-o"></i> Email Field</a></li><br><li><a draggable="true" href="#date-field"><i class="fa m-r-10 fa-calendar"></i> Date Field</a></li><br><li><a draggable="true" href="#phone-field"><i class="fa m-r-10 fa-puzzle-piece"></i> Masked Field</a></li><br><li><a draggable="true" href="#select"><i class="fa m-r-10 fa-caret-down"></i> Select</a></li><br><li><a draggable="true" href="#radio-group"><i class="fa m-r-10 fa-check-circle"></i> Radio Button</a></li><br><li><a draggable="true" href="#checkbox-group"><i class="fa m-r-10 fa-check-square"></i> Checkbox</a></li><br><li><a draggable="true" href="#file-upload"><i class="fa m-r-10 fa-upload"></i> File Upload</a></li><br><li><a draggable="true" href="#signature"><i class="fa m-r-10 fa-pencil"></i> Signature</a></li><br></ul></div>');
+  var html = $('<div id="list-container"><button onclick="toJson()"></button> <h3>Input Types</h3> <ul class="input-list"> <li><a draggable="true" href="#header"><i class="fa m-r-10 fa-header"></i> Header</a></li><br><li><a draggable="true" href="#paragraph"><i class="fa m-r-10 fa-paragraph"></i> Paragraph</a></li><br><li><a draggable="true" href="#text-field"><i class="fa m-r-10 fa-font"></i> Text Field</a></li><br><li><a draggable="true" href="#text-area"><i class="fa m-r-10 fa-align-justify"></i> Text Area</a></li><br><li><a draggable="true" href="#number-field"><i class="fa m-r-10"><b>1</b></i> Number Field</a></li><br><li><a draggable="true" href="#email-field"><i class="fa m-r-10 fa-envelope-o"></i> Email Field</a></li><br><li><a draggable="true" href="#date-field"><i class="fa m-r-10 fa-calendar"></i> Date Field</a></li><br><li><a draggable="true" href="#phone-field"><i class="fa m-r-10 fa-puzzle-piece"></i> Masked Field</a></li><br><li><a draggable="true" href="#select"><i class="fa m-r-10 fa-caret-down"></i> Select</a></li><br><li><a draggable="true" href="#radio-group"><i class="fa m-r-10 fa-check-circle"></i> Radio Button</a></li><br><li><a draggable="true" href="#checkbox-group"><i class="fa m-r-10 fa-check-square"></i> Checkbox</a></li><br><li><a draggable="true" href="#file-upload"><i class="fa m-r-10 fa-upload"></i> File Upload</a></li><br><li><a draggable="true" href="#signature"><i class="fa m-r-10 fa-pencil"></i> Signature</a></li><br></ul></div>');
   if($('#drag-container.report-view').length > 0){
     html.find('li:not(:nth-of-type(1)):not(:nth-of-type(2))').remove()
   }
@@ -716,7 +767,6 @@ function appendList(){
       $('#drag-container .tab.active').append(clone);
 
       ordenateFields();
-      updateRulesPages();
   });
 
   for(var i = 0; i < list.length; i++){
@@ -947,7 +997,7 @@ function ordenateFields(){
     var field = fields[i];
     var index = i;
     var fieldIndex = index+1;
-    $(field).find('.drag-heading .ordenation').text('(' + (fieldIndex) + ')' );
+    //$(field).find('.drag-heading .ordenation').text('(' + (fieldIndex) + ')' );
     var fieldId = $(field).attr('id').split('__')[1];
   }
 
@@ -957,7 +1007,6 @@ function ordenateFields(){
     var id = $(rule).attr('field-id');
     $(rule).find('.ordenation').html();
   }
-
 }
 
 
@@ -977,6 +1026,7 @@ function addRule(node, page, field, comparison, value) {
 }
  
 function updateRulesPages(){
+  
   var ruleOptions = '<option value="initial">Select Page</option>';
   var anchors = $('li.tab-control a');
   for(var i = 0; i < anchors.length; i++){
@@ -985,6 +1035,7 @@ function updateRulesPages(){
   }
 
   $('.rule').find('.tabs').html(ruleOptions);
+
 }
 
 

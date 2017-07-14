@@ -189,6 +189,7 @@ function toJson(){
 // Uses createFields
 function createTabs(json, clientView = false, isClient, report){
 
+  console.log(json);
   var objs = JSON.parse(json);
   
   if(objs.length <= 0){
@@ -201,15 +202,13 @@ function createTabs(json, clientView = false, isClient, report){
   $('.help .icon').hide();
   $('.tab-control').remove();
 
-
     for(var i = 0; i < objs.length; i++){
       var obj = objs[i];
       clones = new Array();
       addTab(obj.config);
-      if(obj.fields !== undefined || obj.fields !== null){
-
-        for(var i = 0; i < obj.fields.length; i++){
-          var objeto = obj.fields[i];
+      if(obj.fields !== undefined && obj.fields !== null){
+        for(var j = 0; j < obj.fields.length; j++){
+          var objeto = obj.fields[j];
           createFields(objeto, clientView);
         }
       }
@@ -222,10 +221,9 @@ function createTabs(json, clientView = false, isClient, report){
 
       var fragment = document.createDocumentFragment();
 
-      for(var i = 0; i < clones.length; i++){
-        var clone = clones[i];
+      for(var k = 0; k < clones.length; k++){
+        var clone = clones[k];
         fragment.appendChild(clone[0]);
-        //$(clone).appendTo('.tab.active');
       }
 
       $('.tab.active').append(fragment);
@@ -236,8 +234,8 @@ function createTabs(json, clientView = false, isClient, report){
     for(var i = 0; i < objs.length; i++){
       var obj = objs[i];
       if(obj.fields != undefined){
-        for(var i = 0; i < obj.fields.length; i++){
-          var field = obj.fields[i];
+        for(var j = 0; j < obj.fields.length; j++){
+          var field = obj.fields[j];
           if(field.isEditable && clientView) {
             activateRule(field.setting.ordenate, field.setting.rule.ruleAction, field.setting.rule.ruleTarget, field.setting.rule.conditions);
           }
@@ -252,9 +250,11 @@ function createTabs(json, clientView = false, isClient, report){
   $('.tab-control:first-of-type').addClass('active');
 
   $('#drag-container').find('a:not(.btn)').attr('target', '_blank');
-  $('.drag-options').hide();
   
+  $('.drag-options').addClass('hidden');
+
   if(isClientView){
+    $('.drag-options').hide();
     $('.draggable-input').removeClass('panel');
     $('.tabs-options #addTab').hide();
     $('.drag-heading li:not(:first-of-type)').hide();
@@ -321,9 +321,11 @@ function createFields(obj, clientView){
     filesArray[obj._id] = obj.setting.value;
   }
 
-  for(var i = 0; i < obj.setting.options.length; i++){
-    var option = obj.setting.options[i];
-    addOption(obj.type, clone, option.label, option.value, option.prop, obj._id);
+  if(obj.type == 'checkbox-group' || obj.type == 'radio-group' || obj.type == 'select'){
+    for(var i = 0; i < obj.setting.options.length; i++){
+      var option = obj.setting.options[i];
+      addOption(obj.type, clone, option.label, option.value, option.prop, obj._id);
+    }
   }
 
   if(obj.comments != null){
@@ -334,6 +336,7 @@ function createFields(obj, clientView){
 }
 
   addEvents(clone[0], obj._id, obj.setting.signature);
+
   //rules
   clone.find('.rule-action').val(obj.setting.rule.ruleAction);
   clone.find('.rule-target').val(obj.setting.rule.ruleTarget);
@@ -372,7 +375,6 @@ function configureField(node, options, type, id){
   node.find('.help-text').html(options.help);
   var text = node.find('.help-text').text().trim();
  
-
   if(text == '') {
     node.find('.help .icon').hide();
   }else{
