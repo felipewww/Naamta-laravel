@@ -5,6 +5,8 @@ var tabCounter = 0; //TAB ID
 var isClientView;
 var isUserClient;
 
+var tabHolderFrag = document.createDocumentFragment();
+
 var filesArray = new Array();
 
 // Temporary variables
@@ -189,7 +191,7 @@ function toJson(){
 // Uses createFields
 function createTabs(json, clientView = false, isClient, report){
 
-  console.log(json);
+  //console.log(json);
   var objs = JSON.parse(json);
   
   if(objs.length <= 0){
@@ -205,7 +207,7 @@ function createTabs(json, clientView = false, isClient, report){
     for(var i = 0; i < objs.length; i++){
       var obj = objs[i];
       clones = new Array();
-      addTab(obj.config);
+      var t = addTab(obj.config);
       if(obj.fields !== undefined && obj.fields !== null){
         for(var j = 0; j < obj.fields.length; j++){
           var objeto = obj.fields[j];
@@ -226,24 +228,28 @@ function createTabs(json, clientView = false, isClient, report){
         fragment.appendChild(clone[0]);
       }
 
-      $('.tab.active').append(fragment);
+      t.append(fragment);
 
-      updateRulesPages();
+      tabHolderFrag.appendChild(t[0]);
+
     }
+      
 
-    for(var i = 0; i < objs.length; i++){
-      var obj = objs[i];
-      if(obj.fields != undefined){
-        for(var j = 0; j < obj.fields.length; j++){
-          var field = obj.fields[j];
-          if(field.isEditable && clientView) {
-            activateRule(field.setting.ordenate, field.setting.rule.ruleAction, field.setting.rule.ruleTarget, field.setting.rule.conditions);
-          }
+  $('.form-holder .tabs-holder').append(tabHolderFrag);
+  ordenateFields();
+  updateRulesPages();
+  
+  for(var i = 0; i < objs.length; i++){
+    var obj = objs[i];
+    if(obj.fields != undefined){
+      for(var j = 0; j < obj.fields.length; j++){
+        var field = obj.fields[j];
+        if(field.isEditable && clientView) {
+          activateRule(field.setting.ordenate, field.setting.rule.ruleAction, field.setting.rule.ruleTarget, field.setting.rule.conditions);
         }
       }
     }
-
-  ordenateFields();
+  }
   
   $('.required-field').remove();
   $('.tab-control').removeClass('active');
@@ -500,13 +506,16 @@ function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
 }
 
 function evaluate(obj_id, cond, ruleAction){
+
   if(eval(cond)){
         if(ruleAction === "show"){
+          console.log('show')
           $(".order_" + obj_id).show();
         }else{
           $(".order_" + obj_id).hide();
         }
-      }else{
+  }else{
+        console.log('hide')
         if(ruleAction === "show"){
           $(".order_" + obj_id).hide();
         }else{
