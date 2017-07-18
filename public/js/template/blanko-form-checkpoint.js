@@ -1,4 +1,4 @@
-/*var temporaryCheckpoints = new Array();
+var temporaryCheckpoints = new Array();
 var checkpoints = new Array();
 var clicked;
 var current = 0;
@@ -63,4 +63,4 @@ function appendToHistory(index, date, checkpoint = false, data = toJson()){
 		})
 	);
 	current++;
-}*/
+}

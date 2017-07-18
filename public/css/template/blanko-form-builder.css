@@ -82,7 +82,7 @@
     transform: rotate(45deg);
 }
 
-#drag-container.client-view h4{
+#drag-container.client-view .drag-heading h4{
     display: none;
 }
 

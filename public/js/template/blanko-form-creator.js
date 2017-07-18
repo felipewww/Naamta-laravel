@@ -27,7 +27,6 @@ var container = GetElement('#drag-container')[0];
 // Uses createFields
 function createTabs(json, clientView = false, isClient, report){
 
-  //console.log(json);
   var objs = JSON.parse(json);
   
   if(objs.length <= 0){
@@ -70,8 +69,7 @@ function createTabs(json, clientView = false, isClient, report){
       t.append(fragment);
 
       tabHolderFrag.appendChild(t[0]);
-
-
+      
     }
 
   var tabsHolder = document.getElementById('tabs-holder');
@@ -345,7 +343,6 @@ function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
 }
 
 function evaluate(obj_id, cond, ruleAction){
-  console.log(cond);
   if(eval(cond)){
         if(ruleAction === "show"){
           //$("[ordenation=\"" + obj_id + "\"]").show();
@@ -355,7 +352,6 @@ function evaluate(obj_id, cond, ruleAction){
           GetElement('[ordenation="'+ obj_id +'"]').toggle(false);
         }
   }else{
-        console.log('hide')
         if(ruleAction === "show"){
           //$("[ordenation=\"" + obj_id + "\"]").hide();
           GetElement('[ordenation="'+ obj_id +'"]').toggle(false);
@@ -370,7 +366,6 @@ function checkFieldValue(id, value, options, isIncorrect, file){
   if( isClientView ){
     var elem = $('.draggable-input[data-id="'+id+'"]');
 
-    //console.log(value);
     var tabs = $('.tab')
     for(var i = 0; i < tabs.length; i++){
     var tab = tabs[i];
@@ -392,10 +387,8 @@ function checkFieldValue(id, value, options, isIncorrect, file){
       }
     };
 
-    //console.log(type);
     if(value != null){
       if(type == 'signature'){
-        //console.log('aqui');
         obj.setting.signature = value;
       }else{
         obj.setting.value = value;
@@ -426,10 +419,8 @@ function checkFieldValue(id, value, options, isIncorrect, file){
       data: sequence,
       success: function (data) {
         console.log('Success!');
-        //window.location.href = window.location.protocol + "//" + window.location.hostname;
       },
       error: function (data) {
-      ////  console.log(data);
       console.log('Error!');
       }
     });
@@ -474,16 +465,12 @@ function saveComments(id, username, message, type){
     method: 'POST',
     data: sequence,
     success: function (result) {
-      return commentCallback(result);
+      console.log(result.commentId);
     },
     error: function (data) {
-      
+      console.log("No comments added");
     }
   });
-}
-
-function commentCallback(result) {
-  //console.log(result.commentId);
 }
 
 
@@ -761,7 +748,10 @@ function Field(obj){
 
   body.appendChild(dragInput);
   
-  if(!isClientView){
+  if(isClientView){
+    var dragComments = new DragComments();
+    body.appendChild(dragComments);
+  }else{
     var dragOptions = new DragOptions(type, settings);
     body.appendChild(dragOptions);
   }
@@ -924,7 +914,6 @@ function DragOptions(type, settings){
   }
 
   if(type == 'phone-field'){
-    console.log(settings);
     var maskConfig = new MaskConfig(settings.mask);
     form.appendChild(maskConfig);
   }
@@ -1150,4 +1139,52 @@ function OptionsConfig(type, options){
 
   return optionsConfig;
 
+}
+
+function DragComments(){
+  var commentsHolder = document.createElement('div');
+  commentsHolder.classList.add('p-t-20', 'drag-comments', 'hidden');
+
+  var externalH4 = document.createElement('h4');
+  externalH4.classList.add('active', 'open-external');
+  externalH4.textContent = "Comments";
+
+  var internalH4 = document.createElement('h4');
+  internalH4.classList.add('open-internal');
+  internalH4.textContent = "Internal Comments";
+
+  var listExternal = document.createElement('ul');
+  listExternal.classList.add('comments', 'external-comments');
+
+  var listInternal = document.createElement('ul');
+  listInternal.classList.add('comments', 'internal-comments');
+
+  commentsHolder.appendChild(externalH4);
+  commentsHolder.appendChild(internalH4);
+  commentsHolder.appendChild(listExternal);
+  commentsHolder.appendChild(listInternal);
+
+  var commentInput = document.createElement('div');
+  commentInput.classList.add('form-group', 'comment-input', 'row');
+
+  var text = document.createElement('textarea');
+  text.classList.add('comment-msg', 'form-control');
+  text.setAttribute('comment-type', 'texternal');
+  text.setAttribute('placeholder', 'Type your comment here')
+
+  var sendComment = document.createElement('div');
+  sendComment.classList.add('col-sm-3', 'radio', 'text-right', 'pull-right');
+
+  var send = document.createElement('a');
+  send.classList.add('btn', 'btn-default', 'add-comment');
+  send.textContent = "Send";
+
+  sendComment.appendChild(send);
+  commentInput.appendChild(text);
+  commentInput.appendChild(sendComment);
+
+  commentsHolder.appendChild(commentInput);
+
+
+  return commentsHolder;
 }
