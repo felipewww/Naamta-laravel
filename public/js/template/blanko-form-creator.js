@@ -14,12 +14,478 @@ var tempContainers;
 var tempFields;
 var clones = new Array();
 
-$(document).on('keyup keypress', 'form input[type="text"]', function(e) {
+document.addEventListener('keypress', function(e){
   if(e.which == 13) {
     e.preventDefault();
     return false;
   }
 });
+
+var container = GetElement('#drag-container')[0];
+
+// Creates tabs from json
+// Uses createFields
+function createTabs(json, clientView = false, isClient, report){
+
+  //console.log(json);
+  var objs = JSON.parse(json);
+  
+  if(objs.length <= 0){
+      objs = [{"config":{"_id":"00","title":"New Page","tabId":""},"fields":[]}];
+  }
+
+  isUserClient = isClient;
+  isClientView = clientView;
+
+
+  GetElement('.help .icon').toggle(false);
+  //$('.help .icon').hide();
+  GetElement('.tab-control').toggle(false);
+  //$('.tab-control').remove();
+
+    for(var i = 0; i < objs.length; i++){
+      var obj = objs[i];
+      clones = new Array();
+      var t = addTab(obj.config);
+      if(obj.fields !== undefined && obj.fields !== null){
+        for(var j = 0; j < obj.fields.length; j++){
+          var objeto = obj.fields[j];
+          createFields(objeto, clientView);
+        }
+      }
+
+      clones.sort(function(a, b){
+        var a = parseInt($(a).attr('class').split('order_')[1]);
+        var b =  parseInt($(b).attr('class').split('order_')[1]);
+        return a - b;
+      });
+
+      var fragment = document.createDocumentFragment();
+
+      for(var k = 0; k < clones.length; k++){
+        var clone = clones[k];
+        fragment.appendChild(clone[0]);
+      }
+
+      t.append(fragment);
+
+      tabHolderFrag.appendChild(t[0]);
+
+
+    }
+
+  var tabsHolder = document.getElementById('tabs-holder');
+  tabsHolder.appendChild(tabHolderFrag);
+
+  ordenateFields();
+  
+  for(var i = 0; i < objs.length; i++){
+    var obj = objs[i];
+    if(obj.fields != undefined){
+      for(var j = 0; j < obj.fields.length; j++){
+        var field = obj.fields[j];
+        if(field.isEditable && clientView) {
+          activateRule(field.setting.ordenate, field.setting.rule.ruleAction, field.setting.rule.ruleTarget, field.setting.rule.conditions);
+        }
+      }
+    }
+  }
+
+  $('.required-field').remove();
+  $('.tab-control').removeClass('active');
+  $('.tab-control:first-of-type').addClass('active');
+
+  $('#drag-container').find('a:not(.btn)').attr('target', '_blank');
+
+  if(isClientView){
+
+    container.classList.add('client-view');
+    GetElement('.drag-options').toggle(false);
+    $('.draggable-input').removeClass('panel');
+    GetElement('.tabs-options #addTab').toggle(false);
+    $('.drag-heading li:not(:first-of-type)').toggle(false);
+    GetElement('#list-container').toggle(false);
+    GetElement('.tab .modal').toggle(false)
+    GetElement('nav .tab-control .fa').toggle(false);
+    $('.help .comment-icon').html($('<i>', {
+      class : 'fa fa-comments toggle-comments',
+      click : function(){
+        $(this).closest('.draggable-input').find('.drag-comments').toggleClass('hidden');
+      }
+    }));
+
+    GetElement('#save-changes').toggle(true);
+    
+    var fields = $('.draggable-input');
+    for(var i = 0; i < fields.length; i++){
+      var field = fields[i];
+      var ordenation = $(field).find('.drag-heading .ordenation').clone();
+      $(field).find('.drag-heading .ordenation').hide();
+      $(field).find('.drag-label').prepend(ordenation);
+    }
+
+    //$('.drag-label').each(function(){
+      //var heading = $(this).closest('.draggable-input').find('.ordenation');
+      //$(this).insertAfter(heading);
+    //});
+
+  }else{
+    $('.filter').hide();
+    $('.drag-validate').hide();
+    $('#save-changes').hide();
+    $('.drag-input.dropzone').hide();
+  }
+  
+  if(isClient){
+    $('.internal-comments').hide();
+    $('.open-internal').hide();
+  }
+
+  if(isClient || !clientView){
+    $('.drag-validate').hide();
+  }
+  
+    $('.preview-form .filter').hide();
+    $('.preview-form #save-changes').hide();
+    $('.preview-form .drag-validate').hide();
+    $('.preview-form .tabs-options').hide();
+
+}
+
+// Creates the fields related to the createTabs function
+// Relates to createTabs
+// Uses configureField
+function createFields(obj, clientView){
+  //var clone = $('#input-types #' + obj.type).clone();
+  var clone = new Field(obj);
+  clone = $(clone);
+  //$('.tab-control .tab-config').toggle(obj.isEditable);
+  //$('.tab-control .tab-remove').toggle(obj.isEditable);
+  //clone.find('.drag-heading').toggle(obj.isEditable);
+  //clone.find('.drag-options').toggle(obj.isEditable);
+  configureField(clone, obj.setting, obj.type, obj._id);
+  clones.splice(obj.setting.ordenate, 0, clone);
+
+
+  if(obj.type == 'file-upload'){
+    filesArray[obj._id] = obj.setting.value;
+  }
+
+  if(obj.type == 'checkbox-group' || obj.type == 'radio-group' || obj.type == 'select'){
+    for(var i = 0; i < obj.setting.options.length; i++){
+      var option = obj.setting.options[i];
+      addOption(obj.type, clone, option.label, option.value, option.prop, obj._id);
+    }
+  }
+
+  if(obj.comments != null){
+      for(var i = 0; i < obj.comments.length; i++){
+        var comment = obj.comments[i];
+        appendComment(comment.username, comment.msg, comment.type, $(clone), comment._id);
+      }
+  }
+
+  addEvents(clone[0], obj._id, obj.setting.signature);
+
+  //rules
+  clone.find('.rule-action').val(obj.setting.rule.ruleAction);
+  clone.find('.rule-action').attr('rule-action-id', obj._id);
+  clone.find('.rule-target').val(obj.setting.rule.ruleTarget);
+  clone.find('.rule-target').attr('rule-target-id', obj._id);
+
+
+  for(var i = 0; i < obj.setting.rule.conditions.length; i++){
+    var condition = obj.setting.rule.conditions[i];
+    var page = condition.page;
+    var field = condition.field;
+    var comparison = condition.comparison;
+    var value = condition.value;
+    addRule( clone.find('.rules'), page, field, comparison, value);
+  }
+
+}
+function configureField(node, options, type, id){
+
+  if(type != 'paragraph'){
+    node.find('.update-label').text(options.label);
+    node.find('.update-label').val(options.label);
+  }else{
+    node.find('.update-paragraph').text(options.label);
+    node.find('.paragraph-content').val(options.label);
+  }
+
+  node.find('.help + .text').html(options.help);
+  node.find('.help-text').html(options.help);
+
+  var text = node.find('.help-text').text().trim();
+ 
+  if(text == '') {
+    node.find('.help .icon').hide();
+  }else{
+    node.find('.help .icon').show();
+  }
+
+  //Size of the field
+  node.addClass(options.class);
+
+  node.find('.drag-validate input[value="'+ options.error +'"]').prop('checked', true);
+
+  //other attributes
+  node.find('.drag-input input').attr({
+    'min' : options.min,
+    'max' : options.max,
+    'value' : options.value,
+    'step' : options.step,
+    'placeholder' : options.placeholder
+  });
+
+  if(options.mask != null){
+     node.find('.drag-input input').mask(options.mask);
+     node.find('.drag-input input').attr('mask', options.mask);
+     node.find('.mask').val(options.mask);
+  }
+
+  if( type == 'file-upload' ){
+    if(options.value != null){
+      [].forEach.call(options.value, function(file){
+        var fileIcon;
+        if(file.type == "image/jpeg" || file.type == "image/png" || file.type == "image/svg+xml"){
+          fileIcon = 'fa-file-image-o';
+        }else if(file.type == "application/pdf"){
+          fileIcon = 'fa-file-pdf-o';
+        }else{
+          fileIcon = 'fa-file-o';
+        }
+        file = file;
+        var link = $('<h5 title="'+ file.name +'"><a href="/storage/' + file.path + '"><i class="fa '+ fileIcon +' m-r-10"></i><div>'+ file.name+'</div></a><div class="pull-right"><i class="fa fa-times remove-file"></i></div></h5>');
+        link.find('.remove-file').click(function(){
+          $(this).closest('h5').remove();
+          [].forEach.call(filesArray[id], function(item, index){
+            if(item.name == file.name){
+              filesArray[id].splice(index, 1);
+              checkFieldValue(id, filesArray[id])
+            }
+          });
+        });
+        node.find('.file-holder').append(link);
+      });
+    }else{
+      node.find('.file-holder').append('No files attached.');
+    }
+    
+  }
+
+  if( type == 'checkbox' ){
+    node.find('.drag-input input').prop('checked', options.checked)
+  }
+
+  if( type == 'button' ){
+    node.find('.drag-input button').attr({'type' : options.type});
+  }
+
+  // required
+  node.find('.span-required').toggle(options.isRequired);
+  node.find('.update-required').toggleClass('required', options.isRequired);
+
+  node.find('.update-value').text(options.value);
+  node.find('.update-value').attr('placeholder', options.placeholder);
+
+  /*Options*/
+  node = node.find('.drag-options');
+  node.find('.is-required').prop('checked', options.isRequired);
+  node.find('.label-text').val(options.label);
+  node.find('.help-text').html(options.help);
+
+  node.find('.value').val(options.placeholder);
+  node.find('.min-value').val(options.min);
+  node.find('.max-value').val(options.max);
+  node.find('.step-value').val(options.step);
+  node.find('input[value="' + options.type+'"]' ).prop('checked', true);
+}
+
+//activateRule(action, target, page, field, comparison, value)
+function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
+  var cond = "";
+  var changes = "";
+  
+  if(conditions.length >0){
+    var i = 0;
+
+    conditions.forEach(function( condition){
+      var is_last_item = (i == (conditions.length - 1));
+
+      var page = condition.page;
+      var field = condition.field;
+      var comparison = condition.comparison;
+      var value = condition.value;
+      changes += "'[ordenation=\"" + field.index + "\"] .drag-input .form-control'";
+      //changes += "'[data-id=\""+field._id+"\"] .drag-input .form-control'";
+      cond += " " + "$('[ordenation=\"" + field.index + "\"] .drag-input .form-control').val() " + comparison.value + "'" + value.value + "'";
+      //cond += " " + "$('[data-id=\""+ field._id + "\"] .drag-input .form-control').val() " + comparison.value + "'" + value.value + "'";
+      
+      if(conditions.length>1 && !is_last_item){
+        cond += (ruleTarget == "all" ? " && " : " || " );
+        changes += ", ";
+      }
+      i++;
+    });
+
+    $(eval(changes)).change(function() {
+      evaluate(obj_id, cond, ruleAction);
+    });
+    // $(document).ready(function(){
+    //   if(ruleAction === "show"){
+    //     $(".order_" + obj_id).hide();
+    //   }else{
+    //     $(".order_" + obj_id).show();
+    //   }
+    // });
+    evaluate(obj_id, cond, ruleAction);
+  }
+}
+
+function evaluate(obj_id, cond, ruleAction){
+  console.log(cond);
+  if(eval(cond)){
+        if(ruleAction === "show"){
+          //$("[ordenation=\"" + obj_id + "\"]").show();
+          GetElement('[ordenation="'+ obj_id +'"]').toggle(true);
+        }else{
+          //$("[ordenation=\"" + obj_id + "\"]").hide();
+          GetElement('[ordenation="'+ obj_id +'"]').toggle(false);
+        }
+  }else{
+        console.log('hide')
+        if(ruleAction === "show"){
+          //$("[ordenation=\"" + obj_id + "\"]").hide();
+          GetElement('[ordenation="'+ obj_id +'"]').toggle(false);
+        }else{
+          GetElement('[ordenation="'+ obj_id +'"]').toggle(true);
+          //$("[ordenation=\"" + obj_id + "\"]").show();
+        }
+    }
+}
+
+function checkFieldValue(id, value, options, isIncorrect, file){
+  if( isClientView ){
+    var elem = $('.draggable-input[data-id="'+id+'"]');
+
+    //console.log(value);
+    var tabs = $('.tab')
+    for(var i = 0; i < tabs.length; i++){
+    var tab = tabs[i];
+    
+      var l = $(tab).find('.required-fail').length;
+      if( l <= 0 ){
+        var tabid = $(tab).attr('id');
+        $('[href="#'+ tabid +'"]').removeClass('tab-fail');
+      }
+    }
+
+    $('#save-changes').removeClass('btn-default').addClass('btn-save').html('<i class="fa fa-check m-r-20"></i> Save Changes');
+
+    var type = elem.attr('id').split('__')[0];
+
+    var obj = {
+      _id : id,
+      setting : {
+      }
+    };
+
+    //console.log(type);
+    if(value != null){
+      if(type == 'signature'){
+        //console.log('aqui');
+        obj.setting.signature = value;
+      }else{
+        obj.setting.value = value;
+      }
+    }
+    if(options != null){
+      obj.setting.options = options;
+    }
+    if(isIncorrect != null){
+      obj.setting.error = isIncorrect;
+    }
+
+    if(file != null){
+      if(filesArray[id] == null){
+        filesArray[id] = new Array();
+      }
+        filesArray[id].push(file);
+        obj.setting.value = filesArray[id];
+    }
+
+
+    var sequence = { _token: window.Laravel.csrfToken, field: JSON.stringify(obj) };
+
+    $.ajax({
+      url: '/workflow/updateFormField',
+      dataType: "json",
+      method: 'POST',
+      data: sequence,
+      success: function (data) {
+        console.log('Success!');
+        //window.location.href = window.location.protocol + "//" + window.location.hostname;
+      },
+      error: function (data) {
+      ////  console.log(data);
+      console.log('Error!');
+      }
+    });
+
+    return obj;
+  }
+}
+
+function getComments(id){
+  var elem = $('.draggable-input[data-id="'+id+'"]');
+  var result = new Array();
+  var comments = $(elem).find('.comments li');
+
+  for(var i = 0; i < comments.length; i++){
+    var com = comments[i];
+    var comment = {
+        _id : $(com).attr('comment-id'),
+        fieldId : id,
+        username : $(com).find('span.username').text(),
+        msg : $(com).find('.message').text(),
+        type : $(com).attr('comment-type')
+      };
+    result.push(comment);
+  }
+
+  return result;
+}
+
+
+function saveComments(id, username, message, type){
+  var comment = {
+    fieldId : id,
+    username : username,
+    msg : message,
+    type : type
+  };
+
+  var sequence = { _token: window.Laravel.csrfToken, comment:  JSON.stringify(comment)  };
+  $.ajax({
+    url: '/workflow/addFieldComment',
+    dataType: "json",
+    method: 'POST',
+    data: sequence,
+    success: function (result) {
+      return commentCallback(result);
+    },
+    error: function (data) {
+      
+    }
+  });
+}
+
+function commentCallback(result) {
+  //console.log(result.commentId);
+}
+
 
 // Transform fields in objects
 function toFieldObject(){
@@ -39,7 +505,7 @@ function toFieldObject(){
   };
 
   obj.setting.error = $('[name="incorrect__'+ obj._id +'"]:checked').val();
-  obj.setting.ordenate = parseInt($(this).find('.ordenation').text().replace('(','').replace(')','')) ;
+  obj.setting.ordenate = parseInt(this.getAttribute('ordenation'));
   obj.setting.isRequired = true;
   if(obj.type != 'paragraph'){
     obj.setting.label = $(this).find('.update-label').text();
@@ -59,7 +525,8 @@ function toFieldObject(){
   obj.setting.class = ($(this).hasClass('half-row')) ? 'half-row' : '';
 
   if(obj.type == 'phone-field'){
-    obj.setting.mask =  $(this).find('.mask').val();
+    //obj.setting.mask =  $(this).find('.draggable-input').val();
+    obj.setting.mask = $(this).find('[mask]').attr('mask');
   }
 
   if(obj.type == 'signature'){
@@ -141,16 +608,6 @@ function toFieldObject(){
       }
       break;
   }
-  if(obj.type == 'select'){
-      
-  }
-  if(obj.type == 'radio-group'){
-
-  }
-
-  if(obj.type == 'checkbox-group'){
-    
-  }
   tempFields.push(obj);
 }
 
@@ -187,484 +644,510 @@ function toJson(){
   return JSON.stringify(tempContainers);
 }
 
-// Creates tabs from json
-// Uses createFields
-function createTabs(json, clientView = false, isClient, report){
 
-  //console.log(json);
-  var objs = JSON.parse(json);
-  
-  if(objs.length <= 0){
-      objs = [{"config":{"_id":"00","title":"New Page","tabId":""},"fields":[]}];
-  }
-
-  isUserClient = isClient;
-  isClientView = clientView;
-  $('#drag-container').toggleClass('client-view', clientView);
-  $('.help .icon').hide();
-  $('.tab-control').remove();
-
-    for(var i = 0; i < objs.length; i++){
-      var obj = objs[i];
-      clones = new Array();
-      var t = addTab(obj.config);
-      if(obj.fields !== undefined && obj.fields !== null){
-        for(var j = 0; j < obj.fields.length; j++){
-          var objeto = obj.fields[j];
-          createFields(objeto, clientView);
-        }
-      }
-
-      clones.sort(function(a, b){
-        var a = parseInt($(a).attr('class').split('order_')[1]);
-        var b =  parseInt($(b).attr('class').split('order_')[1]);
-        return a - b;
-      });
-
-      var fragment = document.createDocumentFragment();
-
-      for(var k = 0; k < clones.length; k++){
-        var clone = clones[k];
-        fragment.appendChild(clone[0]);
-      }
-
-      t.append(fragment);
-
-      tabHolderFrag.appendChild(t[0]);
-
-    }
-      
-
-  $('.form-holder .tabs-holder').append(tabHolderFrag);
-  ordenateFields();
-  updateRulesPages();
-  
-  for(var i = 0; i < objs.length; i++){
-    var obj = objs[i];
-    if(obj.fields != undefined){
-      for(var j = 0; j < obj.fields.length; j++){
-        var field = obj.fields[j];
-        if(field.isEditable && clientView) {
-          activateRule(field.setting.ordenate, field.setting.rule.ruleAction, field.setting.rule.ruleTarget, field.setting.rule.conditions);
-        }
-      }
-    }
-  }
-  
-  $('.required-field').remove();
-  $('.tab-control').removeClass('active');
-  $('.tab-control:first-of-type').addClass('active');
-
-  $('#drag-container').find('a:not(.btn)').attr('target', '_blank');
-  
-  $('.drag-options').addClass('hidden');
-
-  if(isClientView){
-    $('.drag-options').hide();
-    $('.draggable-input').removeClass('panel');
-    $('.tabs-options #addTab').hide();
-    $('.drag-heading li:not(:first-of-type)').hide();
-    $('#list-container').hide();
-    $('.tab .modal').hide()
-    $('nav .tab-control .fa').hide();
-    $('.help .comment-icon').html($('<i>', {
-      class : 'fa fa-comments toggle-comments',
-      click : function(){
-        $(this).closest('.draggable-input').find('.drag-comments').toggleClass('hidden');
-      }
-    }));
-    $('#save-changes').show();
-    
-    var fields = $('.draggable-input');
-    for(var i = 0; i < fields.length; i++){
-      var field = fields[i];
-      var ordenation = $(field).find('.drag-heading .ordenation').clone();
-      $(field).find('.drag-heading .ordenation').hide();
-      $(field).find('.drag-label').prepend(ordenation);
+function GetElement(query){
+    if(this === window) {
+        return new GetElement(query);
     }
 
-    //$('.drag-label').each(function(){
-      //var heading = $(this).closest('.draggable-input').find('.ordenation');
-      //$(this).insertAfter(heading);
-    //});
+    this.element = document.querySelectorAll(query);
 
-  }else{
-    $('.filter').hide();
-    $('.drag-validate').hide();
-    $('#save-changes').hide();
-    $('.drag-input.dropzone').hide();
-  }
-  
-  if(isClient){
-    $('.internal-comments').hide();
-    $('.open-internal').hide();
-  }
-
-  if(isClient || !clientView){
-    $('.drag-validate').hide();
-  }
-  
-    $('.preview-form .filter').hide();
-    $('.preview-form #save-changes').hide();
-    $('.preview-form .drag-validate').hide();
-    $('.preview-form .tabs-options').hide();
-}
-
-// Creates the fields related to the createTabs function
-// Relates to createTabs
-// Uses configureField
-function createFields(obj, clientView){
-  var clone = $('#input-types #' + obj.type).clone();
-  $('.tab-control .tab-config').toggle(obj.isEditable);
-  $('.tab-control .tab-remove').toggle(obj.isEditable);
-  clone.find('.drag-heading').toggle(obj.isEditable);
-  clone.find('.drag-options').toggle(obj.isEditable);
-  configureField(clone, obj.setting, obj.type, obj._id);
-  clones.splice(obj.setting.ordenate, 0, clone);
-
-
-  if(obj.type == 'file-upload'){
-    filesArray[obj._id] = obj.setting.value;
-  }
-
-  if(obj.type == 'checkbox-group' || obj.type == 'radio-group' || obj.type == 'select'){
-    for(var i = 0; i < obj.setting.options.length; i++){
-      var option = obj.setting.options[i];
-      addOption(obj.type, clone, option.label, option.value, option.prop, obj._id);
-    }
-  }
-
-  if(obj.comments != null){
-    for(var i = 0; i < obj.comments.length; i++){
-      var comment = obj.comments[i];
-      appendComment(comment.username, comment.msg, comment.type, $(clone), comment._id);
-    }
-}
-
-  addEvents(clone[0], obj._id, obj.setting.signature);
-
-  //rules
-  clone.find('.rule-action').val(obj.setting.rule.ruleAction);
-  clone.find('.rule-target').val(obj.setting.rule.ruleTarget);
-
-
-  for(var i = 0; i < obj.setting.rule.conditions.length; i++){
-    var condition = obj.setting.rule.conditions[i];
-    var page = condition.page;
-    var field = condition.field;
-    var comparison = condition.comparison;
-    var value = condition.value;
-    addRule( clone.find('.rules'), page, field, comparison, value);
-  }
-
-  // if(obj.isEditable && clientView) {
-  //   activateRule(obj.setting.ordenate, obj.setting.rule.ruleAction, obj.setting.rule.ruleTarget, obj.setting.rule.conditions);
-  // }
-}
-
-// Field values according to json from createTabs
-// Relates to createFields
-function configureField(node, options, type, id){
-
-  /*Visual*/
-  node.addClass('order_' + options.ordenate);
-
-  if(type != 'paragraph'){
-    node.find('.update-label').text(options.label);
-    node.find('.update-label').val(options.label);
-  }else{
-    node.find('.update-paragraph').html(options.label);
-    node.find('.paragraph-content').html(options.label);
-  }
-
-  node.find('.help + .text').html(options.help);
-  node.find('.help-text').html(options.help);
-  var text = node.find('.help-text').text().trim();
- 
-  if(text == '') {
-    node.find('.help .icon').hide();
-  }else{
-    node.find('.help .icon').show();
-  }
-
-  //Size of the field
-  node.addClass(options.class);
-
-  node.find('.drag-validate input[value="'+ options.error +'"]').prop('checked', true);
-
-  //other attributes
-  node.find('.drag-input input').attr({
-    'min' : options.min,
-    'max' : options.max,
-    'value' : options.value,
-    'step' : options.step,
-    'placeholder' : options.placeholder
-  });
-
-  if(options.mask != null){
-     node.find('.drag-input input').mask(options.mask);
-     node.find('.mask').val(options.mask);
-  }
-
-  if( type == 'file-upload' ){
-    if(options.value != null){
-      [].forEach.call(options.value, function(file){
-        var fileIcon;
-        if(file.type == "image/jpeg" || file.type == "image/png" || file.type == "image/svg+xml"){
-          fileIcon = 'fa-file-image-o';
-        }else if(file.type == "application/pdf"){
-          fileIcon = 'fa-file-pdf-o';
-        }else{
-          fileIcon = 'fa-file-o';
-        }
-        file = file;
-        var link = $('<h5 title="'+ file.name +'"><a href="/storage/' + file.path + '"><i class="fa '+ fileIcon +' m-r-10"></i><div>'+ file.name+'</div></a><div class="pull-right"><i class="fa fa-times remove-file"></i></div></h5>');
-        link.find('.remove-file').click(function(){
-          $(this).closest('h5').remove();
-          [].forEach.call(filesArray[id], function(item, index){
-            if(item.name == file.name){
-              filesArray[id].splice(index, 1);
-              checkFieldValue(id, filesArray[id])
+    for(var i = 0; i < this.element.length; i++){
+        this.element[i].toggleClass = function(className, toggle){
+            var element = this;
+            if(toggle !== undefined && toggle !== null){
+                if( toggle === true ) {
+                    element.classList.remove(className);
+                }else{
+                    element.classList.add(className);
+                }
+            }else{
+                if( element.classList.contains(className) ) {
+                    element.classList.remove(className);
+                }else{
+                    element.classList.add(className);
+                }
             }
-          });
-        });
-        node.find('.file-holder').append(link);
-      });
-    }else{
-      node.find('.file-holder').append('No files attached.');
+            return this;
+        };
+        this.element[i].toggle = function(toggle){
+            if(toggle !== null && toggle !== undefined){
+                if(toggle === false){
+                    this.style.display = 'none';
+                }else{
+                    this.style.display = null;
+                }
+            }else{
+                if(this.style.display === 'none'){
+                    this.style.display = null;
+                }else{
+                    this.style.display = 'none';
+                }
+            }
+            return this;
+        };
+        this.element[i].remove = function(element){
+            element.parentNode.removeChild(element);
+        };
     }
-    
-  }
 
-  if( type == 'checkbox' ){
-    node.find('.drag-input input').prop('checked', options.checked)
-  }
-
-  if( type == 'button' ){
-    node.find('.drag-input button').attr({'type' : options.type});
-  }
-
-  // required
-  node.find('.span-required').toggle(options.isRequired);
-  node.find('.update-required').toggleClass('required', options.isRequired);
-
-  node.find('.update-value').text(options.value);
-  node.find('.update-value').attr('placeholder', options.placeholder);
-
-  /*Options*/
-  node = node.find('.drag-options');
-  node.find('.is-required').prop('checked', options.isRequired);
-  node.find('.label-text').val(options.label);
-  node.find('.help-text').html(options.help);
-
-  node.find('.value').val(options.placeholder);
-  node.find('.min-value').val(options.min);
-  node.find('.max-value').val(options.max);
-  node.find('.step-value').val(options.step);
-  node.find('input[value="' + options.type+'"]' ).prop('checked', true);
-}
-
-//activateRule(action, target, page, field, comparison, value)
-function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
-  var cond = "";
-  var changes = "";
-  
-  if(conditions.length >0){
-    var i = 0;
-
-    conditions.forEach(function( condition){
-      var is_last_item = (i == (conditions.length - 1));
-
-      var page = condition.page;
-      var field = condition.field;
-      var comparison = condition.comparison;
-      var value = condition.value;
-      changes += "'.order_"+field.index + " .drag-input .form-control'";
-      //changes += "'[data-id=\""+field._id+"\"] .drag-input .form-control'";
-      cond += " " + "$('.order_"+field.index + " .drag-input .form-control').val() " + comparison.value + "'" + value.value + "'";
-      //cond += " " + "$('[data-id=\""+ field._id + "\"] .drag-input .form-control').val() " + comparison.value + "'" + value.value + "'";
-      
-      if(conditions.length>1 && !is_last_item){
-        cond += (ruleTarget == "all" ? " && " : " || " );
-        changes += ", ";
-      }
-      i++;
-    });
-
-    $(eval(changes)).change(function() {
-      evaluate(obj_id, cond, ruleAction);
-    });
-    // $(document).ready(function(){
-    //   if(ruleAction === "show"){
-    //     $(".order_" + obj_id).hide();
-    //   }else{
-    //     $(".order_" + obj_id).show();
-    //   }
-    // });
-    evaluate(obj_id, cond, ruleAction);
-  }
-}
-
-function evaluate(obj_id, cond, ruleAction){
-
-  if(eval(cond)){
-        if(ruleAction === "show"){
-          console.log('show')
-          $(".order_" + obj_id).show();
-        }else{
-          $(".order_" + obj_id).hide();
+    this.element.toggleClass = function(className, toggle){
+        for(var i = 0; i < this.length; i++){
+            this[i].toggleClass(className, toggle);
         }
-  }else{
-        console.log('hide')
-        if(ruleAction === "show"){
-          $(".order_" + obj_id).hide();
-        }else{
-          $(".order_" + obj_id).show();
+        return this;
+    };
+    this.element.toggle = function(toggle){
+        for(var i = 0; i < this.length; i++){
+            this[i].toggle(toggle);
         }
-    }
-}
-
-function checkFieldValue(id, value, options, isIncorrect, file){
-  if( isClientView ){
-    var elem = $('.draggable-input[data-id="'+id+'"]');
-
-    //console.log(value);
-    var tabs = $('.tab')
-    for(var i = 0; i < tabs.length; i++){
-    var tab = tabs[i];
-    
-      var l = $(tab).find('.required-fail').length;
-      if( l <= 0 ){
-        var tabid = $(tab).attr('id');
-        $('[href="#'+ tabid +'"]').removeClass('tab-fail');
-      }
-    }
-
-    $('#save-changes').removeClass('btn-default').addClass('btn-save').html('<i class="fa fa-check m-r-20"></i> Save Changes');
-
-    var type = elem.attr('id').split('__')[0];
-
-    var obj = {
-      _id : id,
-      setting : {
-      }
+        return this;
+    };
+    this.element.remove = function(element){
+        for(var i = 0; i < this.length; i++){
+            this[i].remove(element);
+        }
     };
 
-    //console.log(type);
-    if(value != null){
-      if(type == 'signature'){
-        //console.log('aqui');
-        obj.setting.signature = value;
-      }else{
-        obj.setting.value = value;
-      }
-    }
-    if(options != null){
-      obj.setting.options = options;
-    }
-    if(isIncorrect != null){
-      obj.setting.error = isIncorrect;
-    }
-
-    if(file != null){
-      if(filesArray[id] == null){
-        filesArray[id] = new Array();
-      }
-        filesArray[id].push(file);
-        obj.setting.value = filesArray[id];
-        //console.log(obj.setting.value);
-      //Como está
-      //obj.setting.value = file; //substitui pelo ultimo arquivo
-      // Como tem que ser
-    }
-
-  /*
-    if(elem.find("input[type=file]").length > 0){
-      var fData = new FormData();
-      fData.append("folder", appFolder);
-      fData.append("_token", window.Laravel.csrfToken);
-      fData.append("upload", elem.find("input[type=file]").prop('files')[0]);
-      $.ajax({
-        url: "/upload-files", // Url to which the request is send
-        type: "POST",             // Type of request to be send, called as method
-        data: fData, // Data sent to server, a set of key/value pairs (i.e. form fields and values)
-        contentType: false,       // The content type used when sending data to the server.
-        cache: false,             // To unable request pages to be cached
-        processData:false,  // To send DOMDocument or non processed data file it is set to false
-        async: false,
-        success: function(data)   // A function to be called if request succeeds
-        {
-          obj.setting.value = data.upload;
-        }
-      });
-    }
-  */
-
-    var sequence = { _token: window.Laravel.csrfToken, field: JSON.stringify(obj) };
-
-    $.ajax({
-      url: '/workflow/updateFormField',
-      dataType: "json",
-      method: 'POST',
-      data: sequence,
-      success: function (data) {
-        console.log('Success!');
-        //window.location.href = window.location.protocol + "//" + window.location.hostname;
-      },
-      error: function (data) {
-      ////  console.log(data);
-      console.log('Error!');
-      }
-    });
-
-    return obj;
-  }
+    return this.element ;
 }
 
-function getComments(id){
-  var elem = $('.draggable-input[data-id="'+id+'"]');
-  var result = new Array();
-  var comments = $(elem).find('.comments li');
 
-  for(var i = 0; i < comments.length; i++){
-    var com = comments[i];
-    var comment = {
-        _id : $(com).attr('comment-id'),
-        fieldId : id,
-        username : $(com).find('span.username').text(),
-        msg : $(com).find('.message').text(),
-        type : $(com).attr('comment-type')
-      };
-    result.push(comment);
+function Field(obj){
+  var type = obj.type;
+  var label = obj.setting.label;
+  var settings = obj.setting;
+  var mask = obj.setting.mask;
+
+  var field = document.createElement('div');
+  field.setAttribute('id', type);
+  field.setAttribute('data-id', '');
+  field.classList.add('draggable-input', 'panel');
+
+  var heading = new Heading(type);
+
+  var body = document.createElement('div');
+  body.classList.add('panel-body');
+  
+  var dragLabel = new DragLabel(label);
+
+  var dragInput = document.createElement('div');
+  dragInput.classList.add('drag-input', 'form-group');
+
+  switch(type){
+    case 'header' :
+      dragInput.appendChild( new Header() );
+      break;
+    case 'paragraph' :
+      dragInput.appendChild( new Paragraph() );
+      break;
+    case 'checkbox-group':
+      body.appendChild(dragLabel);
+      dragInput.appendChild( new Checkbox() );
+      break;
+    case 'radio-group':
+      body.appendChild(dragLabel);
+      dragInput.appendChild( new Radio() );
+      break;
+    case 'select':
+      body.appendChild(dragLabel);
+      dragInput.appendChild( new Select() );
+      break;
+    default :
+      body.appendChild(dragLabel);
+      dragInput.appendChild( new DragInput(type, mask) );
   }
 
-  return result;
+
+  body.appendChild(dragInput);
+  
+  if(!isClientView){
+    var dragOptions = new DragOptions(type, settings);
+    body.appendChild(dragOptions);
+  }
+
+  field.appendChild(heading);
+  field.appendChild(body);
+
+  return field;
 }
 
 
-function saveComments(id, username, message, type){
-  var comment = {
-    fieldId : id,
-    username : username,
-    msg : message,
-    type : type
-  };
+function DragLabel(type){
 
-  var sequence = { _token: window.Laravel.csrfToken, comment:  JSON.stringify(comment)  };
-  $.ajax({
-    url: '/workflow/addFieldComment',
-    dataType: "json",
-    method: 'POST',
-    data: sequence,
-    success: function (result) {
-      return commentCallback(result);
-    },
-    error: function (data) {
-      
+  var dragLabel = document.createElement('div');
+  dragLabel.classList.add('drag-label');
+
+  dragLabel.label = document.createElement('label');
+  dragLabel.label.classList.add('update-label');
+  dragLabel.label.textContent = type;
+
+  dragLabel.appendChild(dragLabel.label);
+
+  dragLabel.help = document.createElement('div');
+  dragLabel.help.classList.add('help');
+  
+  dragLabel.help.iconHolder = document.createElement('div');
+  dragLabel.help.iconHolder.classList.add('icon');
+  dragLabel.help.iconHolder.icon = document.createElement('i');
+  dragLabel.help.iconHolder.icon.classList.add('fa', 'fa-question-circle');
+
+  dragLabel.help.iconHolder.appendChild(dragLabel.help.iconHolder.icon);
+
+  dragLabel.help.comment = document.createElement('div');
+  dragLabel.help.comment.classList.add('comment-icon');
+
+  dragLabel.help.appendChild(dragLabel.help.iconHolder);
+  dragLabel.help.appendChild(dragLabel.help.comment);
+
+  dragLabel.appendChild(dragLabel.help);
+  
+  dragLabel.helpText = document.createElement('div');
+  dragLabel.helpText.classList.add('text');
+  dragLabel.appendChild(dragLabel.helpText);
+
+  return dragLabel;
+}
+
+
+function Heading(type){
+
+  var heading = document.createElement('div');
+  heading.classList.add('drag-heading');
+  heading.setAttribute('draggable', true);
+
+  var headingH4 = document.createElement('h4');
+  headingH4.textContent = type.replace('-group', "").replace('-field', "");
+
+  var headingMenu = document.createElement('ul');
+  var expandField = document.createElement('li');
+  var expandFieldIcon = document.createElement('i');
+  expandFieldIcon.classList.add('fa', 'expand-field');
+  var cloneField = document.createElement('li');
+  var cloneFieldIcon = document.createElement('i');
+  cloneFieldIcon.classList.add('fa', 'fa-clone');
+  var configField = document.createElement('li');
+  var configFieldIcon = document.createElement('i');
+  configFieldIcon.classList.add('fa', 'fa-cog');
+  var deleteField = document.createElement('li');
+  var deleteFieldIcon = document.createElement('i');
+  deleteFieldIcon.classList.add('fa', 'fa-times');
+  expandField.appendChild(expandFieldIcon);
+  cloneField.appendChild(cloneFieldIcon);
+  configField.appendChild(configFieldIcon);
+  deleteField.appendChild(deleteFieldIcon);
+
+  headingMenu.appendChild(expandField);
+  headingMenu.appendChild(cloneField);
+  headingMenu.appendChild(configField);
+  headingMenu.appendChild(deleteField);
+
+  heading.appendChild(headingH4);
+  heading.appendChild(headingMenu);
+
+  return heading;
+}
+
+function DragInput(type, mask){
+  var input = document.createElement('input');
+  input.type = type.replace('-field', "");
+  input.classList.add('form-control', 'update-value', 'update-required');
+  if(type == 'phone-field') {
+    input.setAttribute('mask', mask);
+  }
+  return input;
+}
+
+function Header(){
+  var input = document.createElement('h3');
+  input.textContent = "Header";
+  input.classList.add('update-label')
+  return input;
+}
+
+function Paragraph(){
+  var input = document.createElement('p');
+  input.textContent = "Paragraph";
+  input.classList.add('update-paragraph');
+  return input;
+}
+
+function Checkbox(){
+  var input = document.createElement('div');
+  input.classList.add('checkbox-group', 'update-required');
+  return input;
+}
+
+function Radio(){
+  var input = document.createElement('div');
+  input.classList.add('radio-group', 'update-required');
+  return input;
+}
+
+function Select(){
+  var input = document.createElement('select');
+  input.classList.add('form-control', 'update-required', 'update-value');
+
+  var opt = document.createElement('option');
+  opt.value = "initial-value";
+  opt.textContent = "Select One";
+
+  input.appendChild(opt);
+
+  return input;
+}
+
+function DragOptions(type, settings){
+
+  var dragOptions = document.createElement('div');
+  dragOptions.classList.add('drag-options', 'p-t-20', 'hidden');
+
+  var h4 = document.createElement('h4')
+  h4.textContent = "Field Configuration";
+
+  var form = document.createElement('div');
+  form.classList.add('form-horizontal');
+
+  if(type == 'checkbox-group' || type === 'select' || type === 'radio-group'){
+  var optionsConfig = new OptionsConfig(type, settings.options);
+    form.appendChild(optionsConfig);
+  }
+
+  var labelConfig = new LabelConfig(type, settings.label);
+  var helpConfig = new HelpConfig(settings.help);
+
+  form.appendChild(labelConfig);
+
+  if(type !== 'checkbox-group' && type == 'select' && type == 'radio-group' && type !== 'paragraph' && type !== 'header' && type !== 'file-upload' && type !== 'signature' && type !== 'date-field'){
+    var placeholderConfig = new PlaceholderConfig(settings.placeholder);
+    form.appendChild(placeholderConfig);  
+  }
+
+  if(type == 'phone-field'){
+    console.log(settings);
+    var maskConfig = new MaskConfig(settings.mask);
+    form.appendChild(maskConfig);
+  }
+
+  form.appendChild(helpConfig);
+
+  
+
+  dragOptions.appendChild(h4);
+  dragOptions.appendChild(form);
+
+  return dragOptions;
+}
+
+
+function LabelConfig(type, label){
+
+  var labelConfig = document.createElement('div');
+  labelConfig.classList.add('form-group');
+
+  labelConfig.label = document.createElement('label');
+
+  labelConfig.label.classList.add('control-label');
+  labelConfig.label.textContent = "Label"
+
+  labelConfig.input = document.createElement('input');
+  var labelClass = (type === 'paragraph') ? 'paragraph-content' : 'label-text'
+  labelConfig.input.classList.add('form-control' , labelClass);
+  labelConfig.input.type = "text";
+  labelConfig.input.value = label;
+
+  labelConfig.appendChild(labelConfig.label);
+  labelConfig.appendChild(labelConfig.input);
+
+  return labelConfig;
+}
+
+function PlaceholderConfig(placeholder){
+
+  var placeholderConfig = document.createElement('div');
+  placeholderConfig.classList.add('form-group');
+
+  placeholderConfig.label = document.createElement('label');
+  placeholderConfig.label.classList.add('control-label');
+  placeholderConfig.label.textContent = "Placeholder"
+
+  placeholderConfig.input = document.createElement('input');
+  placeholderConfig.input.classList.add('form-control', 'value');
+  placeholderConfig.input.type = "text";
+  placeholderConfig.input.value = placeholder;
+
+  placeholderConfig.appendChild(placeholderConfig.label);
+  placeholderConfig.appendChild(placeholderConfig.input);
+
+  return placeholderConfig;
+}
+
+
+function MaskConfig(mask){
+  var maskConfig = document.createElement('div');
+  maskConfig.classList.add('form-group');
+
+  maskConfig.label = document.createElement('label');
+  maskConfig.label.classList.add('control-label');
+  maskConfig.label.textContent = "Mask"
+
+  maskConfig.input = document.createElement('input');
+  maskConfig.input.classList.add('form-control', 'mask');
+  maskConfig.input.type = "text";
+  maskConfig.input.value = (mask !== undefined) ? mask : "(000) 000-0000";
+
+  maskConfig.appendChild(maskConfig.label);
+  maskConfig.appendChild(maskConfig.input);
+
+  return maskConfig;
+}
+
+function HelpConfig(help){
+  var helpConfig = document.createElement('div');
+  helpConfig.classList.add('form-group');
+
+  helpConfig.label = document.createElement('label');
+  helpConfig.label.classList.add('control-label');
+  helpConfig.label.textContent = "Help Text"
+
+  helpConfig.input = document.createElement('p');
+  helpConfig.input.classList.add('help-text');
+  helpConfig.input.setAttribute('contenteditable', true);
+  helpConfig.input.setAttribute('rows', 15);
+  helpConfig.input.innerHTML = help;
+
+  helpConfig.appendChild(helpConfig.label);
+  helpConfig.appendChild(helpConfig.input);
+
+  return helpConfig;
+}
+
+function Commands(){
+  var commands = document.createElement('div');
+  commands.classList.add('commands');
+
+  function Button(command){
+    var btn = document.createElement('button');
+    btn.classList.add('btn', 'btn-default');
+    btn.setAttribute('data-command', command);
+
+    var icon = document.createElement('i');
+    icon.classList.add('fa');
+
+    switch(command){
+      case 'justifyLeft' :
+        icon.classList.add('fa-align-left');
+        break;
+      case 'justifyRight' :
+        icon.classList.add('fa-align-right');
+        break;
+      case 'justifyCenter' :
+        icon.classList.add('fa-align-center');
+        break;
+      case 'justifyFull' :
+        icon.classList.add('fa-align-justify');
+        break;
+      case 'insertUnorderedList' :
+        icon.classList.add('fa-list-ul');
+        break;
+      case 'insertOrderedList' :
+        icon.classList.add('fa-list-ol');
+        break;
+      case 'createLink' :
+        icon.classList.add('fa-link');
+        break;
+      case 'h4' :
+        icon.textContent = "H1";
+        break;
+      case 'h5' :
+        icon.textContent = "H2";
+        break;
+      case 'p' :
+        icon.textContent = "P";
+        break;
+      default :
+        icon.classList.add('fa-'+ command.toLowerCase());
     }
-  });
+
+    btn.appendChild(icon);
+    return btn;
+  }
+
+  commands.appendChild( new Button('bold') );
+  commands.appendChild( new Button('italic') );
+  commands.appendChild( new Button('underline') );
+  commands.appendChild( new Button('strikeThrough') );
+  commands.appendChild( new Button('justifyLeft') );
+  commands.appendChild( new Button('justifyCenter') );
+  commands.appendChild( new Button('justifyRight') );
+  commands.appendChild( new Button('justifyFull') );
+  //commands.appendChild( new Button('indent') );
+  //commands.appendChild( new Button('outdent') );
+  commands.appendChild( new Button('insertUnorderedList') );
+  commands.appendChild( new Button('insertOrderedList') );
+  commands.appendChild( new Button('h4') );
+  commands.appendChild( new Button('h5') );
+  commands.appendChild( new Button('p') );
+  commands.appendChild( new Button('createLink') );
+  commands.appendChild( new Button('unlink') );
+
+  return commands;
 }
 
-function commentCallback(result) {
-  //console.log(result.commentId);
+
+function OptionsConfig(type, options){
+  var optionsConfig = document.createElement('div');
+  optionsConfig.classList.add('options', 'form-group');
+
+  var label = document.createElement('label');
+  label.classList.add('control-label');
+  label.textContent = "Options";
+
+  optionsConfig.appendChild(label);
+
+  var addOption = document.createElement('div');
+  addOption.classList.add('form-group');
+  
+
+  addOption.input = document.createElement('input');
+  addOption.input.classList.add('form-control', 'label-input', 'col-md-4');
+  addOption.input.setAttribute('placeholder', "Item");
+
+  addOption.button = document.createElement('a')
+  addOption.button.textContent = "Add";
+  addOption.button.classList.add('add-options', 'btn', 'btn-success');
+
+  addOption.appendChild(addOption.input);
+  addOption.appendChild(addOption.button);
+
+  optionsConfig.appendChild(addOption);
+
+  if(type === 'select'){
+
+    var tableHolder = document.createElement('div');
+    tableHolder.classList.add('form-group');
+
+    var table = document.createElement('table');
+    table.classList.add('table', 'color-table', 'muted-table');
+
+    var thead = document.createElement('thead');
+    thead.innerHTML = '<tr><th>Label</th><th>Value</th><th></th></tr>';
+
+    table.appendChild(thead);
+
+    var tbody = document.createElement('tbody')
+    tbody.classList.add('options-table');
+    tbody.innerHTML = '<tr class="hidden"><td>Label</td><td>Value</td><td class="text-nowrap"></td></tr>'
+
+    table.appendChild(tbody);
+
+    tableHolder.appendChild(table);
+
+    optionsConfig.appendChild(tableHolder);
+    
+  }
+
+
+  return optionsConfig;
+
 }

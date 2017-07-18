@@ -14,15 +14,15 @@ if(localStorage.getItem('checkpoints') != null){
 	appendToHistory(current, lastReview, true);
 }
 
-setInterval( function(){
-	var date = new Date();
-	if(toJson() != temporaryCheckpoints[current-1] && toJson() != clicked){
-		$('#checkpoints').find('a').removeClass('active');
-		appendToHistory(current, date);
-	}
-}, 30000);
+// setInterval( function(){
+// 	var date = new Date();
+// 	if(toJson() != temporaryCheckpoints[current-1] && toJson() != clicked){
+// 		$('#checkpoints').find('a').removeClass('active');
+// 		appendToHistory(current, date);
+// 	}
+// }, 30000);
 
-setInterval(saveCheckpoint, 240000);
+// setInterval(saveCheckpoint, 240000);
 
 function loadPonctualCheckpoint(id){
 	$('#drag-container .tab-control').remove();

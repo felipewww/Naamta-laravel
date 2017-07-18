@@ -83,6 +83,7 @@
             <div class="clearfix"></div>
         </div>
     </div>
+    
 </form>
 <script>
     var username = '{{ Auth::user()->name }}';
