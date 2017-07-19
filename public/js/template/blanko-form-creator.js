@@ -36,9 +36,7 @@ function createTabs(json, clientView = false, isClient, report){
   isUserClient = isClient;
   isClientView = clientView;
 
-
   GetElement('.help .icon').toggle(false);
-  //$('.help .icon').hide();
   GetElement('.tab-control').toggle(false);
   //$('.tab-control').remove();
 
@@ -215,7 +213,7 @@ function configureField(node, options, type, id){
   node.find('.help + .text').html(options.help);
   node.find('.help-text').html(options.help);
 
-  var text = node.find('.help-text').text().trim();
+  var text = options.help;
  
   if(text == '') {
     node.find('.help .icon').hide();
@@ -379,7 +377,7 @@ function checkFieldValue(id, value, options, isIncorrect, file){
 
     $('#save-changes').removeClass('btn-default').addClass('btn-save').html('<i class="fa fa-check m-r-20"></i> Save Changes');
 
-    var type = elem.attr('id').split('__')[0];
+    var type = elem.attr('field-type');
 
     var obj = {
       _id : id,
@@ -591,8 +589,10 @@ function toFieldObject(){
           value : $(opt).find('input').val(),
           prop : $(opt).find('input').prop('checked')
         };
+        console.log($(opt).find('label').val())
         obj.setting.options.push(option);
       }
+
       break;
   }
   tempFields.push(obj);
@@ -705,20 +705,21 @@ function Field(obj){
   var label = obj.setting.label;
   var settings = obj.setting;
   var mask = obj.setting.mask;
+  var id = obj._id;
 
-  var field = document.createElement('div');
+  var field = create('div');
   field.setAttribute('id', type);
   field.setAttribute('data-id', '');
+  field.setAttribute('field-type', type);
+  field.setAttribute('field-id', id);
   field.classList.add('draggable-input', 'panel');
 
   var heading = new Heading(type);
 
-  var body = document.createElement('div');
+  var body = create('div');
   body.classList.add('panel-body');
   
-  var dragLabel = new DragLabel(label);
-
-  var dragInput = document.createElement('div');
+  var dragInput = create('div');
   dragInput.classList.add('drag-input', 'form-group');
 
   switch(type){
@@ -728,32 +729,42 @@ function Field(obj){
     case 'paragraph' :
       dragInput.appendChild( new Paragraph() );
       break;
+    case 'file-upload' :
+      body.appendChild( new DragLabel() );
+      dragInput.appendChild( new FileUpload() );
+      break;
+    case 'text-area' :
+      body.appendChild( new DragLabel() );
+      dragInput.appendChild( new TextArea() );
+      break;
+    case 'signature' :
+      body.appendChild( new DragLabel() );
+      dragInput.appendChild( new Signature() );
+      break;
     case 'checkbox-group':
-      body.appendChild(dragLabel);
+      body.appendChild( new DragLabel() );
       dragInput.appendChild( new Checkbox() );
       break;
     case 'radio-group':
-      body.appendChild(dragLabel);
+      body.appendChild( new DragLabel() );
       dragInput.appendChild( new Radio() );
       break;
     case 'select':
-      body.appendChild(dragLabel);
+      body.appendChild( new DragLabel() );
       dragInput.appendChild( new Select() );
       break;
     default :
-      body.appendChild(dragLabel);
+      body.appendChild( new DragLabel() );
       dragInput.appendChild( new DragInput(type, mask) );
   }
-
 
   body.appendChild(dragInput);
   
   if(isClientView){
-    var dragComments = new DragComments();
-    body.appendChild(dragComments);
+    body.appendChild( DragComments() );
+    body.appendChild( new DragValidate() );
   }else{
-    var dragOptions = new DragOptions(type, settings);
-    body.appendChild(dragOptions);
+    body.appendChild( new DragOptions(type, settings) );
   }
 
   field.appendChild(heading);
@@ -762,66 +773,31 @@ function Field(obj){
   return field;
 }
 
-
-function DragLabel(type){
-
-  var dragLabel = document.createElement('div');
-  dragLabel.classList.add('drag-label');
-
-  dragLabel.label = document.createElement('label');
-  dragLabel.label.classList.add('update-label');
-  dragLabel.label.textContent = type;
-
-  dragLabel.appendChild(dragLabel.label);
-
-  dragLabel.help = document.createElement('div');
-  dragLabel.help.classList.add('help');
-  
-  dragLabel.help.iconHolder = document.createElement('div');
-  dragLabel.help.iconHolder.classList.add('icon');
-  dragLabel.help.iconHolder.icon = document.createElement('i');
-  dragLabel.help.iconHolder.icon.classList.add('fa', 'fa-question-circle');
-
-  dragLabel.help.iconHolder.appendChild(dragLabel.help.iconHolder.icon);
-
-  dragLabel.help.comment = document.createElement('div');
-  dragLabel.help.comment.classList.add('comment-icon');
-
-  dragLabel.help.appendChild(dragLabel.help.iconHolder);
-  dragLabel.help.appendChild(dragLabel.help.comment);
-
-  dragLabel.appendChild(dragLabel.help);
-  
-  dragLabel.helpText = document.createElement('div');
-  dragLabel.helpText.classList.add('text');
-  dragLabel.appendChild(dragLabel.helpText);
-
-  return dragLabel;
-}
-
-
+//Field Heading
 function Heading(type){
 
-  var heading = document.createElement('div');
+  var heading = create('div');
   heading.classList.add('drag-heading');
   heading.setAttribute('draggable', true);
 
-  var headingH4 = document.createElement('h4');
+  var headingH4 = create('h4');
   headingH4.textContent = type.replace('-group', "").replace('-field', "");
 
-  var headingMenu = document.createElement('ul');
-  var expandField = document.createElement('li');
-  var expandFieldIcon = document.createElement('i');
+  var headingMenu = create('ul');
+  var expandField = create('li');
+
+  var expandFieldIcon = create('i');
   expandFieldIcon.classList.add('fa', 'expand-field');
-  var cloneField = document.createElement('li');
-  var cloneFieldIcon = document.createElement('i');
+  var cloneField = create('li');
+  var cloneFieldIcon = create('i');
   cloneFieldIcon.classList.add('fa', 'fa-clone');
-  var configField = document.createElement('li');
-  var configFieldIcon = document.createElement('i');
+  var configField = create('li');
+  var configFieldIcon = create('i');
   configFieldIcon.classList.add('fa', 'fa-cog');
-  var deleteField = document.createElement('li');
-  var deleteFieldIcon = document.createElement('i');
+  var deleteField = create('li');
+  var deleteFieldIcon = create('i');
   deleteFieldIcon.classList.add('fa', 'fa-times');
+
   expandField.appendChild(expandFieldIcon);
   cloneField.appendChild(cloneFieldIcon);
   configField.appendChild(configFieldIcon);
@@ -838,47 +814,139 @@ function Heading(type){
   return heading;
 }
 
+//Field Label
+function DragLabel(){
+
+  var dragLabel = create('div');
+  dragLabel.classList.add('drag-label');
+
+  dragLabel.label = create('label');
+  dragLabel.label.classList.add('update-label');
+  dragLabel.label.textContent = "Label";
+
+  dragLabel.appendChild(dragLabel.label);
+
+  dragLabel.help = create('div');
+  dragLabel.help.classList.add('help');
+  
+  dragLabel.help.iconHolder = create('div');
+  dragLabel.help.iconHolder.classList.add('icon');
+  dragLabel.help.iconHolder.icon = create('i');
+  dragLabel.help.iconHolder.icon.classList.add('fa', 'fa-question-circle');
+
+  dragLabel.help.iconHolder.appendChild(dragLabel.help.iconHolder.icon);
+
+  dragLabel.help.comment = create('div');
+  dragLabel.help.comment.classList.add('comment-icon');
+
+  dragLabel.help.appendChild(dragLabel.help.iconHolder);
+  dragLabel.help.appendChild(dragLabel.help.comment);
+
+  dragLabel.appendChild(dragLabel.help);
+  
+  dragLabel.helpText = create('div');
+  dragLabel.helpText.classList.add('text');
+  dragLabel.appendChild(dragLabel.helpText);
+
+  return dragLabel;
+}
+
+//Create Inputs
+
 function DragInput(type, mask){
-  var input = document.createElement('input');
+  var input = create('input');
   input.type = type.replace('-field', "");
   input.classList.add('form-control', 'update-value', 'update-required');
   if(type == 'phone-field') {
+    mask = (mask !== undefined) ? mask : "(000) 000-0000";
     input.setAttribute('mask', mask);
   }
   return input;
 }
 
+function Signature(){
+  var signature = create('div');
+  signature.classList.add('form-group');
+
+  var clear = create('button');
+  clear.classList.add('clear', 'btn', 'btn-default');
+  clear.textContent = "Clear";
+
+  var canvas = create('canvas');
+  canvas.classList.add('update-required');
+
+  signature.appendChild(clear);
+  signature.appendChild(canvas);
+
+  return signature;
+}
+
+function FileUpload(){
+  var fragment = document.createDocumentFragment();
+
+  var input = create('div');
+  input.classList.add('file-drop', 'm-t-20');
+
+
+  var fileHolderH5 = create('h5');
+  fileHolderH5.classList.add('bold', 'm-t-20');
+  fileHolderH5.textContent = "Files ";
+
+  var icon = create('i');
+  icon.classList.add('fa', 'fa-arrow-down');
+
+  fileHolderH5.appendChild(icon);
+
+  var fileHolder = create('div');
+  fileHolder.classList.add('file-holder');
+  
+  if(isClientView){
+    fragment.appendChild(input);
+  }
+
+  fragment.appendChild(fileHolderH5);
+  fragment.appendChild(fileHolder);
+
+  return fragment;
+}
+
+function TextArea(){
+  var input = create('textarea');
+  input.classList.add('form-control', 'update-value', 'update-required');
+  return input;
+}
+
 function Header(){
-  var input = document.createElement('h3');
+  var input = create('h3');
   input.textContent = "Header";
   input.classList.add('update-label')
   return input;
 }
 
 function Paragraph(){
-  var input = document.createElement('p');
+  var input = create('p');
   input.textContent = "Paragraph";
   input.classList.add('update-paragraph');
   return input;
 }
 
 function Checkbox(){
-  var input = document.createElement('div');
+  var input = create('div');
   input.classList.add('checkbox-group', 'update-required');
   return input;
 }
 
 function Radio(){
-  var input = document.createElement('div');
+  var input = create('div');
   input.classList.add('radio-group', 'update-required');
   return input;
 }
 
 function Select(){
-  var input = document.createElement('select');
+  var input = create('select');
   input.classList.add('form-control', 'update-required', 'update-value');
 
-  var opt = document.createElement('option');
+  var opt = create('option');
   opt.value = "initial-value";
   opt.textContent = "Select One";
 
@@ -889,24 +957,24 @@ function Select(){
 
 function DragOptions(type, settings){
 
-  var dragOptions = document.createElement('div');
+  var dragOptions = create('div');
   dragOptions.classList.add('drag-options', 'p-t-20', 'hidden');
 
-  var h4 = document.createElement('h4')
+  var h4 = create('h4')
   h4.textContent = "Field Configuration";
 
-  var form = document.createElement('div');
+  var form = create('div');
   form.classList.add('form-horizontal');
 
-  if(type == 'checkbox-group' || type === 'select' || type === 'radio-group'){
-  var optionsConfig = new OptionsConfig(type, settings.options);
-    form.appendChild(optionsConfig);
-  }
 
   var labelConfig = new LabelConfig(type, settings.label);
-  var helpConfig = new HelpConfig(settings.help);
 
   form.appendChild(labelConfig);
+
+  if(type == 'checkbox-group' || type === 'select' || type === 'radio-group'){
+    var optionsConfig = new OptionsConfig(type, settings.options);
+    form.appendChild(optionsConfig);
+  }
 
   if(type !== 'checkbox-group' && type == 'select' && type == 'radio-group' && type !== 'paragraph' && type !== 'header' && type !== 'file-upload' && type !== 'signature' && type !== 'date-field'){
     var placeholderConfig = new PlaceholderConfig(settings.placeholder);
@@ -918,9 +986,10 @@ function DragOptions(type, settings){
     form.appendChild(maskConfig);
   }
 
-  form.appendChild(helpConfig);
-
-  
+  if(type !== 'paragraph' && type !== 'header'){
+    var helpConfig = new HelpConfig(settings.help);
+    form.appendChild(helpConfig);
+  }
 
   dragOptions.appendChild(h4);
   dragOptions.appendChild(form);
@@ -931,15 +1000,15 @@ function DragOptions(type, settings){
 
 function LabelConfig(type, label){
 
-  var labelConfig = document.createElement('div');
+  var labelConfig = create('div');
   labelConfig.classList.add('form-group');
 
-  labelConfig.label = document.createElement('label');
+  labelConfig.label = create('label');
 
   labelConfig.label.classList.add('control-label');
   labelConfig.label.textContent = "Label"
 
-  labelConfig.input = document.createElement('input');
+  labelConfig.input = create('input');
   var labelClass = (type === 'paragraph') ? 'paragraph-content' : 'label-text'
   labelConfig.input.classList.add('form-control' , labelClass);
   labelConfig.input.type = "text";
@@ -953,14 +1022,14 @@ function LabelConfig(type, label){
 
 function PlaceholderConfig(placeholder){
 
-  var placeholderConfig = document.createElement('div');
+  var placeholderConfig = create('div');
   placeholderConfig.classList.add('form-group');
 
-  placeholderConfig.label = document.createElement('label');
+  placeholderConfig.label = create('label');
   placeholderConfig.label.classList.add('control-label');
   placeholderConfig.label.textContent = "Placeholder"
 
-  placeholderConfig.input = document.createElement('input');
+  placeholderConfig.input = create('input');
   placeholderConfig.input.classList.add('form-control', 'value');
   placeholderConfig.input.type = "text";
   placeholderConfig.input.value = placeholder;
@@ -973,17 +1042,17 @@ function PlaceholderConfig(placeholder){
 
 
 function MaskConfig(mask){
-  var maskConfig = document.createElement('div');
+  var maskConfig = create('div');
   maskConfig.classList.add('form-group');
 
-  maskConfig.label = document.createElement('label');
+  maskConfig.label = create('label');
   maskConfig.label.classList.add('control-label');
   maskConfig.label.textContent = "Mask"
 
-  maskConfig.input = document.createElement('input');
+  maskConfig.input = create('input');
   maskConfig.input.classList.add('form-control', 'mask');
   maskConfig.input.type = "text";
-  maskConfig.input.value = (mask !== undefined) ? mask : "(000) 000-0000";
+  maskConfig.input.value = (mask !== undefined && mask !== null) ? mask : "(000) 000-0000";
 
   maskConfig.appendChild(maskConfig.label);
   maskConfig.appendChild(maskConfig.input);
@@ -992,14 +1061,14 @@ function MaskConfig(mask){
 }
 
 function HelpConfig(help){
-  var helpConfig = document.createElement('div');
+  var helpConfig = create('div');
   helpConfig.classList.add('form-group');
 
-  helpConfig.label = document.createElement('label');
+  helpConfig.label = create('label');
   helpConfig.label.classList.add('control-label');
   helpConfig.label.textContent = "Help Text"
 
-  helpConfig.input = document.createElement('p');
+  helpConfig.input = create('p');
   helpConfig.input.classList.add('help-text');
   helpConfig.input.setAttribute('contenteditable', true);
   helpConfig.input.setAttribute('rows', 15);
@@ -1012,15 +1081,15 @@ function HelpConfig(help){
 }
 
 function Commands(){
-  var commands = document.createElement('div');
+  var commands = create('div');
   commands.classList.add('commands');
 
   function Button(command){
-    var btn = document.createElement('button');
+    var btn = create('button');
     btn.classList.add('btn', 'btn-default');
     btn.setAttribute('data-command', command);
 
-    var icon = document.createElement('i');
+    var icon = create('i');
     icon.classList.add('fa');
 
     switch(command){
@@ -1085,24 +1154,24 @@ function Commands(){
 
 
 function OptionsConfig(type, options){
-  var optionsConfig = document.createElement('div');
+  var optionsConfig = create('div');
   optionsConfig.classList.add('options', 'form-group');
 
-  var label = document.createElement('label');
+  var label = create('label');
   label.classList.add('control-label');
   label.textContent = "Options";
 
   optionsConfig.appendChild(label);
 
-  var addOption = document.createElement('div');
+  var addOption = create('div');
   addOption.classList.add('form-group');
   
 
-  addOption.input = document.createElement('input');
+  addOption.input = create('input');
   addOption.input.classList.add('form-control', 'label-input', 'col-md-4');
   addOption.input.setAttribute('placeholder', "Item");
 
-  addOption.button = document.createElement('a')
+  addOption.button = create('a')
   addOption.button.textContent = "Add";
   addOption.button.classList.add('add-options', 'btn', 'btn-success');
 
@@ -1113,18 +1182,18 @@ function OptionsConfig(type, options){
 
   if(type === 'select'){
 
-    var tableHolder = document.createElement('div');
+    var tableHolder = create('div');
     tableHolder.classList.add('form-group');
 
-    var table = document.createElement('table');
+    var table = create('table');
     table.classList.add('table', 'color-table', 'muted-table');
 
-    var thead = document.createElement('thead');
+    var thead = create('thead');
     thead.innerHTML = '<tr><th>Label</th><th>Value</th><th></th></tr>';
 
     table.appendChild(thead);
 
-    var tbody = document.createElement('tbody')
+    var tbody = create('tbody')
     tbody.classList.add('options-table');
     tbody.innerHTML = '<tr class="hidden"><td>Label</td><td>Value</td><td class="text-nowrap"></td></tr>'
 
@@ -1142,21 +1211,21 @@ function OptionsConfig(type, options){
 }
 
 function DragComments(){
-  var commentsHolder = document.createElement('div');
+  var commentsHolder = create('div');
   commentsHolder.classList.add('p-t-20', 'drag-comments', 'hidden');
 
-  var externalH4 = document.createElement('h4');
+  var externalH4 = create('h4');
   externalH4.classList.add('active', 'open-external');
   externalH4.textContent = "Comments";
 
-  var internalH4 = document.createElement('h4');
+  var internalH4 = create('h4');
   internalH4.classList.add('open-internal');
   internalH4.textContent = "Internal Comments";
 
-  var listExternal = document.createElement('ul');
+  var listExternal = create('ul');
   listExternal.classList.add('comments', 'external-comments');
 
-  var listInternal = document.createElement('ul');
+  var listInternal = create('ul');
   listInternal.classList.add('comments', 'internal-comments');
 
   commentsHolder.appendChild(externalH4);
@@ -1164,18 +1233,18 @@ function DragComments(){
   commentsHolder.appendChild(listExternal);
   commentsHolder.appendChild(listInternal);
 
-  var commentInput = document.createElement('div');
+  var commentInput = create('div');
   commentInput.classList.add('form-group', 'comment-input', 'row');
 
-  var text = document.createElement('textarea');
+  var text = create('textarea');
   text.classList.add('comment-msg', 'form-control');
   text.setAttribute('comment-type', 'texternal');
   text.setAttribute('placeholder', 'Type your comment here')
 
-  var sendComment = document.createElement('div');
+  var sendComment = create('div');
   sendComment.classList.add('col-sm-3', 'radio', 'text-right', 'pull-right');
 
-  var send = document.createElement('a');
+  var send = create('a');
   send.classList.add('btn', 'btn-default', 'add-comment');
   send.textContent = "Send";
 
@@ -1185,6 +1254,57 @@ function DragComments(){
 
   commentsHolder.appendChild(commentInput);
 
-
   return commentsHolder;
+}
+
+function DragValidate(){
+  var dragValidate = create('div');
+  dragValidate.classList.add("drag-validate");
+
+  function Radio(type){
+    var radio = create('div');
+    radio.classList.add('radio');
+    var input = create('input');
+    input.classList.add('is-incorrect');
+    input.type = "radio"
+    input.value = type;
+    input.name = "incorrect";
+
+    var label = create('label');
+    label.textContent = type;
+
+    radio.appendChild(input);
+    radio.appendChild(label);
+
+    return radio;
+  }
+
+  dragValidate.appendChild(new Radio("Pass"));
+  dragValidate.appendChild(new Radio("Fail"));
+  dragValidate.appendChild(new Radio("Audit"));
+
+
+  return dragValidate;
+}
+
+function create(tag, classes, config){
+
+  var element = document.createElement(tag);
+  
+  //add class
+  if(arguments[1] != null){
+    for(var i = 0; i < classes.length; i++){
+      element.classList.add(classes[i]);
+    }
+  }
+
+  //add attributes
+  if(arguments[2] != null){
+    if(config.type != null) element.type = config.type;
+    if(config.text != null) element.textContent = config.text;
+    if(config.value != null) element.value = config.value;
+    if(config.placeholder != null) element.setAttribute('placeholder', config.placeholder);
+  }
+  
+  return element; 
 }

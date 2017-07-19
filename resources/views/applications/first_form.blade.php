@@ -38,7 +38,7 @@
 
 <script>
     createTabs($('input[name=containers]').val(), true, "{{$isResponsible}}");
-
+    //console.log($('input[name=containers]').val());
     @if(!$isResponsible)
 
         Script.env = '{{ app('env') }}';

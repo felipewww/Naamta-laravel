@@ -7,7 +7,7 @@ var canvas;
 var canvasArray = new Array();
 appendNavigation();
 if($('client-view').length <= 0){ appendList(); }
-appendModel();
+//appendModel();
 
 // For Drag And Drop //
 
@@ -23,7 +23,7 @@ blankSpace.addEventListener('dragover', handleDragOver);
 blankSpace.addEventListener('drop', handleDrop);
 
 // Fixed menu while scrolling
-/*
+
 var menuTop = $('#list-container').offset().top;
 
 $(window).on('scroll', function(){
@@ -43,7 +43,6 @@ $(window).on('scroll', function(){
         $('#list-container').removeClass('fixed');
     }
 });
-*/
 
 //When drag starts
 function handleDragStart(e) {
@@ -150,9 +149,10 @@ function addEvents(elem, id = null, signature = null){
 
     //$(elem).css('display', 'none');
 
-    var type = $(elem).attr('id').split("__")[0];
+    var type = elem.getAttribute('field-type');
 
     if(id == null){
+        id = fieldCounter;
         $(elem).attr('id', type + '__' + fieldCounter);
         $(elem).find('.drag-options [type="radio"]').attr('name', 'button-type__' + fieldCounter );
         $(elem).attr('data-id', "");
@@ -164,7 +164,6 @@ function addEvents(elem, id = null, signature = null){
         $(elem).attr('data-id', id);
     }
 
-    id = $(elem).attr('id').split("__")[1];
 
     if( !isClientView ){
         // Add Event Listeners for Drag and Drop
@@ -199,7 +198,7 @@ function addEvents(elem, id = null, signature = null){
             changeSelect(elem);
             break;
         case 'signature':
-            //signatureField(elem);
+            signatureField(elem);
             changeSignature(elem);
             break;
         case 'number-field':
@@ -231,6 +230,10 @@ function addEvents(elem, id = null, signature = null){
     }
     function updateHelp(elem){
         // Update Help Text
+        if( $(elem).find('.help-text').html() === "" ){
+            $(elem).find('.help .icon').hide();
+        }
+
         $(elem).find('.drag-options .help-text').keyup(function(e){
             e.preventDefault();
             $(elem).find('.help + .text').html($(this).html());
@@ -580,7 +583,7 @@ function addEvents(elem, id = null, signature = null){
         }
     }
     function updateFileUpload(elem){
-        $(elem).find('.drag-input').addClass('dropzone').dropzone({
+        $(elem).find('.file-drop').addClass('dropzone').dropzone({
             url : "/upload-files",
             addRemoveLinks: true,
             acceptedFiles : "image/*,application/pdf,.psd, .docx, .mp4, .mp3",
@@ -678,9 +681,9 @@ function addEvents(elem, id = null, signature = null){
             for(var i = 0; i < options.length; i++){
                 var opt = options[i];
                 var option = {
-                    label : $(this).find('label').text(),
-                    value : $(this).find('input').val(),
-                    prop : $(this).find('input').prop('checked')
+                    label : $(opt).find('label').text(),
+                    value : $(opt).find('input').val(),
+                    prop : $(opt).find('input').prop('checked')
                 };
                 optionsArray.push(option);
             }
@@ -967,30 +970,81 @@ function addOption(type, node, label, value, prop, id){
 
     var html;
     if(type == 'checkbox-group'){
-        prop = (prop) ? 'checked' : '';
-        html = '<div class="checkbox checkbox-success"><input type="checkbox" name="radio-group__'+ id +'" value="' + value + '" '+ prop  +'><label>'+ label + '</label></div>'
-        $(html).appendTo(node.find('.drag-input .checkbox-group'));
+
+        var option = create('div');
+        option.classList.add('checkbox', 'checkbox-success');
+
+        var inputOption = create('input');
+        inputOption.type = "checkbox";
+        inputOption.name = "checkbox-group__" + id;
+        inputOption.value = value;
+        if(prop) inputOption.setAttribute('checked', true);
+
+        var labelOption = create('label');
+        labelOption.textContent = label;
+
+        option.appendChild(inputOption);
+        option.appendChild(labelOption);
+
+        if(!isClientView){
+            var removeOption = create('a', ['m-l-20', 'remove-option']);
+            removeOption.appendChild( create('i', ['fa', 'fa-times', 'text-danger']) );
+            option.appendChild(removeOption);
+            removeOption.addEventListener('click', function(){
+                this.parentNode.remove();
+            });
+        }
+
+        node.find('.drag-input .checkbox-group')[0].appendChild(option);
+
     }else if(type == 'radio-group'){
-        prop = (prop) ? 'checked' : '';
-        html = '<div class="radio radio-success"> <input type="radio" name="radio-group__'+ id +'" value="'+ value +'" '+ prop +'> <label> '+ label +' </label> </div>';
-        $(html).appendTo(node.find('.drag-input .radio-group'));
+        var option = create('div');
+        option.classList.add('radio', 'radio-success');
+
+        var inputOption = create('input');
+        inputOption.type = "radio";
+        inputOption.name = "radio-group__" + id;
+        inputOption.value = value;
+        if(prop) inputOption.setAttribute('checked', true);
+
+        var labelOption = create('label');
+        labelOption.textContent = label;
+
+
+        option.appendChild(inputOption);
+        option.appendChild(labelOption);
+
+        if(!isClientView){
+            var removeOption = create('a', ['m-l-20', 'remove-option']);
+            removeOption.appendChild( create('i', ['fa', 'fa-times', 'text-danger']) );
+            option.appendChild(removeOption);
+            removeOption.addEventListener('click', function(){
+                this.parentNode.remove();
+            });
+        }
+
+        node.find('.drag-input .radio-group')[0].appendChild(option);
+
     }else if(type == 'select'){
+
         prop = (prop) ? 'selected' : '';
         var html = '<option value="' + value + '" '+ prop +'>'+ label + '</option>';
         $(html).appendTo(node.find('.drag-input select'));
+
+        node.find('.drag-options .options-table').append('<tr><td>' + label + '</td><td>' + value + '</td><td class="text-nowrap"><a href="#" data-toggle="tooltip" data-original-title="Delete" class="remove-option"> <i class="fa fa-close text-danger"></i> </a></td></tr>');
+        
+        node.find('.drag-options .remove-option i').on('click', function(e){
+            e.preventDefault();
+            var index = $(this).closest('tr').index();
+
+            node.find('.checkbox-group .checkbox:nth-of-type('+ (index+1) +')').remove();
+            node.find('.radio-group .radio:nth-of-type('+ (index+1) +')').remove();
+            node.find('select option:nth-of-type('+ (index+1) +')').remove();
+            $(this).closest('tr').remove();
+        });
     }
-    node.find('.drag-options .options-table').append('<tr><td>' + label + '</td><td>' + value + '</td><td class="text-nowrap"><a href="#" data-toggle="tooltip" data-original-title="Delete" class="remove-option"> <i class="fa fa-close text-danger"></i> </a></td></tr>');
+    
 
-    //Remove options
-    node.find('.drag-options .remove-option i').on('click', function(e){
-        e.preventDefault();
-        var index = $(this).closest('tr').index();
-
-        node.find('.checkbox-group .checkbox:nth-of-type('+ (index+1) +')').remove();
-        node.find('.radio-group .radio:nth-of-type('+ (index+1) +')').remove();
-        node.find('select option:nth-of-type('+ (index+1) +')').remove();
-        $(this).closest('tr').remove();
-    });
 }
 
 // Returns the hash of the child 'a' element

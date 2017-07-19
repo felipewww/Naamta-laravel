@@ -40,23 +40,11 @@
     color: red;
     font-weight: bold;
 }
-/*
-#drag-container.client-view .drag-heading{
-    cursor: default;
-    padding: 5px;
-    background-color: rgba(0,0,0,0);
-}
-#drag-container.client-view .drag-heading h4, #drag-container.client-view .drag-heading .ordenation{
-    color: white;
-}
-#drag-container.client-view .drag-heading ul{
-    margin-right: 20px;
-}
-*/
 
 #drag-container .drag-heading h4{
     color: white;
     display: inline;
+    text-transform: uppercase;
 }
 #drag-container .drag-heading ul{
     list-style: none;
@@ -549,9 +537,10 @@ h4[class*="open-"].active{
 .file-holder h5:hover a div{
     text-decoration: none;
 }
-.remove-file{
+.remove-file, .remove-option{
     cursor: pointer;
 }
+
 
 .dropzone:hover{
     cursor: pointer;
