@@ -16,7 +16,7 @@
     display: none;
 }
 #drag-container .active .draggable-input{
-    display: block;
+    display: inline-block;
 }
 #drag-container .draggable-input.half-row{
     width: 49%;
@@ -397,7 +397,6 @@
     border: none;
     padding: 0 10px 20px 10px ;
     width: 33%;
-    float: left;
 }
 #drag-container.client-view .draggable-input[id*="header"]{
     padding: 0 10px 0 10px;

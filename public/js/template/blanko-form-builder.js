@@ -858,7 +858,17 @@ function appendNavigation(){
                 }
             }
         }else{
-            createTabs(toJson(), isClientView, isUserClient);
+            //createTabs(toJson(), isClientView, isUserClient);
+            var tabs = $('.tab');
+            for(var t = 0; t < tabs.length; t++){
+                var fields = $(tabs[t]).find('.draggable-input');
+                fields.sort(function(a, b){
+                    var a = parseInt($(a).attr('ordenation'));
+                    var b =  parseInt($(b).attr('ordenation'));
+                    return a - b;
+                });
+                $(fields).prependTo($(tabs[t]));
+            }
         }
     });
 
