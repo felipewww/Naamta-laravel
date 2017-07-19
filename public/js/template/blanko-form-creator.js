@@ -762,7 +762,7 @@ function Field(obj){
   
   if(isClientView){
     body.appendChild( DragComments() );
-    body.appendChild( new DragValidate() );
+    if(type !== 'header' && type !== 'paragraph') body.appendChild( new DragValidate() );
   }else{
     body.appendChild( new DragOptions(type, settings) );
   }
@@ -918,14 +918,14 @@ function TextArea(){
 
 function Header(){
   var input = create('h3');
-  input.textContent = "Header";
+  input.textContent = "Label";
   input.classList.add('update-label')
   return input;
 }
 
 function Paragraph(){
   var input = create('p');
-  input.textContent = "Paragraph";
+  input.textContent = "Label";
   input.classList.add('update-paragraph');
   return input;
 }
@@ -1007,14 +1007,21 @@ function LabelConfig(type, label){
 
   labelConfig.label.classList.add('control-label');
   labelConfig.label.textContent = "Label"
-
-  labelConfig.input = create('input');
-  var labelClass = (type === 'paragraph') ? 'paragraph-content' : 'label-text'
-  labelConfig.input.classList.add('form-control' , labelClass);
-  labelConfig.input.type = "text";
-  labelConfig.input.value = label;
-
+  
   labelConfig.appendChild(labelConfig.label);
+
+  if(type !== 'paragraph'){
+    labelConfig.input = create('input');
+    labelConfig.input.classList.add('form-control' , 'label-text');
+    labelConfig.input.type = "text";
+    labelConfig.input.value = label;
+  }else{
+    labelConfig.input = create('textarea');
+    labelConfig.input.classList.add('form-control' , 'paragraph-content');
+    labelConfig.input.textContent = label;
+  }
+
+
   labelConfig.appendChild(labelConfig.input);
 
   return labelConfig;
@@ -1164,8 +1171,6 @@ function OptionsConfig(type, options){
   optionsConfig.appendChild(label);
 
   var addOption = create('div');
-  addOption.classList.add('form-group');
-  
 
   addOption.input = create('input');
   addOption.input.classList.add('form-control', 'label-input', 'col-md-4');
@@ -1182,8 +1187,7 @@ function OptionsConfig(type, options){
 
   if(type === 'select'){
 
-    var tableHolder = create('div');
-    tableHolder.classList.add('form-group');
+    var tableHolder = create('div', ['m-t-20']);
 
     var table = create('table');
     table.classList.add('table', 'color-table', 'muted-table');

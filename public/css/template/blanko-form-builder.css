@@ -76,7 +76,10 @@
 
 #drag-container.client-view .drag-heading .drag-label label{
     font-weight: 300;
-    margin-bottom: 0;
+}
+
+#drag-container .drag-options label{
+    margin-bottom: 10px;
 }
 
 #drag-container .help {
@@ -92,6 +95,12 @@
     font-size: 1em;
     padding: 10px;
 }
+
+#drag-container .label-input{
+    width: 30%;
+    height: 34px;
+}
+
 /*
 #drag-container.client-view .drag-heading ul{
     float: none;
@@ -388,6 +397,7 @@
     border: none;
     padding: 0 10px 20px 10px ;
     width: 33%;
+    float: left;
 }
 #drag-container.client-view .draggable-input[id*="header"]{
     padding: 0 10px 0 10px;
@@ -492,6 +502,7 @@
 
 #drag-container canvas{
     border: 1px solid #ddd;
+    display: block;
 }
 
 #drag-container .rules .form-group{
@@ -501,6 +512,10 @@
 
 #drag-container .drag-options .col-lg-2{
     margin-right: 10px;
+}
+#drag-container .drag-options .commands .btn{
+    margin-right: 5px;
+    margin-bottom: 5px;
 }
 
 #drag-container .half-row .col-lg-2{
