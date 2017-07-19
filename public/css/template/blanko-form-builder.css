@@ -1,10 +1,8 @@
-#drag-container .hidden{
-    display: none;
-}
 #drag-container .modal{
     position: fixed;
     height: 450px;
 }
+
 #drag-container .draggable-input{
     border: 1px solid #e8e8e8;
     transition: 0.5s;
@@ -12,9 +10,11 @@
     width: 99%;
     vertical-align: top;
 }
+
 #drag-container .draggable-input{
     display: none;
 }
+
 #drag-container .active .draggable-input{
     display: inline-block;
 }
@@ -26,11 +26,6 @@
     opacity: 0.5;
     cursor: move;
 }
-#drag-container .drag-heading{
-    cursor: default;
-    background-color: #333;
-    padding: 10px 15px;
-} 
 .required-fail{
     border: 2px #f00 solid;
     padding: 5px;
@@ -41,6 +36,11 @@
     font-weight: bold;
 }
 
+#drag-container .drag-heading{
+    cursor: default;
+    background-color: #333;
+    padding: 10px 15px;
+} 
 #drag-container .drag-heading h4{
     color: white;
     display: inline;
@@ -66,6 +66,7 @@
 #drag-container .drag-heading ul li:hover{
     color: #f59623;
 }
+
 #drag-container .drag-heading .fa-compress, #drag-container .drag-heading .fa-expand{
     transform: rotate(45deg);
 }
@@ -78,8 +79,19 @@
     font-weight: 300;
 }
 
+#drag-container .drag-options .config-form{
+    display: flex;
+}
+
 #drag-container .drag-options label{
+    width: 10%;
     margin-bottom: 10px;
+    display: inline-block;
+    margin-right: 20px;
+}
+#drag-container .drag-options label + input, #drag-container .drag-options label + .help-holder{
+    display: inline-block;
+    width: 100%;
 }
 
 #drag-container .help {
@@ -515,6 +527,7 @@
 #drag-container .drag-options .commands .btn{
     margin-right: 5px;
     margin-bottom: 5px;
+    padding: 5px 10px;
 }
 
 #drag-container .half-row .col-lg-2{

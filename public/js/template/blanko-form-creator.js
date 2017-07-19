@@ -1001,7 +1001,7 @@ function DragOptions(type, settings){
 function LabelConfig(type, label){
 
   var labelConfig = create('div');
-  labelConfig.classList.add('form-group');
+  labelConfig.classList.add('form-group', 'config-form');
 
   labelConfig.label = create('label');
 
@@ -1030,7 +1030,7 @@ function LabelConfig(type, label){
 function PlaceholderConfig(placeholder){
 
   var placeholderConfig = create('div');
-  placeholderConfig.classList.add('form-group');
+  placeholderConfig.classList.add('form-group', 'config-form');
 
   placeholderConfig.label = create('label');
   placeholderConfig.label.classList.add('control-label');
@@ -1050,7 +1050,7 @@ function PlaceholderConfig(placeholder){
 
 function MaskConfig(mask){
   var maskConfig = create('div');
-  maskConfig.classList.add('form-group');
+  maskConfig.classList.add('form-group', 'config-form');
 
   maskConfig.label = create('label');
   maskConfig.label.classList.add('control-label');
@@ -1069,20 +1069,24 @@ function MaskConfig(mask){
 
 function HelpConfig(help){
   var helpConfig = create('div');
-  helpConfig.classList.add('form-group');
+  helpConfig.classList.add('form-group', 'config-form');
 
   helpConfig.label = create('label');
   helpConfig.label.classList.add('control-label');
   helpConfig.label.textContent = "Help Text"
 
-  helpConfig.input = create('p');
-  helpConfig.input.classList.add('help-text');
-  helpConfig.input.setAttribute('contenteditable', true);
-  helpConfig.input.setAttribute('rows', 15);
-  helpConfig.input.innerHTML = help;
+  helpConfig.formGroup = create('div', ['form-group', 'help-holder']);
+
+  helpConfig.formGroup.input = create('p');
+  helpConfig.formGroup.input.classList.add('help-text');
+  helpConfig.formGroup.input.setAttribute('contenteditable', true);
+  helpConfig.formGroup.input.setAttribute('rows', 15);
+  helpConfig.formGroup.input.innerHTML = help;
+
+  helpConfig.formGroup.appendChild(helpConfig.formGroup.input);
 
   helpConfig.appendChild(helpConfig.label);
-  helpConfig.appendChild(helpConfig.input);
+  helpConfig.appendChild(helpConfig.formGroup);
 
   return helpConfig;
 }
@@ -1162,7 +1166,7 @@ function Commands(){
 
 function OptionsConfig(type, options){
   var optionsConfig = create('div');
-  optionsConfig.classList.add('options', 'form-group');
+  optionsConfig.classList.add('options', 'form-group', 'config-form');
 
   var label = create('label');
   label.classList.add('control-label');
