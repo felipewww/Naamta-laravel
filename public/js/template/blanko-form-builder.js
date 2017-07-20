@@ -115,7 +115,7 @@ function handleDragStartList(e) {
     dragSrcEl = new Field(obj);
 
     // Add necessary events to the source
-    addEvents(dragSrcEl[0]);
+    addEvents(dragSrcEl);
 }
 
 // When an element of the list is dragged over a field in the form-holder

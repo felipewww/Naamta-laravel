@@ -303,21 +303,42 @@ function configureField(node, options, type, id){
 function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
   var cond = "";
   var changes = "";
-  
+  var ev = "";
+  var ev2 = "";
+  var fields = [];
+  var cont = 0;
   if(conditions.length >0){
     var i = 0;
-
     conditions.forEach(function( condition){
       var is_last_item = (i == (conditions.length - 1));
-
+      
       var page = condition.page;
       var field = condition.field;
       var comparison = condition.comparison;
       var value = condition.value;
-      changes += "'[ordenation=\"" + field.index + "\"] .drag-input .form-control'";
-      //changes += "'[data-id=\""+field._id+"\"] .drag-input .form-control'";
-      cond += " " + "$('[ordenation=\"" + field.index + "\"] .drag-input .form-control').val() " + comparison.value + "'" + value.value + "'";
-      //cond += " " + "$('[data-id=\""+ field._id + "\"] .drag-input .form-control').val() " + comparison.value + "'" + value.value + "'";
+
+      var jQfield = $('[ordenation="' + field.index +'"]');
+      var jQFieldId = jQfield.attr('field-id');
+      var fieldType = jQfield.attr('field-type');
+      
+      if(fieldType === 'radio-group'){
+        changes += "'[name=\"radio-group__"+ jQFieldId +"\"]'"
+        cond += " " + "$('[name=\"radio-group__"+ jQFieldId +"\"]:checked').val() " + comparison.value + "'" + value.value + "'";
+      }else if(fieldType == 'checkbox-group'){
+        changes += "'[name=\"checkbox-group__"+ jQFieldId +"\"]'"
+        cond += "0"
+        //cond += " " + "$('[name=\"checkbox-group__" + jQFieldId + "\"]:checked').val() " + comparison.value + "'" + value.value + "'";
+        fields.push( "[ordenation=\"" + field.index + "\"]");
+        console.log(fields);
+        ev += "opts[j].value " + comparison.value+" "+value.value + " ";
+        if(!is_last_item) ev += "||";
+        cont+= 1;
+      }else{
+        changes += "'[ordenation=\"" + field.index + "\"] .drag-input .form-control'";
+        //changes += "'[data-id=\""+field._id+"\"] .drag-input .form-control'";
+        cond += " " + "$('[ordenation=\"" + field.index + "\"] .drag-input .form-control').val() " + comparison.value + "'" + value.value + "'";
+        //cond += " " + "$('[data-id=\""+ field._id + "\"] .drag-input .form-control').val() " + comparison.value + "'" + value.value + "'";
+      }
       
       if(conditions.length>1 && !is_last_item){
         cond += (ruleTarget == "all" ? " && " : " || " );
@@ -327,37 +348,66 @@ function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
     });
 
     $(eval(changes)).change(function() {
-      evaluate(obj_id, cond, ruleAction);
+      evaluate(obj_id, cond, ruleAction, ev, fields, cont);
     });
-    // $(document).ready(function(){
-    //   if(ruleAction === "show"){
-    //     $(".order_" + obj_id).hide();
-    //   }else{
-    //     $(".order_" + obj_id).show();
-    //   }
-    // });
-    evaluate(obj_id, cond, ruleAction);
+
+    evaluate(obj_id, cond, ruleAction, ev, fields, cont);
   }
 }
 
-function evaluate(obj_id, cond, ruleAction){
-  if(eval(cond)){
-        if(ruleAction === "show"){
-          //$("[ordenation=\"" + obj_id + "\"]").show();
-          GetElement('[ordenation="'+ obj_id +'"]').toggle(true);
-        }else{
-          //$("[ordenation=\"" + obj_id + "\"]").hide();
-          GetElement('[ordenation="'+ obj_id +'"]').toggle(false);
-        }
+function evaluate(obj_id, cond, ruleAction, ev, fields, cont){
+  if(ev == ""){
+      if(eval(cond)){
+          if(ruleAction === "show"){
+            //$("[ordenation=\"" + obj_id + "\"]").show();
+            GetElement('[ordenation="'+ obj_id +'"]').toggle(true);
+          }else{
+            //$("[ordenation=\"" + obj_id + "\"]").hide();
+            GetElement('[ordenation="'+ obj_id +'"]').toggle(false);
+          }
+      }else{
+          if(ruleAction === "show"){
+            //$("[ordenation=\"" + obj_id + "\"]").hide();
+            GetElement('[ordenation="'+ obj_id +'"]').toggle(false);
+          }else{
+            GetElement('[ordenation="'+ obj_id +'"]').toggle(true);
+            //$("[ordenation=\"" + obj_id + "\"]").show();
+          }
+      }
   }else{
-        if(ruleAction === "show"){
-          //$("[ordenation=\"" + obj_id + "\"]").hide();
-          GetElement('[ordenation="'+ obj_id +'"]').toggle(false);
-        }else{
-          GetElement('[ordenation="'+ obj_id +'"]').toggle(true);
-          //$("[ordenation=\"" + obj_id + "\"]").show();
+    for(var i = 0; i < fields.length; i++){
+      field = $(fields[i]);
+      var opts = field.find('.drag-input :checked');
+      var a = [];
+      for(var j = 0; j < opts.length; j++){
+        console.log(opts[j].value);
+        if(eval(ev)){
+          console.log(ev);
+          a.push(opts[j].value);
+          console.log(a);
         }
+      }
+      console.log(a.length);
+      console.log(cont);
+      if(a.length >= cont){
+            if(ruleAction === "show"){
+              //$("[ordenation=\"" + obj_id + "\"]").show();
+              GetElement('[ordenation="'+ obj_id +'"]').toggle(true);
+            }else{
+              //$("[ordenation=\"" + obj_id + "\"]").hide();
+              GetElement('[ordenation="'+ obj_id +'"]').toggle(false);
+            }
+          }else{
+            if(ruleAction === "show"){
+              //$("[ordenation=\"" + obj_id + "\"]").hide();
+              GetElement('[ordenation="'+ obj_id +'"]').toggle(false);
+            }else{
+              GetElement('[ordenation="'+ obj_id +'"]').toggle(true);
+              //$("[ordenation=\"" + obj_id + "\"]").show();
+            }
+          }
     }
+  }
 }
 
 function checkFieldValue(id, value, options, isIncorrect, file){
@@ -787,7 +837,7 @@ function Heading(type){
   var expandField = create('li');
 
   var expandFieldIcon = create('i');
-  expandFieldIcon.classList.add('fa', 'expand-field');
+  expandFieldIcon.classList.add('fa', 'expand-field', 'fa-compress');
   var cloneField = create('li');
   var cloneFieldIcon = create('i');
   cloneFieldIcon.classList.add('fa', 'fa-clone');
