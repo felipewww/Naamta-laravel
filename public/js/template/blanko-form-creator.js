@@ -302,7 +302,7 @@ function configureField(node, options, type, id){
 //activateRule(action, target, page, field, comparison, value)
 function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
   var cond = "";
-  var changes = "";
+  var changes = "'";
   var ev = "";
   var ev2 = "";
   var fields = [];
@@ -322,11 +322,11 @@ function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
       var fieldType = jQfield.attr('field-type');
       
       if(fieldType === 'radio-group'){
-        changes += "'[name=\"radio-group__"+ jQFieldId +"\"]'"
+        changes += "[name=\"radio-group__"+ jQFieldId +"\"]"
         cond += " " + "$('[name=\"radio-group__"+ jQFieldId +"\"]:checked').val() " + comparison.value + "'" + value.value + "'";
       }else if(fieldType == 'checkbox-group'){
-        changes += "'[name=\"checkbox-group__"+ jQFieldId +"\"]'"
-        cond += "0"
+        changes += "[name=\"checkbox-group__"+ jQFieldId +"\"]"
+        cond += "1"
         //cond += " " + "$('[name=\"checkbox-group__" + jQFieldId + "\"]:checked').val() " + comparison.value + "'" + value.value + "'";
         fields.push( "[ordenation=\"" + field.index + "\"]");
         console.log(fields);
@@ -334,7 +334,7 @@ function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
         if(!is_last_item) ev += "||";
         cont+= 1;
       }else{
-        changes += "'[ordenation=\"" + field.index + "\"] .drag-input .form-control'";
+        changes += "[ordenation=\"" + field.index + "\"] .drag-input .form-control";
         //changes += "'[data-id=\""+field._id+"\"] .drag-input .form-control'";
         cond += " " + "$('[ordenation=\"" + field.index + "\"] .drag-input .form-control').val() " + comparison.value + "'" + value.value + "'";
         //cond += " " + "$('[data-id=\""+ field._id + "\"] .drag-input .form-control').val() " + comparison.value + "'" + value.value + "'";
@@ -347,7 +347,12 @@ function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
       i++;
     });
 
+    changes += "'";
+
+    console.log(changes);
+
     $(eval(changes)).change(function() {
+
       evaluate(obj_id, cond, ruleAction, ev, fields, cont);
     });
 
@@ -387,9 +392,9 @@ function evaluate(obj_id, cond, ruleAction, ev, fields, cont){
           console.log(a);
         }
       }
-      console.log(a.length);
-      console.log(cont);
       if(a.length >= cont){
+        if(eval(cond)){
+          console.log('succ');
             if(ruleAction === "show"){
               //$("[ordenation=\"" + obj_id + "\"]").show();
               GetElement('[ordenation="'+ obj_id +'"]').toggle(true);
@@ -397,7 +402,8 @@ function evaluate(obj_id, cond, ruleAction, ev, fields, cont){
               //$("[ordenation=\"" + obj_id + "\"]").hide();
               GetElement('[ordenation="'+ obj_id +'"]').toggle(false);
             }
-          }else{
+        }else{
+          console.log('err');
             if(ruleAction === "show"){
               //$("[ordenation=\"" + obj_id + "\"]").hide();
               GetElement('[ordenation="'+ obj_id +'"]').toggle(false);
@@ -405,7 +411,17 @@ function evaluate(obj_id, cond, ruleAction, ev, fields, cont){
               GetElement('[ordenation="'+ obj_id +'"]').toggle(true);
               //$("[ordenation=\"" + obj_id + "\"]").show();
             }
-          }
+        }
+      }else{
+        console.log('menor')
+        if(ruleAction === "show"){
+          //$("[ordenation=\"" + obj_id + "\"]").hide();
+          GetElement('[ordenation="'+ obj_id +'"]').toggle(false);
+        }else{
+          GetElement('[ordenation="'+ obj_id +'"]').toggle(true);
+          //$("[ordenation=\"" + obj_id + "\"]").show();
+        }
+      }
     }
   }
 }
