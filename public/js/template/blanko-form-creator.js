@@ -1312,7 +1312,7 @@ function DragComments(){
 
   var text = create('textarea');
   text.classList.add('comment-msg', 'form-control');
-  text.setAttribute('comment-type', 'texternal');
+  text.setAttribute('comment-type', 'external');
   text.setAttribute('placeholder', 'Type your comment here')
 
   var sendComment = create('div');
