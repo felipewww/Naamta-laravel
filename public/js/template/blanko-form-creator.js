@@ -1072,7 +1072,6 @@ function LabelConfig(type, label){
   labelConfig.classList.add('form-group', 'config-form');
 
   labelConfig.label = create('label');
-
   labelConfig.label.classList.add('control-label');
   labelConfig.label.textContent = "Label"
   
@@ -1244,6 +1243,7 @@ function OptionsConfig(type, options){
   optionsConfig.appendChild(label);
 
   var addOption = create('div');
+  addOption.classList.add('full-row');
 
   addOption.input = create('input');
   addOption.input.classList.add('form-control', 'label-input', 'col-md-4');

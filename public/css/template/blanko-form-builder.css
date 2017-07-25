@@ -83,6 +83,10 @@
     display: flex;
 }
 
+#drag-container .drag-options .config-form .full-row{
+    width: 100%;
+}
+
 #drag-container .drag-options label{
     width: 10%;
     margin-bottom: 10px;

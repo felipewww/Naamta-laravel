@@ -1287,3 +1287,21 @@ function validateEmail(email) {
     var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
 }
+
+function optionsNotEmpty(){
+    var errors = 0;
+    
+    if( $('.checkbox-group').length > 0 ){
+        $('.checkbox-group').each(function(){
+            if( $(this).find('.checkbox').length <= 0) errors++;
+        });
+    }
+
+    if( $('.radio-group').length > 0 ){
+        $('.radio-group').each(function(){
+            if( $(this).find('.radio').length <= 0) errors++;
+        });
+    }
+    console.log(errors);
+    return errors <= 0;
+}

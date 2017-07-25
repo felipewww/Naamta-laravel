@@ -100,8 +100,12 @@
 <script>
     $('form').submit(function(e){
         e.preventDefault();
-        $('input[name=containers]').val(toJson());
-        $(this).unbind().submit();
+        if( optionsNotEmpty() ){
+            $('input[name=containers]').val(toJson());
+            $(this).unbind().submit();
+        }else{
+            alert('Please, check if your checkboxes and radio-buttons are not empty');
+        }
     });
 
     if($('input[name=containers]').val() != ''){
