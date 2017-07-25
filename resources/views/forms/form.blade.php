@@ -22,7 +22,7 @@
     @section('scripts')
         <script>
             $(document).ready(function () {
-                $('#save, #open-history, .form-holder > .filter').hide();
+                $('.form-holder > .filter').hide();
             });
         </script>
     @endsection

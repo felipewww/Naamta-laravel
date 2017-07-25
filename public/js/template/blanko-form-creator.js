@@ -16,7 +16,9 @@ var clones = new Array();
 
 document.addEventListener('keypress', function(e){
   if(e.which == 13) {
-    e.preventDefault();
+    if(e.target.nodeName !== 'TEXTAREA' && e.target.nodeName !== 'P' ) {
+      e.preventDefault()
+    }
     return false;
   }
 });
@@ -206,8 +208,8 @@ function configureField(node, options, type, id){
     node.find('.update-label').text(options.label);
     node.find('.update-label').val(options.label);
   }else{
-    node.find('.update-paragraph').text(options.label);
-    node.find('.paragraph-content').val(options.label);
+    node.find('.update-paragraph').html(options.label);
+    node.find('.paragraph-content').html(options.label);
   }
 
   node.find('.help + .text').html(options.help);
@@ -1082,8 +1084,9 @@ function LabelConfig(type, label){
     labelConfig.input.type = "text";
     labelConfig.input.value = label;
   }else{
-    labelConfig.input = create('textarea');
+    labelConfig.input = create('p');
     labelConfig.input.classList.add('form-control' , 'paragraph-content');
+    labelConfig.input.setAttribute('contenteditable', true);
     labelConfig.input.textContent = label;
   }
 

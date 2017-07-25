@@ -295,7 +295,7 @@ function addEvents(elem, id = null, signature = null){
     }
     function updateParagraph(elem){
         $(elem).find('.drag-options .paragraph-content').keyup(function(){
-            $(elem).find('.update-paragraph').text($(this).val());
+            $(elem).find('.update-paragraph').html($(this).html());
         });
     }
     function updateRequired(elem){
