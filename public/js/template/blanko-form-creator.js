@@ -1083,10 +1083,13 @@ function LabelConfig(type, label){
     labelConfig.input.type = "text";
     labelConfig.input.value = label;
   }else{
-    labelConfig.input = create('p');
-    labelConfig.input.classList.add('form-control' , 'paragraph-content');
-    labelConfig.input.setAttribute('contenteditable', true);
-    labelConfig.input.textContent = label;
+    labelConfig.input = create('div', ['full-row'])
+    labelConfig.input.p = create('p');
+    labelConfig.input.p.classList.add('form-control' , 'paragraph-content');
+    labelConfig.input.p.setAttribute('contenteditable', true);
+    labelConfig.input.p.textContent = label;
+
+    labelConfig.input.appendChild(labelConfig.input.p);
   }
 
 

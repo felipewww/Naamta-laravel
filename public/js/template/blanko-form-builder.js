@@ -322,6 +322,10 @@ function addEvents(elem, id = null, signature = null){
                 dragOpt.find('.commands').remove();
             }else{
                 dragOpt.find('.help-text').before(new Commands());
+                if( type == 'paragraph' ) {
+                    console.log('a');
+                    dragOpt.find('.paragraph-content').before(new Commands())
+                }
                 helpFormatter(elem);
             }
         });
@@ -746,7 +750,8 @@ function addEvents(elem, id = null, signature = null){
             if (command == 'h4' || command == 'h5' || command == 'p') {
                 document.execCommand('formatBlock', false, command);
             }
-            if (command == 'createlink') {
+            if (command == 'createLink') {
+                console.log('aaaa')
                 url = prompt('Enter the link here: ', 'http:\/\/');
                 document.execCommand($(this).data('command'), false, url);
             } else document.execCommand($(this).data('command'), false, null);
