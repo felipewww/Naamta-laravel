@@ -104,7 +104,7 @@
             $('input[name=containers]').val(toJson());
             $(this).unbind().submit();
         }else{
-            alert('Please, check if your checkboxes and radio-buttons are not empty');
+            alert('Please, check if your checkboxes, selects and radio-buttons have at least 1 option');
         }
     });
 

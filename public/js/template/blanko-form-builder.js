@@ -1291,17 +1291,24 @@ function validateEmail(email) {
 function optionsNotEmpty(){
     var errors = 0;
     
-    if( $('.checkbox-group').length > 0 ){
-        $('.checkbox-group').each(function(){
+    if( $('.drag-input .checkbox-group').length > 0 ){
+        $('.drag-input .checkbox-group').each(function(){
             if( $(this).find('.checkbox').length <= 0) errors++;
         });
     }
 
-    if( $('.radio-group').length > 0 ){
-        $('.radio-group').each(function(){
+    if( $('.drag-input .radio-group').length > 0 ){
+        $('.drag-input .radio-group').each(function(){
             if( $(this).find('.radio').length <= 0) errors++;
         });
     }
+
+    if( $('.drag-input select').length > 0){
+        $('.drag-input select').each(function(){
+            if( $(this).find('option').length <= 1) errors++;
+        });   
+    }
+
     console.log(errors);
     return errors <= 0;
 }
