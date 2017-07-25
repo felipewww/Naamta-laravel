@@ -1272,13 +1272,12 @@ function OptionsConfig(type, options){
 
     var tbody = create('tbody')
     tbody.classList.add('options-table');
-    tbody.innerHTML = '<tr class="hidden"><td>Label</td><td>Value</td><td class="text-nowrap"></td></tr>'
 
     table.appendChild(tbody);
 
     tableHolder.appendChild(table);
 
-    optionsConfig.appendChild(tableHolder);
+    addOption.appendChild(tableHolder);
     
   }
 
