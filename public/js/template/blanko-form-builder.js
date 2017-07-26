@@ -1200,9 +1200,10 @@ function validateForm(){
     }else{
         var shownFields = $('.tabs-holder .draggable-input:not([style="display: none;"])');
         for(var i = 0; i < shownFields.length; i++){
-            var type = $(this).attr('id').split('__')[0];
-            var id = $(this).attr('id').split('__')[1];
-            var dragInput = $(this).find('.drag-input');
+            var field = shownFields[i];
+            var type = $(field).attr('id').split('__')[0];
+            var id = $(field).attr('id').split('__')[1];
+            var dragInput = $(field).find('.drag-input');
 
             switch(type){
                 case 'signature' :
@@ -1215,35 +1216,35 @@ function validateForm(){
                     }
                     break;
                 case 'radio-group' :
-                    if( $(this).find('.drag-input input:radio:checked').length <= 0 ){
+                    if( $(field).find('.drag-input input:radio:checked').length <= 0 ){
                         dragInput.addClass('required-fail');
                     }else{
                         dragInput.removeClass('required-fail');
                     }
                     break;
                 case 'checkbox-group' :
-                    if( $(this).find('.drag-input input:checkbox:checked').length <= 0 ){
+                    if( $(field).find('.drag-input input:checkbox:checked').length <= 0 ){
                         dragInput.addClass('required-fail');
                     }else{
                         dragInput.removeClass('required-fail');
                     }
                     break;
                 case 'file-upload' :
-                    if($(this).find('.dz-preview').length > 0 || $(this).find('.file-holder h5').length > 0){
+                    if($(field).find('.dz-preview').length > 0 || $(field).find('.file-holder h5').length > 0){
                         dragInput.removeClass('required-fail');
                     }else{
                         dragInput.addClass('required-fail');
                     }
                     break;
                 case 'select' :
-                    if( $(this).find('.drag-input select').val() == 'initial-value' ){
+                    if( $(field).find('.drag-input select').val() == 'initial-value' ){
                         dragInput.addClass('required-fail');
                     }else{
                         dragInput.removeClass('required-fail');
                     }
                     break;
                 case 'email-field' :
-                    isValid = validateEmail($(this).find('.drag-input input').val());
+                    isValid = validateEmail($(field).find('.drag-input input').val());
                     if( isValid){
                         dragInput.removeClass('required-fail');
                     }else{
@@ -1253,7 +1254,7 @@ function validateForm(){
                     }
                     break;
                 default :
-                    if($(this).find('.drag-input input').val() == ''){
+                    if($(field).find('.drag-input input').val() == ''){
                         dragInput.addClass('required-fail');
                     }else{
                         dragInput.removeClass('required-fail');
