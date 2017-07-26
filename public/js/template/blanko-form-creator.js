@@ -1275,6 +1275,7 @@ function OptionsConfig(type, options){
 
     var tbody = create('tbody')
     tbody.classList.add('options-table');
+    tbody.innerHTML = '<tr></tr>';
 
     table.appendChild(tbody);
 

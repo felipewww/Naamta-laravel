@@ -1062,7 +1062,9 @@ function addOption(type, node, label, value, prop, id){
         var html = '<option value="' + value + '" '+ prop +'>'+ label + '</option>';
         $(html).appendTo(node.find('.drag-input select'));
 
-        node.find('.drag-options .options-table').append('<tr><td>' + label + '</td><td>' + value + '</td><td class="text-nowrap"><a href="#" data-toggle="tooltip" data-original-title="Delete" class="remove-option"> <i class="fa fa-close text-danger"></i> </a></td></tr>');
+        if(value !== "initial-value"){
+            node.find('.drag-options .options-table').append('<tr><td>' + label + '</td><td>' + value + '</td><td class="text-nowrap"><a href="#" data-toggle="tooltip" data-original-title="Delete" class="remove-option"> <i class="fa fa-close text-danger"></i> </a></td></tr>');
+        }
         
         node.find('.drag-options .remove-option').on('click', function(e){
             e.preventDefault();

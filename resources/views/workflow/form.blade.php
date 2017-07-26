@@ -86,8 +86,11 @@
     
     $('.submit-form').on('click', function(e){
         e.preventDefault();
-        
+        if( validateForm() ){
             workflow.sendForm();
+        }else{
+            console.log('You shall not pass')
+        }
         
     });
 
