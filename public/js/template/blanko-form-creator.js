@@ -54,8 +54,10 @@ function createTabs(json, clientView = false, isClient, report){
       }
 
       clones.sort(function(a, b){
-        var a = parseInt($(a).attr('class').split('order_')[1]);
-        var b =  parseInt($(b).attr('class').split('order_')[1]);
+        console.log(a);
+        var a =  $(a).attr('ordenation');
+        var b =  parseInt($(b).attr('ordenation'));
+        console.log(a);
         return a - b;
       });
 
@@ -150,17 +152,10 @@ function createTabs(json, clientView = false, isClient, report){
 
 }
 
-// Creates the fields related to the createTabs function
-// Relates to createTabs
-// Uses configureField
 function createFields(obj, clientView){
   //var clone = $('#input-types #' + obj.type).clone();
   var clone = new Field(obj);
   clone = $(clone);
-  //$('.tab-control .tab-config').toggle(obj.isEditable);
-  //$('.tab-control .tab-remove').toggle(obj.isEditable);
-  //clone.find('.drag-heading').toggle(obj.isEditable);
-  //clone.find('.drag-options').toggle(obj.isEditable);
   configureField(clone, obj.setting, obj.type, obj._id);
   clones.splice(obj.setting.ordenate, 0, clone);
 
@@ -202,6 +197,7 @@ function createFields(obj, clientView){
   }
 
 }
+
 function configureField(node, options, type, id){
 
   if(type != 'paragraph'){
@@ -211,6 +207,9 @@ function configureField(node, options, type, id){
     node.find('.update-paragraph').html(options.label);
     node.find('.paragraph-content').html(options.label);
   }
+
+  node.attr('ordenation', options.ordenate);
+  console.log(node);
 
   node.find('.help + .text').html(options.help);
   node.find('.help-text').html(options.help);
@@ -332,7 +331,7 @@ function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
         //cond += " " + "$('[name=\"checkbox-group__" + jQFieldId + "\"]:checked').val() " + comparison.value + "'" + value.value + "'";
         fields.push( "[ordenation=\"" + field.index + "\"]");
         console.log(fields);
-        ev += "opts[j].value " + comparison.value+" "+value.value + " ";
+        ev += "opts[j].value " + comparison.value+" '"+value.value + "' ";
         if(!is_last_item) ev += "||";
         cont+= 1;
       }else{
