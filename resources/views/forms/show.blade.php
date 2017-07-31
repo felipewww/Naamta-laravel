@@ -43,8 +43,9 @@ var appFolder = "teste";
 <?php
     $containers = str_replace("'", "\'", $containers );
     $containers = str_replace('"', '\"', $containers );
+    $containers = str_replace('\n', '\\\n', $containers );
 ?>
-
-createTabs('<?= $containers ?>', true, "{{ Auth::user()->isClient() ? true : false }}");
+var json = '<?= $containers ?>';
+createTabs(json , true, "{{ Auth::user()->isClient() ? true : false }}");
 </script>
 @endsection
