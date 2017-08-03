@@ -185,6 +185,7 @@ class ApplicationsController extends Controller
     public function update(Request $request, $id, Response $res)
     {
         Validator::extend('users_application.needs_client', function ($attribute, $value, $parameters, $validator) {
+//            dd('here!');
 
             if ( !is_array($value) ) {
                 return false;
@@ -253,7 +254,7 @@ class ApplicationsController extends Controller
 
         \DB::commit();
 //        dd('everything is ok!');
-        return Redirect::to('/applications/'.$id.'/edit');
+        return Redirect::to('/application/'.$id.'/dashboard');
     }
 
     public function settings(Request $request, $id)

@@ -22,6 +22,13 @@ Route::get('register/confirmation/resend/{token}/{id}', 'Auth\RegisterController
 
 
 Auth::routes();
+
+Route::get('/logout', function (Request $request){
+    //dd(\Illuminate\Support\Facades\Auth::user());
+    \Illuminate\Support\Facades\Auth::logout();
+    return redirect()->to('/login');
+});
+
 Route::get('/test', function (Request $request) {
 
 });

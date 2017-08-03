@@ -57,6 +57,7 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
+//        dd('here');
         if (!Auth::user()) {
             return Redirect::to('/login');
         }
@@ -256,6 +257,7 @@ class HomeController extends Controller
 
             $isResponsible = $currentStep->loggedUserIsStepResponsible();
             $userTypeResponsible = ApplicationUserTypes::where('id', $currentStep->responsible)->first();
+            //dd($currentStep->responsible);
             $userResponsible = UserApplication::where('user_type', $currentStep->responsible)->get();
 
             $workflowInfo = $this->getApplicationWorkflowInfo($application);
@@ -273,7 +275,7 @@ class HomeController extends Controller
 
 
 //            dd($currentStep);
-
+//dd($previousStep->name);
             return view('homes.application', [
                 'previous_step'         => $previousStep,
                 'pageInfo'              => $this->pageInfo,

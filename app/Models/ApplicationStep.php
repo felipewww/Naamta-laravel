@@ -69,7 +69,10 @@ class ApplicationStep extends Model
     }
 
     public function previousStep(){
-        $prev = ApplicationStep::where("ordination", (($this->ordination>0 ? ($this->ordination - 1): 0)))->first();
+        $prev = ApplicationStep::where("ordination", (($this->ordination > 0 ? ($this->ordination - 1): 0)))
+            ->where('application_id', $this->application->id)
+            ->first();
+
         if($prev->id === $this->id){
             return null;
         }

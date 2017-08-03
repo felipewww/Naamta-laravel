@@ -122,10 +122,11 @@
                 <ul class="wp-side-menu">
                     <li> <a href="{{ url('') }}"> Dashboard</a></li>
                     @if(Auth::user()!=null && Auth::user()->isAdmin())
-                        <li class="nav-small-cap">USERS</li>
+                        {{--<li class="nav-small-cap">USERS</li>--}}
                         {{--<li> <a href="{{ url('/firstFormEdit') }}"> Edit Register Form</a></li>--}}
                         <li> <a href="{{ url('users') }}">Users List</a> </li>
                         <li> <a href="{{ url('usertypes') }}">User Types</a></li>
+                        <li> <a href="{{ url('firstFormEdit') }}">Edit Registration Form</a></li>
                     @endif
                     @if(Auth::user()!=null && (Auth::user()->isAdmin() || Auth::user()->isStaff()))
                         <li class="nav-small-cap">WORKFLOW</li>

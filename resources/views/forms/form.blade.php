@@ -1,20 +1,20 @@
 @extends('layouts.app')
 
 @php
-    $page = "forms";
-    
-    $route = route('forms.store');
-    $method = 'POST';
-    if(isset($form) && $form!=null){
-        if($form->id!=null){
-            $route = route('forms.update', ['id' => $form->id]);
-            $method = 'PUT';
+        $page = "forms";
+
+        $route = route('forms.store');
+        $method = 'POST';
+        if(isset($form) && $form!=null){
+            if($form->id!=null){
+                $route = route('forms.update', ['id' => $form->id]);
+                $method = 'PUT';
+            }
+            $noFilter = false;
+        }else{
+            $noFilter = true;
+            $form = new App\Models\FormTemplate();
         }
-        $noFilter = false;
-    }else{
-        $noFilter = true;
-        $form = new App\Models\FormTemplate();
-    }
 
 @endphp
 

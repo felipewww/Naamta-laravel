@@ -16,15 +16,18 @@
                         @endif
                     </p>
                     <h4>Next Step:</h4>
-                    <p class="m-b-40">Step : {{ ($currentStep->nextStep() != null) ? $currentStep->nextStep()->title : "It's the last step" }}</p>
+                    <p class="m-b-40">Step : {{ ($currentStep->nextStep() != null) ? $currentStep->nextStep()->title : "This is the last step" }}</p>
                     <h4>Previous Step:</h4>
-                    <p class="">Step :  {{($currentStep->previousStep()!=null ? $currentStep->previousStep()->title : "It's the first step")}}</p>
+{{--                    {{ dd($currentStep->previousStep()) }}--}}
+                    <p class="">Step :  {{($currentStep->previousStep()!=null ? $currentStep->previousStep()->title : "This is the first step")}}</p>
                     <br>
                     <h4>Responsible User Type: <strong>{{ $userTypeResponsible->title }}</strong></h4>
                     <ul>
-                        @foreach($userResponsible as $ures)
+{{--                        {{ dd($userResponsible) }}--}}
+                        @foreach($userResponsible as $user)
                         <li>
-                            {{ $ures->user->name }}, {{ $ures->user->email }}
+{{--                            {{dd($user->user)}}--}}
+                            {{ $user->user->name }}, {{ $user->user->email }}
                         </li>
                         @endforeach
                     </ul>
@@ -32,7 +35,7 @@
                     @if($isResponsible)
                         @if($currentStep->morphs_from === "App\Models\Approval")
                             @if($currentStep->approval->has_report === 0)
-                                <button onclick="workflow.sendApproval('rejected', '{{$currentStep->id}}', null);" class="btn btn-danger pull-left">Reprove</button>
+                                <button onclick="workflow.sendApproval('rejected', '{{$currentStep->id}}', null);" class="btn btn-danger pull-left">Deny</button>
                                 <button onclick="workflow.sendApproval('approved', '{{$currentStep->id}}', null);" class="btn btn-primary pull-right">Approve</button>
                             @else
                                 <a href="/workflow/step/{{$currentStep->id}}/show" class="btn btn-success pull-right">Evaluate with report</a>
@@ -66,7 +69,7 @@
                     <p class="m-b-40">{{ $application->client->company }}</p>
 
                     <h4>Applicant’s Representative:</h4>
-                    <p class="">{{ $application->client->user->name }}</p>
+                    <p class="">{{ $application->client->user->name }}, {{ $application->client->user->email }}</p>
 
                 </div>
             </div>

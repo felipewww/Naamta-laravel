@@ -106,7 +106,8 @@ class FormsController extends Controller
      * @return Response
      */
     public function create(Request $request, $id = null)
-    {   $this->pageInfo->title              = 'Form Templates';
+    {
+        $this->pageInfo->title              = 'Form Templates';
         $this->pageInfo->category->title    = 'Form Types';
         $this->pageInfo->category->link     = '/forms';
         $this->pageInfo->subCategory->title = 'Form Create';
