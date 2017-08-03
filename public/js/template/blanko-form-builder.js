@@ -334,7 +334,7 @@ function addEvents(elem, id = null, signature = null){
         $(elem).find('.drag-heading .expand-field').click(function(){
             var field = $(this).closest('.draggable-input');
             $(this).toggleClass('fa-expand').toggleClass('fa-compress');
-
+            field.siblings().find('.expand-field').addClass('fa-expand').removeClass('fa-compress');
             field.toggleClass('expanded').siblings().removeClass('expanded');
             field.toggleClass('half-row');
             //$(field).find(canvas).hide();
