@@ -1,6 +1,5 @@
 var isValid;
 
-
 Dropzone.autoDiscover = false;
 
 var canvas;
@@ -323,7 +322,7 @@ function addEvents(elem, id = null, signature = null){
             }else{
                 dragOpt.find('.help-text').before(new Commands());
                 if( type == 'paragraph' ) {
-                    console.log('a');
+                    //console.log('a');
                     dragOpt.find('.paragraph-content').before(new Commands())
                 }
                 helpFormatter(elem);
@@ -334,7 +333,8 @@ function addEvents(elem, id = null, signature = null){
         $(elem).find('.drag-heading .expand-field').click(function(){
             var field = $(this).closest('.draggable-input');
             $(this).toggleClass('fa-expand').toggleClass('fa-compress');
-            field.siblings().find('.expand-field').addClass('fa-expand').removeClass('fa-compress');
+            if (isClientView)
+                field.siblings().find('.expand-field').addClass('fa-expand').removeClass('fa-compress');
             field.toggleClass('expanded').siblings().removeClass('expanded');
             field.toggleClass('half-row');
             //$(field).find(canvas).hide();
@@ -751,7 +751,7 @@ function addEvents(elem, id = null, signature = null){
                 document.execCommand('formatBlock', false, command);
             }
             if (command == 'createLink') {
-                console.log('aaaa')
+                //console.log('aaaa')
                 url = prompt('Enter the link here: ', 'http:\/\/');
                 document.execCommand($(this).data('command'), false, url);
             } else document.execCommand($(this).data('command'), false, null);
@@ -1100,12 +1100,8 @@ function appendComment(user, msg, type = 'external', node, id){
 
 
 function addRule(node, page, field, comparison, value) {
-
-    var tr = document.createElement('tr');
-    var td = document.createElement('td');
-    td.setAttribute('page-id', page._id);
-
-    var html =  '<tr> <td class="page-id" page-id="' + page._id + '">' + page.label + '</td> <td class="field-id" field-id="' + field._id + '"><span class="ordenation">('+ field.index + ')</span> <span class="field-label">' + field.label + '</span></td><td class="comparison" value="'+ comparison.value +'">'+ comparison.label+'</td> <td class="value" value="'+ value.value +'">'+ value.label +'</td> <td><a class="remove-row close col-lg-1">×</a></td> </tr>';
+    //console.log(field);
+    var html =  '<tr> <td class="page-id" page-id="' + page._id + '" field-id="'+ field._id +'" >' + page.label + '</td> <td class="field-id" field-id="' + field._id + '" ordenation="'+ field.index +'"><span class="ordenation">('+ field.index + ')</span> <span class="field-label">' + field.label + '</span></td><td class="comparison" value="'+ comparison.value +'">'+ comparison.label+'</td> <td class="value" value="'+ value.value +'">'+ value.label +'</td> <td><a class="remove-row close col-lg-1">×</a></td> </tr>';
     node.append(html);
 
     node.find('a.remove-row').click(function(e){
@@ -1123,26 +1119,32 @@ function ordenateFields(){
 
      for(var i = 0; i < fields.length; i++){
          var field = fields[i];
-         var index = i;
-         var fieldIndex = index + 1;
+         var old_order = $(field).attr('ordenation');
+         var index = i + 1;
          //$(field).find('.drag-heading .ordenation').text('(' + (fieldIndex) + ')' );
-         field.setAttribute('ordenation', fieldIndex);
+         field.setAttribute('ordenation', index);
          var fieldId = $(field).attr('id').split('__')[1];
      }
 
-     var rules = $('.rules td');
-     for(var i = 0; i < rules.length; i++){
-     var rule = rules[i];
-     var id = $(rule).attr('field-id');
-     $(rule).find('.ordenation').html();
-     }
+      var rules = $('.rules .field-id');
+      
+      for (var j =  0; j < rules.length; j++) {
+        var rule = rules[j];
+        var id = rule.getAttribute('field-id');
+        var field = $('.draggable-input[field-id="'+ id +'"]')[0];
+        //console.log(field);
+        var order = field.getAttribute('ordenation');
+        rule.setAttribute('ordenation', order);
+        $(rule).find('.ordenation').html('(' + order + ')');
+      } 
 }
+
 function updateRulesPages(){
      var ruleOptions = '<option value="initial">Select Page</option>';
      var anchors = $('li.tab-control a');
      for(var i = 0; i < anchors.length; i++){
-     var anchor = anchors[i];
-     ruleOptions += '<option value="'+ $(anchor).attr('href').replace('#tab', '') +'">'+ $(anchor).text() +'</option>'
+         var anchor = anchors[i];
+         ruleOptions += '<option value="'+ $(anchor).attr('href').replace('#tab', '') +'">'+ $(anchor).text() +'</option>'
      }
 
      $('.rule').find('.tabs').html(ruleOptions);
@@ -1270,7 +1272,6 @@ function validateForm(){
 
         var id = $('.tab-fail').removeClass('tab-fail');
 
-
         for(var i = 0; i < fails.length; i++){
             var fail = fails[i];
             var id = $(fail).closest('.tab').attr('id');
@@ -1317,6 +1318,6 @@ function optionsNotEmpty(){
         });   
     }
 
-    console.log(errors);
+    //console.log(errors);
     return errors <= 0;
 }

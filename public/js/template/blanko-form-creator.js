@@ -54,10 +54,10 @@ function createTabs(json, clientView = false, isClient, report){
       }
 
       clones.sort(function(a, b){
-        console.log(a);
+        //console.log(a);
         var a =  $(a).attr('ordenation');
         var b =  parseInt($(b).attr('ordenation'));
-        console.log(a);
+        //console.log(a);
         return a - b;
       });
 
@@ -77,8 +77,27 @@ function createTabs(json, clientView = false, isClient, report){
   var tabsHolder = document.getElementById('tabs-holder');
   tabsHolder.appendChild(tabHolderFrag);
 
-  ordenateFields();
+  var fields = $('.form-holder .draggable-input');
+
+  for(var i = 0; i < fields.length; i++){
+    var field = fields[i];
+    var old_order = $(field).attr('ordenation');
+    var index = i + 1;
+    //$(field).find('.drag-heading .ordenation').text('(' + (fieldIndex) + ')' );
+    field.setAttribute('ordenation', index);
+    var fieldId = $(field).attr('id').split('__')[1];
+  }
+
+  var rules = $('.rules .field-id');
   
+  for (var j =  0; j < rules.length; j++) {
+    var rule = rules[j];
+    var ruleOrder = rule.getAttribute('ordenation');
+    var field = $('.draggable-input[ordenation="'+ ruleOrder +'"]')[0];
+    var id = field.getAttribute('field-id');
+    rule.setAttribute('field-id', id)
+  } 
+
   for(var i = 0; i < objs.length; i++){
     var obj = objs[i];
     if(obj.fields != undefined){
@@ -91,12 +110,14 @@ function createTabs(json, clientView = false, isClient, report){
     }
   }
 
+
   $('.required-field').remove();
   $('.tab-control').removeClass('active');
   $('.tab-control:first-of-type').addClass('active');
 
   $('#drag-container').find('a:not(.btn)').attr('target', '_blank');
 
+   
   if(isClientView){
 
     container.classList.add('client-view');
@@ -209,7 +230,7 @@ function configureField(node, options, type, id){
   }
 
   node.attr('ordenation', options.ordenate);
-  console.log(node);
+  //console.log(node);
 
   node.find('.help + .text').html(options.help);
   node.find('.help-text').html(options.help);
@@ -330,7 +351,7 @@ function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
         cond += "1"
         //cond += " " + "$('[name=\"checkbox-group__" + jQFieldId + "\"]:checked').val() " + comparison.value + "'" + value.value + "'";
         fields.push( "[ordenation=\"" + field.index + "\"]");
-        console.log(fields);
+        //console.log(fields);
         ev += "opts[j].value " + comparison.value+" '"+value.value + "' ";
         if(!is_last_item) ev += "||";
         cont+= 1;
@@ -350,7 +371,7 @@ function activateRule(obj_id, ruleAction, ruleTarget, conditions) {
 
     changes += "'";
 
-    console.log(changes);
+    //console.log(changes);
 
     $(eval(changes)).change(function() {
 
@@ -386,16 +407,16 @@ function evaluate(obj_id, cond, ruleAction, ev, fields, cont){
       var opts = field.find('.drag-input :checked');
       var a = [];
       for(var j = 0; j < opts.length; j++){
-        console.log(opts[j].value);
+        //console.log(opts[j].value);
         if(eval(ev)){
-          console.log(ev);
+          //console.log(ev);
           a.push(opts[j].value);
-          console.log(a);
+          //console.log(a);
         }
       }
       if(a.length >= cont){
         if(eval(cond)){
-          console.log('succ');
+          //console.log('succ');
             if(ruleAction === "show"){
               //$("[ordenation=\"" + obj_id + "\"]").show();
               GetElement('[ordenation="'+ obj_id +'"]').toggle(true);
@@ -404,7 +425,7 @@ function evaluate(obj_id, cond, ruleAction, ev, fields, cont){
               GetElement('[ordenation="'+ obj_id +'"]').toggle(false);
             }
         }else{
-          console.log('err');
+          //console.log('err');
             if(ruleAction === "show"){
               //$("[ordenation=\"" + obj_id + "\"]").hide();
               GetElement('[ordenation="'+ obj_id +'"]').toggle(false);
@@ -414,7 +435,7 @@ function evaluate(obj_id, cond, ruleAction, ev, fields, cont){
             }
         }
       }else{
-        console.log('menor')
+        //console.log('menor')
         if(ruleAction === "show"){
           //$("[ordenation=\"" + obj_id + "\"]").hide();
           GetElement('[ordenation="'+ obj_id +'"]').toggle(false);
@@ -656,7 +677,7 @@ function toFieldObject(){
           value : $(opt).find('input').val(),
           prop : $(opt).find('input').prop('checked')
         };
-        console.log($(opt).find('label').val())
+        //console.log($(opt).find('label').val())
         obj.setting.options.push(option);
       }
 
@@ -772,13 +793,14 @@ function Field(obj){
   var label = obj.setting.label;
   var settings = obj.setting;
   var mask = obj.setting.mask;
-  var id = obj._id;
+  var id = obj._id || fieldCounter;
 
   var field = create('div');
   field.setAttribute('id', type);
   field.setAttribute('data-id', '');
   field.setAttribute('field-type', type);
   field.setAttribute('field-id', id);
+  //console.log(id);
   field.classList.add('draggable-input', 'panel');
 
   var heading = new Heading(type);
