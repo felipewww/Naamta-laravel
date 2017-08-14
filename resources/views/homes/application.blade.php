@@ -59,6 +59,10 @@
                     <a class="btn btn-save" href="/applications/{{$application->id}}/edit">
                         Edit settings
                     </a>
+
+                        <a class="btn btn-save" href="/applications/{{$application->id}}/payment/first_form">
+                            Registration info
+                        </a>
                     <br>
                     @endif
 
