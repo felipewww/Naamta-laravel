@@ -3,32 +3,28 @@ var isValid;
 Dropzone.autoDiscover = false;
 
 var canvas;
-var canvasArray = new Array();
+var canvasArray = [];
 appendNavigation();
 if($('client-view').length <= 0){ appendList(); }
-//appendModel();
 
 // For Drag And Drop //
-
 // Drop location
 var lastValidField;
 //Source Element
 var dragSrcEl = null;
 
 // Element to represent where it will be placed
-var blankSpace = $( "<div>", { id: "blankSpace" } )[0];
-// Add drag events to it
-blankSpace.addEventListener('dragover', handleDragOver);
-blankSpace.addEventListener('drop', handleDrop);
-
+if(navigator.userAgent.search('Firefox') < 0){
+    var blankSpace = $( "<div>", { id: "blankSpace" } )[0];
+    // Add drag events to it
+    blankSpace.addEventListener('dragover', handleDragOver);
+    blankSpace.addEventListener('drop', handleDrop);
+}
 // Fixed menu while scrolling
-
 var menuTop = $('#list-container').offset().top;
 
 $(window).on('scroll', function(){
     var scrollTop = $(window).scrollTop();
-    //console.log(scrollTop);
-    //console.log($('#page-wrapper').height())
 
     if(scrollTop >= menuTop && (scrollTop + $('#list-container').height()) < (scrollTop + $('#drag-container').height()) ){
         if( scrollTop < $('#page-wrapper').height() - $('#list-container').height() ) {
@@ -43,41 +39,39 @@ $(window).on('scroll', function(){
     }
 });
 
-//When drag starts
 function handleDragStart(e) {
-    // (this) is the source node.
-    // Save the source
     var field = $(this).parent()[0];
-    dragSrcEl = field;
-    // Change opacity to identify the field that will be moved
     $(field).addClass('on-drag');
+
+    dragSrcEl = field;
+    console.log(dragSrcEl);
+    e.dataTransfer.setData('text/html', dragSrcEl);
+
     if($(field).hasClass('half-row')){
         $(blankSpace).addClass('half-row')
     }else{
         $(blankSpace).removeClass('half-row');
+
     }
 }
 
-// When any element is dragged over a field in the form-holder
 function handleDragOver(e) {
-    // Prevents any action
     if (e.preventDefault) {
         e.preventDefault();
     }
     // If it's not a blankSpace, then it's a valid field
-    if(this != $('#blankSpace')[0]){
+    if(this !== $('#blankSpace')[0]){
         lastValidField = this;
     }
     // Remove the last blankSpace
     $('#blankSpace').remove();
 
     // If the source and the valid field are not the same
-    if(lastValidField != dragSrcEl){
+    if(lastValidField !== dragSrcEl){
         // If the source element is under the valid field
         if(dragSrcEl.offsetTop > lastValidField.offsetTop){
             // Put blankSpace above the valid field
             $(blankSpace).insertBefore(lastValidField);
-
             // If the source element is above the valid field
         }else{
             // Put blankSpace under the valid field
@@ -87,7 +81,6 @@ function handleDragOver(e) {
     return false;
 }
 
-// When an element of the list is dragged from the menu
 function handleDragEnd(e) {
     // Remove on-drag class from the source element
     $(dragSrcEl).removeClass('on-drag');
@@ -109,7 +102,7 @@ function handleDragStartList(e) {
             mask : "(000) 000-0000",
             options : []
         }
-    }
+    };
 
     dragSrcEl = new Field(obj);
 
@@ -127,14 +120,13 @@ function handleDragOverList(e) {
 
 // When any element is dropped
 function handleDrop(e) {
-    // this/e.target is current target element.
-    if (e.stopPropagation) {
-        e.stopPropagation(); // Stops some browsers from redirecting.
-    }
+    if(e.preventDefault) { e.preventDefault(); }
+    if(e.stopPropagation) { e.stopPropagation(); }
+
     // Don't do anything if dropping the same column we're dragging.
-    if (dragSrcEl != this) {
+    if (dragSrcEl !== this) {
         //Drop directly over tab
-        if(this == $('#drag-container .tab.active')[0]){
+        if(this === $('#drag-container .tab.active')[0]){
             $(dragSrcEl).appendTo(this);
             //Drop over other field
         }else{
@@ -146,23 +138,17 @@ function handleDrop(e) {
                 $(dragSrcEl).insertAfter(lastValidField);
             }
         }
-        setTimeout(function(){
-            $(dragSrcEl).find('.label-text').focus();
-            $(dragSrcEl).find('.paragraph-content').focus();
-        });
     }
     $('#blankSpace').remove();
     return false;
 }
 
 // Adds all events necessary for the field
-function addEvents(elem, id = null, signature = null){
-
-    //$(elem).css('display', 'none');
+function addEvents(elem, id, signature){
 
     var type = elem.getAttribute('field-type');
 
-    if(id == null){
+    if(!id){
         id = fieldCounter;
         $(elem).attr('id', type + '__' + fieldCounter);
         $(elem).find('.drag-options [type="radio"]').attr('name', 'button-type__' + fieldCounter );
@@ -174,7 +160,6 @@ function addEvents(elem, id = null, signature = null){
         $(elem).find('.drag-options [type="radio"]').attr('name', 'button-type__' + id );
         $(elem).attr('data-id', id);
     }
-
 
     if( !isClientView ){
         // Add Event Listeners for Drag and Drop
@@ -893,7 +878,7 @@ function appendNavigation(){
 }
 
 // Adds a new tab on the form-holder
-function addTab(obj = null){
+function addTab(obj){
     var title = (obj != null) ? obj.title : 'New Page';
     $('.tab-control').removeClass('active');
     var tabId = (obj != null) ? obj._id : tabCounter++;
@@ -1085,7 +1070,7 @@ function getHash(elem){
     return $(elem).find('a').attr('href');
 }
 
-function appendComment(user, msg, type = 'external', node, id){
+function appendComment(user, msg, type, node, id){
     if(msg != ''){
         var comment = '<li comment-type="'+ type +'" class="'+ ( (username == user) ? 'user-message': '' ) +'" comment-id="'+ ((id != null) ? id : '') +'"><p><span class="username">'+ user +'</span><div class="message">'+ msg +'</div></p></li>';
         if(type == 'external'){

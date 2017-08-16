@@ -37,11 +37,12 @@
 }
 
 #drag-container .drag-heading{
-    cursor: default;
+    cursor: move;
     background-color: #333;
     padding: 10px 15px;
 } 
 #drag-container .drag-heading h4{
+    cursor: default;
     color: white;
     display: inline;
     text-transform: uppercase;
