@@ -667,7 +667,7 @@ h5.bold{
     }
 }
 
-@keyframes fadeIn 0.1s{
+@keyframes fadeIn {
     from{
         opacity: 0;
     }
