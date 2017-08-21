@@ -1,4 +1,4 @@
-var thiss;
+
 var isEditable = true;
 var fieldCounter = 0; // FIELD ID
 var tabCounter = 0; //TAB ID
@@ -16,7 +16,7 @@ var clones = new Array();
 
 document.addEventListener('keypress', function(e){
   if(e.which == 13) {
-    if(e.target.nodeName !== 'TEXTAREA' && e.target.nodeName !== 'P' ) {
+    if(e.target.nodeName !== 'TEXTAREA' && e.target.className !== "help-text" && e.target.className !== "form-control paragraph-content" ) {
       e.preventDefault()
     }
     return false;
@@ -27,7 +27,7 @@ var container = GetElement('#drag-container')[0];
 
 // Creates tabs from json
 // Uses createFields
-function createTabs(json, clientView = false, isClient, report){
+function createTabs(json, clientView, isClient, report){
 
   var objs = JSON.parse(json);
   
@@ -44,7 +44,7 @@ function createTabs(json, clientView = false, isClient, report){
 
     for(var i = 0; i < objs.length; i++){
       var obj = objs[i];
-      clones = new Array();
+      clones = [];
       var t = addTab(obj.config);
       if(obj.fields !== undefined && obj.fields !== null){
         for(var j = 0; j < obj.fields.length; j++){
@@ -1105,7 +1105,7 @@ function LabelConfig(type, label){
     labelConfig.input.value = label;
   }else{
     labelConfig.input = create('div', ['full-row'])
-    labelConfig.input.p = create('p');
+    labelConfig.input.p = create('div');
     labelConfig.input.p.classList.add('form-control' , 'paragraph-content');
     labelConfig.input.p.setAttribute('contenteditable', true);
     labelConfig.input.p.textContent = label;
@@ -1169,7 +1169,7 @@ function HelpConfig(help){
 
   helpConfig.formGroup = create('div', ['form-group', 'help-holder']);
 
-  helpConfig.formGroup.input = create('p');
+  helpConfig.formGroup.input = create('div');
   helpConfig.formGroup.input.classList.add('help-text');
   helpConfig.formGroup.input.setAttribute('contenteditable', true);
   helpConfig.formGroup.input.setAttribute('rows', 15);
@@ -1238,6 +1238,9 @@ function Commands(){
   commands.appendChild( new Button('italic') );
   commands.appendChild( new Button('underline') );
   commands.appendChild( new Button('strikeThrough') );
+    commands.appendChild( new Button('createLink') );
+    commands.appendChild( new Button('unlink') );
+    if(1){
   commands.appendChild( new Button('justifyLeft') );
   commands.appendChild( new Button('justifyCenter') );
   commands.appendChild( new Button('justifyRight') );
@@ -1249,9 +1252,7 @@ function Commands(){
   commands.appendChild( new Button('h4') );
   commands.appendChild( new Button('h5') );
   commands.appendChild( new Button('p') );
-  commands.appendChild( new Button('createLink') );
-  commands.appendChild( new Button('unlink') );
-
+    }
   return commands;
 }
 

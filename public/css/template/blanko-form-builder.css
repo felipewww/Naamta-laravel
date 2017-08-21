@@ -37,11 +37,12 @@
 }
 
 #drag-container .drag-heading{
-    cursor: default;
+    cursor: move;
     background-color: #333;
     padding: 10px 15px;
 } 
 #drag-container .drag-heading h4{
+    cursor: default;
     color: white;
     display: inline;
     text-transform: uppercase;
@@ -666,7 +667,7 @@ h5.bold{
     }
 }
 
-@keyframes fadeIn 0.1s{
+@keyframes fadeIn {
     from{
         opacity: 0;
     }

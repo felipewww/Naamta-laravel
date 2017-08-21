@@ -1,34 +1,34 @@
+var isFirefox = (navigator.userAgent.search('Firefox') >= 0);
+
 var isValid;
 
 Dropzone.autoDiscover = false;
 
 var canvas;
-var canvasArray = new Array();
+var canvasArray = [];
 appendNavigation();
 if($('client-view').length <= 0){ appendList(); }
-//appendModel();
 
 // For Drag And Drop //
-
 // Drop location
 var lastValidField;
 //Source Element
 var dragSrcEl = null;
 
+
 // Element to represent where it will be placed
-var blankSpace = $( "<div>", { id: "blankSpace" } )[0];
-// Add drag events to it
-blankSpace.addEventListener('dragover', handleDragOver);
-blankSpace.addEventListener('drop', handleDrop);
+if(!isFirefox){
+    var blankSpace = $( "<div>", { id: "blankSpace" } )[0];
+    // Add drag events to it
+    blankSpace.addEventListener('dragover', handleDragOver);
+    blankSpace.addEventListener('drop', handleDrop);
+}
 
 // Fixed menu while scrolling
-
 var menuTop = $('#list-container').offset().top;
 
 $(window).on('scroll', function(){
     var scrollTop = $(window).scrollTop();
-    //console.log(scrollTop);
-    //console.log($('#page-wrapper').height())
 
     if(scrollTop >= menuTop && (scrollTop + $('#list-container').height()) < (scrollTop + $('#drag-container').height()) ){
         if( scrollTop < $('#page-wrapper').height() - $('#list-container').height() ) {
@@ -43,41 +43,38 @@ $(window).on('scroll', function(){
     }
 });
 
-//When drag starts
 function handleDragStart(e) {
-    // (this) is the source node.
-    // Save the source
     var field = $(this).parent()[0];
-    dragSrcEl = field;
-    // Change opacity to identify the field that will be moved
     $(field).addClass('on-drag');
+
+    dragSrcEl = field;
+    e.dataTransfer.setData('text/html', dragSrcEl);
+
     if($(field).hasClass('half-row')){
         $(blankSpace).addClass('half-row')
     }else{
         $(blankSpace).removeClass('half-row');
+
     }
 }
 
-// When any element is dragged over a field in the form-holder
 function handleDragOver(e) {
-    // Prevents any action
     if (e.preventDefault) {
         e.preventDefault();
     }
     // If it's not a blankSpace, then it's a valid field
-    if(this != $('#blankSpace')[0]){
+    if(this !== $('#blankSpace')[0]){
         lastValidField = this;
     }
     // Remove the last blankSpace
     $('#blankSpace').remove();
 
     // If the source and the valid field are not the same
-    if(lastValidField != dragSrcEl){
+    if(lastValidField !== dragSrcEl){
         // If the source element is under the valid field
         if(dragSrcEl.offsetTop > lastValidField.offsetTop){
             // Put blankSpace above the valid field
             $(blankSpace).insertBefore(lastValidField);
-
             // If the source element is above the valid field
         }else{
             // Put blankSpace under the valid field
@@ -87,7 +84,6 @@ function handleDragOver(e) {
     return false;
 }
 
-// When an element of the list is dragged from the menu
 function handleDragEnd(e) {
     // Remove on-drag class from the source element
     $(dragSrcEl).removeClass('on-drag');
@@ -109,7 +105,7 @@ function handleDragStartList(e) {
             mask : "(000) 000-0000",
             options : []
         }
-    }
+    };
 
     dragSrcEl = new Field(obj);
 
@@ -127,14 +123,13 @@ function handleDragOverList(e) {
 
 // When any element is dropped
 function handleDrop(e) {
-    // this/e.target is current target element.
-    if (e.stopPropagation) {
-        e.stopPropagation(); // Stops some browsers from redirecting.
-    }
+    if(e.preventDefault) { e.preventDefault(); }
+    if(e.stopPropagation) { e.stopPropagation(); }
+
     // Don't do anything if dropping the same column we're dragging.
-    if (dragSrcEl != this) {
+    if (dragSrcEl !== this) {
         //Drop directly over tab
-        if(this == $('#drag-container .tab.active')[0]){
+        if(this === $('#drag-container .tab.active')[0]){
             $(dragSrcEl).appendTo(this);
             //Drop over other field
         }else{
@@ -146,23 +141,17 @@ function handleDrop(e) {
                 $(dragSrcEl).insertAfter(lastValidField);
             }
         }
-        setTimeout(function(){
-            $(dragSrcEl).find('.label-text').focus();
-            $(dragSrcEl).find('.paragraph-content').focus();
-        });
     }
     $('#blankSpace').remove();
     return false;
 }
 
 // Adds all events necessary for the field
-function addEvents(elem, id = null, signature = null){
-
-    //$(elem).css('display', 'none');
+function addEvents(elem, id, signature){
 
     var type = elem.getAttribute('field-type');
 
-    if(id == null){
+    if(!id){
         id = fieldCounter;
         $(elem).attr('id', type + '__' + fieldCounter);
         $(elem).find('.drag-options [type="radio"]').attr('name', 'button-type__' + fieldCounter );
@@ -174,7 +163,6 @@ function addEvents(elem, id = null, signature = null){
         $(elem).find('.drag-options [type="radio"]').attr('name', 'button-type__' + id );
         $(elem).attr('data-id', id);
     }
-
 
     if( !isClientView ){
         // Add Event Listeners for Drag and Drop
@@ -747,7 +735,8 @@ function addEvents(elem, id = null, signature = null){
 
             var command = $(this).data('command');
 
-            if (command == 'h4' || command == 'h5' || command == 'p') {
+            if (command === 'h4' || command === 'h5' || command === 'p') {
+                console.log(command)
                 document.execCommand('formatBlock', false, command);
             }
             if (command == 'createLink') {
@@ -762,26 +751,9 @@ function addEvents(elem, id = null, signature = null){
             $('#drag-container').find('a:not(.btn)').attr('target', '_blank');
         });
     }
-
-     // setTimeout(function(){
-     // if( type == 'paragraph'){
-     // $(elem).find('.paragraph-content')[0].focus();
-     // }else{
-     // $(elem).find('.label-text')[0].focus();
-     // }
-     // });
-        
-    //window.scroll(0, elem.offsetTop);
-
-    //end addEvents
 }
 
 // Appends field models
-function appendModel(){
-    var html = $('<div id="input-types" class="hidden"> <div class="draggable-input panel" data-id="" id="checkbox-group"> <div class="drag-heading" draggable="true">  <h4>Checkbox</h4> <ul> <li><i class="fa expand-field"></i></li><li><i class="fa fa-clone"></i></li><li><i class="fa fa-cog"></i></li><li><i class="fa fa-times"></i></li></ul> </div><div class="panel-body " draggable="false"> <div class="drag-label"> <label class="update-label">Checkbox </label><span class="span-required">*</span> <div class="help"> <div class="icon"><i class="fa fa-question-circle"></i></div><div class="comment-icon"></div></div><div class="text"></div></div><div class="drag-input"> <div class="form-group checkbox-group update-required"> </div></div><div class="hidden drag-options form-horizontal p-t-20"> <h4>Options</h4> <div class="form-horizontal"> <div class="form-group"> <div class="col-sm-offset-2 col-sm-10 required-field"> <div class="checkbox checkbox-success"> <input type="checkbox" class="is-required"> <label> Required </label> </div></div></div><div class="form-group"> <label class="control-label col-sm-2">Label</label> <div class="col-sm-10"> <input type="text" class="form-control label-text" value="Checkbox"> </div></div><div class="form-group"> <label class="control-label col-sm-2">Help Text</label> <div class="col-sm-10"> <div class="help-formatter"> </div><p class="help-text" contenteditable="true" rows="15"> </p></div></div><div class="options"> <div class="form-group"> <label class="control-label col-sm-2">Options</label> <div class="col-sm-4"> <input type="text" class="form-control label-input" placeholder="Item"> </div><a href="#" class="add-options btn btn-success">Add </a> </div><div class="form-group"> <div class="col-sm-10 col-sm-offset-2"> <table class="table color-table muted-table"> <thead> <tr> <th>Label</th> <th>Value</th> <th></th> </tr></thead> <tbody class="options-table"></tbody> </table> </div></div></div></div></div><div class="hidden drag-comments p-t-20"> <h4 class="active open-external">Comments</h4> <h4 class="open-internal">Internal Comments</h4> <ul class="comments external-comments"></ul> <ul class="comments internal-comments"></ul> <div class="comment-input row"> <div class="form-group"> <div class="col-sm-12"> <textarea comment-type="external" placeholder="Type your comment here" class="comment-msg form-control"></textarea> </div><div class="col-sm-3 radio text-right pull-right"> <a class="btn btn-default add-comment">Send</a> </div></div></div></div><div class="drag-validate"> <div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Pass"> <label> Pass </label> </div><div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Fail"> <label> Fail </label> </div><div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Audit"> <label> Site Audit </label> </div></div></div></div><div class="draggable-input panel" data-id="" id="radio-group"> <div class="drag-heading" draggable="true">  <h4>Radio Button</h4> <ul> <li><i class="fa expand-field"></i></li><li><i class="fa fa-clone"></i></li><li><i class="fa fa-cog"></i></li><li><i class="fa fa-times"></i></li></ul> </div><div class="panel-body " draggable="false"> <div class="drag-label"> <label class="update-label">Radio Button </label><span class="span-required">*</span> <div class="help"> <div class="icon"><i class="fa fa-question-circle"></i></div><div class="comment-icon"></div></div><div class="text"></div></div><div class="drag-input"> <div class="form-group radio-group update-required"> </div></div><div class="hidden drag-options form-horizontal p-t-20"> <h4>Options</h4> <div class="form-horizontal"> <div class="form-group"> <div class="col-sm-offset-2 col-sm-10 required-field"> <div class="checkbox checkbox-success"> <input type="checkbox" class="is-required"> <label> Required </label> </div></div></div><div class="form-group"> <label class="control-label col-sm-2">Label</label> <div class="col-sm-10"> <input type="text" class="form-control label-text" value="Radio Button"> </div></div><div class="form-group"> <label class="control-label col-sm-2">Help Text</label> <div class="col-sm-10"> <div class="help-formatter"> </div><p class="help-text" contenteditable="true" rows="15"> </p></div></div><div class="options"> <div class="form-group"> <label class="control-label col-sm-2">Options</label> <div class="col-sm-4"> <input type="text" class="form-control label-input" placeholder="Item"> </div><a href="#" class="add-options btn btn-success">Add </a> </div><div class="form-group"> <div class="col-sm-10 col-sm-offset-2"> <table class="table color-table muted-table"> <thead> <tr> <th>Label</th> <th>Value</th> <th></th> </tr></thead> <tbody class="options-table"> </tbody> </table> </div></div></div></div></div><div class="hidden drag-comments p-t-20"> <h4 class="active open-external">Comments</h4> <h4 class="open-internal">Internal Comments</h4> <ul class="comments external-comments"></ul> <ul class="comments internal-comments"></ul> <div class="comment-input row"> <div class="form-group"> <div class="col-sm-12"> <textarea comment-type="external" placeholder="Type your comment here" class="comment-msg form-control"></textarea> </div><div class="col-sm-3 radio text-right pull-right"> <a class="btn btn-default add-comment">Send</a> </div></div></div></div><div class="drag-validate"> <div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Pass"> <label> Pass </label> </div><div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Fail"> <label> Fail </label> </div><div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Audit"> <label> Site Audit </label> </div></div></div></div><div class="draggable-input panel" data-id="" id="select"> <div class="drag-heading" draggable="true">  <h4>Select</h4> <ul> <li><i class="fa expand-field"></i></li><li><i class="fa fa-clone"></i></li><li><i class="fa fa-cog"></i></li><li><i class="fa fa-times"></i></li></ul> </div><div class="panel-body " draggable="false"> <div class="drag-label"> <label class="update-label">Select </label><span class="span-required">*</span> <div class="help"> <div class="icon"><i class="fa fa-question-circle"></i></div><div class="comment-icon"></div></div><div class="text"></div></div><div class="drag-input"> <div class="form-group"> <select class="form-control update-required update-value"> <option value="initial-value">Select one</option> </select> </div></div><div class="hidden drag-options form-horizontal p-t-20"> <h4>Options</h4> <div class="form-horizontal"> <div class="form-group"> <div class="col-sm-offset-2 col-sm-10 required-field"> <div class="checkbox checkbox-success"> <input type="checkbox" class="is-required"> <label> Required </label> </div></div></div><div class="form-group"> <label class="control-label col-sm-2">Label</label> <div class="col-sm-10"> <input type="text" class="form-control label-text" value="Select"> </div></div><div class="form-group"> <label class="control-label col-sm-2">Help Text</label> <div class="col-sm-10"> <div class="help-formatter"> </div><p class="help-text" contenteditable="true" rows="15"> </p></div></div><div class="options"> <div class="form-group"> <label class="control-label col-sm-2">Options</label> <div class="col-sm-4"> <input type="text" class="form-control label-input" placeholder="Item"> </div><a href="#" class="add-options btn btn-success">Add </a> </div><div class="form-group"> <div class="col-sm-10 col-sm-offset-2"> <table class="table color-table muted-table"> <thead> <tr> <th>Label</th> <th>Value</th> <th></th> </tr></thead> <tbody class="options-table"> <tr class="hidden"> <td>Label</td><td>Value</td><td class="text-nowrap"></td></tr></tbody> </table> </div></div></div></div></div><div class="hidden drag-comments p-t-20"> <h4 class="active open-external">Comments</h4> <h4 class="open-internal">Internal Comments</h4> <ul class="comments external-comments"></ul> <ul class="comments internal-comments"></ul> <div class="comment-input row"> <div class="form-group"> <div class="col-sm-12"> <textarea comment-type="external" placeholder="Type your comment here" class="comment-msg form-control"></textarea> </div><div class="col-sm-3 radio text-right pull-right"> <a class="btn btn-default add-comment">Send</a> </div></div></div></div><div class="drag-validate"> <div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Pass"> <label> Pass </label> </div><div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Fail"> <label> Fail </label> </div><div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Audit"> <label> Site Audit </label> </div></div></div></div><div class="draggable-input panel" data-id="" id="date-field"> <div class="drag-heading" draggable="true">  <h4>Date Field</h4> <ul> <li><i class="fa expand-field"></i></li><li><i class="fa fa-clone"></i></li><li><i class="fa fa-cog"></i></li><li><i class="fa fa-times"></i></li></ul> </div><div class="panel-body " draggable="false"> <div class="drag-label"> <label class="update-label">Date Field </label><span class="span-required">*</span> <div class="help"> <div class="icon"><i class="fa fa-question-circle"></i></div><div class="comment-icon"></div></div><div class="text"></div></div><div class="drag-input"> <input type="date" class="form-control update-value update-required"> </div><div class="hidden drag-options form-horizontal p-t-20"> <h4>Options</h4> <div class="form-horizontal"> <div class="form-group"> <div class="col-sm-offset-2 col-sm-10 required-field"> <div class="checkbox checkbox-success"> <input type="checkbox" class="is-required"> <label> Required </label> </div></div></div><div class="form-group"> <label class="control-label col-sm-2">Label</label> <div class="col-sm-10"> <input type="text" class="form-control label-text" value="Date Field"> </div></div><div class="form-group"> <label class="control-label col-sm-2">Help Text</label> <div class="col-sm-10"> <div class="help-formatter"> </div><p class="help-text" contenteditable="true" rows="15"> </p></div></div></div></div><div class="hidden drag-comments p-t-20"> <h4 class="active open-external">Comments</h4> <h4 class="open-internal">Internal Comments</h4> <ul class="comments external-comments"></ul> <ul class="comments internal-comments"></ul> <div class="comment-input row"> <div class="form-group"> <div class="col-sm-12"> <textarea comment-type="external" placeholder="Type your comment here" class="comment-msg form-control"></textarea> </div><div class="col-sm-3 radio text-right pull-right"> <a class="btn btn-default add-comment">Send</a> </div></div></div></div><div class="drag-validate"> <div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Pass"> <label> Pass </label> </div><div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Fail"> <label> Fail </label> </div><div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Audit"> <label> Site Audit </label> </div></div></div></div><div class="draggable-input panel" data-id="" id="file-upload"> <div class="drag-heading" draggable="true">  <h4>File Upload</h4> <ul> <li><i class="fa expand-field"></i></li><li><i class="fa fa-clone"></i></li><li><i class="fa fa-cog"></i></li><li><i class="fa fa-times"></i></li></ul> </div><div class="panel-body " draggable="false"> <div class="drag-label"> <label class="update-label">File Upload </label><span class="span-required">*</span> <div class="help"> <div class="icon"><i class="fa fa-question-circle"></i></div><div class="comment-icon"></div></div><div class="text"></div></div><div class="drag-input"> <div class="form-group"></div></div><h5 class="bold">Files <i class="fa fa-arrow-down"></i></h5> <div class="file-holder"></div><div class="hidden drag-options form-horizontal p-t-20"> <h4>Options</h4> <div class="form-horizontal"> <div class="form-group"> <div class="col-sm-offset-2 col-sm-10 required-field"> <div class="checkbox checkbox-success"> <input type="checkbox" class="is-required"> <label> Required </label> </div></div></div><div class="form-group"> <label class="control-label col-sm-2">Label</label> <div class="col-sm-10"> <input type="text" class="form-control label-text" value="File Upload"> </div></div><div class="form-group"> <label class="control-label col-sm-2">Help Text</label> <div class="col-sm-10"> <div class="help-formatter"> </div><p class="help-text" contenteditable="true" rows="15"> </p></div></div></div></div><div class="hidden drag-comments p-t-20"> <h4 class="active open-external">Comments</h4> <h4 class="open-internal">Internal Comments</h4> <ul class="comments external-comments"></ul> <ul class="comments internal-comments"></ul> <div class="comment-input row"> <div class="form-group"> <div class="col-sm-12"> <textarea comment-type="external" placeholder="Type your comment here" class="comment-msg form-control"></textarea> </div><div class="col-sm-3 radio text-right pull-right"> <a class="btn btn-default add-comment">Send</a> </div></div></div></div><div class="drag-validate"> <div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Pass"> <label> Pass </label> </div><div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Fail"> <label> Fail </label> </div><div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Audit"> <label> Site Audit </label> </div></div></div></div><div class="draggable-input panel" data-id="" id="header"> <div class="drag-heading" draggable="true">  <h4>Static Header</h4> <ul> <li><i class="fa expand-field"></i></li><li><i class="fa fa-clone"></i></li><li><i class="fa fa-cog"></i></li><li><i class="fa fa-times"></i></li></ul> </div><div class="panel-body " draggable="false"> <div class="drag-input"> <h3 class="update-label">Header</h3> </div><div class="hidden drag-options form-horizontal p-t-20"> <h4>Options</h4> <div class="form-horizontal"> <div class="form-group"> <label class="control-label col-sm-2">Label</label> <div class="col-sm-10"> <input type="text" class="form-control label-text" value="Header"> </div></div></div></div><div class="hidden drag-comments p-t-20"> <h4 class="active open-external">Comments</h4> <h4 class="open-internal">Internal Comments</h4> <ul class="comments external-comments"></ul> <ul class="comments internal-comments"></ul> <div class="comment-input row"> <div class="form-group"> <div class="col-sm-12"> <textarea comment-type="external" placeholder="Type your comment here" class="comment-msg form-control"></textarea> </div><div class="col-sm-3 radio text-right pull-right"> <a class="btn btn-default add-comment">Send</a> </div></div></div></div></div></div><div class="draggable-input panel" data-id="" id="paragraph"> <div class="drag-heading" draggable="true">  <h4>Static Paragraph</h4> <ul> <li><i class="fa expand-field"></i></li><li><i class="fa fa-clone"></i></li><li><i class="fa fa-cog"></i></li><li><i class="fa fa-times"></i></li></ul> </div><div class="panel-body " draggable="false"> <div class="drag-input"> <div class="update-paragraph">Paragraph</div></div><div class="hidden drag-options form-horizontal p-t-20"> <h4>Options</h4> <div class="form-horizontal"> <div class="form-group"> <label class="control-label col-sm-2">Content</label> <div class="col-sm-10"> <div contenteditable="true" class="form-control paragraph-content">Paragraph</div></div></div></div></div><div class="hidden drag-comments p-t-20"> <h4 class="active open-external">Comments</h4> <h4 class="open-internal">Internal Comments</h4> <ul class="comments external-comments"></ul> <ul class="comments internal-comments"></ul> <div class="comment-input row"> <div class="form-group"> <div class="col-sm-12"> <textarea comment-type="external" placeholder="Type your comment here" class="comment-msg form-control"></textarea> </div><div class="col-sm-3 radio text-right pull-right"> <a class="btn btn-default add-comment">Send</a> </div></div></div></div></div></div><div class="draggable-input panel" data-id="" id="number-field"> <div class="drag-heading" draggable="true">  <h4>Number Field</h4> <ul> <li><i class="fa expand-field"></i></li><li><i class="fa fa-clone"></i></li><li><i class="fa fa-cog"></i></li><li><i class="fa fa-times"></i></li></ul> </div><div class="panel-body " draggable="false"> <div class="drag-label"> <label class="update-label">Number Field </label><span class="span-required">*</span> <div class="help"> <div class="icon"><i class="fa fa-question-circle"></i></div><div class="comment-icon"></div></div><div class="text"></div></div><div class="drag-input"> <div class="form-group"> <input type="number" class="form-control update-value update-required update-min update-max update-step" min="" max="" step=""> </div></div><div class="hidden drag-options form-horizontal p-t-20"> <h4>Options</h4> <div class="form-horizontal"> <div class="form-group"> <div class="col-sm-offset-2 col-sm-10 required-field"> <div class="checkbox checkbox-success"> <input type="checkbox" class="is-required"> <label> Required </label> </div></div></div><div class="form-group"> <label class="control-label col-sm-2">Label</label> <div class="col-sm-10"> <input type="text" class="form-control label-text" value="Number Field"> </div></div><div class="form-group"> <label class="control-label col-sm-2">Help Text</label> <div class="col-sm-10"> <div class="help-formatter"> </div><p class="help-text" contenteditable="true" rows="15"> </p></div></div><div class="form-group"> <label class="control-label col-sm-2">Min</label> <div class="col-sm-10"> <input type="number" class="form-control min-value"> </div></div><div class="form-group"> <label class="control-label col-sm-2">Max</label> <div class="col-sm-10"> <input type="number" class="form-control max-value"> </div></div><div class="form-group"> <label class="control-label col-sm-2">Step</label> <div class="col-sm-10"> <input type="number" class="form-control step-value"> </div></div><div class="form-group"> <label class="control-label col-sm-2">Placeholder</label> <div class="col-sm-10"> <input type="text" class="form-control value"> </div></div></div></div><div class="hidden drag-comments p-t-20"> <h4 class="active open-external">Comments</h4> <h4 class="open-internal">Internal Comments</h4> <ul class="comments external-comments"></ul> <ul class="comments internal-comments"></ul> <div class="comment-input row"> <div class="form-group"> <div class="col-sm-12"> <textarea comment-type="external" placeholder="Type your comment here" class="comment-msg form-control"></textarea> </div><div class="col-sm-3 radio text-right pull-right"> <a class="btn btn-default add-comment">Send</a> </div></div></div></div><div class="drag-validate"> <div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Pass"> <label> Pass </label> </div><div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Fail"> <label> Fail </label> </div><div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Audit"> <label> Site Audit </label> </div></div></div></div><div class="draggable-input panel" data-id="" id="text-field"> <div class="drag-heading" draggable="true">  <h4>Text Field</h4> <ul> <li><i class="fa expand-field"></i></li><li><i class="fa fa-clone"></i></li><li><i class="fa fa-cog"></i></li><li><i class="fa fa-times"></i></li></ul> </div><div class="panel-body " draggable="false"> <div class="drag-label"> <label class="update-label">Text Field </label><span class="span-required">*</span> <div class="help"> <div class="icon"><i class="fa fa-question-circle"></i></div><div class="comment-icon"></div></div><div class="text"></div></div><div class="drag-input"> <div class="form-group"> <input type="text" class="form-control update-value update-required"> </div></div><div class="hidden drag-options form-horizontal p-t-20"> <h4>Options</h4> <div class="form-horizontal"> <div class="form-group"> <div class="col-sm-offset-2 col-sm-10 required-field"> <div class="checkbox checkbox-success"> <input type="checkbox" class="is-required"> <label> Required </label> </div></div></div><div class="form-group"> <label class="control-label col-sm-2">Label</label> <div class="col-sm-10"> <input type="text" class="form-control label-text" value="Text Field"> </div></div><div class="form-group"> <label class="control-label col-sm-2">Help Text</label> <div class="col-sm-10"> <div class="help-formatter"> </div><p class="help-text" contenteditable="true" rows="15"> </p></div></div><div class="form-group"> <label class="control-label col-sm-2">Placeholder</label> <div class="col-sm-10"> <input type="text" class="form-control value"> </div></div></div></div><div class="hidden drag-comments p-t-20"> <h4 class="active open-external">Comments</h4> <h4 class="open-internal">Internal Comments</h4> <ul class="comments external-comments"></ul> <ul class="comments internal-comments"></ul> <div class="comment-input row"> <div class="form-group"> <div class="col-sm-12"> <textarea comment-type="external" placeholder="Type your comment here" class="comment-msg form-control"></textarea> </div><div class="col-sm-3 radio text-right pull-right"> <a class="btn btn-default add-comment">Send</a> </div></div></div></div><div class="drag-validate"> <div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Pass"> <label> Pass </label> </div><div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Fail"> <label> Fail </label> </div><div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Audit"> <label> Site Audit </label> </div></div></div></div><div class="draggable-input panel" data-id="" id="email-field"> <div class="drag-heading" draggable="true">  <h4>E-mail Field</h4> <ul> <li><i class="fa expand-field"></i></li><li><i class="fa fa-clone"></i></li><li><i class="fa fa-cog"></i></li><li><i class="fa fa-times"></i></li></ul> </div><div class="panel-body " draggable="false"> <div class="drag-label"> <label class="update-label">E-mail Field </label><span class="span-required">*</span> <div class="help"> <div class="icon"><i class="fa fa-question-circle"></i></div><div class="comment-icon"></div></div><div class="text"></div></div><div class="drag-input"> <div class="form-group"> <input type="email" class="form-control update-value update-required"> </div></div><div class="hidden drag-options form-horizontal p-t-20"> <h4>Options</h4> <div class="form-horizontal"> <div class="form-group"> <div class="col-sm-offset-2 col-sm-10 required-field"> <div class="checkbox checkbox-success"> <input type="checkbox" class="is-required"> <label> Required </label> </div></div></div><div class="form-group"> <label class="control-label col-sm-2">Label</label> <div class="col-sm-10"> <input type="text" class="form-control label-text" value="E-mail Field"> </div></div><div class="form-group"> <label class="control-label col-sm-2">Help Text</label> <div class="col-sm-10"> <div class="help-formatter"> </div><p class="help-text" contenteditable="true" rows="15"> </p></div></div><div class="form-group"> <label class="control-label col-sm-2">Placeholder</label> <div class="col-sm-10"> <input type="text" class="form-control value"> </div></div></div></div><div class="hidden drag-comments p-t-20"> <h4 class="active open-external">Comments</h4> <h4 class="open-internal">Internal Comments</h4> <ul class="comments external-comments"></ul> <ul class="comments internal-comments"></ul> <div class="comment-input row"> <div class="form-group"> <div class="col-sm-12"> <textarea comment-type="external" placeholder="Type your comment here" class="comment-msg form-control"></textarea> </div><div class="col-sm-3 radio text-right pull-right"> <a class="btn btn-default add-comment">Send</a> </div></div></div></div><div class="drag-validate"> <div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Pass"> <label> Pass </label> </div><div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Fail"> <label> Fail </label> </div><div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Audit"> <label> Site Audit </label> </div></div></div></div><div class="draggable-input panel" data-id="" id="phone-field"> <div class="drag-heading" draggable="true">  <h4>Masked Field</h4> <ul> <li><i class="fa expand-field"></i></li><li><i class="fa fa-clone"></i></li><li><i class="fa fa-cog"></i></li><li><i class="fa fa-times"></i></li></ul> </div><div class="panel-body " draggable="false"> <div class="drag-label"> <label class="update-label">Masked Field </label><span class="span-required">*</span> <div class="help"> <div class="icon"><i class="fa fa-question-circle"></i></div><div class="comment-icon"></div></div><div class="text"></div></div><div class="drag-input"> <div class="form-group"> <input type="text" class="form-control update-value update-required"> </div></div><div class="hidden drag-options form-horizontal p-t-20"> <h4>Options</h4> <div class="form-horizontal"> <div class="form-group"> <div class="col-sm-offset-2 col-sm-10 required-field"> <div class="checkbox checkbox-success"> <input type="checkbox" class="is-required"> <label> Required </label> </div></div></div><div class="form-group"> <label class="control-label col-sm-2">Label</label> <div class="col-sm-10"> <input type="text" class="form-control label-text" value="Masked Field"> </div></div><div class="form-group"> <label class="control-label col-sm-2" title="Ex: (000) 000-0000">Mask</label> <div class="col-sm-10"> <input type="text" class="form-control mask" value="(000) 000-0000"> </div></div><div class="form-group"> <label class="control-label col-sm-2">Help Text</label> <div class="col-sm-10"> <div class="help-formatter"> </div><p class="help-text" contenteditable="true" rows="15"> </p></div></div><div class="form-group"> <label class="control-label col-sm-2">Placeholder</label> <div class="col-sm-10"> <input type="text" class="form-control value"> </div></div></div></div><div class="hidden drag-comments p-t-20"> <h4 class="active open-external">Comments</h4> <h4 class="open-internal">Internal Comments</h4> <ul class="comments external-comments"></ul> <ul class="comments internal-comments"></ul> <div class="comment-input row"> <div class="form-group"> <div class="col-sm-12"> <textarea comment-type="external" placeholder="Type your comment here" class="comment-msg form-control"></textarea> </div><div class="col-sm-3 radio text-right pull-right"> <a class="btn btn-default add-comment">Send</a> </div></div></div></div><div class="drag-validate"> <div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Pass"> <label> Pass </label> </div><div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Fail"> <label> Fail </label> </div><div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Audit"> <label> Site Audit </label> </div></div></div></div><div class="draggable-input panel" data-id="" id="text-area"> <div class="drag-heading" draggable="true">  <h4>Text Area</h4> <ul> <li><i class="fa expand-field"></i></li><li><i class="fa fa-clone"></i></li><li><i class="fa fa-cog"></i></li><li><i class="fa fa-times"></i></li></ul> </div><div class="panel-body" draggable="false"> <div class="drag-label"> <label class="update-label">Text Area </label><span class="span-required">*</span> <div class="help"> <div class="icon"><i class="fa fa-question-circle"></i></div><div class="comment-icon"></div></div><div class="text"></div></div><div class="drag-input"> <div class="form-group"> <textarea class="form-control update-value update-required"></textarea> </div></div><div class="hidden drag-options form-horizontal p-t-20"> <h4>Options</h4> <div class="form-horizontal"> <div class="form-group"> <div class="col-sm-offset-2 col-sm-10 required-field"> <div class="checkbox checkbox-success"> <input type="checkbox" class="is-required"> <label> Required </label> </div></div></div><div class="form-group"> <label class="control-label col-sm-2">Label</label> <div class="col-sm-10"> <input type="text" class="form-control label-text" value="Text Area"> </div></div><div class="form-group"> <label class="control-label col-sm-2">Help Text</label> <div class="col-sm-10"> <div class="help-formatter"> </div><p class="help-text" contenteditable="true" rows="15"> </p></div></div><div class="form-group"> <label class="control-label col-sm-2">Placeholder</label> <div class="col-sm-10"> <input type="text" class="form-control value"> </div></div></div></div><div class="hidden drag-comments p-t-20"> <h4 class="active open-external">Comments</h4> <h4 class="open-internal">Internal Comments</h4> <ul class="comments external-comments"></ul> <ul class="comments internal-comments"></ul> <div class="comment-input row"> <div class="form-group"> <div class="col-sm-12"> <textarea comment-type="external" placeholder="Type your comment here" class="comment-msg form-control"></textarea> </div><div class="col-sm-3 radio text-right pull-right"> <a class="btn btn-default add-comment">Send</a> </div></div></div></div><div class="drag-validate"> <div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Pass"> <label> Pass </label> </div><div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Fail"> <label> Fail </label> </div><div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Audit"> <label> Site Audit </label> </div></div></div></div><div class="draggable-input panel" data-id="" id="signature"> <div class="drag-heading" draggable="true">  <h4>Signature</h4> <ul> <li><i class="fa expand-field"></i></li><li><i class="fa fa-clone"></i></li><li><i class="fa fa-cog"></i></li><li><i class="fa fa-times"></i></li></ul> </div><div class="panel-body " draggable="false"> <div class="drag-label"> <label class="update-label">Signature </label><span class="span-required">*</span> <div class="help"> <div class="icon"><i class="fa fa-question-circle"></i></div><div class="comment-icon"></div></div><div class="text"></div></div><div class="drag-input"> <div class="form-group"> <button class="clear btn btn-default">Clear</button> </div><canvas class="update-required"></canvas> </div><div class="hidden drag-options form-horizontal p-t-20"> <h4>Options</h4> <div class="form-horizontal"> <div class="form-group"> <div class="col-sm-offset-2 col-sm-10 required-field"> <div class="checkbox checkbox-success"> <input type="checkbox" class="is-required"> <label> Required </label> </div></div></div><div class="form-group"> <label class="control-label col-sm-2">Label</label> <div class="col-sm-10"> <input type="text" class="form-control label-text" value="Signature"> </div></div><div class="form-group"> <label class="control-label col-sm-2">Help Text</label> <div class="col-sm-10"> <div class="help-formatter"> </div><p class="help-text" contenteditable="true" rows="15"> </p></div></div></div></div><div class="hidden drag-comments p-t-20"> <h4 class="active open-external">Comments</h4> <h4 class="open-internal">Internal Comments</h4> <ul class="comments external-comments"></ul> <ul class="comments internal-comments"></ul> <div class="comment-input row"> <div class="form-group"> <div class="col-sm-12"> <textarea comment-type="external" placeholder="Type your comment here" class="comment-msg form-control"></textarea> </div><div class="col-sm-3 radio text-right pull-right"> <a class="btn btn-default add-comment">Send</a> </div></div></div></div><div class="drag-validate"> <div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Pass"> <label> Pass </label> </div><div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Fail"> <label> Fail </label> </div><div class="radio"> <input type="radio" name="incorrect" class="is-incorrect" value="Audit"> <label> Site Audit </label> </div></div></div></div></div>');
-    $("#drag-container").append(html);
-    //$('.drag-heading').append($('<div>'));
-}
 
 // Appends fields menu
 function appendList(){
@@ -893,7 +865,7 @@ function appendNavigation(){
 }
 
 // Adds a new tab on the form-holder
-function addTab(obj = null){
+function addTab(obj){
     var title = (obj != null) ? obj.title : 'New Page';
     $('.tab-control').removeClass('active');
     var tabId = (obj != null) ? obj._id : tabCounter++;
@@ -1085,7 +1057,7 @@ function getHash(elem){
     return $(elem).find('a').attr('href');
 }
 
-function appendComment(user, msg, type = 'external', node, id){
+function appendComment(user, msg, type, node, id){
     if(msg != ''){
         var comment = '<li comment-type="'+ type +'" class="'+ ( (username == user) ? 'user-message': '' ) +'" comment-id="'+ ((id != null) ? id : '') +'"><p><span class="username">'+ user +'</span><div class="message">'+ msg +'</div></p></li>';
         if(type == 'external'){
