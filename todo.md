@@ -1,3 +1,27 @@
+#Levantamento de horas
+
+#### Estrutura
+- Modelagem de dados inicial                        - 1 semana
+- Ajustes de modelagem durante o desenvolvimento    - 1 semana
+- Configuração mongoDB                              - 1 semana
+- Cadastros básicos (cliente, step, email template, tipo de usuario e etc.) - 2 semanas
+- Testes e ajustes                                  - 2 semanas
+
+- Clone da aplicação (Steps, tipo de usuario, form) - 2 semanas
+- Regras de acesso de todas as páginas básicas      - 1 semana
+    
+- Regras de acesso a aplicação - 2 semanas
+    - visualização da dashboard
+    - botões de ação (ver form, aprovar (reprovar) e etc.)
+    - Regras de acesso por responsável e tipo de usuário aos steps
+
+- Configuração de servidor de produção, serviços (envio de email, schedule tasks) - +
+
+- Form (Javascript + CRUD mongo + First Form)       - 2 meses FRONT END + BACK
+
+13 semanas - 520hrs + 2 meses de FORM 320hrs front
+840hrs total
+
 - STEPS
 
 -[x] Não permitir criar o mesmo e-mail template em onsucces/rejected

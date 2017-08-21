@@ -53,7 +53,7 @@ class WorkflowEmails extends Mailable
 
     public function approved()
     {
-        echo "Email approving an step sent.\n";
+        echo "Email step approved sent.\n";
         $this->subject = $this->params['title'];
 
         view('emails.workflow.templates', ['text' => $this->params['text']]);
@@ -66,6 +66,7 @@ class WorkflowEmails extends Mailable
 
     public function reject()
     {
+        echo "Email step reject sent.\n";
         $this->subject = $this->params['title'];
 
         view('emails.workflow.templates', ['text' => $this->params['text']]);
@@ -77,12 +78,21 @@ class WorkflowEmails extends Mailable
     }
 
     private function checkShortcodesText($params){
+        //dd($params);
         $application = Application::with(["client"])->find($params['application_id']);
         $client = $application->client;
-        $user   = User::find($client->user_id);
-        $params['text'] = str_replace("[ClientName]", $user->name, $params['text']);
-        $params['text'] = str_replace("[ClientEmail]", $user->email, $params['text']);
-        $params['text'] = str_replace("[ClientCompany]", $client->company, $params['text']);
+
+        if ( $params['receiverType'] == 'just_receiver' ){
+            $params['text'] = str_replace("[ClientName]", "Responsible for ".$client->company." application", $params['text']);
+            $params['text'] = str_replace("[ClientEmail]", $params['email'], $params['text']);
+            $params['text'] = str_replace("[ClientCompany]", $client->company, $params['text']);
+        }else{
+            $user   = User::find($client->user_id);
+
+            $params['text'] = str_replace("[ClientName]", $user->name, $params['text']);
+            $params['text'] = str_replace("[ClientEmail]", $user->email, $params['text']);
+            $params['text'] = str_replace("[ClientCompany]", $client->company, $params['text']);
+        }
         return $params;
     }
 }

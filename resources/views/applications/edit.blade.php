@@ -38,7 +38,7 @@
                         <strong>Warning!</strong> This application has one ore more steps inactivated and cannot be activated  yet. <a href="/applications/{{$application->id}}/edit">Click here to solve it.</a>
                     </div>
                     @endif
-                   <form class="form-horizontal" role="form" method="POST" action="{{ $route }}">
+                   <form name="mainform" class="form-horizontal" role="form" method="POST" action="{{ $route }}">
                     {{--{!! Form::open(array('url' => $route, 'class' => 'form-horizontal')) !!}--}}
                         {{ csrf_field() }}
                         <input type="hidden" name="_method" value="{{ $method }}">
@@ -127,6 +127,40 @@
                                     </tbody>
                                 </table>
                             </div>
+
+                            <div class="clearfix"></div>
+                            <div class="panel-heading">Other receivers</div>
+                            <div class="col-sm-12">
+
+                                <div class="form-group" style="margin-top: 15px;">
+                                    <label for="company" class="col-md-4 control-label">Receiver e-mail</label>
+                                    <div class="col-md-6">
+                                        <input id="newReceiver" type="text" class="form-control" >
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <a href="#" onclick="addOtherReceiver()" class="btn btn-custom waves-effect waves-light m-r-20">Add</a>
+                                    </div>
+                                </div>
+
+                                <table class="table color-table muted-table">
+                                    <thead>
+                                    <tr>
+                                        <th>Email</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="receiverTable">
+                                    @foreach($application->customerEmails as $receiver)
+                                        <tr>
+                                            <td>{{ $receiver->email }}</td>
+                                            <td class="text-nowrap">
+                                                <a href="#" onclick="deleteReceiver({{ $receiver->id }}, this)" data-toggle="tooltip" data-original-title="Delete" class="removeTr"> <i class="fa fa-close text-danger"></i> </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                         <div class="form-group{{ $errors->has('status') ? ' has-error' : '' }}">
                             <label for="text" class="col-md-4 control-label">Status</label>
@@ -159,22 +193,110 @@
 @endsection
 @section('scripts')
 <script>
+
+    appID = '{{ $application->id }}';
+
+    $(document).ready(function () {
+        mainForm = document.forms.mainform;
+        console.log('MF', mainForm);
+    });
+
+    var inputReceiver = document.createElement('input');
+
     function addUserType(){
         var userName =  $("#user_application").find(":selected");
         var staffName = $("#staff_application").find(":selected");
         if(userName.val()!="" && staffName.val()!=""){
             $('#filltable').prepend(
                 '<tr>' +
-                    '<td>'+userName.text()+'<input type="hidden" name="users_application[]" value="'+userName.val()+', '+staffName.val()+'"></td>'+
-                    '<td>'+staffName.text()+'</td>'+
-                    '<td class="text-nowrap">'+
-                        '<a href="#" onclick="event.preventDefault();$(this).parent().parent().remove();" data-toggle="tooltip" data-original-title="Delete" class="removeTr"> <i class="fa fa-close text-danger"></i> </a>'+
-                    '</td>'+
+                '<td>'+userName.text()+'<input type="hidden" name="users_application[]" value="'+userName.val()+', '+staffName.val()+'"></td>'+
+                '<td>'+staffName.text()+'</td>'+
+                '<td class="text-nowrap">'+
+                '<a href="#" onclick="event.preventDefault();$(this).parent().parent().remove();" data-toggle="tooltip" data-original-title="Delete" class="removeTr"> <i class="fa fa-close text-danger"></i> </a>'+
+                '</td>'+
                 '</tr>'
             );
         }
         userName.prop("selected", false);
         staffName.prop("selected", false);
+    }
+
+    function addOtherReceiver() {
+//        var inputReceiver = document.createElement('input');
+//        inputReceiver.setAttribute('name', 'otherReceiver[]');
+//        inputReceiver.setAttribute('type', 'hidden');
+//        inputReceiver.setAttribute('value', email);
+//
+//        mainForm.appendChild(inputReceiver);
+
+        var inputReceiver = document.getElementById("newReceiver");
+        var newValue = inputReceiver.value;
+
+        $.ajax({
+            url: '/applications/'+appID+'/newReceiver',
+            method: 'post',
+            data: { _token: window.Laravel.csrfToken, email: newValue },
+            dataType: 'json',
+            success: function (data) {
+                if (data.status) {
+                    var table = document.getElementById('receiverTable');
+                    var tr  = document.createElement('tr');
+
+                    var td1 = document.createElement('td');
+                    td1.innerHTML = newValue;
+
+                    var td2 = document.createElement('td');
+                    var a   = document.createElement('a');
+                    var i   = document.createElement('i');
+
+                    i.setAttribute('class', 'fa fa-close text-danger');
+
+                    a.setAttribute('data-toggle','tooltip');
+                    a.setAttribute('data-original-title','Delete');
+                    a.setAttribute('class','removeTr');
+
+                    a.onclick = function () {
+                        deleteReceiver(data.id, this);
+                    };
+
+                    a.appendChild(i);
+                    td2.appendChild(a);
+
+                    tr.appendChild(td1);
+                    tr.appendChild(td2);
+
+                    table.appendChild(tr);
+                }else{
+                    Script.xmodal().setTitle("Error!").setContent("An error was occurred even request has been succeed. Please, contact system administrator").show()
+                }
+            },
+            error: function (error) {
+                Script.xmodal().setTitle("Error!").setContent("An error was occurred with this request. Please, contact system administrator").show()
+            }
+        });
+    }
+
+    function deleteReceiver(id, button) {
+        $.ajax({
+            url: '/applications/'+appID+'/deleteReceiver',
+            method: 'post',
+            data: { _token: window.Laravel.csrfToken, receiver_id: id },
+            dataType: 'json',
+            success: function (data) {
+                console.log(data.status);
+                if (data.status) {
+                    var tr = $(button).closest('tr')[0];
+//                    console.log("TR::", tr);
+                    $(tr).remove();
+                }else{
+                    Script.xmodal().setTitle("Error!").setContent("An error was occurred even request has been succeed. Please, contact system administrator").show()
+                }
+                console.log("Receiver Success!");
+            },
+            error: function (error) {
+                Script.xmodal().setTitle("Error!").setContent("An error was occurred with this request. Please, contact system administrator").show()
+            }
+        });
     }
 </script>
 @endsection

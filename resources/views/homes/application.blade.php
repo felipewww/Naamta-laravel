@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('scripts')
+    <script type="text/javascript" src="{{ asset("js/Dashboard.js") }}"></script>
+@endsection
+
 @section('content')
     <div class="container-fluid">
         <div class="row">
@@ -18,15 +22,12 @@
                     <h4>Next Step:</h4>
                     <p class="m-b-40">Step : {{ ($currentStep->nextStep() != null) ? $currentStep->nextStep()->title : "This is the last step" }}</p>
                     <h4>Previous Step:</h4>
-{{--                    {{ dd($currentStep->previousStep()) }}--}}
                     <p class="">Step :  {{($currentStep->previousStep()!=null ? $currentStep->previousStep()->title : "This is the first step")}}</p>
                     <br>
                     <h4>Responsible User Type: <strong>{{ $userTypeResponsible->title }}</strong></h4>
                     <ul>
-{{--                        {{ dd($userResponsible) }}--}}
                         @foreach($userResponsible as $user)
                         <li>
-{{--                            {{dd($user->user)}}--}}
                             {{ $user->user->name }}, {{ $user->user->email }}
                         </li>
                         @endforeach
@@ -56,9 +57,9 @@
 
                     @if(\Illuminate\Support\Facades\Auth::user()->isAdmin())
                     <br>
-                    <a class="btn btn-save" href="/applications/{{$application->id}}/edit">
-                        Edit settings
-                    </a>
+                        <a class="btn btn-save" href="/applications/{{$application->id}}/edit">
+                            Edit settings
+                        </a>
 
                         <a class="btn btn-save" href="/applications/{{$application->id}}/payment/first_form">
                             Registration info
@@ -75,6 +76,9 @@
                     <h4>Applicant’s Representative:</h4>
                     <p class="">{{ $application->client->user->name }}, {{ $application->client->user->email }}</p>
 
+                    <a class="btn btn-danger" href="javascript:Dashboard.deleteApplication({{$application->id}});">
+                        Delete Application
+                    </a>
                 </div>
             </div>
             <div class="col-sm-12 col-md-4">
@@ -198,7 +202,4 @@
     <!-- /.container-fluid -->
     <script src="{{ asset("js/workflow.js") }}"></script>
 
-@endsection
-
-@section('scripts')
 @endsection

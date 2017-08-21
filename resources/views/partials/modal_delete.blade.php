@@ -7,14 +7,15 @@
                     <h4 class="modal-title" id="modalDeleteLabel">Are you sure?</h4>
                 </div>
                 <div class="modal-body">
-                    You will not be able to recover this item!
+                    <div id="modalDeleteContent"></div>
+                    You will not be able to recover this item later!
                     {{ csrf_field() }}
                     <input type="hidden" name="_method" value="DELETE">
                     <input type="hidden" name="id" value="">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Confirm</button>
+                    <button type="button" id="modalDeleteCancelAction" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" id="modalDeleteConfirmation" class="btn btn-primary">Confirm</button>
                 </div>
             </form>
         </div>

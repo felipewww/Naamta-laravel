@@ -6,12 +6,12 @@ Script = {
     env : '',
     init: function () {
         $('#modalDelete').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget) // Button that triggered the modal
-            var action = button.data('action') // Extract info from data-* attributes
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var action = button.data('action'); // Extract info from data-* attributes
             // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
             // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
             var modal = $(this)
-            modal.find('.modal-content form').attr("action", action)
+            modal.find('.modal-content form').attr("action", action);
         });
 
         this.setDefaultModal();
@@ -83,6 +83,11 @@ Script = {
 
         return this;
     },
+
+    // confirmDeleteModal: function ()
+    // {
+    //
+    // },
 
     setDefaultModal: function () {
         this.modal = $('#defaultModal');
@@ -194,18 +199,18 @@ Script = {
         var e = document.createElement(element);
         e.innerHTML = innerHTML;
 
-        for(attr in attrs)
+        for(var attr in attrs)
         {
             if (attr == 'onclick' && typeof attrs[attr] == 'function') {
                 e.addEventListener('click', function (ev) {
                     return ev;
-                }(attrs[attr]))
+                }(attrs[attr]));
             }else{
                 e.setAttribute(attr, attrs[attr]);
             }
         }
 
-        for(css in styles)
+        for(var css in styles)
         {
             e.style[css] = styles[css];
         }
@@ -224,8 +229,8 @@ Script = {
                 this.generateds = [];
             }
 
-            if ( start == undefined ) { start = 1; }
-            if ( end == undefined ) { end = 100; }
+            if ( start === undefined ) { start = 1; }
+            if ( end === undefined ) { end = 100; }
 
             var current = Script.Random(end, start);
 
@@ -244,13 +249,13 @@ Script = {
 
             this.generateds.push(current);
             return current;
-        }
+        };
     },
 
     Random: function (end, start)
     {
-        if ( start == undefined ) { start = 1; }
-        if ( end == undefined ) { end = 100; }
+        if ( start === undefined ) { start = 1; }
+        if ( end === undefined ) { end = 100; }
 
         return Math.floor(Math.random() * end) + start;
     }
