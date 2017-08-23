@@ -107,9 +107,18 @@ class SystemUsersController extends Controller
         \DB::beginTransaction();
         $request->offsetSet('password', bcrypt($request->password));
 
-        $u = User::create($request->all());
-        $u->roles()->sync($request->user_type);
+        $e = [];
+
+        try{
+            $u = User::create($request->all());
+            $u->roles()->sync($request->user_type);
+        }catch (\Exception $e){
+            //dd($e);
+            \Session::flash('error',true);
+        }
+
         \DB::commit();
+
         return redirect('users');
     }
     

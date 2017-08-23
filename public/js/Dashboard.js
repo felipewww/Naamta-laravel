@@ -24,9 +24,10 @@ Dashboard = {
             };
 
             $.ajax({
-                url: "/applications/"+id,
-                type: "DELETE",
+                url: "/applications/"+id+"/deleteApp",
+                // type: "DELETE",
                 data: data,
+                method: 'post',
                 // dataType: "json",
                 success: function () {
                     window.location.href="/";

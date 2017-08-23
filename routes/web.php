@@ -129,6 +129,7 @@ Route::group(['middleware' => 'auth'], function(){
 
     Route::post('/applications/{id}/saveStepsPosition', 'ApplicationsController@saveStepsPosition');
     Route::post('/applications/{id}/changeStepStatus', 'ApplicationsController@changeStepStatus');
+    Route::post('/applications/{id}/deleteApp', 'ApplicationsController@destroy');
 
     Route::get('/firstFormEdit', 'FormsController@firstFormEdit');
 

@@ -7,6 +7,9 @@
 @include('partials.dataTables')
 
 @section('content')
+    @if(session('error'))
+        <div class="alert alert-danger">User was not created. Verify if all fields are filled correctly or make sure the email already not exists in database</div>
+    @endif
 
     <div class="row">
         <div class="panel panel-default">
