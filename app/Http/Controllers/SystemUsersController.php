@@ -96,7 +96,7 @@ class SystemUsersController extends Controller
         $this->pageInfo->subCategory->title = 'Users List';
         $user = new User();
 
-        $roles = Role::all();
+        $roles = Role::where('name','!=','client')->where('name','!=','none')->get();
 //        dd($roles);
 
         return view('systemUsers.form')->with(['roles', $this->roles, 'pageInfo' => $this->pageInfo, "roles" => $roles, "action" => "create"]);
@@ -139,7 +139,7 @@ class SystemUsersController extends Controller
                 return redirect('/');
             }
         }
-        
+
         return view('systemUsers.form')->with(['user' => $user, 'roles'=>$this->roles, 'pageInfo' => $this->pageInfo, "action" => "edit"]);
     }
 

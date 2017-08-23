@@ -13,6 +13,10 @@
 
     <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
         <div class="col-md-12">
+            @if(session('disallowed'))
+                <div class="alert alert-danger">Your Application is no longer available. Please, contact Naamta.</div>
+                {{--{{ dd('$errors') }}--}}
+            @endif
             <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="Email Address" required autofocus>
             @if ($errors->has('email'))
                 <span class="help-block">

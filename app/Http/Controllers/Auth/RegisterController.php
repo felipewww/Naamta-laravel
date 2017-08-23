@@ -62,7 +62,31 @@ class RegisterController extends Controller
                 ?: redirect($this->redirectPath());
 
         }catch (\Exception $e){
-            return redirect('/register')->withErrors($this->validator($request->all()))->withInput();
+
+            $arr = $this->validator($request->all())->errors()->all();
+
+            if ( $this->validator($request->all())->errors()->get('email') ){
+//                dd('here?');
+                $user = User::withTrashed()->where('email', $request->email)->get()[0];
+
+                //If user is related with a client, probably this application was reejcted in the registration form
+                if ($user->client){
+                    //And... this client is related with a deleted application, or have no relations (because the app was deleted)...
+                    if (!$user->client->application) {
+                        $arr['email'] = "Your application is no longer available. Please contact Naamta.";
+                    }
+
+                    $this->validator($request->all())->validate();
+                }
+                else{
+                    //If the user is from system... keep the default message
+                    $arr['email'] = "The email has already been taken...";
+                }
+            }else{
+                $arr = $this->validator($request->all())->errors();
+            }
+
+            return redirect('/register')->withErrors($arr)->withInput();
         }
     }
 
@@ -81,6 +105,7 @@ class RegisterController extends Controller
             'password' => 'required|min:6|confirmed',
         ]);
 
+        //dd($validator);
         return $validator;
     }
 
