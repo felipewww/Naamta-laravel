@@ -26,6 +26,12 @@
                     <br>
                     <h4>Responsible User Type: <strong>{{ $userTypeResponsible->title }}</strong></h4>
                     <ul>
+                        @if( $userResponsible->count() == 0 )
+                            <div class="alert alert-danger">
+                                Missing responsible user for this step, please, contact the administrator to configure within <a href="/applications/{{$application->id}}/edit">Application settings</a> .
+                            </div>
+                        @endif
+
                         @foreach($userResponsible as $user)
                         <li>
                             {{ $user->user->name }}, {{ $user->user->email }}
