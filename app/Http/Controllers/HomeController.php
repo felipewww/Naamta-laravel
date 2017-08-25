@@ -63,21 +63,25 @@ class HomeController extends Controller
             return Redirect::to('/login');
         }
 
-        if (!Auth::user()->verified) {
+        if ( Auth::user()->isClient() )
+        {
+            if (!Auth::user()->verified) {
 
-            $this->pageInfo->title = Auth::user()->client->company;
-            $this->pageInfo->category->title    = "Applications";
-            $this->pageInfo->subCategory->title =  "Waiting e-mail verification";
+                $this->pageInfo->title = Auth::user()->client->company;
+                $this->pageInfo->category->title    = "Applications";
+                $this->pageInfo->subCategory->title =  "Waiting e-mail verification";
 
-            $activation = new ActivationService();
-            return view('homes.wait_emailverify', 
-                [
-                    'pageInfo' => $this->pageInfo,
-                    'user' => Auth::user(),
-                    'token' => $activation->getActivation(Auth::user())->token
-                ]
-            );
+                $activation = new ActivationService();
+                return view('homes.wait_emailverify',
+                    [
+                        'pageInfo' => $this->pageInfo,
+                        'user' => Auth::user(),
+                        'token' => $activation->getActivation(Auth::user())->token
+                    ]
+                );
+            }
         }
+
 
         $user = Auth::user();
         $userType = $user->roles[0]->name;

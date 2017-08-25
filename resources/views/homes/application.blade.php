@@ -82,9 +82,11 @@
                     <h4>Applicant’s Representative:</h4>
                     <p class="">{{ $application->client->user->name }}, {{ $application->client->user->email }}</p>
 
+                    @if(\Illuminate\Support\Facades\Auth::user()->isAdmin())
                     <a class="btn btn-danger" href="javascript:Dashboard.deleteApplication({{$application->id}});">
                         Delete Application
                     </a>
+                    @endif
                 </div>
             </div>
             <div class="col-sm-12 col-md-4">
