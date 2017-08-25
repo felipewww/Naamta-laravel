@@ -7,10 +7,16 @@
 @include('partials.dataTables')
 
 @section('content')
+    @if(session('error'))
+        <div class="alert alert-danger">User was not created. Verify if all fields are filled correctly or make sure the email already not exists in database</div>
+    @endif
 
     <div class="row">
         <div class="panel panel-default">
-            <div class="panel-heading">System Users</div>
+            <div class="panel-heading">
+                System Users
+                <a role="button" href="{{ URL::to($page . '/create') }}" class="btn btn-success pull-right m-r-20"><i class="fa fa-plus"></i> Add</span></a>
+            </div>
 
             <div class="panel-body">
                 <table class="setDataTables">

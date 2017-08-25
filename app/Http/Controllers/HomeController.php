@@ -14,6 +14,7 @@ use App\Models\SysContinuousCompliance;
 use App\Models\User;
 use App\Models\UserApplication;
 use Faker\Factory;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Client;
@@ -62,21 +63,25 @@ class HomeController extends Controller
             return Redirect::to('/login');
         }
 
-        if (!Auth::user()->verified) {
+        if ( Auth::user()->isClient() )
+        {
+            if (!Auth::user()->verified) {
 
-            $this->pageInfo->title = Auth::user()->client->company;
-            $this->pageInfo->category->title    = "Applications";
-            $this->pageInfo->subCategory->title =  "Waiting e-mail verification";
+                $this->pageInfo->title = Auth::user()->client->company;
+                $this->pageInfo->category->title    = "Applications";
+                $this->pageInfo->subCategory->title =  "Waiting e-mail verification";
 
-            $activation = new ActivationService();
-            return view('homes.wait_emailverify', 
-                [
-                    'pageInfo' => $this->pageInfo,
-                    'user' => Auth::user(),
-                    'token' => $activation->getActivation(Auth::user())->token
-                ]
-            );
+                $activation = new ActivationService();
+                return view('homes.wait_emailverify',
+                    [
+                        'pageInfo' => $this->pageInfo,
+                        'user' => Auth::user(),
+                        'token' => $activation->getActivation(Auth::user())->token
+                    ]
+                );
+            }
         }
+
 
         $user = Auth::user();
         $userType = $user->roles[0]->name;
@@ -94,11 +99,18 @@ class HomeController extends Controller
 
         if($userType === "client"){
             $application = Client::where("user_id", Auth::id())->first()->application()->first();
+
             if(isset($application)){
                 if($application->status == '0' || $application->status == 'wt_payment'){
                     return view('homes.wait_approval', ['pageInfo' => $this->pageInfo]);
                 }
                 return $this->applicationDashboard($request, $application->id);
+            }else{
+//                \Auth::user()->logout();
+                Auth::logout();
+//                return redirect()->to('/')->withErrors(['email' => "Your app is no longer available"]);
+                return redirect('/login')->with('disallowed', "Your app is no longer available");
+                //return 'No longer available';
             }
         }
 

@@ -35,6 +35,7 @@ class SystemUsersController extends Controller
      */
     public function index(Request $request){
 //dd('1',Auth::user());
+
         $this->pageInfo->title              = 'System';
         $this->pageInfo->category->title    = 'Users';
         $this->pageInfo->subCategory->title = 'Users List';
@@ -88,17 +89,37 @@ class SystemUsersController extends Controller
     }
     
     public function create(Request $request){
-
+//dd("here!");
+//        dd("H");
         $this->pageInfo->title              = 'System';
         $this->pageInfo->category->title    = 'Users';
         $this->pageInfo->subCategory->title = 'Users List';
+        $user = new User();
 
-        return view('systemUsers.form')->with(['roles', $this->roles, 'pageInfo' => $this->pageInfo]);
+        $roles = Role::where('name','!=','client')->where('name','!=','none')->get();
+//        dd($roles);
+
+        return view('systemUsers.form')->with(['roles', $this->roles, 'pageInfo' => $this->pageInfo, "roles" => $roles, "action" => "create"]);
     }
     
     public function store(Request $request){
-        \Session::flash('success_msg', 'User Added.');
-        return view('systemUsers.form');
+
+        \DB::beginTransaction();
+        $request->offsetSet('password', bcrypt($request->password));
+
+        $e = [];
+
+        try{
+            $u = User::create($request->all());
+            $u->roles()->sync($request->user_type);
+        }catch (\Exception $e){
+            //dd($e);
+            \Session::flash('error',true);
+        }
+
+        \DB::commit();
+
+        return redirect('users');
     }
     
     public function edit(Request $request, $id){
@@ -118,13 +139,12 @@ class SystemUsersController extends Controller
                 return redirect('/');
             }
         }
-        
-        return view('systemUsers.form')->with(['user' => $user, 'roles'=>$this->roles, 'pageInfo' => $this->pageInfo]);
+
+        return view('systemUsers.form')->with(['user' => $user, 'roles'=>$this->roles, 'pageInfo' => $this->pageInfo, "action" => "edit"]);
     }
-    
+
     public function update(Request $request, $id){
         try{
-
             $user = User::findOrFail($id);
 
             if (!Auth::user()->hasRole('admin'))
@@ -133,6 +153,13 @@ class SystemUsersController extends Controller
             }
             else{
                 $user->roles()->sync($request->user_type);
+            }
+
+            if ($request->password == "") {
+                $request->offsetUnset('password');
+            }else{
+                $request->offsetSet('password', bcrypt($request->password));
+//                $request->password = bcrypt($request->password);
             }
 
 

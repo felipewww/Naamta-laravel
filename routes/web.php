@@ -31,6 +31,27 @@ Route::get('/logout', function (Request $request){
 
 Route::get('/test', function (Request $request) {
 
+    $r = new \Illuminate\Http\Request();
+    $r->offsetSet('status','approved');
+    $r->offsetSet('isTest',true);
+
+    $wf = new \App\Http\Controllers\WorkflowController();
+
+    $wf->application = \App\Models\Application::findOrFail(1);
+    $wf->step = \App\Models\ApplicationStep::findOrFail(1);
+    $wf->stepActions($r);
+//    $r = new \Illuminate\Http\Request();
+//    $r->offsetSet('status','approved');
+//    $mailData = [
+//        'title'     => 'Email teste',
+//        'text'      => 'Dispatching job from url',
+//        'status'    => 'approved',
+//        'allFormsWithErrors' => []
+//    ];
+//
+//    $u = \App\Models\User::findOrFail(6);
+//
+//    dispatch(new \App\Jobs\WorkflowEmails($r, $mailData, $u));
 });
 
 Route::get('/formtest', function (Request $request) {
@@ -93,18 +114,22 @@ Route::group(['middleware' => 'auth'], function(){
 
     //view of continuous forms when application isn't accredited yet
     //It's possible will be removed because on documentation says: "Enable continuos when applicant BECOMES ACCREDITED"...
+//    Route::post('/application/destroy', 'ApplicationsController@destroy');
     Route::get('/application/{id}/continuousCompliances', 'ApplicationsController@continuousComplianceNotAccredited');
 
     Route::post('/application/{id}/addContinuousCompliance', 'ApplicationsController@addContinuousCompliance');
     Route::get('/application/{id}/deleteContinuousCompliances/{cid}', 'ApplicationsController@deleteContinuousCompliance');
 
     Route::get('/applications/{id}/settings',  'ApplicationsController@settings');
+    Route::post('/applications/{id}/newReceiver',  'ApplicationsController@newReceiver');
+    Route::post('/applications/{id}/deleteReceiver',  'ApplicationsController@deleteReceiver');
 
     Route::get('/applications/{id}/continuous/{relID}',  'ApplicationsController@continuousComplianceForm');
     Route::post('/applications/{id}/continuous/{relID}',  'ApplicationsController@saveContinuousComplianceForm'); //send ajax form
 
     Route::post('/applications/{id}/saveStepsPosition', 'ApplicationsController@saveStepsPosition');
     Route::post('/applications/{id}/changeStepStatus', 'ApplicationsController@changeStepStatus');
+    Route::post('/applications/{id}/deleteApp', 'ApplicationsController@destroy');
 
     Route::get('/firstFormEdit', 'FormsController@firstFormEdit');
 

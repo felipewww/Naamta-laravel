@@ -66,7 +66,6 @@ class WorkflowController extends Controller
     public function stepActions(Request $request)
     {
         \DB::beginTransaction();
-
         /*
          * Fall here when submit all forms, so, convert status to approved and find the step
          * */
@@ -79,8 +78,14 @@ class WorkflowController extends Controller
         $isResponsible = $this->step->loggedUserIsStepResponsible();
 
         if ( !$isResponsible ) {
-            return redirect('/');
+
+            if ($request->isTest && Auth::user()->isAdmin()) {
+                //continue executing if is test...
+            }else{
+                return redirect('/');
+            }
         }
+
 
         switch ($request->status)
         {
@@ -102,9 +107,11 @@ class WorkflowController extends Controller
             case FormTemplate::class:
                 $res = $this->saveStepForm($request);
             break;
+
             case Approval::class:
                 $res = $this->saveApproval($request);
             break;
+
             default:
                 return json_encode(['status' => false]);
             break;
@@ -116,9 +123,30 @@ class WorkflowController extends Controller
             $emailTemplate  = EmailTemplate::where('id', $receiver->email_id)->first();
             $usersRelated   = UserApplication::where('user_type', $uType->id)->where('application_id', $this->application->id)->get();
 
+            if ($uType->title == 'Client') {
+
+                foreach ($this->application->customerEmails as $otherEmail){
+                    $toClone = $usersRelated->first();
+
+                    $fakeUser = new UserApplication();
+                    $fakeUser->id               = $toClone->id;
+                    $fakeUser->user_id          = $toClone->user_id;
+                    $fakeUser->application_id   = $toClone->application_id;
+                    $fakeUser->receiver_email = $otherEmail->email;
+                    $fakeUser->user_type        = "just_receiver";
+                    $usersRelated->add($fakeUser);
+                }
+            }
+
             foreach ($usersRelated as $userApp)
             {
                 $user = User::findOrFail($userApp->user_id);
+
+                if ($userApp->user_type == 'just_receiver') {
+                    $user->type     = "just_receiver";
+                    $user->name     = "Responsible for ".$this->application->client->company." application";
+                    $user->email    = $userApp->receiver_email;
+                }
 
                 $contentComplement = '';
 
@@ -135,13 +163,15 @@ class WorkflowController extends Controller
                 ];
 
                 $c = new Carbon();
+
                 $delay = $c->now()->addMinutes(1);
                 $job = (new \App\Jobs\WorkflowEmails($request, $mailData, $user))->delay($delay);
+                $job->theuser = $user;
 
                 dispatch($job);
             }
         }
-//        dd('do not commit');
+
         \DB::commit();
         return $res;
     }

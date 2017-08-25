@@ -9,6 +9,7 @@ use App\Models\ApplicationUserTypes;
 use App\Models\ApplicationUsesEmail;
 use App\Models\Approval;
 use App\Models\ContinuousCompliance;
+use App\Models\CustomerEmails;
 use App\Models\FormTemplate;
 use App\Models\Roles;
 use App\Models\Step;
@@ -84,7 +85,7 @@ class ApplicationsController extends Controller
         $this->usersApplication = UserApplication::where('application_id', $id)->get();
         $application = Application::FindOrFail($id);
 
-        if ($application->status == '1') 
+        if ($application->status == '1')
         {
             if (Auth::user()->isAdmin())
             {
@@ -110,7 +111,6 @@ class ApplicationsController extends Controller
          * If an application doesn't have steps, it's a new register and is waiting to system user approve
          * */
         if ($steps->isEmpty()) {
-            //dd('Waiting payment');
             $this->pageInfo->title              = 'New register waiting payment';
             $this->pageInfo->category->title    = 'Application';
             $this->pageInfo->subCategory->title = 'Waiting';
@@ -122,7 +122,6 @@ class ApplicationsController extends Controller
                 ]
             );
         }
-
 
         return view('applications.form',
             [
@@ -217,7 +216,7 @@ class ApplicationsController extends Controller
 
         \DB::beginTransaction();
         try{
-            $application = Application::where('id', $id)->first();
+            $application = Application::findOrFail($id);
 
             $request->offsetUnset('_token');
 
@@ -253,7 +252,6 @@ class ApplicationsController extends Controller
         }
 
         \DB::commit();
-//        dd('everything is ok!');
         return Redirect::to('/application/'.$id.'/dashboard');
     }
 
@@ -325,8 +323,6 @@ class ApplicationsController extends Controller
         SysContinuousCompliance::create($request->all());
 
         return \redirect('/application/'.$id.'/dashboard');
-//        $home = new \App\Http\Controllers\HomeController();
-//        return $home->applicationDashboard($request, $id);
     }
 
     public function deleteContinuousCompliance(Request $request, $app_id, $comp_id)
@@ -506,6 +502,8 @@ class ApplicationsController extends Controller
             $step->status = '0';
             $step->save();
         }
+
+        return \redirect('/');
     }
 
     public static function cloneApplication(Application $application, User $user)
@@ -575,10 +573,6 @@ class ApplicationsController extends Controller
                 'morphs_from'       => $step->morphs_from,
                 'morphs_id'         => $step->morphs_id,
             ];
-//            if (!$responsible) {
-//                dd($uTypesClones);
-////                dd($dataNewStep);
-//            }
 
             $appSteps = ApplicationStep::create($dataNewStep);
             $default_ids[$step->id] = $appSteps->id;
@@ -603,6 +597,49 @@ class ApplicationsController extends Controller
                     $newEmailRelation->save();
                 }
             }
+        }
+    }
+
+    public function newReceiver(Request $request, $id){
+
+        $res = [
+            'status' => false
+        ];
+
+        if ($request->email == "") {
+            return json_encode($res);
+        }
+
+
+        $new = CustomerEmails::create([
+            'application_id' => $id,
+            'email' => $request->email
+        ]);
+
+        $res = [
+            'appid' => $id,
+            'status' => true,
+            'id' => $new->id
+        ];
+
+        return json_encode($res);
+    }
+
+    public function deleteReceiver(Request $request, $id){
+        CustomerEmails::findOrFail($request->receiver_id)->delete();
+
+        $res = [
+            'appid' => $id,
+            'status' => true
+        ];
+
+        return json_encode($res);
+    }
+
+    public function destroy(Request $request){
+        if(Auth::user()->isAdmin()){
+            $app = Application::findOrFail($request->id);
+            $app->delete();
         }
     }
 }

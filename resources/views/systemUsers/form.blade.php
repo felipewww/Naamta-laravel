@@ -8,8 +8,9 @@
     if(isset($user) && $user!=null){
         $method = 'PUT';
         $route = route('users.update', ['id' => $user->id]);
-        
+
     }else{
+        $user = new \App\Models\User();
         $email = new App\Models\User();
     }
 @endphp
@@ -21,24 +22,36 @@
             <div class="panel panel-default">
                 <div class="panel-heading">System Users</div>
                 <div class="panel-body">
-                   <form class="form-horizontal" role="form" method="POST" action="{{ $route }}">
+                   <form class="form-horizontal" role="form" method="POST" action="{{ $route }}" autocomplete="new-password">
                         {{ csrf_field() }}
                         <input type="hidden" name="_method" value="{{ $method }}">
                         <div class="row" style="margin-top: 15px;">
                             <div class="col-md-12">
-                                <input type="text" class="form-control" name="name" placeholder="Name" value="{{ $user->name!=null ? $user->name : old('name') }}" >
+                                <input type="text" class="form-control" name="name" placeholder="Name" value="{{ $user->name!=null ? $user->name : old('name') }}" autocomplete="new-password" >
                             </div>
                         </div>
                         <div class="row" style="margin-top: 15px;">
                             <div class="col-md-12">
-                                <input type="text" class="form-control" name="email" disabled placeholder="Email" value="{{ $user->email!=null ? $user->email : old('email') }}">
+                                <input type="text" class="form-control" name="email" {{ ($action == "create") ? "" : "disabled" }} placeholder="Email" value="{{ $user->email!=null ? $user->email : old('email') }}" autocomplete="new-password">
                             </div>
                         </div>
+                       <div class="row" style="margin-top: 15px;">
+                           <div class="col-md-12">
+                               <input type="password" class="form-control" {{ ($action == "create") ? 'required="required"' : "" }} name="password" placeholder="Password" autocomplete="new-password">
+                           </div>
+                       </div>
                         <div class="row" style="margin-top: 15px;">
                             <div class="col-md-12">
+{{--                                    {{ dd("ROLES::", $user->roles()->first()) }}--}}
                                 <select class="form-control" name="user_type" required="">
                                     @foreach($roles as $role)
-                                        <option value="{{ $role->id }}" {{ (isset($user) && $user->roles()->first()->id == $role->id ? "selected" : "") }}>{{ $role->name }}</option>
+
+                                        @if( $user->roles()->first() )
+                                            <option value="{{ $role->id }}" {{ (isset($user) && $user->roles()->first()->id == $role->id ? "selected" : "") }}>{{ $role->name }}</option>
+                                        @else
+                                            <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                        @endif
+
                                     @endforeach
                                 </select>
                             </div>

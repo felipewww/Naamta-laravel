@@ -62,4 +62,8 @@ class Application extends Model
     {
         return $this->hasMany(ApplicationUserTypes::class);
     }
+
+    public function customerEmails(){
+        return $this->hasMany(CustomerEmails::class);
+    }
 }
