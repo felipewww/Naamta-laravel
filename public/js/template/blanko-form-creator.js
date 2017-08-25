@@ -576,7 +576,8 @@ function toFieldObject(){
     },
     comments : []
   };
-
+  console.log($(this).find('.evaluation').prop('checked'));
+  obj.setting.showEvaluation = $(this).find('.evaluation').prop('checked');
   obj.setting.error = $('[name="incorrect__'+ obj._id +'"]:checked').val();
   obj.setting.ordenate = parseInt(this.getAttribute('ordenation'));
   obj.setting.isRequired = true;
@@ -816,6 +817,7 @@ function Field(obj){
       dragInput.appendChild( new Header() );
       break;
     case 'paragraph' :
+      body.appendChild( new DragLabel(true) );
       dragInput.appendChild( new Paragraph() );
       break;
     case 'file-upload' :
@@ -851,7 +853,10 @@ function Field(obj){
   
   if(isClientView){
     body.appendChild( DragComments() );
-    if(type !== 'header' && type !== 'paragraph') body.appendChild( new DragValidate() );
+    console.log(obj.setting);
+    if(obj.setting.showEvaluation){
+      if(type !== 'header' && type !== 'paragraph') body.appendChild( new DragValidate() );
+    }
   }else{
     body.appendChild( new DragOptions(type, settings) );
   }
@@ -904,14 +909,18 @@ function Heading(type){
 }
 
 //Field Label
-function DragLabel(){
+function DragLabel(isParagraph){
 
   var dragLabel = create('div');
   dragLabel.classList.add('drag-label');
 
   dragLabel.label = create('label');
   dragLabel.label.classList.add('update-label');
-  dragLabel.label.textContent = "Label";
+  if(!isParagraph){
+    dragLabel.label.textContent = "Label";
+  }else{
+    dragLabel.label.textContent = "";
+  }
 
   dragLabel.appendChild(dragLabel.label);
 
@@ -1022,7 +1031,7 @@ function Paragraph(){
 function Checkbox(){
   var input = create('div');
   input.classList.add('checkbox-group', 'update-required');
-  return input;
+  return input; 
 }
 
 function Radio(){
@@ -1055,9 +1064,12 @@ function DragOptions(type, settings){
   var form = create('div');
   form.classList.add('form-horizontal');
 
-
+  if(type !== 'paragraph' && type !== 'header'){
+    var evaluation = new Evaluation(settings.showEvaluation);
+    form.appendChild(evaluation);
+  }
+  
   var labelConfig = new LabelConfig(type, settings.label);
-
   form.appendChild(labelConfig);
 
   if(type == 'checkbox-group' || type === 'select' || type === 'radio-group'){
@@ -1075,10 +1087,11 @@ function DragOptions(type, settings){
     form.appendChild(maskConfig);
   }
 
-  if(type !== 'paragraph' && type !== 'header'){
+  if(type !== 'header'){
     var helpConfig = new HelpConfig(settings.help);
     form.appendChild(helpConfig);
   }
+
 
   dragOptions.appendChild(h4);
   dragOptions.appendChild(form);
@@ -1086,6 +1099,29 @@ function DragOptions(type, settings){
   return dragOptions;
 }
 
+function Evaluation(showEvaluation){
+  var evaluation = create('div');
+  evaluation.classList.add('form-group');
+
+  evaluation.label = create('label');
+  evaluation.label.textContent = "Evaluate Field";
+
+
+  evaluation.inputHolder = create('div');
+  evaluation.inputHolder.classList.add('checkbox', 'checkbox-success');
+
+  evaluation.input = create('input');
+  evaluation.input.classList.add('evaluation');
+  evaluation.input.type = "checkbox";
+  evaluation.input.checked = showEvaluation;
+  
+
+  evaluation.inputHolder.appendChild(evaluation.input);
+  evaluation.inputHolder.appendChild(evaluation.label);
+  evaluation.appendChild(evaluation.inputHolder);
+
+  return evaluation;
+}
 
 function LabelConfig(type, label){
 
@@ -1094,7 +1130,7 @@ function LabelConfig(type, label){
 
   labelConfig.label = create('label');
   labelConfig.label.classList.add('control-label');
-  labelConfig.label.textContent = "Label"
+  labelConfig.label.textContent = "Label";
   
   labelConfig.appendChild(labelConfig.label);
 

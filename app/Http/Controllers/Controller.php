@@ -178,6 +178,9 @@ class Controller extends BaseController
                 if(isset($config->checked))
                     $setting->checked = $config->checked;
 
+                if(isset($config->showEvaluation))
+                    $setting->showEvaluation = $config->showEvaluation;
+
                 if(isset($config->min))
                     $setting->min = $config->min;
 
