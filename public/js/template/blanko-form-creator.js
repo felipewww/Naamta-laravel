@@ -852,10 +852,11 @@ function Field(obj){
   body.appendChild(dragInput);
   
   if(isClientView){
-    body.appendChild( DragComments() );
-    console.log(obj.setting);
-    if(obj.setting.showEvaluation){
-      if(type !== 'header' && type !== 'paragraph') body.appendChild( new DragValidate() );
+    if(type !== 'header' && type !== 'paragraph'){
+      body.appendChild( new DragComments() );
+      if(obj.setting.showEvaluation){
+         body.appendChild( new DragValidate() );
+      }
     }
   }else{
     body.appendChild( new DragOptions(type, settings) );
@@ -934,11 +935,13 @@ function DragLabel(isParagraph){
 
   dragLabel.help.iconHolder.appendChild(dragLabel.help.iconHolder.icon);
 
-  dragLabel.help.comment = create('div');
-  dragLabel.help.comment.classList.add('comment-icon');
 
   dragLabel.help.appendChild(dragLabel.help.iconHolder);
-  dragLabel.help.appendChild(dragLabel.help.comment);
+  if(!isParagraph){
+    dragLabel.help.comment = create('div');
+    dragLabel.help.comment.classList.add('comment-icon');
+    dragLabel.help.appendChild(dragLabel.help.comment);
+  }
 
   dragLabel.appendChild(dragLabel.help);
   
