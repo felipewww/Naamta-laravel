@@ -28,7 +28,9 @@ var container = GetElement('#drag-container')[0];
 // Creates tabs from json
 // Uses createFields
 function createTabs(json, clientView, isClient, report){
-
+  if(json.trim() == ""){
+    json = "[]";
+  }
   var objs = JSON.parse(json);
   
   if(objs.length <= 0){
