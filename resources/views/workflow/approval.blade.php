@@ -30,28 +30,46 @@
                 </div>
             </div>
         </div>
+        {{--{{ dd($withError) }}--}}
         @php
             if ( $report )
                 $forms_errors = json_decode($report->forms_errors);
         @endphp
-        @if( isset($report->forms_errors) && !empty($report->forms_errors) )
+{{--        @if( isset($report->forms_errors) && !empty($report->forms_errors) )--}}
+        @if( isset($withError) && !empty($withError) )
             <div class="row">
                 <div class="col-sm-12">
                     <div class="white-box">
                         <h3 class="box-title m-b-0">Forms Errors</h3>
                         <ul>
-                            @foreach($forms_errors as $formWithError)
+                            @foreach($withError as $formWithError)
+                                <h3>{{ $formWithError->name }}</h3>
+                                @if( $formWithError->errorsCount[0]->Pass || $formWithError->errorsCount[0]->Audit || $formWithError->errorsCount[0]->Fail )
+                                    @if($formWithError->errorsCount[0]->Pass)
+                                        <div>Passed: {{$formWithError->errorsCount[0]->Pass}}</div>
+                                    @endif
+
+                                    @if($formWithError->errorsCount[0]->Audit)
+                                        <div>Site Audit: {{$formWithError->errorsCount[0]->Audit}}</div>
+                                    @endif
+
+                                    @if($formWithError->errorsCount[0]->Fail)
+                                        <div>Failed: {{  $formWithError->errorsCount[0]->Fail }}</div>
+                                    @endif
+                                @endif
                                 <li>
-                                    <h3>{{ $formWithError->name }}</h3>
-                                    @foreach($formWithError->fields as $fieldError)
-                                        <br>
-                                        <strong>Field:</strong> {{ $fieldError->label }}
-                                        <br>
-                                        <strong>Filled out:</strong> "{{ $fieldError->value }}"
-                                        <br>
-                                        <strong>Error type:</strong> {{ $fieldError->error }}
-                                        <br>
-                                    @endforeach
+                                    @if($formWithError->fields)
+                                        @foreach($formWithError->fields as $fieldError)
+                                            <br>
+                                            <strong>Field:</strong> {{ $fieldError->label }}
+                                            <br>
+                                            <strong>Filled out:</strong> "{{ $fieldError->value }}"
+                                            <br>
+                                            <strong>Error type:</strong> {{ $fieldError->error }}
+                                            <br>
+                                        @endforeach
+
+                                    @endif
                                 </li>
                             @endforeach
                         </ul>

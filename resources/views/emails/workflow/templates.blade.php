@@ -10,6 +10,20 @@
         <h3>You have some fields not passed in some forms. Please access the dashboard to see more.</h3>
         @foreach($allFormsWithErrors as $form)
             <h4>Form: {{$form->name}} </h4>
+{{--            {{ $form->errorsCount }}--}}
+            {{--@if( $form->errorsCount[0]->Pass || $form->errorsCount[0]->Audit || $form->errorsCount[0]->Fail )--}}
+                {{--@if($form->errorsCount[0]->Pass)--}}
+                    {{--<div>Passed: {{$form->errorsCount[0]->Pass}}</div>--}}
+                {{--@endif--}}
+
+                {{--@if($form->errorsCount[0]->Audit)--}}
+                    {{--<div>Site Audit: {{$form->errorsCount[0]->Audit}}</div>--}}
+                {{--@endif--}}
+
+                {{--@if($form->errorsCount[0]->Fail)--}}
+                    {{--<div>Failed: {{  $form->errorsCount[0]->Fail }}</div>--}}
+                {{--@endif--}}
+            {{--@endif--}}
             <ul>
                 @foreach($form->fieldsWithError as $k => $field)
 

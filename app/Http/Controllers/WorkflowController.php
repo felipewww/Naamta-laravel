@@ -259,6 +259,51 @@ class WorkflowController extends Controller
     private function getApprovalView($stepId, $approval, $report = null, $params = [])
     {
         $currentStep = ApplicationStep::where("id", $stepId)->first();
+        $this->allFormsWithErrors = $this->_getAllFormsErrorsField($currentStep);
+
+        $slightJson = [];
+
+        foreach ($this->allFormsWithErrors as $form)
+        {
+            $f = [
+                'name' => $form->name,
+                'fields' => [],
+                'errorsCount' => []
+            ];
+
+            foreach ($form->fieldsWithError as $k => $field)
+            {
+                if ($field instanceof \App\MModels\Field)
+                {
+                    $fieldData = [
+                        'label' => $field->setting->label,
+                        'value' => $field->setting->value,
+                        'error' => $field->setting->error,
+                    ];
+
+                    array_push($f['fields'], $fieldData);
+                }
+                else if($k == 'errorsCount'){
+//                    array_push($f['fields'], ['errorsCount' => $field]);
+//                    array_push($f['fields'], $field);
+                    array_push($f['errorsCount'], $field);
+                }
+
+            }
+
+            array_push($slightJson, $f);
+        }
+
+//        dd($this->allFormsWithErrors);
+
+//        if ($report) {
+//            $formWithError = json_decode($report->forms_errors);
+//            dd($formWithError);
+//            foreach ($formWithError as &$form){
+//                $this->_getErrorsField($form, 'field');
+//            }
+//            dd($formWithError);
+//        }
 
         //Do not allow even admin to edit approval when it isn't editable
         $editable  =( isset($params['editable']) ) ? $params['editable'] : true;
@@ -272,7 +317,8 @@ class WorkflowController extends Controller
                 'isResponsible' => $isResponsible,
                 'approval' => $approval,
                 'report' => $report,
-                'pageInfo' => $this->pageInfo
+                'pageInfo' => $this->pageInfo,
+                'withError' => json_decode(json_encode($slightJson))
             ]);
     }
 
@@ -345,7 +391,8 @@ class WorkflowController extends Controller
                 {
                     $f = [
                         'name' => $form->name,
-                        'fields' => []
+                        'fields' => [],
+                        'errorsCount' => []
                     ];
 
                     foreach ($form->fieldsWithError as $k => $field)
@@ -361,7 +408,8 @@ class WorkflowController extends Controller
                             array_push($f['fields'], $fieldData);
                         }
                         else if($k == 'errorsCount'){
-                            array_push($f['fields'], '$field');
+                            //array_push($f['fields'], '$field');
+                            array_push($f['errorsCount'], $field);
                         }
 
                     }

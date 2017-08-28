@@ -67,7 +67,11 @@ class WorkflowEmails extends Mailable
 
     public function rejected()
     {
-        echo "Email step reject sent.\n";
+        echo "Email step reject sent!!!.\n";
+
+//        echo '<pre>';
+//        print_r($this->params['allFormsWithErrors'][0]->fieldsWithError['errorsCount']);
+//        echo '</pre>';
         $this->subject = $this->params['title'];
 
         view('emails.workflow.templates', ['text' => $this->params['text']]);
