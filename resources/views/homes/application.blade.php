@@ -81,7 +81,7 @@
 
                     <h4>Applicant’s Representative:</h4>
                     <p class="">{{ $application->client->user->name }}, {{ $application->client->user->email }}</p>
-
+{{--                    {{ dd(\Illuminate\Support\Facades\Auth::user()) }}--}}
                     @if(\Illuminate\Support\Facades\Auth::user()->isAdmin())
                     <a class="btn btn-danger" href="javascript:Dashboard.deleteApplication({{$application->id}});">
                         Delete Application
@@ -184,7 +184,8 @@
                             </thead>
                             <tbody>
                             @foreach($errorsFormsFields as $form)
-                                @foreach($form->fieldsWithError as $field)
+                                @foreach($form->fieldsWithError as $k => $field)
+                                    @if($field instanceof \App\MModels\Field)
                                     <tr>
                                         <td>
                                             <h6>{{ $field->container->forms->name }}</h6>
@@ -197,6 +198,9 @@
                                             <a href="/workflow/step/{{$currentStep->id}}/{{$field->container->forms->_id}}/show" class="btn btn-success btn-circle"><i class="fa fa-pencil"></i></a>
                                         </td>
                                     </tr>
+                                    {{--@else--}}
+                                        {{--{{ dd($k) }}--}}
+                                    @endif
                                 @endforeach
                             @endforeach
                             </tbody>

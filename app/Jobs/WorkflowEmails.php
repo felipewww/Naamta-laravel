@@ -42,6 +42,7 @@ class WorkflowEmails implements ShouldQueue
      */
     public function handle()
     {
+//        echo 'MAILTO::'.$this->emailTo;
         Mail::to($this->emailTo)->send(
             new \App\Mail\WorkflowEmails($this->status, [
                 'application_id' => $this->mailData['application_id'],
@@ -52,6 +53,5 @@ class WorkflowEmails implements ShouldQueue
                 'email' => $this->emailTo
             ])
         );
-
     }
 }

@@ -57,11 +57,11 @@ workflow = {
             method: 'POST',
             data: sequence,
             success: function (data) {
-                console.log('Success!');
+                // console.log('Success!');
                 window.location.href = window.location.protocol + "//" + window.location.hostname;
             },
             error: function (data) {
-                console.log('Error!');
+                // console.log('Error!');
             }
         });
     },

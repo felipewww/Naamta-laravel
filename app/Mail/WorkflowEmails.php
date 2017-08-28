@@ -48,6 +48,7 @@ class WorkflowEmails extends Mailable
     public function build()
     {
         $act = $this->wich;
+        echo 'ACT:: '.$act;
         return $this->$act();
     }
 
@@ -64,7 +65,7 @@ class WorkflowEmails extends Mailable
         ])->view('emails.workflow.templates');
     }
 
-    public function reject()
+    public function rejected()
     {
         echo "Email step reject sent.\n";
         $this->subject = $this->params['title'];
@@ -79,10 +80,12 @@ class WorkflowEmails extends Mailable
 
     private function checkShortcodesText($params){
         //dd($params);
+        //echo 'shortcodes';
         $application = Application::with(["client"])->find($params['application_id']);
         $client = $application->client;
 
         if ( $params['receiverType'] == 'just_receiver' ){
+//            echo 'Just receiver: '.$params['email'];
             $params['text'] = str_replace("[ClientName]", "Responsible for ".$client->company." application", $params['text']);
             $params['text'] = str_replace("[ClientEmail]", $params['email'], $params['text']);
             $params['text'] = str_replace("[ClientCompany]", $client->company, $params['text']);

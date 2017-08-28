@@ -464,7 +464,7 @@ class Controller extends BaseController
             }
         }
 
-//        dd($formsWithError);
+        //dd($formsWithError);
 
         return $formsWithError;
     }
@@ -489,18 +489,30 @@ class Controller extends BaseController
 
     protected function _getErrorsField($form, $wich = 'errors'){
         $errors = array();
+        $errorsCount = [
+            'Pass'  => 0,
+            'Fail'  => 0,
+            'Audit' => 0,
+        ];
+
         $arr = [];
         try{
             foreach ($form->containers as $i => $c){
                 foreach($c->fields as $k => $v){
                     if(isset($v->setting->error)){
                         if ($v->setting->error == 'Fail' || $v->setting->error == 'Audit') {
+                            $errorsCount[$v->setting->error] = $errorsCount[$v->setting->error]+1;
                             array_push($arr, $v);
                             array_push($errors, Field::find($v->_id));
+                        }else{
+                            $errorsCount['Pass'] = $errorsCount['Pass']+1;
                         }
                     }
                 }
             }
+
+            $errors['errorsCount'] = $errorsCount;
+            $arr['errorsCount'] = $errorsCount;
 
             if ($wich == 'errors'){
                 return $errors;

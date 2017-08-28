@@ -152,7 +152,7 @@ class WorkflowController extends Controller
 
                 if (app('env') == 'local')
                 {
-                    $contentComplement = 'This e-mail should have been sent to: '.$uType->title.', User: '.$user->name.' | '.$user->email.'when step is '.$request->status.'<br>';
+                    //$contentComplement = 'This e-mail should have been sent to: '.$uType->title.', User: '.$user->name.' | '.$user->email.'when step is '.$request->status.'<br>';
                 }
 
                 $mailData = [
@@ -164,8 +164,9 @@ class WorkflowController extends Controller
 
                 $c = new Carbon();
 
-                $delay = $c->now()->addMinutes(1);
-                $job = (new \App\Jobs\WorkflowEmails($request, $mailData, $user))->delay($delay);
+//                $delay = $c->now()->addMinutes(1);
+//                $job = (new \App\Jobs\WorkflowEmails($request, $mailData, $user))->delay($delay);
+                $job = (new \App\Jobs\WorkflowEmails($request, $mailData, $user));
                 $job->theuser = $user;
 
                 dispatch($job);
@@ -346,19 +347,29 @@ class WorkflowController extends Controller
                         'name' => $form->name,
                         'fields' => []
                     ];
-                    foreach ($form->fieldsWithError as $field)
-                    {
-                        $fieldData = [
-                            'label' => $field->setting->label,
-                            'value' => $field->setting->value,
-                            'error' => $field->setting->error,
-                        ];
 
-                        array_push($f['fields'], $fieldData);
+                    foreach ($form->fieldsWithError as $k => $field)
+                    {
+                        if ($field instanceof \App\MModels\Field)
+                        {
+                            $fieldData = [
+                                'label' => $field->setting->label,
+                                'value' => $field->setting->value,
+                                'error' => $field->setting->error,
+                            ];
+
+                            array_push($f['fields'], $fieldData);
+                        }
+                        else if($k == 'errorsCount'){
+                            array_push($f['fields'], '$field');
+                        }
+
                     }
 
                     array_push($slightJson, $f);
                 }
+
+//                dd($slightJson);
 
                 Report::create(
                     [
