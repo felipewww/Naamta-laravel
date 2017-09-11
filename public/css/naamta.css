@@ -15,3 +15,13 @@ table.setDataTables tbody tr td {
 }
 
 /*# sourceMappingURL=naamta.css.map */
+
+/*Keep textarea and Fileupload zone as same height*/
+textarea.form-control {
+  height: auto;
+  min-height: 102px;
+}
+
+.m-t-20.dropzone {
+   margin-top: 0px!important;
+}
