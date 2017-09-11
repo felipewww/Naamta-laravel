@@ -31,6 +31,13 @@ function createTabs(json, clientView, isClient, report){
   if(json.trim() == ""){
     json = "[]";
   }
+
+  /*
+  * Some texts have been created with this special characters, maybe, because copied and pasted from another software.
+  * So, replace it to avoid bug.
+  * */
+  json = json.replace(/\/g, '');
+
   var objs = JSON.parse(json);
   
   if(objs.length <= 0){
