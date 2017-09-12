@@ -104,9 +104,11 @@
 var sel;
 function insertTextAtCursor(text) {
     var range, html;
+    console.log(window.getSelection());
     if (window.getSelection) {
         sel = window.getSelection();
-        if($(sel.baseNode).closest('#text')[0] == $('#text')[0] ){
+//        console.log('here!', sel.baseNode);
+        if($(sel.anchorNode).closest('#text')[0] == $('#text')[0] ){
             if (sel.getRangeAt && sel.rangeCount) {
                 range = sel.getRangeAt(0);
                 range.deleteContents();
