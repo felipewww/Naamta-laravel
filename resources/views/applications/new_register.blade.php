@@ -1,5 +1,27 @@
 @extends('layouts.app')
 
+@section('scripts')
+    <script type="text/javascript">
+        function saveVerifier(select, position) {
+            var id = select.children[select.selectedIndex].value;
+//            console.log({e:select});
+//            console.log(id);
+            $.ajax({
+                url: '/applications/{{ $application->id }}/saveVerifier',
+                method: 'post',
+                data: { user_id: id, position: position, _token: window.Laravel['csrfToken'] },
+                success: function (data) {
+//                    alert('ok!');
+                },
+                error: function (error) {
+                    console.log(error);
+                    alert('Error. Please, contact administrator.')
+                }
+            })
+        }
+    </script>
+@endsection
+
 @section('content')
     <div class="container-fluid">
         <div class="row">
@@ -18,6 +40,24 @@
 
                     <h4>Status</h4>
                     <p class="m-l-10 m-b-20">Waiting first form verification</p>
+
+                    <h4>Verified by:</h4>
+                    <div class="form-group col-md-6 ">
+                        <select class="form-control" onchange="saveVerifier(this, 0)">
+                            <option value="0">Select a user</option>
+                            @foreach($sysUsers as $user)
+                                <option value="{{$user->id}}" {{ $verifiers[0] == $user->id ? 'selected="selected"' : ''  }} >{{$user->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6 ">
+                        <select class="form-control" onchange="saveVerifier(this, 1)">
+                            <option value="0">Select a user</option>
+                            @foreach($sysUsers as $user)
+                                <option value="{{$user->id}}" {{ $verifiers[1] == $user->id ? 'selected="selected"' : ''  }}>{{$user->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
                     <a href="{{ asset('applications/'.$application->id.'/payment/first_form') }}" class="btn btn-custom">View Form</a>
 

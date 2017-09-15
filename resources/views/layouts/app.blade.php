@@ -139,6 +139,7 @@
                         <li> <a href="{{ url('forms') }}"> Form Templates</a></li>
                         <li> <a href="{{ url('approvals') }}"> Approval Templates</a></li>
                     @endif
+{{--                    <li> <a href="{{ url('onlydeleted') }}">Deleted Registrations</a></li>--}}
                 </ul>
             </div>
         </div>

@@ -66,4 +66,9 @@ class Application extends Model
     public function customerEmails(){
         return $this->hasMany(CustomerEmails::class);
     }
+
+    public function Verifiers()
+    {
+        return $this->hasMany(ApplicationVerifiers::class);
+    }
 }

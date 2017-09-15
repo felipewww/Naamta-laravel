@@ -61,6 +61,18 @@ class ApplicationsController extends Controller
         }
     }
 
+    public function onlyDeleted()
+    {
+        $this->pageInfo->title              = 'Deleted Applications';
+        $this->pageInfo->category->title    = 'Applications';
+        $this->pageInfo->subCategory->title = 'List';
+
+        return view('applications.onlydeleted', [
+            'pageInfo'      => $this->pageInfo,
+            'apps' => Application::onlyTrashed()->with(['client'])->get()
+        ]);
+    }
+
     /**
      * Show the application dashboard.
      *
@@ -115,10 +127,27 @@ class ApplicationsController extends Controller
             $this->pageInfo->category->title    = 'Application';
             $this->pageInfo->subCategory->title = 'Waiting';
 
+            $sysUser = User::whereHas('roles', function($query) {
+                $query->whereNotIn('name', ['client']);
+            })->get();
+
+            //Find application verifiers
+            $verifiers = [
+                null,
+                null,
+            ];
+
+            foreach ($application->Verifiers as $v)
+            {
+                $verifiers[$v->position] = $v->user_id;
+            }
+
             return view('applications.new_register',
                 [
-                    'application' => $application,
-                    'pageInfo'          => $this->pageInfo
+                    'application'   => $application,
+                    'pageInfo'      => $this->pageInfo,
+                    'sysUsers'      => $sysUser,
+                    'verifiers'     => $verifiers
                 ]
             );
         }
@@ -337,6 +366,7 @@ class ApplicationsController extends Controller
 
     public function saveContinuousComplianceForm(Request $request, $appID, $relid)
     {
+//        dd('here!');
         $rel = ContinuousCompliance::findOrFail($relid);
 
         if (!$rel) {
@@ -359,6 +389,7 @@ class ApplicationsController extends Controller
 
     public function continuousComplianceForm(Request $request, $appID, $relid)
     {
+//        dd('here 2222!');
         $rel = ContinuousCompliance::findOrFail($relid);
         $formID = $rel->form_template_id;
 

@@ -132,7 +132,6 @@ class Controller extends BaseController
     }
     
     public function _storeFormToMongo($form){
-
         $mForm = Form::create(['name' => $form->name, 'status' => $form->status]);
 
         foreach ($form->containers as $i => $c){
@@ -234,6 +233,7 @@ class Controller extends BaseController
     }
 
     protected function _updateFormToMongo($containers){
+
         try{
             foreach ($containers as $i => $c){
                 //$container = Container::find($c->_id);
@@ -273,6 +273,7 @@ class Controller extends BaseController
     }
 
     protected function _updateFieldToMongo($v){
+//        dd($v);
         try{
             $field = Field::find($v->_id);
 

@@ -66,6 +66,10 @@
                             <li class="text-right">
                                 <a href="/applications/{{ $inactiveApplication->id }}/edit" class="btn btn-success m-t-10">Details</a>
                             </li>
+                            @elseif($inactiveApplication->status == 'denied')
+                            <li class="text-right">
+                                <a href="/applications/{{ $inactiveApplication->id }}/payment/first_form" class="btn btn-success m-t-10">Registration info</a>
+                            </li>
                             @endif
                         </ul>
                     </div>

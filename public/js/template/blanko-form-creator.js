@@ -940,7 +940,7 @@ function DragLabel(isParagraph){
   dragLabel.help.iconHolder = create('div');
   dragLabel.help.iconHolder.classList.add('icon');
   dragLabel.help.iconHolder.icon = create('i');
-  dragLabel.help.iconHolder.icon.classList.add('fa', 'fa-question-circle');
+  dragLabel.help.iconHolder.icon.classList.add('fa', 'fa-book');
 
   dragLabel.help.iconHolder.appendChild(dragLabel.help.iconHolder.icon);
 

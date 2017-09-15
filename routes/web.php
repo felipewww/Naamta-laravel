@@ -120,6 +120,25 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/application/{id}/addContinuousCompliance', 'ApplicationsController@addContinuousCompliance');
     Route::get('/application/{id}/deleteContinuousCompliances/{cid}', 'ApplicationsController@deleteContinuousCompliance');
 
+    Route::get('/onlydeleted', 'ApplicationsController@onlyDeleted');
+
+    Route::post('/applications/{id}/saveVerifier',  function (\Illuminate\Http\Request $request, $id){
+        $model = new \App\Models\ApplicationVerifiers();
+
+        $verifiers = $model->where('application_id', $id)->where('position', $request->position)->first();
+
+        //Update if already exists.
+        if ($verifiers) {
+            $model = $verifiers;
+        }
+
+        $model->application_id = $id;
+        $model->user_id = $request->user_id;
+        $model->position = $request->position;
+
+        $model->save();
+    });
+
     Route::get('/applications/{id}/settings',  'ApplicationsController@settings');
     Route::post('/applications/{id}/newReceiver',  'ApplicationsController@newReceiver');
     Route::post('/applications/{id}/deleteReceiver',  'ApplicationsController@deleteReceiver');
