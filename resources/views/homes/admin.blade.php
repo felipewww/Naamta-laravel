@@ -18,6 +18,23 @@
                                 <h5><b>Current Step:</b>{{ $activeApplication->currStep->title }}</h5>
                                 <h5><b>Last Step Submitted:</b> {{ $activeApplication->lastDateSubmit }} </h5>
                                 <h5><b>Responsible:</b> {{ $activeApplication->client->user->name }}, {{ $activeApplication->client->user->email }} </h5>
+{{--{{ dd($activeApplication->client->user) }}--}}
+                                @if($activeApplication->client->user->primary_contact_name)
+                                    <h5><b>Primary contact name:</b> {{ $activeApplication->client->user->primary_contact_name }}</h5>
+                                @endif
+
+                                @if($activeApplication->client->user->primary_contact_phone)
+                                    <h5><b>Phone:</b> {{ $activeApplication->client->user->primary_contact_phone }}</h5>
+                                @endif
+
+                                @if($activeApplication->client->user->primary_transport)
+                                    <h5><b>Transport:</b> {{ $activeApplication->client->user->primary_transport }}</h5>
+                                @endif
+
+                                @if($activeApplication->client->user->primary_scopecare)
+                                    <h5><b>Scope of Care:</b> {{ $activeApplication->client->user->primary_scopecare }}</h5>
+                                @endif
+
                                 <ul class="list-inline two-part">
                                     <li></li>
                                     <li class="text-right">

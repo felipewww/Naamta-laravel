@@ -54,7 +54,7 @@
     </div>
     <section id="wrapper" class="login-register">
         <div class="logo"><img src="{{asset('media/images/naamta_logo.png')}}" alt="home" class="dark-logo" height="120" /></div>
-        <div class="login-box">
+        <div class="login-box" style="width: 600px;">
             <div class="white-box">
                 @yield('content')
             </div>

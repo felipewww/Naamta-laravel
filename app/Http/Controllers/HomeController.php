@@ -116,11 +116,11 @@ class HomeController extends Controller
 
         $appIds = UserApplication::where('user_id', Auth::user()->id)->with(['application','application.steps'])->get();
 
-
         if (Auth::user()->isAdmin())
         {
             $this->vars->completedApplications = Application::where('status', 'completed')->get();
             $this->vars->activeApplications = Application::where('status', '1')->get();
+//            dd($this->vars->activeApplications);
         }
         else if(Auth::user()->isstaff())
         {
