@@ -120,7 +120,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/application/{id}/addContinuousCompliance', 'ApplicationsController@addContinuousCompliance');
     Route::get('/application/{id}/deleteContinuousCompliances/{cid}', 'ApplicationsController@deleteContinuousCompliance');
 
-    Route::get('/onlydeleted', 'ApplicationsController@onlyDeleted');
+    Route::get('/onlyrejected', 'ApplicationsController@onlyRejected');
 
     Route::post('/applications/{id}/saveVerifier',  function (\Illuminate\Http\Request $request, $id){
         $model = new \App\Models\ApplicationVerifiers();

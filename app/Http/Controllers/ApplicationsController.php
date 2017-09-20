@@ -61,15 +61,15 @@ class ApplicationsController extends Controller
         }
     }
 
-    public function onlyDeleted()
+    public function onlyRejected()
     {
-        $this->pageInfo->title              = 'Deleted Applications';
-        $this->pageInfo->category->title    = 'Applications';
-        $this->pageInfo->subCategory->title = 'List';
+        $this->pageInfo->title              = 'Rejected Applications';
+        $this->pageInfo->category->title    = '';
+        $this->pageInfo->subCategory->title = '';
 
-        return view('applications.onlydeleted', [
+        return view('applications.onlyrejecteds', [
             'pageInfo'      => $this->pageInfo,
-            'apps' => Application::onlyTrashed()->with(['client'])->get()
+            'apps' => Application::where('status','denied')->get()
         ]);
     }
 

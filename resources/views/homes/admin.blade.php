@@ -18,7 +18,7 @@
                                 <h5><b>Current Step:</b>{{ $activeApplication->currStep->title }}</h5>
                                 <h5><b>Last Step Submitted:</b> {{ $activeApplication->lastDateSubmit }} </h5>
                                 <h5><b>Responsible:</b> {{ $activeApplication->client->user->name }}, {{ $activeApplication->client->user->email }} </h5>
-{{--{{ dd($activeApplication->client->user) }}--}}
+
                                 @if($activeApplication->client->user->primary_contact_name)
                                     <h5><b>Primary contact name:</b> {{ $activeApplication->client->user->primary_contact_name }}</h5>
                                 @endif
@@ -53,6 +53,21 @@
                                     <h3 class="box-title">Company: {{ $completedApplication->client->company }}</h3>
                                     <h5><b>Last Step Submitted:</b> {{ $completedApplication->updated_at }} </h5>
                                     <h5><b>Responsible:</b> {{ $completedApplication->client->user->name }}, {{ $completedApplication->client->user->email }} </h5>
+                                    @if($completedApplication->client->user->primary_contact_name)
+                                        <h5><b>Primary contact name:</b> {{ $completedApplication->client->user->primary_contact_name }}</h5>
+                                    @endif
+
+                                    @if($completedApplication->client->user->primary_contact_phone)
+                                        <h5><b>Phone:</b> {{ $completedApplication->client->user->primary_contact_phone }}</h5>
+                                    @endif
+
+                                    @if($completedApplication->client->user->primary_transport)
+                                        <h5><b>Transport:</b> {{ $completedApplication->client->user->primary_transport }}</h5>
+                                    @endif
+
+                                    @if($completedApplication->client->user->primary_scopecare)
+                                        <h5><b>Scope of Care:</b> {{ $completedApplication->client->user->primary_scopecare }}</h5>
+                                    @endif
                                     <ul class="list-inline two-part">
                                         <li></li>
                                         <li class="text-right">
@@ -73,6 +88,23 @@
                         <h5><b>Responsible:</b> {{ $inactiveApplication->client->user->name }}, {{ $inactiveApplication->client->user->email }} </h5>
                         <h5><b>Status:</b> {{ $inactiveApplication->statusText }} </h5>
                         <h5><b>Last Update:</b> {{ $inactiveApplication->updated_at->toDateTimeString() }} </h5>
+
+                        @if($inactiveApplication->client->user->primary_contact_name)
+                            <h5><b>Primary contact name:</b> {{ $inactiveApplication->client->user->primary_contact_name }}</h5>
+                        @endif
+
+                        @if($inactiveApplication->client->user->primary_contact_phone)
+                            <h5><b>Phone:</b> {{ $inactiveApplication->client->user->primary_contact_phone }}</h5>
+                        @endif
+
+                        @if($inactiveApplication->client->user->primary_transport)
+                            <h5><b>Transport:</b> {{ $inactiveApplication->client->user->primary_transport }}</h5>
+                        @endif
+
+                        @if($inactiveApplication->client->user->primary_scopecare)
+                            <h5><b>Scope of Care:</b> {{ $inactiveApplication->client->user->primary_scopecare }}</h5>
+                        @endif
+
                         @if( $inactiveApplication->reset_at )
                             <div>3 years flow</div>
                         @endif

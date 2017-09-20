@@ -166,7 +166,8 @@ class HomeController extends Controller
         /*
          * Não da para exibir os firstforms pq o cliente pode ter ou nao preenchido e exibe o botão de approve e deny, antes de ter preenchido
          */
-        $this->vars->inactiveApplications = Application::whereIn('status', ['0','wt_payment','denied', 'wt_firstform_validation'])->orderBy('created_at', 'DESC')->get();
+//        $this->vars->inactiveApplications = Application::whereIn('status', ['0','wt_payment','denied', 'wt_firstform_validation'])->orderBy('created_at', 'DESC')->get();
+        $this->vars->inactiveApplications = Application::whereIn('status', ['0','wt_payment', 'wt_firstform_validation'])->orderBy('created_at', 'DESC')->get();
         foreach ($this->vars->inactiveApplications as &$inApp)
         {
             switch ($inApp->status)
