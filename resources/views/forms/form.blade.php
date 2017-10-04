@@ -18,6 +18,7 @@
 
 @endphp
 
+
 @if($noFilter)
     @section('scripts')
         <script>
@@ -33,10 +34,10 @@
 @endsection
 
 @section('content')
-<form  class="" role="form" method="POST" action="{{$route}}">
+<form class="" role="form" method="POST" action="{{$route}}">
     {{ csrf_field() }}
-                <input type="hidden" name="_method" value="{{ $method }}">
-                <input type="hidden" name="containers" value="{{ isset($containers) ? $containers : old('containers') }}" required>
+    <input type="hidden" name="_method" value="{{ $method }}">
+    <input id="the_values" type="hidden" name="containers" value="" required>
     <div class="row">
         <div class="col-sm-12">
             @if ($form->id != 1) {{-- show only if isn't a first form (register form) --}}
@@ -87,6 +88,8 @@
 </form>
 <script>
     var username = '{{ Auth::user()->name }}';
+    var json = '<?= isset($containers) ? $containers : old('containers') ?>';
+    $('#the_values').val(json);
 </script>
 <script src="{{ asset("js/template/signature_pad.js") }}"></script>
 <script src="{{ asset("js/template/dropzone.js") }}"></script>

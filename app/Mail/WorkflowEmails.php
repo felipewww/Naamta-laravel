@@ -69,9 +69,6 @@ class WorkflowEmails extends Mailable
     {
         echo "Email step reject sent!!!.\n";
 
-//        echo '<pre>';
-//        print_r($this->params['allFormsWithErrors'][0]->fieldsWithError['errorsCount']);
-//        echo '</pre>';
         $this->subject = $this->params['title'];
 
         view('emails.workflow.templates', ['text' => $this->params['text']]);

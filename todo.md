@@ -118,3 +118,5 @@ cadastro de forms > clientes > por tempo..
 - Has report nao esta carregando o selecionado
 - remover botão de editar do fomr (confirmar com leonardo)
 - Exibir o email que foi enviado na tela de confirmação
+
+- Linha 699 - converto to json

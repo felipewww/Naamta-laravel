@@ -1902,6 +1902,7 @@ function formBuilderEventsFn() {
       }
 
       var $field = $(this).parents('.form-field:eq(0)');
+
       _helpers.updatePreview($field);
       _helpers.save();
     });

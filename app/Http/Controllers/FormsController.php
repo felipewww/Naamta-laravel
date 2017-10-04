@@ -143,7 +143,6 @@ class FormsController extends Controller
     {
         \DB::beginTransaction();
         try{
-//            dd($request->all());
             $form = FormTemplate::create([
                 'name'      => $request->name,
                 'status'    => (int)$request->status

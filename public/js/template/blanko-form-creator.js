@@ -571,6 +571,8 @@ function saveComments(id, username, message, type){
 
 // Transform fields in objects
 function toFieldObject(){
+
+  console.log($(this));
   var obj = {
     _id : $(this).attr('data-id'),
     type :  $(this).attr('id').split("__")[0],
@@ -585,7 +587,7 @@ function toFieldObject(){
     },
     comments : []
   };
-  console.log($(this).find('.evaluation').prop('checked'));
+  // console.log($(this).find('.evaluation').prop('checked'));
   obj.setting.showEvaluation = $(this).find('.evaluation').prop('checked');
   obj.setting.error = $('[name="incorrect__'+ obj._id +'"]:checked').val();
   obj.setting.ordenate = parseInt(this.getAttribute('ordenation'));
@@ -595,10 +597,18 @@ function toFieldObject(){
   }else{
     obj.setting.label = $(this).find('.update-paragraph').html();
   }
+
+  console.log(1, obj.setting.label = $(this).find('.update-label').text());
+  console.log(2, obj.setting.label = $(this).find('.update-paragraph').html());
+
   obj.setting.help = $(this).find('.help-text').html();
   if(obj.type != 'file-upload'){
     obj.setting.value = $(this).find('.update-value').val();
   }
+
+  console.log(3, $(this).find('.help-text').html());
+  console.log(4, $(this).find('.update-value').val());
+
   obj.setting.placeholder = $(this).find('.update-value').attr('placeholder');
   obj.setting.checked = $(this).find('.update-value').prop('checked');
   obj.setting.min = $(this).find('.update-min').attr('min');
@@ -606,6 +616,12 @@ function toFieldObject(){
   obj.setting.step = $(this).find('.step-value').val();
   obj.setting.type = $(this).find('[type=radio]:checked').val();
   obj.setting.class = ($(this).hasClass('half-row')) ? 'half-row' : '';
+
+  console.log(5, $(this).find('.step-value').val());
+  console.log(6, $(this).find('[type=radio]:checked').val());
+  console.log('\n');
+
+  // &#10;
 
   if(obj.type == 'phone-field'){
     //obj.setting.mask =  $(this).find('.draggable-input').val();
@@ -616,7 +632,7 @@ function toFieldObject(){
     for(var i = 0; i < canvasArray.length; i++){
       var sign = canvasArray[i];
       if(sign.field == obj._id){
-        obj.setting.signature = sign.signature.toDataURL()
+        obj.setting.signature = sign.signature.toDataURL();
       }
     }
   }
@@ -702,6 +718,9 @@ function toJson(){
   var listContainers = $('.tab');
 
   for(var i = 0; i < listContainers.length; i++){
+
+    console.log("tojson", listContainers);
+
     var container = listContainers[i];
     var id = $(container).attr('id').replace("tab", "");
     var index = $(container).attr('id');
@@ -719,7 +738,9 @@ function toJson(){
       fields : []
     }
     var listFields = $(container).find('.draggable-input');
+
     listFields.each(toFieldObject);
+
     tab.fields = tempFields;
     tempContainers.push(tab);
   }
