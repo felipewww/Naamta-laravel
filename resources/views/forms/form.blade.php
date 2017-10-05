@@ -88,8 +88,8 @@
 </form>
 <script>
     var username = '{{ Auth::user()->name }}';
-    var json = '<?= isset($containers) ? $containers : old('containers') ?>';
-    $('#the_values').val(json);
+    var json = '<?= isset($containers) ? str_replace("'", "’", $containers) : old('containers') ?>';
+//    $('#the_values').val(json);
 </script>
 <script src="{{ asset("js/template/signature_pad.js") }}"></script>
 <script src="{{ asset("js/template/dropzone.js") }}"></script>
@@ -111,11 +111,14 @@
         }
     });
 
-    if($('input[name=containers]').val() != ''){
-        createTabs($('input[name=containers]').val(), false);
-    }else{
-        createTabs(toJson());
-    }
+    createTabs(json, false);
+
+//    if($('input[name=containers]').val() != ''){
+//        createTabs($('input[name=containers]').val(), false);
+//    }else{
+//        alert("here");
+//        createTabs(toJson());
+//    }
     
 </script>
 @endsection

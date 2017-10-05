@@ -271,7 +271,9 @@ class FormsController extends Controller
                     $field = Field::firstOrNew(array('id' => $value->_id));
                     $field->container_id = $container->id;
                     $field->type = $value->type;
-                    $field->config = json_encode($value->setting);
+//                    dd('here', $value->setting);
+//                    dd('here', json_encode( $value->setting, JSON_UNESCAPED_SLASHES) );
+                    $field->config = json_encode($value->setting, JSON_UNESCAPED_SLASHES );
                     $field->status = 1;
                     $field->save();
                 }

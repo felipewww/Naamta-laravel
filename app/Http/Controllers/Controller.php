@@ -123,11 +123,27 @@ class Controller extends BaseController
 //        dd($_return);
 
 //        | JSON_PRETTY_PRINT
-//        JSON_HEX_TAG |
-//        JSON_HEX_QUOT
-//        |  JSON_HEX_AMP
-        return json_encode($_return);
-//        return json_encode($_return, JSON_HEX_APOS | JSON_NUMERIC_CHECK  | JSON_UNESCAPED_SLASHES | JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE);
+//
+//
+//        |
+//        return json_encode($_return);
+//        dd($_return);
+        //JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_APOS | JSON_NUMERIC_CHECK  | JSON_UNESCAPED_SLASHES | JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE
+        $json = json_encode($_return);
+        $json = str_replace('\n', '', $json);
+        $json = str_replace('\t', '', $json);
+//        $json = str_replace('"', '\"', $json);
+
+//        json =
+//            json.replace("\n", "")
+//    json.replace("\t", "")
+//    .replace(/\\r/g, "")
+//        .replace(/\\t/g, "")
+//        .replace(/\\b/g, "")
+//        .replace(/\\f/g, "");
+
+//        dd($json);
+        return $json;
     }
     
     protected static function _storeApprovalToMongo($approval)
