@@ -120,29 +120,12 @@ class Controller extends BaseController
             }
         }
 
-//        dd($_return);
-
-//        | JSON_PRETTY_PRINT
-//
-//
-//        |
-//        return json_encode($_return);
-//        dd($_return);
-        //JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_APOS | JSON_NUMERIC_CHECK  | JSON_UNESCAPED_SLASHES | JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE
-        $json = json_encode($_return);
+        $json = json_encode($_return, JSON_HEX_QUOT);
+        $json = str_replace("\\", '/', $json);
         $json = str_replace('\n', '', $json);
         $json = str_replace('\t', '', $json);
-//        $json = str_replace('"', '\"', $json);
+        $json = str_replace('u0022', "'", $json);
 
-//        json =
-//            json.replace("\n", "")
-//    json.replace("\t", "")
-//    .replace(/\\r/g, "")
-//        .replace(/\\t/g, "")
-//        .replace(/\\b/g, "")
-//        .replace(/\\f/g, "");
-
-//        dd($json);
         return $json;
     }
     

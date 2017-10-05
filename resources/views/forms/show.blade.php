@@ -39,13 +39,13 @@
 
 <script>
 var appFolder = "teste";
+var json = '<?= isset($containers) ? str_replace("'", "’", $containers) : old('containers') ?>';
 
 <?php
-    $containers = str_replace("'", "\'", $containers );
-    $containers = str_replace('"', '\"', $containers );
-    $containers = str_replace('\n', '\\\n', $containers );
+//    $containers = str_replace("'", "\'", $containers );
+//    $containers = str_replace('"', '\"', $containers );
+//    $containers = str_replace('\n', '\\\n', $containers );
 ?>
-var json = '<?= $containers ?>';
-createTabs(json , true, "{{ Auth::user()->isClient() ? true : false }}");
+createTabs(json, true, "{{ Auth::user()->isClient() ? true : false }}");
 </script>
 @endsection

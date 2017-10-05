@@ -273,7 +273,8 @@ class FormsController extends Controller
                     $field->type = $value->type;
 //                    dd('here', $value->setting);
 //                    dd('here', json_encode( $value->setting, JSON_UNESCAPED_SLASHES) );
-                    $field->config = json_encode($value->setting, JSON_UNESCAPED_SLASHES );
+//                    $field->config = json_encode($value->setting, JSON_UNESCAPED_SLASHES );
+                    $field->config = json_encode($value->setting );
                     $field->status = 1;
                     $field->save();
                 }

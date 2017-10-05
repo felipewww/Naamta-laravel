@@ -37,15 +37,6 @@ function createTabs(json, clientView, isClient, report){
   * So, replace it to avoid bug.
   * */
   json = json.replace(/\/g, '');
-  // json =
-  //   json.replace("\n", "")
-  //   json.replace("\t", "")
-  //       .replace(/\\r/g, "")
-  //       .replace(/\\t/g, "")
-  //       .replace(/\\b/g, "")
-  //       .replace(/\\f/g, "");
-  // console.log('json!!!');
-  console.log(json);
 
   var objs = JSON.parse(json);
   
