@@ -89,6 +89,7 @@
 <script>
     var username = '{{ Auth::user()->name }}';
     var json = '<?= isset($containers) ? str_replace("'", "’", $containers) : old('containers') ?>';
+    console.log(json);
 //    $('#the_values').val(json);
 </script>
 <script src="{{ asset("js/template/signature_pad.js") }}"></script>

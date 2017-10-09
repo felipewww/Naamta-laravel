@@ -6,6 +6,7 @@ use App\Models\ApplicationStep;
 use App\Models\ApplicationStepForms;
 use App\Models\Approval;
 use App\Models\FormTemplate;
+use function GuzzleHttp\Psr7\str;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -91,12 +92,58 @@ class Controller extends BaseController
         return $this->storeFiles($folder, $request->allFiles(), []);
     }
 
+    private function _clear($string){
+        $newStr = $string;
+//        $newStr = str_replace('/', "", $newStr);
+        $newStr = str_replace('\\', '/', $newStr);
+        $newStr = str_replace('"', '\"', $newStr);
+
+        $newStr = str_replace('<!--div-->', '', $newStr);
+        $newStr = str_replace('<!--span-->', '', $newStr);
+        $newStr = str_replace('<!--u-->', '', $newStr);
+        $newStr = str_replace('<!--font-->', '', $newStr);
+        $newStr = str_replace('<!--i-->', '', $newStr);
+
+        $newStr = str_replace('u2022', " ", $newStr);
+        $newStr = str_replace('u2019', " ", $newStr);
+
+//        $newStr = str_replace('-->', '', $newStr);
+//        $newStr = stripslashes($newStr);
+
+//        $newStr = strip_tags($newStr, '<br><b><i><u><div>');
+        $newStr = strip_tags($newStr, '<br><b><i><u>');
+//        $newStr = strip_tags($newStr);
+
+        return $newStr;
+    }
+
+    public function _clearHTML($fieldConfig)
+    {
+        $json = json_decode($fieldConfig);
+
+        try{
+            if ( property_exists($json, 'label') ) {
+                $json->label = $this->_clear($json->label);
+            }
+
+            if ( property_exists($json, 'help') ) {
+                $json->help = $this->_clear($json->help);
+            }
+        }catch (\Exception $e){
+            dd($json);
+        }
+
+        return json_encode($json);
+    }
+
     /*
      * Convert a form to json.
      *
      * @return response of saved items
      */
     public function _convertFormToJson($form, $clone = false){
+
+        $settings = [];
         $_return = array();
         foreach ($form->containers as $i => $c){
             $_return[$i]["config"] = [
@@ -116,15 +163,18 @@ class Controller extends BaseController
                         array_push($_return[$i]["fields"][$k]["comments"], array("username" => $comment->user_name, "msg" => $comment->text));
                     }
                 }
-                $_return[$i]["fields"][$k]["setting"] =  json_decode($v->config);
+
+//                $_return[$i]["fields"][$k]["setting"] =  json_decode($v->config);
+
+                $configWithoutHTML = $this->_clearHTML($v->config);
+                $_return[$i]["fields"][$k]["setting"] =  json_decode($configWithoutHTML);
             }
         }
 
-        $json = json_encode($_return, JSON_HEX_QUOT);
-        $json = str_replace("\\", '/', $json);
-        $json = str_replace('\n', '', $json);
-        $json = str_replace('\t', '', $json);
-        $json = str_replace('u0022', "'", $json);
+        $json = json_encode($_return);
+
+//        $json = str_replace('u2022', "", $json);
+//        $json = str_replace('u2019', " ", $json);
 
         return $json;
     }
