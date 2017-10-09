@@ -94,7 +94,7 @@ class Controller extends BaseController
 
     private function _clear($string){
         $newStr = $string;
-//        $newStr = str_replace('/', "", $newStr);
+        $newStr = str_replace('/', "", $newStr);
         $newStr = str_replace('\\', '/', $newStr);
         $newStr = str_replace('"', '\"', $newStr);
 
@@ -110,8 +110,8 @@ class Controller extends BaseController
 //        $newStr = str_replace('-->', '', $newStr);
 //        $newStr = stripslashes($newStr);
 
-//        $newStr = strip_tags($newStr, '<br><b><i><u><div>');
-        $newStr = strip_tags($newStr, '<br><b><i><u>');
+        $newStr = strip_tags($newStr, '<br><b><i><u><div>');
+//        $newStr = strip_tags($newStr, '<br><b><i><u>');
 //        $newStr = strip_tags($newStr);
 
         return $newStr;
