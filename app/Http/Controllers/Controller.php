@@ -94,7 +94,7 @@ class Controller extends BaseController
 
     private function _clear($string){
         $newStr = $string;
-        $newStr = str_replace('/', "", $newStr);
+//        $newStr = str_replace('/', "", $newStr);
         $newStr = str_replace('\\', '/', $newStr);
         $newStr = str_replace('"', '\"', $newStr);
 
